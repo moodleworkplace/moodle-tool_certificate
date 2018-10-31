@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once('../../../config.php');
 
 $tid = optional_param('tid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);

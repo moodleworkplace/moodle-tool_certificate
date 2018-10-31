@@ -28,7 +28,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tool_certificate_issues"/>
-        <KEY NAME="customcert" TYPE="foreign" FIELDS="customcertid" REFTABLE="customcert" REFFIELDS="id"/>
+        <KEY NAME="template" TYPE="foreign" FIELDS="templateid" REFTABLE="tool_certificate_templates" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
@@ -46,7 +46,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tool_certificate_pages"/>
-        <KEY NAME="template" TYPE="foreign" FIELDS="templateid" REFTABLE="customcert_template" REFFIELDS="id"/>
+        <KEY NAME="template" TYPE="foreign" FIELDS="templateid" REFTABLE="tool_certificate_templates" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
     <TABLE NAME="tool_certificate_elements" COMMENT="Stores the elements for a given page">

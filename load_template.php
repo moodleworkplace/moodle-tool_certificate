@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once('../../../config.php');
 
 $tid = required_param('tid', PARAM_INT);
 $ltid = required_param('ltid', PARAM_INT); // The template to load.

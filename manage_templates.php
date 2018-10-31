@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once('../../config.php');
+require_once('../../../config.php');
 
 $contextid = optional_param('contextid', context_system::instance()->id, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);

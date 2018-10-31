@@ -42,6 +42,6 @@ class tool_certificate_admin_page_manage_element_plugins extends admin_externalp
      */
     public function __construct() {
         $url = new moodle_url('/admin/tool/certificate/adminmanageplugins.php');
-        parent::__construct('manageelementplugins', get_string('manageelementplugins', 'tool_certificate'), $url);
+        parent::__construct('tool_certificate_manageelementplugins', get_string('manageelementplugins', 'tool_certificate'), $url);
     }
 }
