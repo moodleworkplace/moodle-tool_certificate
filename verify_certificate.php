@@ -93,7 +93,8 @@ if ($form->get_data()) {
 
     // Ok, now check if the code is valid.
     $userfields = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT ci.id, u.id as userid, $userfields, co.id as courseid,
+    $sql = "SELECT ci.id, ci.customcertid, ci.code, ci.emailed, ci.timecreated,
+                   u.id as userid, $userfields, co.id as courseid,
                    co.fullname as coursefullname, c.id as certificateid,
                    c.name as certificatename, c.verifyany
               FROM {customcert} c
@@ -133,6 +134,11 @@ echo $OUTPUT->heading($heading);
 echo $form->display();
 if (isset($result)) {
     $renderer = $PAGE->get_renderer('mod_customcert');
+    if ($result->success) {
+        foreach ($result->issues as $issue) {
+            \mod_customcert\event\certificate_verified::create_from_issue($issue)->trigger();
+        }
+    }
     $result = new \mod_customcert\output\verify_certificate_results($result);
     echo $renderer->render($result);
 }

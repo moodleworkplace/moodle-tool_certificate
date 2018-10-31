@@ -135,5 +135,18 @@ function xmldb_customcert_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017050506, 'customcert');
     }
 
+    if ($oldversion < 2018051705) {
+
+        // Define key userid (foreign) to be added to customcert_issues.
+        $table = new xmldb_table('customcert_issues');
+        $key = new xmldb_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+
+        // Launch add key userid.
+        $dbman->add_key($table, $key);
+
+        // Customcert savepoint reached.
+        upgrade_mod_savepoint(true, 2018051705, 'customcert');
+    }
+
     return true;
 }

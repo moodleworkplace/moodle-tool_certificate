@@ -162,6 +162,7 @@ class email_certificate_task extends \core\task\scheduled_task {
                         $template->id = $customcert->templateid;
                         $template->name = $customcert->templatename;
                         $template->contextid = $customcert->contextid;
+                        $template->timecreated = $customcert->timecreated;
                         $template = new \mod_customcert\template($template);
                         $filecontents = $template->generate_pdf(false, $user->id, true);
 

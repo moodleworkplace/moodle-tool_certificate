@@ -83,6 +83,9 @@ if ($deleteissue && $canmanage && confirm_sesskey()) {
         exit();
     }
 
+    $issue = $DB->get_record('customcert_issues', ['id' => $deleteissue]);
+    \mod_customcert\event\certificate_revoked::create_from_issue($issue)->trigger();
+
     // Delete the issue.
     $DB->delete_records('customcert_issues', array('id' => $deleteissue, 'customcertid' => $customcert->id));
 

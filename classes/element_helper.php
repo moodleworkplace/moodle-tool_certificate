@@ -394,35 +394,43 @@ class element_helper {
         // Array to store the element types.
         $options = array();
 
-        // Check that the directory exists.
-        $elementdir = "$CFG->dirroot/mod/customcert/element";
-        if (file_exists($elementdir)) {
-            // Get directory contents.
-            $elementfolders = new \DirectoryIterator($elementdir);
-            // Loop through the elements folder.
-            foreach ($elementfolders as $elementfolder) {
-                // If it is not a directory or it is '.' or '..', skip it.
-                if (!$elementfolder->isDir() || $elementfolder->isDot()) {
-                    continue;
-                }
-                // Check that the standard class exists, if not we do
-                // not want to display it as an option as it will not work.
-                $foldername = $elementfolder->getFilename();
-                // Get the class name.
-                $classname = '\\customcertelement_' . $foldername . '\\element';
-                // Ensure the necessary class exists.
-                if (class_exists($classname)) {
-                    // Additionally, check if the user is allowed to add the element at all.
-                    if ($classname::can_add()) {
-                        $component = "customcertelement_{$foldername}";
-                        $options[$foldername] = get_string('pluginname', $component);
-                    }
+        $plugins = self::get_enabled_plugins();
+
+        // Loop through the enabled plugins.
+        foreach ($plugins as $plugin) {
+            $classname = '\\customcertelement_' . $plugin. '\\element';
+            // Ensure the necessary class exists.
+            if (class_exists($classname)) {
+                // Additionally, check if the user is allowed to add the element at all.
+                if ($classname::can_add()) {
+                    $component = "customcertelement_{$plugin}";
+                    $options[$plugin] = get_string('pluginname', $component);
                 }
             }
         }
 
-        \core_collator::asort($options);
         return $options;
+    }
+
+    public static function get_enabled_plugins() {
+        global $DB;
+
+        // Get all available plugins.
+        $manager = new plugin_manager();
+        $plugins = $manager->get_sorted_plugins_list();
+        if (!$plugins) {
+            return array();
+        }
+
+        // Check they are enabled using get_config (which is cached and hopefully fast).
+        $enabled = array();
+        foreach ($plugins as $plugin) {
+            $disabled = get_config('customcertelement_' . $plugin, 'disabled');
+            if (empty($disabled)) {
+                $enabled[$plugin] = $plugin;
+            }
+        }
+        return $enabled;
     }
 
     /**

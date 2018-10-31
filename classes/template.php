@@ -51,6 +51,11 @@ class template {
     protected $contextid;
 
     /**
+     * @var int $timecreated The creation time of this template
+     */
+    protected $timecreated;
+
+    /**
      * The constructor.
      *
      * @param \stdClass $template
@@ -59,6 +64,11 @@ class template {
         $this->id = $template->id;
         $this->name = $template->name;
         $this->contextid = $template->contextid;
+        if (isset($template->timecreated)) {
+            $this->timecreated = $template->timecreated;
+        } else {
+            $this->timecreated = time();
+        }
     }
 
     /**
@@ -73,6 +83,10 @@ class template {
         $savedata->id = $this->id;
         $savedata->name = $data->name;
         $savedata->timemodified = time();
+        $savedata->timecreated = $this->timecreated;
+        $savedata->contextid = $this->contextid;
+
+        \mod_customcert\event\template_updated::create_from_template($savedata)->trigger();
 
         $DB->update_record('customcert_templates', $savedata);
     }
@@ -172,6 +186,9 @@ class template {
         if (!$DB->delete_records('customcert_pages', array('templateid' => $this->id))) {
             return false;
         }
+
+        $deletedtemplate = $DB->get_record('customcert_templates', ['id' => $this->id]);
+        \mod_customcert\event\template_deleted::create_from_template($deletedtemplate)->trigger();
 
         // Now, finally delete the actual template.
         if (!$DB->delete_records('customcert_templates', array('id' => $this->id))) {
@@ -469,6 +486,8 @@ class template {
         $template->timecreated = time();
         $template->timemodified = $template->timecreated;
         $template->id = $DB->insert_record('customcert_templates', $template);
+
+        \mod_customcert\event\template_created::create_from_template($template)->trigger();
 
         return new \mod_customcert\template($template);
     }

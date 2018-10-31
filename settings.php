@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once($CFG->dirroot . '/mod/customcert/adminlib.php');
+
 $url = $CFG->wwwroot . '/mod/customcert/verify_certificate.php';
 
 $ADMIN->add('modsettings', new admin_category('customcert', get_string('pluginname', 'mod_customcert')));
@@ -84,6 +86,8 @@ $settings->add(new admin_setting_configcheckbox('customcert/protection_copy',
     0));
 
 $ADMIN->add('customcert', $settings);
+
+$ADMIN->add('customcert', new customcert_admin_page_manage_element_plugins());
 
 // Element plugin settings.
 $ADMIN->add('customcert', new admin_category('customcertelements', get_string('elementplugins', 'customcert')));
