@@ -17,7 +17,7 @@
 /**
  * Serves files for the mobile app.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,7 +64,7 @@ if ($userid != $USER->id) {
 } else {
     // Make sure the user has met the required time.
     if ($certificate->requiredtime) {
-        if (\mod_customcert\certificate::get_course_time($certificate->course) < ($certificate->requiredtime * 60)) {
+        if (\tool_certificate\certificate::get_course_time($certificate->course) < ($certificate->requiredtime * 60)) {
             exit();
         }
     }
@@ -79,10 +79,10 @@ if (!$issue) {
         exit();
     }
 
-    \mod_customcert\certificate::issue_certificate($certificate->id, $USER->id);
+    \tool_certificate\certificate::issue_certificate($certificate->id, $USER->id);
 }
 
 // Now we want to generate the PDF.
-$template = new \mod_customcert\template($template);
+$template = new \tool_certificate\template($template);
 $template->generate_pdf(false, $userid);
 exit();

@@ -17,11 +17,11 @@
 /**
  * This is the external API for this tool.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_customcert;
+namespace tool_certificate;
 defined('MOODLE_INTERNAL') || die();
 
 require_once("$CFG->libdir/externallib.php");
@@ -78,7 +78,7 @@ class external extends \external_api {
         $element = $DB->get_record('customcert_elements', array('id' => $elementid), '*', MUST_EXIST);
 
         // Set the template.
-        $template = new \mod_customcert\template($template);
+        $template = new \tool_certificate\template($template);
 
         // Perform checks.
         if ($cm = $template->get_cm()) {
@@ -99,7 +99,7 @@ class external extends \external_api {
         }
 
         // Get an instance of the element class.
-        if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
             return $e->save_form_elements($data);
         }
 
@@ -149,7 +149,7 @@ class external extends \external_api {
         $element = $DB->get_record('customcert_elements', array('id' => $elementid), '*', MUST_EXIST);
 
         // Set the template.
-        $template = new \mod_customcert\template($template);
+        $template = new \tool_certificate\template($template);
 
         // Perform checks.
         if ($cm = $template->get_cm()) {
@@ -159,7 +159,7 @@ class external extends \external_api {
         }
 
         // Get an instance of the element class.
-        if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
             return $e->render_html();
         }
 

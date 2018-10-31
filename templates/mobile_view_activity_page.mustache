@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_customcert/mobile_view_activity_page
+    @template tool_certificate/mobile_view_activity_page
 
     The main page to view the custom certificate activity
 
@@ -80,26 +80,26 @@
 }}
 {{=<% %>=}}
 <div>
-    <core-course-module-description description="<% certificate.intro %>" component="mod_customcert" componentId="<% cmid %>"></core-course-module-description>
+    <core-course-module-description description="<% certificate.intro %>" component="tool_certificate" componentId="<% cmid %>"></core-course-module-description>
     <%^canmanage%>
         <%#requiredtimemet%>
             <ion-item>
                 <ion-grid>
                     <ion-row>
                         <ion-col col-6 class="text-left">
-                            {{ 'plugin.mod_customcert.receiveddate' | translate }}
+                            {{ 'plugin.tool_certificate.receiveddate' | translate }}
                             <br />
                             <div class="timerewarded">
                                 <%#issue%>
                                     {{ <% timecreated %> | coreToLocaleString }}
                                 <%/issue%>
                                 <%^issue%>
-                                    {{ 'plugin.mod_customcert.notissued' | translate }}
+                                    {{ 'plugin.tool_certificate.notissued' | translate }}
                                 <%/issue%>
                             </div>
                         </ion-col>
                         <ion-col col-6 class="text-right">
-                            <button ion-button icon-only clear [core-download-file]="{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}" moduleId="<% cmid %>" courseId="<% certificate.course %>" component="mod_customcert">
+                            <button ion-button icon-only clear [core-download-file]="{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}" moduleId="<% cmid %>" courseId="<% certificate.course %>" component="tool_certificate">
                                 <ion-icon name="download"></ion-icon>
                             </button>
                         </ion-col>
@@ -109,25 +109,25 @@
         <%/requiredtimemet%>
         <%^requiredtimemet%>
             <ion-item>
-                <p>{{ 'plugin.mod_customcert.requiredtimenotmet' | translate: {$a: { requiredtime: <% certificate.requiredtime %>} } }}</p>
+                <p>{{ 'plugin.tool_certificate.requiredtimenotmet' | translate: {$a: { requiredtime: <% certificate.requiredtime %>} } }}</p>
             </ion-item>
         <%/requiredtimemet%>
     <%/canmanage%>
     <%#canmanage%>
         <ion-item>
-            <button ion-button block core-course-download-module-main-file moduleId="<% cmid %>" courseId="<% certificate.course %>" component="mod_customcert" [files]="[{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}]">
+            <button ion-button block core-course-download-module-main-file moduleId="<% cmid %>" courseId="<% certificate.course %>" component="tool_certificate" [files]="[{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}]">
                 <ion-icon name="download" item-start></ion-icon>
-                {{ 'plugin.mod_customcert.getcustomcert' | translate }}
+                {{ 'plugin.tool_certificate.getcustomcert' | translate }}
             </button>
         </ion-item>
     <%/canmanage%>
     <%#showreport%>
         <ion-item>
-            {{ 'plugin.mod_customcert.listofissues' | translate }}
+            {{ 'plugin.tool_certificate.listofissues' | translate }}
         </ion-item>
         <%#showgroups%>
             <ion-item>
-                <ion-label>{{ 'plugin.mod_customcert.selectagroup' | translate }}</ion-label>
+                <ion-label>{{ 'plugin.tool_certificate.selectagroup' | translate }}</ion-label>
                 <ion-select (ionChange)="updateContent({cmid: <% cmid %>, courseid: <% certificate.course %>, group: $event})" interface="popover">
                     <%#groups%>
                         <ion-option value="<% id %>" <%#selected%>selected<%/selected%>><% name %></ion-option>
@@ -147,14 +147,14 @@
                                     <div class="timerewarded">{{ <% timecreated %> | coreToLocaleString }}</div>
                                 </ion-col>
                                 <ion-col col-6 class="text-right">
-                                    <button ion-button icon-only clear [core-download-file]="{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}" moduleId="<% cmid %>" courseId="<% certificate.course %>" component="mod_customcert">
+                                    <button ion-button icon-only clear [core-download-file]="{fileurl: '<% fileurl %>', timemodified: '<% currenttimestamp %>'}" moduleId="<% cmid %>" courseId="<% certificate.course %>" component="tool_certificate">
                                         <ion-icon name="download"></ion-icon>
                                     </button>
                                     <%#canmanage%>
-                                        <button ion-button icon-only clear core-site-plugins-call-ws name="mod_customcert_delete_issue"
+                                        <button ion-button icon-only clear core-site-plugins-call-ws name="tool_certificate_delete_issue"
                                                 [params]="{certificateid: <% certificate.id %>, issueid: <% issueid %>}"
                                                 [preSets]="{getFromCache: 0, saveToCache: 0, typeExpected: 'boolean'}"
-                                                confirmMessage="{{ 'plugin.mod_customcert.deleteissueconfirm' | translate }}"
+                                                confirmMessage="{{ 'plugin.tool_certificate.deleteissueconfirm' | translate }}"
                                                 refreshOnSuccess="true">
                                             <ion-icon name="trash"></ion-icon>
                                         </button>
@@ -168,7 +168,7 @@
         <%/hasrecipients%>
         <%^hasrecipients%>
             <ion-item>
-                {{ 'plugin.mod_customcert.nothingtodisplay' | translate }}
+                {{ 'plugin.tool_certificate.nothingtodisplay' | translate }}
             </ion-item>
         <%/hasrecipients%>
     <%/showreport%>

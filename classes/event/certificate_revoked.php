@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_customcert certificate issued event.
+ * The tool_certificate certificate issued event.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\event;
+namespace tool_certificate\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_customcert certificate revoked event class.
+ * The tool_certificate certificate revoked event class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,7 +62,7 @@ class certificate_revoked extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatecreated', 'mod_customcert');
+        return get_string('eventtemplatecreated', 'tool_certificate');
     }
 
     /**
@@ -82,7 +82,7 @@ class certificate_revoked extends \core\event\base {
      */
     public static function create_from_issue(\stdClass $issue) {
         $data = array(
-            'context' => \mod_customcert\certificate::get_context($issue->customcertid),
+            'context' => \tool_certificate\certificate::get_context($issue->customcertid),
             'objectid' => $issue->id,
             'relateduserid' => $issue->userid
         );

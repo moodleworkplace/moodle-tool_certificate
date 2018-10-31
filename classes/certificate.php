@@ -17,12 +17,12 @@
 /**
  * Provides functionality needed by customcert activities.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Helper functionality for certificates.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -93,7 +93,7 @@ class certificate {
 
         // Save the file if it exists that is currently in the draft area.
         require_once($CFG->dirroot . '/lib/filelib.php');
-        file_save_draft_area_files($draftitemid, $contextid, 'mod_customcert', $filearea, 0);
+        file_save_draft_area_files($draftitemid, $contextid, 'tool_certificate', $filearea, 0);
     }
 
     /**
@@ -436,7 +436,7 @@ class certificate {
 
         // Insert the record into the database.
         if ($issue->id = $DB->insert_record('customcert_issues', $issue)) {
-            \mod_customcert\event\certificate_issued::create_from_issue($issue)->trigger();
+            \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
         }
 
         return $issue->id;

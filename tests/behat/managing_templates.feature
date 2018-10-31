@@ -1,4 +1,4 @@
-@mod @mod_customcert
+@mod @tool_certificate
 Feature: Being able to manage site templates
   In order to ensure managing site templates works as expected
   As an admin

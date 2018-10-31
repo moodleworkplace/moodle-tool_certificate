@@ -17,19 +17,19 @@
 /**
  * Class represents a customcert template.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class represents a customcert template.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -86,7 +86,7 @@ class template {
         $savedata->timecreated = $this->timecreated;
         $savedata->contextid = $this->contextid;
 
-        \mod_customcert\event\template_updated::create_from_template($savedata)->trigger();
+        \tool_certificate\event\template_updated::create_from_template($savedata)->trigger();
 
         $DB->update_record('customcert_templates', $savedata);
     }
@@ -173,7 +173,7 @@ class template {
         if ($elements = $DB->get_records_sql($sql, array('templateid' => $this->id))) {
             foreach ($elements as $element) {
                 // Get an instance of the element class.
-                if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+                if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                     $e->delete();
                 } else {
                     // The plugin files are missing, so just remove the entry from the DB.
@@ -188,7 +188,7 @@ class template {
         }
 
         $deletedtemplate = $DB->get_record('customcert_templates', ['id' => $this->id]);
-        \mod_customcert\event\template_deleted::create_from_template($deletedtemplate)->trigger();
+        \tool_certificate\event\template_deleted::create_from_template($deletedtemplate)->trigger();
 
         // Now, finally delete the actual template.
         if (!$DB->delete_records('customcert_templates', array('id' => $this->id))) {
@@ -216,7 +216,7 @@ class template {
         if ($elements = $DB->get_records('customcert_elements', array('pageid' => $page->id))) {
             foreach ($elements as $element) {
                 // Get an instance of the element class.
-                if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+                if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                     $e->delete();
                 } else {
                     // The plugin files are missing, so just remove the entry from the DB.
@@ -246,7 +246,7 @@ class template {
         $element = $DB->get_record('customcert_elements', array('id' => $elementid), '*', MUST_EXIST);
 
         // Get an instance of the element class.
-        if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
             $e->delete();
         } else {
             // The plugin files are missing, so just remove the entry from the DB.
@@ -316,7 +316,7 @@ class template {
                     // Loop through and display.
                     foreach ($elements as $element) {
                         // Get an instance of the element class.
-                        if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+                        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                             $e->render($pdf, $preview, $user);
                         }
                     }
@@ -357,7 +357,7 @@ class template {
                         // Ok, now we want to insert this into the database.
                         $element->id = $DB->insert_record('customcert_elements', $element);
                         // Load any other information the element may need to for the template.
-                        if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+                        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                             if (!$e->copy_element($templateelement)) {
                                 // Failed to copy - delete the element.
                                 $e->delete();
@@ -475,7 +475,7 @@ class template {
      *
      * @param string $templatename the name of the template
      * @param int $contextid the context id
-     * @return \mod_customcert\template the template object
+     * @return \tool_certificate\template the template object
      */
     public static function create($templatename, $contextid) {
         global $DB;
@@ -487,8 +487,8 @@ class template {
         $template->timemodified = $template->timecreated;
         $template->id = $DB->insert_record('customcert_templates', $template);
 
-        \mod_customcert\event\template_created::create_from_template($template)->trigger();
+        \tool_certificate\event\template_created::create_from_template($template)->trigger();
 
-        return new \mod_customcert\template($template);
+        return new \tool_certificate\template($template);
     }
 }

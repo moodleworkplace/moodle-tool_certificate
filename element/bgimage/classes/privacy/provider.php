@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for customcertelement_bgimage.
+ * Privacy Subsystem implementation for certificateelement_bgimage.
  *
- * @package    customcertelement_bgimage
+ * @package    certificateelement_bgimage
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_bgimage\privacy;
+namespace certificateelement_bgimage\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for customcertelement_bgimage implementing null_provider.
+ * Privacy Subsystem for certificateelement_bgimage implementing null_provider.
  *
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

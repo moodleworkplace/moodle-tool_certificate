@@ -16,12 +16,12 @@
 /**
  * AMD module used when rearranging a custom certificate.
  *
- * @module     mod_customcert/rearrange-area
- * @package    mod_customcert
+ * @module     tool_certificate/rearrange-area
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/yui', 'core/fragment', 'mod_customcert/dialogue', 'core/notification',
+define(['jquery', 'core/yui', 'core/fragment', 'tool_certificate/dialogue', 'core/notification',
         'core/str', 'core/templates', 'core/ajax'],
         function($, Y, fragment, Dialogue, notification, str, template, ajax) {
 
@@ -51,8 +51,8 @@ define(['jquery', 'core/yui', 'core/fragment', 'mod_customcert/dialogue', 'core/
                     'elementid': elementid
                 };
 
-                fragment.loadFragment('mod_customcert', 'editelement', contextid, params).done(function(html, js) {
-                    str.get_string('editelement', 'mod_customcert').done(function(title) {
+                fragment.loadFragment('tool_certificate', 'editelement', contextid, params).done(function(html, js) {
+                    str.get_string('editelement', 'tool_certificate').done(function(title) {
                         Y.use('moodle-core-formchangechecker', function() {
                             new Dialogue(
                                 title,
@@ -174,7 +174,7 @@ define(['jquery', 'core/yui', 'core/fragment', 'mod_customcert/dialogue', 'core/
 
                 // Call the web service to get the updated element.
                 var promises = ajax.call([{
-                    methodname: 'mod_customcert_get_element_html',
+                    methodname: 'tool_certificate_get_element_html',
                     args: {
                         templateid: templateid,
                         elementid: elementid
@@ -192,7 +192,7 @@ define(['jquery', 'core/yui', 'core/fragment', 'mod_customcert/dialogue', 'core/
 
                 // Call the web service to save the element.
                 var promises = ajax.call([{
-                    methodname: 'mod_customcert_save_element',
+                    methodname: 'tool_certificate_save_element',
                     args: {
                         templateid: templateid,
                         elementid: elementid,

@@ -17,7 +17,7 @@
 /**
  * Define all the restore steps that will be used by the restore_customcert_activity_task.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 /**
  * Define the complete customcert structure for restore, with file and id annotations.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -171,9 +171,9 @@ class restore_customcert_activity_structure_step extends restore_activity_struct
         parent::after_execute();
 
         // Add the files.
-        $this->add_related_files('mod_customcert', 'intro', null);
+        $this->add_related_files('tool_certificate', 'intro', null);
 
         // Note - we can't use get_old_contextid() as it refers to the module context.
-        $this->add_related_files('mod_customcert', 'image', null, $this->get_task()->get_info()->original_course_contextid);
+        $this->add_related_files('tool_certificate', 'image', null, $this->get_task()->get_info()->original_course_contextid);
     }
 }

@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The mod_customcert template created event.
+ * The tool_certificate template created event.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\event;
+namespace tool_certificate\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The mod_customcert template created event class.
+ * The tool_certificate template created event class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -61,7 +61,7 @@ class template_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatecreated', 'mod_customcert');
+        return get_string('eventtemplatecreated', 'tool_certificate');
     }
 
     /**

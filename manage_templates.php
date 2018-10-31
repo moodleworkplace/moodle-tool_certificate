@@ -17,7 +17,7 @@
 /**
  * Manage customcert templates.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,7 +38,7 @@ if ($action) {
 
 if ($tid) {
     $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
-    $template = new \mod_customcert\template($template);
+    $template = new \tool_certificate\template($template);
 }
 
 $context = context::instance_by_id($contextid);
@@ -51,7 +51,7 @@ $heading = $title;
 
 // Set up the page.
 $pageurl = new moodle_url('/mod/customcert/manage_templates.php');
-\mod_customcert\page_helper::page_setup($pageurl, $context, $title);
+\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
 // Additional page setup.
 if ($tid && $action && confirm_sesskey()) {
@@ -120,7 +120,7 @@ if ($tid) {
     }
 }
 
-$table = new \mod_customcert\manage_templates_table($context);
+$table = new \tool_certificate\manage_templates_table($context);
 $table->define_baseurl($pageurl);
 
 echo $OUTPUT->header();

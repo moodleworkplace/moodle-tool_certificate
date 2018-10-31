@@ -17,12 +17,12 @@
 /**
  * This files contains the form for verifying a certificate.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/formslib.php');
 /**
  * The form for verifying a certificate.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

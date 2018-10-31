@@ -17,7 +17,7 @@
 /**
  * Handles loading a customcert template.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,10 +29,10 @@ $ltid = required_param('ltid', PARAM_INT); // The template to load.
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
 $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
-$template = new \mod_customcert\template($template);
+$template = new \tool_certificate\template($template);
 
 $loadtemplate = $DB->get_record('customcert_templates', array('id' => $ltid), '*', MUST_EXIST);
-$loadtemplate = new \mod_customcert\template($loadtemplate);
+$loadtemplate = new \tool_certificate\template($loadtemplate);
 
 if ($cm = $template->get_cm()) {
     require_login($cm->course, false, $cm);
@@ -61,7 +61,7 @@ if ($confirm && confirm_sesskey()) {
     if ($elements = $DB->get_records_sql($sql, array('templateid' => $template->get_id()))) {
         foreach ($elements as $element) {
             // Get an instance of the element class.
-            if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+            if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                 $e->delete();
             }
         }
@@ -86,7 +86,7 @@ $yesurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $ti
                                                                     'sesskey' => sesskey()));
 
 $pageurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid, 'ltid' => $ltid));
-\mod_customcert\page_helper::page_setup($pageurl, $template->get_context(), $title);
+\tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
 $str = get_string('editcustomcert', 'customcert');
 $link = new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id()));

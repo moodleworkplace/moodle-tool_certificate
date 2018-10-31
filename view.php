@@ -17,7 +17,7 @@
 /**
  * Handles viewing a customcert.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +31,7 @@ $downloadissue = optional_param('downloadissue', 0, PARAM_INT);
 $deleteissue = optional_param('deleteissue', 0, PARAM_INT);
 $confirm = optional_param('confirm', false, PARAM_BOOL);
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', \mod_customcert\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
+$perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 
 $cm = get_coursemodule_from_id('customcert', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -48,11 +48,11 @@ $canviewreport = has_capability('mod/customcert:viewreport', $context);
 
 // Initialise $PAGE.
 $pageurl = new moodle_url('/mod/customcert/view.php', array('id' => $cm->id));
-\mod_customcert\page_helper::page_setup($pageurl, $context, format_string($customcert->name));
+\tool_certificate\page_helper::page_setup($pageurl, $context, format_string($customcert->name));
 
 // Check if the user can view the certificate based on time spent in course.
 if ($customcert->requiredtime && !$canmanage) {
-    if (\mod_customcert\certificate::get_course_time($course->id) < ($customcert->requiredtime * 60)) {
+    if (\tool_certificate\certificate::get_course_time($course->id) < ($customcert->requiredtime * 60)) {
         $a = new stdClass;
         $a->requiredtime = $customcert->requiredtime;
         notice(get_string('requiredtimenotmet', 'customcert', $a), "$CFG->wwwroot/course/view.php?id=$course->id");
@@ -84,7 +84,7 @@ if ($deleteissue && $canmanage && confirm_sesskey()) {
     }
 
     $issue = $DB->get_record('customcert_issues', ['id' => $deleteissue]);
-    \mod_customcert\event\certificate_revoked::create_from_issue($issue)->trigger();
+    \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
 
     // Delete the issue.
     $DB->delete_records('customcert_issues', array('id' => $deleteissue, 'customcertid' => $customcert->id));
@@ -93,7 +93,7 @@ if ($deleteissue && $canmanage && confirm_sesskey()) {
     redirect(new moodle_url('/mod/customcert/view.php', array('id' => $id)));
 }
 
-$event = \mod_customcert\event\course_module_viewed::create(array(
+$event = \tool_certificate\event\course_module_viewed::create(array(
     'objectid' => $customcert->id,
     'context' => $context,
 ));
@@ -111,7 +111,7 @@ if (!$downloadown && !$downloadissue) {
     // Generate the table to the report if there are issues to display.
     if ($canviewreport) {
         // Get the total number of issues.
-        $reporttable = new \mod_customcert\report_table($customcert->id, $cm, $groupmode, $downloadtable);
+        $reporttable = new \tool_certificate\report_table($customcert->id, $cm, $groupmode, $downloadtable);
         $reporttable->define_baseurl($pageurl);
 
         if ($reporttable->is_downloading()) {
@@ -161,7 +161,7 @@ if (!$downloadown && !$downloadissue) {
     if ($downloadown) {
         // Create new customcert issue record if one does not already exist.
         if (!$DB->record_exists('customcert_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id))) {
-            \mod_customcert\certificate::issue_certificate($customcert->id, $USER->id);
+            \tool_certificate\certificate::issue_certificate($customcert->id, $USER->id);
         }
 
         // Set the custom certificate as viewed.
@@ -177,7 +177,7 @@ if (!$downloadown && !$downloadissue) {
     }
 
     // Now we want to generate the PDF.
-    $template = new \mod_customcert\template($template);
+    $template = new \tool_certificate\template($template);
     $template->generate_pdf(false, $userid);
     exit();
 }

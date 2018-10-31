@@ -17,7 +17,7 @@
 /**
  * Definition of customcert scheduled tasks.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @category  task
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $tasks = array(
     array(
-        'classname' => 'mod_customcert\task\email_certificate_task',
+        'classname' => 'tool_certificate\task\email_certificate_task',
         'blocking' => 0,
         'minute' => '*',
         'hour' => '*',

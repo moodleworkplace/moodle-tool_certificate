@@ -17,7 +17,7 @@
 /**
  * This file contains the version information for the userfield plugin.
  *
- * @package    customcertelement_userfield
+ * @package    certificateelement_userfield
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,4 +26,4 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 $plugin->version   = 2018051700; // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2018051700; // Requires this Moodle version (3.5).
-$plugin->component = 'customcertelement_userfield';
+$plugin->component = 'certificateelement_userfield';

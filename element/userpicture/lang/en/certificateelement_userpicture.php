@@ -15,12 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_coursename', language 'en'.
+ * Strings for component 'certificateelement_userpicture', language 'en'.
  *
- * @package    customcertelement_coursename
- * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @package    certificateelement_userpicture
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Course name';
-$string['privacy:metadata'] = 'The Course name plugin does not store any personal data.';
+$string['height'] = 'Height';
+$string['height_help'] = 'Height of the image in mm. If equal to zero, it is automatically calculated.';
+$string['invalidheight'] = 'The height has to be a valid number greater than or equal to 0.';
+$string['invalidwidth'] = 'The width has to be a valid number greater than or equal to 0.';
+$string['pluginname'] = 'User picture';
+$string['privacy:metadata'] = 'The User picture plugin does not store any personal data.';
+$string['width'] = 'Width';
+$string['width_help'] = 'Width of the image in mm. If equal to zero, it is automatically calculated.';

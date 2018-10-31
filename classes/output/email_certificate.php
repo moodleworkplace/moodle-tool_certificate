@@ -17,12 +17,12 @@
 /**
  * Email certificate renderable.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\output;
+namespace tool_certificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 

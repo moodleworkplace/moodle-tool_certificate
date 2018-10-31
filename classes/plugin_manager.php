@@ -17,12 +17,12 @@
 /**
  * This file contains the classes for the admin settings of the customcert module.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +31,7 @@ require_once($CFG->dirroot.'/lib/adminlib.php');
 /**
  * Manage element plugins
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -85,7 +85,7 @@ class plugin_manager {
         $table->define_baseurl($this->pageurl);
         $table->define_columns(array('pluginname', 'version', 'hideshow', 'order', 'settings'));
         $table->define_headers(array(get_string('name'),
-                get_string('version'), get_string('hideshow', 'mod_customcert'),
+                get_string('version'), get_string('hideshow', 'tool_certificate'),
                 get_string('order'), get_string('settings'), get_string('uninstallplugin', 'core_admin')));
         $table->set_attribute('id', 'plugins');
         $table->set_attribute('class', 'admintable generaltable');
@@ -97,10 +97,10 @@ class plugin_manager {
             $row = array();
             $class = '';
 
-            $row[] = get_string('pluginname', 'customcertelement_' . $plugin);
-            $row[] = get_config('customcertelement_' . $plugin, 'version');
+            $row[] = get_string('pluginname', 'certificateelement_' . $plugin);
+            $row[] = get_config('certificateelement_' . $plugin, 'version');
 
-            $visible = !get_config('customcertelement_' . $plugin, 'disabled');
+            $visible = !get_config('certificateelement_' . $plugin, 'disabled');
 
             if ($visible) {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
@@ -123,7 +123,7 @@ class plugin_manager {
             $exists = file_exists($CFG->dirroot . '/mod/customcert/element/' . $plugin . '/settings.php');
             if ($row[1] != '' && $exists) {
                 $row[] = html_writer::link(new moodle_url('/admin/settings.php',
-                        array('section' => 'customcertelement_' . $plugin)), get_string('settings'));
+                        array('section' => 'certificateelement_' . $plugin)), get_string('settings'));
             } else {
                 $row[] = '&nbsp;';
             }
@@ -152,7 +152,7 @@ class plugin_manager {
      * @param string $plugin - The plugin to hide
      */
     public function hide_plugin($plugin) {
-        set_config('disabled', 1, 'customcertelement_' . $plugin);
+        set_config('disabled', 1, 'certificateelement_' . $plugin);
         \core_plugin_manager::reset_caches();
     }
 
@@ -162,7 +162,7 @@ class plugin_manager {
      * @param string $plugin - The plugin to show
      */
     public function show_plugin($plugin) {
-        set_config('disabled', 0, 'customcertelement_' . $plugin);
+        set_config('disabled', 0, 'certificateelement_' . $plugin);
         \core_plugin_manager::reset_caches();
     }
 
@@ -172,12 +172,12 @@ class plugin_manager {
      * @return array The list of plugins
      */
     public function get_sorted_plugins_list() {
-        $names = \core_component::get_plugin_list('customcertelement');
+        $names = \core_component::get_plugin_list('certificateelement');
 
         $result = array();
 
         foreach ($names as $name => $path) {
-            $idx = get_config('customcertelement_' . $name, 'sortorder');
+            $idx = get_config('certificateelement_' . $name, 'sortorder');
             if (!$idx) {
                 $idx = 0;
             }
@@ -252,7 +252,7 @@ class plugin_manager {
 
         // Save the new normal order.
         foreach ($plugins as $key => $plugin) {
-            set_config('sortorder', $key, 'customcertelement_' . $plugin);
+            set_config('sortorder', $key, 'certificateelement_' . $plugin);
         }
     }
 }

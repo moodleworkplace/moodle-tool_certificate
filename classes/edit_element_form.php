@@ -17,12 +17,12 @@
 /**
  * This file contains the form for handling editing a customcert element.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -35,14 +35,14 @@ require_once($CFG->dirroot . '/mod/customcert/includes/colourpicker.php');
 /**
  * The form for handling editing a customcert element.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edit_element_form extends \moodleform {
 
     /**
-     * @var \mod_customcert\element The element object.
+     * @var \tool_certificate\element The element object.
      */
     protected $element;
 
@@ -59,11 +59,11 @@ class edit_element_form extends \moodleform {
         // Add the field for the name of the element, this is required for all elements.
         $mform->addElement('text', 'name', get_string('elementname', 'customcert'), 'maxlength="255"');
         $mform->setType('name', PARAM_TEXT);
-        $mform->setDefault('name', get_string('pluginname', 'customcertelement_' . $element->element));
+        $mform->setDefault('name', get_string('pluginname', 'certificateelement_' . $element->element));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('name', 'elementname', 'customcert');
 
-        $this->element = \mod_customcert\element_factory::get_element_instance($element);
+        $this->element = \tool_certificate\element_factory::get_element_instance($element);
         $this->element->render_form_elements($mform);
 
         $this->add_action_buttons(true);

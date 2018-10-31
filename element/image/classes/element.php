@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element image's core interaction API.
  *
- * @package    customcertelement_image
+ * @package    certificateelement_image
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_image;
+namespace certificateelement_image;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element image's core interaction API.
  *
- * @package    customcertelement_image
+ * @package    certificateelement_image
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * @var array The file manager options.
@@ -63,20 +63,20 @@ class element extends \mod_customcert\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('select', 'fileid', get_string('image', 'customcertelement_image'), self::get_images());
+        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
 
-        $mform->addElement('text', 'width', get_string('width', 'customcertelement_image'), array('size' => 10));
+        $mform->addElement('text', 'width', get_string('width', 'certificateelement_image'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'customcertelement_image');
+        $mform->addHelpButton('width', 'width', 'certificateelement_image');
 
-        $mform->addElement('text', 'height', get_string('height', 'customcertelement_image'), array('size' => 10));
+        $mform->addElement('text', 'height', get_string('height', 'certificateelement_image'), array('size' => 10));
         $mform->setType('height', PARAM_INT);
         $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'customcertelement_image');
+        $mform->addHelpButton('height', 'height', 'certificateelement_image');
 
         if (get_config('customcert', 'showposxy')) {
-            \mod_customcert\element_helper::render_form_element_position($mform);
+            \tool_certificate\element_helper::render_form_element_position($mform);
         }
 
         $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
@@ -96,17 +96,17 @@ class element extends \mod_customcert\element {
 
         // Check if width is not set, or not numeric or less than 0.
         if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
-            $errors['width'] = get_string('invalidwidth', 'customcertelement_image');
+            $errors['width'] = get_string('invalidwidth', 'certificateelement_image');
         }
 
         // Check if height is not set, or not numeric or less than 0.
         if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
-            $errors['height'] = get_string('invalidheight', 'customcertelement_image');
+            $errors['height'] = get_string('invalidheight', 'certificateelement_image');
         }
 
         // Validate the position.
         if (get_config('customcert', 'showposxy')) {
-            $errors += \mod_customcert\element_helper::validate_form_element_position($data);
+            $errors += \tool_certificate\element_helper::validate_form_element_position($data);
         }
 
         return $errors;
@@ -130,7 +130,7 @@ class element extends \mod_customcert\element {
         }
 
         // Handle file uploads.
-        \mod_customcert\certificate::upload_files($data->customcertimage, $context->id);
+        \tool_certificate\certificate::upload_files($data->customcertimage, $context->id);
 
         return parent::save_form_elements($data);
     }
@@ -221,9 +221,9 @@ class element extends \mod_customcert\element {
 
         // Get the image.
         $fs = get_file_storage();
-        if ($file = $fs->get_file($imageinfo->contextid, 'mod_customcert', $imageinfo->filearea, $imageinfo->itemid,
+        if ($file = $fs->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
                 $imageinfo->filepath, $imageinfo->filename)) {
-            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_customcert', 'image', $file->get_itemid(),
+            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'tool_certificate', 'image', $file->get_itemid(),
                 $file->get_filepath(), $file->get_filename());
             $fileimageinfo = $file->get_imageinfo();
             $whratio = $fileimageinfo['width'] / $fileimageinfo['height'];
@@ -287,7 +287,7 @@ class element extends \mod_customcert\element {
 
         // Editing existing instance - copy existing files into draft area.
         $draftitemid = file_get_submitted_draft_itemid('customcertimage');
-        file_prepare_draft_area($draftitemid, $context->id, 'mod_customcert', 'image', 0, $this->filemanageroptions);
+        file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'image', 0, $this->filemanageroptions);
         $element = $mform->getElement('customcertimage');
         $element->setValue($draftitemid);
 
@@ -327,7 +327,7 @@ class element extends \mod_customcert\element {
 
         $fs = get_file_storage();
 
-        return $fs->get_file($imageinfo->contextid, 'mod_customcert', $imageinfo->filearea, $imageinfo->itemid,
+        return $fs->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
             $imageinfo->filepath, $imageinfo->filename);
     }
 
@@ -345,13 +345,13 @@ class element extends \mod_customcert\element {
         // The array used to store the images.
         $arrfiles = array();
         // Loop through the files uploaded in the system context.
-        if ($files = $fs->get_area_files(\context_system::instance()->id, 'mod_customcert', 'image', false, 'filename', false)) {
+        if ($files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
             }
         }
         // Loop through the files uploaded in the course context.
-        if ($files = $fs->get_area_files(\context_course::instance($COURSE->id)->id, 'mod_customcert', 'image', false,
+        if ($files = $fs->get_area_files(\context_course::instance($COURSE->id)->id, 'tool_certificate', 'image', false,
             'filename', false)) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();

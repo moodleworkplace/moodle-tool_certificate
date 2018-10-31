@@ -15,22 +15,20 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_grade', language 'en'.
+ * Strings for component 'certificateelement_digitalsignature', language 'en'.
  *
- * @package    customcertelement_grade
- * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @package    certificateelement_digitalsignature
+ * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['coursegrade'] = 'Course grade';
-$string['gradeitem'] = 'Grade item';
-$string['gradeitem_help'] = 'The grade item you wish to display the grade of.';
-$string['gradeformat'] = 'Grade format';
-$string['gradeformat_help'] = 'The format you wish to use when displaying the grade.';
-$string['gradeitem'] = 'Grade item';
-$string['gradepercent'] = 'Percentage';
-$string['gradepoints'] = 'Points';
-$string['gradeletter'] = 'Letter';
-$string['pluginname'] = 'Grade';
-$string['previewgrade'] = 'Preview grade';
-$string['privacy:metadata'] = 'The Grade plugin does not store any personal data.';
+$string['digitalsignature'] = 'Digital signature';
+$string['nosignature'] = 'No signature';
+$string['pluginname'] = 'Digital signature';
+$string['privacy:metadata'] = 'The Digital signature plugin does not store any personal data.';
+$string['signaturename'] = 'Signature name';
+$string['signaturepassword'] = 'Signature password';
+$string['signaturelocation'] = 'Signature location';
+$string['signaturereason'] = 'Signature reason';
+$string['signaturecontactinfo'] = 'Signature contact info';
+$string['uploaddigitalsignature'] = 'Upload digital signature';

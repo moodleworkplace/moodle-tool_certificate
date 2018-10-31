@@ -15,15 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the version information for the teachername plugin.
+ * Strings for component 'certificateelement_bgimage', language 'en'.
  *
- * @package    customcertelement_teachername
- * @copyright  2013 Mark Nelson <markn@moodle.com>
+ * @package    certificateelement_bgimage
+ * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
-
-$plugin->version   = 2018051700; // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051700; // Requires this Moodle version (3.5).
-$plugin->component = 'customcertelement_teachername';
+$string['pluginname'] = 'Background image';
+$string['privacy:metadata'] = 'The Background image plugin does not store any personal data.';

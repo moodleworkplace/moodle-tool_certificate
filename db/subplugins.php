@@ -17,11 +17,11 @@
 /**
  * Definition of sub-plugins.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array('customcertelement' => 'mod/customcert/element');
+$subplugins = array('certificateelement' => 'mod/customcert/element');

@@ -17,12 +17,12 @@
 /**
  * The report that displays the certificates the user has throughout the site.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
 /**
  * Class for the report that displays the certificates the user has throughout the site.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -51,7 +51,7 @@ class my_certificates_table extends \table_sql {
      * @param string|null $download The file type, null if we are not downloading
      */
     public function __construct($userid, $download = null) {
-        parent::__construct('mod_customcert_report_table');
+        parent::__construct('tool_certificate_report_table');
 
         $columns = array(
             'name',

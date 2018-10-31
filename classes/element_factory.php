@@ -17,19 +17,19 @@
 /**
  * Contains the factory class responsible for creating custom certificate instances.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The factory class responsible for creating custom certificate instances.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -39,17 +39,17 @@ class element_factory {
      * Returns an instance of the element class.
      *
      * @param \stdClass $element the element
-     * @return \mod_customcert\element|bool returns the instance of the element class, or false if element
+     * @return \tool_certificate\element|bool returns the instance of the element class, or false if element
      *         class does not exists.
      */
     public static function get_element_instance($element) {
         // Get the class name.
-        $classname = '\\customcertelement_' . $element->element . '\\element';
+        $classname = '\\certificateelement_' . $element->element . '\\element';
 
         $data = new \stdClass();
         $data->id = isset($element->id) ? $element->id : null;
         $data->pageid = isset($element->pageid) ? $element->pageid : null;
-        $data->name = isset($element->name) ? $element->name : get_string('pluginname', 'customcertelement_' . $element->element);
+        $data->name = isset($element->name) ? $element->name : get_string('pluginname', 'certificateelement_' . $element->element);
         $data->element = $element->element;
         $data->data = isset($element->data) ? $element->data : null;
         $data->font = isset($element->font) ? $element->font : null;

@@ -17,12 +17,12 @@
 /**
  * The report that displays issued certificates.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
 /**
  * Class for the report that displays issued certificates.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +63,7 @@ class report_table extends \table_sql {
      * @param string|null $download The file type, null if we are not downloading
      */
     public function __construct($customcertid, $cm, $groupmode, $download = null) {
-        parent::__construct('mod_customcert_report_table');
+        parent::__construct('tool_certificate_report_table');
 
         $columns = array(
             'fullname',
@@ -175,11 +175,11 @@ class report_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = \mod_customcert\certificate::get_number_of_issues($this->customcertid, $this->cm, $this->groupmode);
+        $total = \tool_certificate\certificate::get_number_of_issues($this->customcertid, $this->cm, $this->groupmode);
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = \mod_customcert\certificate::get_issues($this->customcertid, $this->groupmode, $this->cm,
+        $this->rawdata = \tool_certificate\certificate::get_issues($this->customcertid, $this->groupmode, $this->cm,
             $this->get_page_start(), $this->get_page_size(), $this->get_sql_sort());
 
         // Set initial bars.
@@ -193,7 +193,7 @@ class report_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = \mod_customcert\certificate::get_number_of_issues($this->customcertid, $this->cm, $this->groupmode);
+        $total = \tool_certificate\certificate::get_number_of_issues($this->customcertid, $this->cm, $this->groupmode);
         $this->out($total, false);
         exit;
     }

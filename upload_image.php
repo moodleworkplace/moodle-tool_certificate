@@ -17,7 +17,7 @@
 /**
  * Handles uploading files
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,18 +33,18 @@ $struploadimage = get_string('uploadimage', 'customcert');
 
 // Set the page variables.
 $pageurl = new moodle_url('/mod/customcert/upload_image.php');
-\mod_customcert\page_helper::page_setup($pageurl, $context, $SITE->fullname);
+\tool_certificate\page_helper::page_setup($pageurl, $context, $SITE->fullname);
 
 // Additional page setup.
 $PAGE->navbar->add($struploadimage);
 
-$uploadform = new \mod_customcert\upload_image_form();
+$uploadform = new \tool_certificate\upload_image_form();
 
 if ($uploadform->is_cancelled()) {
     redirect(new moodle_url('/admin/settings.php?section=modsettingcustomcert'));
 } else if ($data = $uploadform->get_data()) {
     // Handle file uploads.
-    \mod_customcert\certificate::upload_files($data->customcertimage, $context->id);
+    \tool_certificate\certificate::upload_files($data->customcertimage, $context->id);
 
     redirect(new moodle_url('/mod/customcert/upload_image.php'), get_string('changessaved'));
 }

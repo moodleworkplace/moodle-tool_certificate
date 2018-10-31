@@ -17,12 +17,12 @@
 /**
  * This file contains the class that handles uploading files.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -31,7 +31,7 @@ require_once($CFG->libdir.'/formslib.php');
 /**
  * Handles uploading files.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -65,7 +65,7 @@ class upload_image_form extends \moodleform {
 
         // Editing existing instance - copy existing files into draft area.
         $draftitemid = file_get_submitted_draft_itemid('customcertimage');
-        file_prepare_draft_area($draftitemid, \context_system::instance()->id, 'mod_customcert', 'image', 0,
+        file_prepare_draft_area($draftitemid, \context_system::instance()->id, 'tool_certificate', 'image', 0,
             $this->filemanageroptions);
         $element = $mform->getElement('customcertimage');
         $element->setValue($draftitemid);

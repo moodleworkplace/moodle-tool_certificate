@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for customcertelement_digitalsignature.
+ * Privacy Subsystem implementation for certificateelement_digitalsignature.
  *
- * @package    customcertelement_digitalsignature
+ * @package    certificateelement_digitalsignature
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_digitalsignature\privacy;
+namespace certificateelement_digitalsignature\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for customcertelement_digitalsignature implementing null_provider.
+ * Privacy Subsystem for certificateelement_digitalsignature implementing null_provider.
  *
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

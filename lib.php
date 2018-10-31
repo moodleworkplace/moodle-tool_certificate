@@ -17,7 +17,7 @@
 /**
  * Customcert module core interaction API
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * Add customcert instance.
  *
  * @param stdClass $data
- * @param mod_customcert_mod_form $mform
+ * @param tool_certificate_mod_form $mform
  * @return int new customcert instance id
  */
 function customcert_add_instance($data, $mform) {
@@ -36,11 +36,11 @@ function customcert_add_instance($data, $mform) {
 
     // Create a template for this customcert to use.
     $context = context_module::instance($data->coursemodule);
-    $template = \mod_customcert\template::create($data->name, $context->id);
+    $template = \tool_certificate\template::create($data->name, $context->id);
 
     // Add the data to the DB.
     $data->templateid = $template->get_id();
-    $data->protection = \mod_customcert\certificate::set_protection($data);
+    $data->protection = \tool_certificate\certificate::set_protection($data);
     $data->timecreated = time();
     $data->timemodified = $data->timecreated;
     $data->id = $DB->insert_record('customcert', $data);
@@ -55,13 +55,13 @@ function customcert_add_instance($data, $mform) {
  * Update customcert instance.
  *
  * @param stdClass $data
- * @param mod_customcert_mod_form $mform
+ * @param tool_certificate_mod_form $mform
  * @return bool true
  */
 function customcert_update_instance($data, $mform) {
     global $DB;
 
-    $data->protection = \mod_customcert\certificate::set_protection($data);
+    $data->protection = \tool_certificate\certificate::set_protection($data);
     $data->timemodified = time();
     $data->id = $data->instance;
 
@@ -96,7 +96,7 @@ function customcert_delete_instance($id) {
 
     // Now, delete the template associated with this certificate.
     if ($template = $DB->get_record('customcert_templates', array('id' => $customcert->templateid))) {
-        $template = new \mod_customcert\template($template);
+        $template = new \tool_certificate\template($template);
         $template->delete();
     }
 
@@ -143,7 +143,7 @@ function customcert_reset_userdata($data) {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the customcert.
  *
- * @param mod_customcert_mod_form $mform form passed by reference
+ * @param tool_certificate_mod_form $mform form passed by reference
  */
 function customcert_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'customcertheader', get_string('modulenameplural', 'customcert'));
@@ -232,7 +232,7 @@ function customcert_pluginfile($course, $cm, $context, $filearea, $args, $forced
         }
 
         $relativepath = implode('/', $args);
-        $fullpath = '/' . $context->id . '/mod_customcert/image/' . $relativepath;
+        $fullpath = '/' . $context->id . '/tool_certificate/image/' . $relativepath;
 
         $fs = get_file_storage();
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
@@ -304,14 +304,14 @@ function customcert_cron() {
  * @param array $args List of named arguments for the fragment loader.
  * @return string
  */
-function mod_customcert_output_fragment_editelement($args) {
+function tool_certificate_output_fragment_editelement($args) {
     global $DB;
 
     // Get the element.
     $element = $DB->get_record('customcert_elements', array('id' => $args['elementid']), '*', MUST_EXIST);
 
     $pageurl = new moodle_url('/mod/customcert/rearrange.php', array('pid' => $element->pageid));
-    $form = new \mod_customcert\edit_element_form($pageurl, array('element' => $element));
+    $form = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
 
     return $form->render();
 }
@@ -342,7 +342,7 @@ function customcert_extend_settings_navigation(settings_navigation $settings, na
         $templateid = $DB->get_field('customcert', 'templateid', array('id' => $PAGE->cm->instance));
         $node = navigation_node::create(get_string('editcustomcert', 'customcert'),
                 new moodle_url('/mod/customcert/edit.php', array('tid' => $templateid)),
-                navigation_node::TYPE_SETTING, null, 'mod_customcert_edit',
+                navigation_node::TYPE_SETTING, null, 'tool_certificate_edit',
                 new pix_icon('t/edit', ''));
         $customcertnode->add_node($node, $beforekey);
     }
@@ -350,7 +350,7 @@ function customcert_extend_settings_navigation(settings_navigation $settings, na
     if (has_capability('mod/customcert:verifycertificate', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('verifycertificate', 'customcert'),
             new moodle_url('/mod/customcert/verify_certificate.php', array('contextid' => $PAGE->cm->context->id)),
-            navigation_node::TYPE_SETTING, null, 'mod_customcert_verify_certificate',
+            navigation_node::TYPE_SETTING, null, 'tool_certificate_verify_certificate',
             new pix_icon('t/check', ''));
         $customcertnode->add_node($node, $beforekey);
     }
@@ -367,7 +367,7 @@ function customcert_extend_settings_navigation(settings_navigation $settings, na
  * @param stdClass $course Course object
  * @return bool
  */
-function mod_customcert_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
+function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     $url = new moodle_url('/mod/customcert/my_certificates.php', array('userid' => $user->id));
     $node = new core_user\output\myprofile\node('miscellaneous', 'mycustomcerts',
         get_string('mycertificates', 'customcert'), null, $url);
@@ -382,7 +382,7 @@ function mod_customcert_myprofile_navigation(core_user\output\myprofile\tree $tr
  * @param string $newvalue
  * @return \core\output\inplace_editable
  */
-function mod_customcert_inplace_editable($itemtype, $itemid, $newvalue) {
+function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
     global $DB, $PAGE;
 
     if ($itemtype === 'elementname') {
@@ -391,7 +391,7 @@ function mod_customcert_inplace_editable($itemtype, $itemid, $newvalue) {
         $template = $DB->get_record('customcert_templates', array('id' => $page->templateid), '*', MUST_EXIST);
 
         // Set the template object.
-        $template = new \mod_customcert\template($template);
+        $template = new \tool_certificate\template($template);
         // Perform checks.
         if ($cm = $template->get_cm()) {
             require_login($cm->course, false, $cm);
@@ -408,7 +408,7 @@ function mod_customcert_inplace_editable($itemtype, $itemid, $newvalue) {
         $updateelement->name = clean_param($newvalue, PARAM_TEXT);
         $DB->update_record('customcert_elements', $updateelement);
 
-        return new \core\output\inplace_editable('mod_customcert', 'elementname', $element->id, true,
+        return new \core\output\inplace_editable('tool_certificate', 'elementname', $element->id, true,
             $updateelement->name, $updateelement->name);
     }
 }
@@ -416,8 +416,8 @@ function mod_customcert_inplace_editable($itemtype, $itemid, $newvalue) {
 /**
  * Get icon mapping for font-awesome.
  */
-function mod_customcert_get_fontawesome_icon_map() {
+function tool_certificate_get_fontawesome_icon_map() {
     return [
-        'mod_customcert:download' => 'fa-download'
+        'tool_certificate:download' => 'fa-download'
     ];
 }

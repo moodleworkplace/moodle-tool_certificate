@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element border's core interaction API.
  *
- * @package    customcertelement_border
+ * @package    certificateelement_border
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_border;
+namespace certificateelement_border;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element border's core interaction API.
  *
- * @package    customcertelement_border
+ * @package    certificateelement_border
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * This function renders the form elements when adding a customcert element.
@@ -42,12 +42,12 @@ class element extends \mod_customcert\element {
      */
     public function render_form_elements($mform) {
         // We want to define the width of the border.
-        $mform->addElement('text', 'width', get_string('width', 'customcertelement_border'), array('size' => 10));
+        $mform->addElement('text', 'width', get_string('width', 'certificateelement_border'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
-        $mform->addHelpButton('width', 'width', 'customcertelement_border');
+        $mform->addHelpButton('width', 'width', 'certificateelement_border');
 
         // The only other thing to define is the colour we want the border to be.
-        \mod_customcert\element_helper::render_form_element_colour($mform);
+        \tool_certificate\element_helper::render_form_element_colour($mform);
     }
 
     /**
@@ -91,11 +91,11 @@ class element extends \mod_customcert\element {
 
         // Check if width is not set, or not numeric or less than 0.
         if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] <= 0)) {
-            $errors['width'] = get_string('invalidwidth', 'customcertelement_border');
+            $errors['width'] = get_string('invalidwidth', 'certificateelement_border');
         }
 
         // Validate the colour.
-        $errors += \mod_customcert\element_helper::validate_form_element_colour($data);
+        $errors += \tool_certificate\element_helper::validate_form_element_colour($data);
 
         return $errors;
     }

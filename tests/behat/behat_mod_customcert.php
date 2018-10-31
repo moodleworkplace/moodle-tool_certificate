@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the class responsible for step definitions related to mod_customcert.
+ * Contains the class responsible for step definitions related to tool_certificate.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @category  test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,14 +28,14 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 
 /**
- * The class responsible for step definitions related to mod_customcert.
+ * The class responsible for step definitions related to tool_certificate.
  *
- * @package mod_customcert
+ * @package tool_certificate
  * @category test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_mod_customcert extends behat_base {
+class behat_tool_certificate extends behat_base {
 
     /**
      * Adds an element to the specified page of a template.

@@ -17,19 +17,19 @@
 /**
  * Contains the course module instance list viewed event class.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\event;
+namespace tool_certificate\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The course module instance list viewed event class.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

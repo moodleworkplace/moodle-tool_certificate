@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template mod_customcert/verify_certificate_results
+    @template tool_certificate/verify_certificate_results
 
     The certificate verification results page
 
@@ -34,7 +34,7 @@
 }}
 {{#success}}
     {{#issues}}
-        {{> mod_customcert/verify_certificate_result }}
+        {{> tool_certificate/verify_certificate_result }}
     {{/issues}}
     {{> core/notification_success}}
 {{/success}}

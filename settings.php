@@ -17,7 +17,7 @@
 /**
  * Creates a link to the upload form on the settings page.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,8 +28,8 @@ require_once($CFG->dirroot . '/mod/customcert/adminlib.php');
 
 $url = $CFG->wwwroot . '/mod/customcert/verify_certificate.php';
 
-$ADMIN->add('modsettings', new admin_category('customcert', get_string('pluginname', 'mod_customcert')));
-$settings = new admin_settingpage('modsettingcustomcert', new lang_string('customcertsettings', 'mod_customcert'));
+$ADMIN->add('modsettings', new admin_category('customcert', get_string('pluginname', 'tool_certificate')));
+$settings = new admin_settingpage('modsettingcustomcert', new lang_string('customcertsettings', 'tool_certificate'));
 
 $settings->add(new admin_setting_configcheckbox('customcert/verifyallcertificates',
     get_string('verifyallcertificates', 'customcert'),
@@ -41,15 +41,15 @@ $settings->add(new admin_setting_configcheckbox('customcert/showposxy',
     get_string('showposxy_desc', 'customcert'),
     0));
 
-$settings->add(new \mod_customcert\admin_setting_link('customcert/verifycertificate',
+$settings->add(new \tool_certificate\admin_setting_link('customcert/verifycertificate',
     get_string('verifycertificate', 'customcert'), get_string('verifycertificatedesc', 'customcert'),
     get_string('verifycertificate', 'customcert'), new moodle_url('/mod/customcert/verify_certificate.php'), ''));
 
-$settings->add(new \mod_customcert\admin_setting_link('customcert/managetemplates',
+$settings->add(new \tool_certificate\admin_setting_link('customcert/managetemplates',
     get_string('managetemplates', 'customcert'), get_string('managetemplatesdesc', 'customcert'),
     get_string('managetemplates', 'customcert'), new moodle_url('/mod/customcert/manage_templates.php'), ''));
 
-$settings->add(new \mod_customcert\admin_setting_link('customcert/uploadimage',
+$settings->add(new \tool_certificate\admin_setting_link('customcert/uploadimage',
     get_string('uploadimage', 'customcert'), get_string('uploadimagedesc', 'customcert'),
     get_string('uploadimage', 'customcert'), new moodle_url('/mod/customcert/upload_image.php'), ''));
 
@@ -90,10 +90,10 @@ $ADMIN->add('customcert', $settings);
 $ADMIN->add('customcert', new customcert_admin_page_manage_element_plugins());
 
 // Element plugin settings.
-$ADMIN->add('customcert', new admin_category('customcertelements', get_string('elementplugins', 'customcert')));
-$plugins = \core_plugin_manager::instance()->get_plugins_of_type('customcertelement');
+$ADMIN->add('customcert', new admin_category('certificateelements', get_string('elementplugins', 'customcert')));
+$plugins = \core_plugin_manager::instance()->get_plugins_of_type('certificateelement');
 foreach ($plugins as $plugin) {
-    $plugin->load_settings($ADMIN, 'customcertelements', $hassiteconfig);
+    $plugin->load_settings($ADMIN, 'certificateelements', $hassiteconfig);
 }
 
 // Tell core we already added the settings structure.

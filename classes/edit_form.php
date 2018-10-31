@@ -17,12 +17,12 @@
 /**
  * This file contains the form for handling the layout of the customcert instance.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/mod/customcert/includes/colourpicker.php');
 /**
  * The form for handling the layout of the customcert instance.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -251,7 +251,7 @@ class edit_form extends \moodleform {
             $table->align = array('left', 'left', 'left');
             // Loop through and add the elements to the table.
             foreach ($elements as $element) {
-                $elementname = new \core\output\inplace_editable('mod_customcert', 'elementname', $element->id,
+                $elementname = new \core\output\inplace_editable('tool_certificate', 'elementname', $element->id,
                     true, format_string($element->name), $element->name);
 
                 $row = new \html_table_row();

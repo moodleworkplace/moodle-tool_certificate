@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element userpicture's core interaction API.
  *
- * @package    customcertelement_userpicture
+ * @package    certificateelement_userpicture
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_userpicture;
+namespace certificateelement_userpicture;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element userpicture's core interaction API.
  *
- * @package    customcertelement_userpicture
+ * @package    certificateelement_userpicture
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * This function renders the form elements when adding a customcert element.
@@ -41,18 +41,18 @@ class element extends \mod_customcert\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('text', 'width', get_string('width', 'customcertelement_userpicture'), array('size' => 10));
+        $mform->addElement('text', 'width', get_string('width', 'certificateelement_userpicture'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'customcertelement_userpicture');
+        $mform->addHelpButton('width', 'width', 'certificateelement_userpicture');
 
-        $mform->addElement('text', 'height', get_string('height', 'customcertelement_userpicture'), array('size' => 10));
+        $mform->addElement('text', 'height', get_string('height', 'certificateelement_userpicture'), array('size' => 10));
         $mform->setType('height', PARAM_INT);
         $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'customcertelement_userpicture');
+        $mform->addHelpButton('height', 'height', 'certificateelement_userpicture');
 
         if (get_config('customcert', 'showposxy')) {
-            \mod_customcert\element_helper::render_form_element_position($mform);
+            \tool_certificate\element_helper::render_form_element_position($mform);
         }
     }
 
@@ -69,17 +69,17 @@ class element extends \mod_customcert\element {
 
         // Check if width is not set, or not numeric or less than 0.
         if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
-            $errors['width'] = get_string('invalidwidth', 'customcertelement_userpicture');
+            $errors['width'] = get_string('invalidwidth', 'certificateelement_userpicture');
         }
 
         // Check if height is not set, or not numeric or less than 0.
         if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
-            $errors['height'] = get_string('invalidheight', 'customcertelement_userpicture');
+            $errors['height'] = get_string('invalidheight', 'certificateelement_userpicture');
         }
 
         // Validate the position.
         if (get_config('customcert', 'showposxy')) {
-            $errors += \mod_customcert\element_helper::validate_form_element_position($data);
+            $errors += \tool_certificate\element_helper::validate_form_element_position($data);
         }
 
         return $errors;

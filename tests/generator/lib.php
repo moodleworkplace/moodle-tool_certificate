@@ -17,7 +17,7 @@
 /**
  * Contains the class responsible for data generation during unit tests
  *
- * @package mod_customcert
+ * @package tool_certificate
  * @category test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,12 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * The class responsible for data generation during unit tests
  *
- * @package mod_customcert
+ * @package tool_certificate
  * @category test
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_customcert_generator extends testing_module_generator {
+class tool_certificate_generator extends testing_module_generator {
 
     /**
      * Creates an instance of the custom certificate.

@@ -15,12 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_bgimage', language 'en'.
+ * Strings for component 'certificateelement_studentname', language 'en'.
  *
- * @package    customcertelement_bgimage
- * @copyright  2016 Mark Nelson <markn@moodle.com>
+ * @package    certificateelement_studentname
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Background image';
-$string['privacy:metadata'] = 'The Background image plugin does not store any personal data.';
+$string['pluginname'] = 'Student name';
+$string['privacy:metadata'] = 'The Student name plugin does not store any personal data.';

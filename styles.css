@@ -29,7 +29,7 @@
 }
 
 #page-mod-customcert-rearrange .element:before {
-    background-image: url([[pix:mod_customcert|target]]);
+    background-image: url([[pix:tool_certificate|target]]);
     background-repeat: no-repeat;
     content: "";
     display: block;

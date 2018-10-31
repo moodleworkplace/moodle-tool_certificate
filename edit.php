@@ -17,7 +17,7 @@
 /**
  * Edit the customcert settings.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,7 +35,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 if ($tid) {
     // Create the template object.
     $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
-    $template = new \mod_customcert\template($template);
+    $template = new \tool_certificate\template($template);
     // Set the context.
     $contextid = $template->get_contextid();
     // Set the page url.
@@ -64,7 +64,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
 require_capability('mod/customcert:manage', $context);
 
 // Set up the page.
-\mod_customcert\page_helper::page_setup($pageurl, $context, $title);
+\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
 if ($context->contextlevel == CONTEXT_SYSTEM) {
     // We are managing a template - add some navigation.
@@ -161,17 +161,17 @@ if ($deleting) {
 }
 
 if ($tid) {
-    $mform = new \mod_customcert\edit_form($pageurl, array('tid' => $tid));
+    $mform = new \tool_certificate\edit_form($pageurl, array('tid' => $tid));
     // Set the name for the form.
     $mform->set_data(array('name' => $template->get_name()));
 } else {
-    $mform = new \mod_customcert\edit_form($pageurl);
+    $mform = new \tool_certificate\edit_form($pageurl);
 }
 
 if ($data = $mform->get_data()) {
     // If there is no id, then we are creating a template.
     if (!$tid) {
-        $template = \mod_customcert\template::create($data->name, $contextid);
+        $template = \tool_certificate\template::create($data->name, $contextid);
 
         // Create a page for this template.
         $pageid = $template->add_page();
@@ -244,7 +244,7 @@ echo $OUTPUT->heading($heading);
 $mform->display();
 if ($tid && $context->contextlevel == CONTEXT_MODULE) {
     $loadtemplateurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid));
-    $loadtemplateform = new \mod_customcert\load_template_form($loadtemplateurl, array('context' => $context), 'post',
+    $loadtemplateform = new \tool_certificate\load_template_form($loadtemplateurl, array('context' => $context), 'post',
         '', array('id' => 'loadtemplateform'));
     $loadtemplateform->display();
 }

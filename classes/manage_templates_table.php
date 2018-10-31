@@ -17,12 +17,12 @@
 /**
  * The table that displays the templates in a given context.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/tablelib.php');
 /**
  * Class for the table that displays the templates in a given context.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +50,7 @@ class manage_templates_table extends \table_sql {
      * @param \context $context
      */
     public function __construct($context) {
-        parent::__construct('mod_customcert_manage_templates_table');
+        parent::__construct('tool_certificate_manage_templates_table');
 
         $columns = [
             'name',

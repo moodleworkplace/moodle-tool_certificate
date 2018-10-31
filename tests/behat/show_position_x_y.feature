@@ -1,4 +1,4 @@
-@mod @mod_customcert
+@mod @tool_certificate
 Feature: Being able to set a site setting to determine whether or not to display the position X and Y fields
   In order to ensure the show position X and Y fields setting works as expected
   As an admin
