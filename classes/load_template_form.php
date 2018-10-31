@@ -48,25 +48,25 @@ class load_template_form extends \moodleform {
         // Get the context.
         $context = $this->_customdata['context'];
 
-        $mform->addElement('header', 'loadtemplateheader', get_string('loadtemplate', 'customcert'));
+        $mform->addElement('header', 'loadtemplateheader', get_string('loadtemplate', 'tool_certificate'));
 
         // Display a link to the manage templates page.
         if ($context->contextlevel != CONTEXT_SYSTEM && has_capability('mod/customcert:manage', \context_system::instance())) {
             $link = \html_writer::link(new \moodle_url('/mod/customcert/manage_templates.php'),
-                get_string('managetemplates', 'customcert'));
+                get_string('managetemplates', 'tool_certificate'));
             $mform->addElement('static', 'managetemplates', '', $link);
         }
 
-        $templates = $DB->get_records_menu('customcert_templates',
+        $templates = $DB->get_records_menu('tool_certificate_templates',
             array('contextid' => \context_system::instance()->id), 'name ASC', 'id, name');
         if ($templates) {
             $group = array();
             $group[] = $mform->createElement('select', 'ltid', '', $templates);
-            $group[] = $mform->createElement('submit', 'loadtemplatesubmit', get_string('load', 'customcert'));
+            $group[] = $mform->createElement('submit', 'loadtemplatesubmit', get_string('load', 'tool_certificate'));
             $mform->addElement('group', 'loadtemplategroup', '', $group, '', false);
             $mform->setType('ltid', PARAM_INT);
         } else {
-            $msg = \html_writer::tag('div', get_string('notemplates', 'customcert'), array('class' => 'alert'));
+            $msg = \html_writer::tag('div', get_string('notemplates', 'tool_certificate'), array('class' => 'alert'));
             $mform->addElement('static', 'notemplates', '', $msg);
         }
     }

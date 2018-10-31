@@ -28,10 +28,10 @@ $tid = required_param('tid', PARAM_INT);
 $ltid = required_param('ltid', PARAM_INT); // The template to load.
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
-$template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
 $template = new \tool_certificate\template($template);
 
-$loadtemplate = $DB->get_record('customcert_templates', array('id' => $ltid), '*', MUST_EXIST);
+$loadtemplate = $DB->get_record('tool_certificate_templates', array('id' => $ltid), '*', MUST_EXIST);
 $loadtemplate = new \tool_certificate\template($loadtemplate);
 
 if ($cm = $template->get_cm()) {
@@ -42,7 +42,7 @@ if ($cm = $template->get_cm()) {
 $template->require_manage();
 
 if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $customcert = $DB->get_record('customcert', ['id' => $cm->instance], '*', MUST_EXIST);
+    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
     $title = $customcert->name;
     $heading = format_string($title);
 } else {
@@ -54,8 +54,8 @@ if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
 if ($confirm && confirm_sesskey()) {
     // First, remove all the existing elements and pages.
     $sql = "SELECT e.*
-              FROM {customcert_elements} e
-        INNER JOIN {customcert_pages} p
+              FROM {tool_certificate_elements} e
+        INNER JOIN {tool_certificate_pages} p
                 ON e.pageid = p.id
              WHERE p.templateid = :templateid";
     if ($elements = $DB->get_records_sql($sql, array('templateid' => $template->get_id()))) {
@@ -68,7 +68,7 @@ if ($confirm && confirm_sesskey()) {
     }
 
     // Delete the pages.
-    $DB->delete_records('customcert_pages', array('templateid' => $template->get_id()));
+    $DB->delete_records('tool_certificate_pages', array('templateid' => $template->get_id()));
 
     // Copy the items across.
     $loadtemplate->copy_to_template($template->get_id());
@@ -88,13 +88,13 @@ $yesurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $ti
 $pageurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid, 'ltid' => $ltid));
 \tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
-$str = get_string('editcustomcert', 'customcert');
+$str = get_string('editcustomcert', 'tool_certificate');
 $link = new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id()));
 $PAGE->navbar->add($str, new \action_link($link, $str));
-$PAGE->navbar->add(get_string('loadtemplate', 'customcert'));
+$PAGE->navbar->add(get_string('loadtemplate', 'tool_certificate'));
 
 // Show a confirmation page.
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
-echo $OUTPUT->confirm(get_string('loadtemplatemsg', 'customcert'), $yesurl, $nourl);
+echo $OUTPUT->confirm(get_string('loadtemplatemsg', 'tool_certificate'), $yesurl, $nourl);
 echo $OUTPUT->footer();

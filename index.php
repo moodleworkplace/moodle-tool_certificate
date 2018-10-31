@@ -34,11 +34,11 @@ require_login($course);
 // Set up the page variables.
 $pageurl = new moodle_url('/mod/customcert/index.php', array('id' => $course->id));
 \tool_certificate\page_helper::page_setup($pageurl, context_course::instance($id),
-    get_string('modulenameplural', 'customcert'));
+    get_string('modulenameplural', 'tool_certificate'));
 
 // Additional page setup needed.
 $PAGE->set_pagelayout('incourse');
-$PAGE->navbar->add(get_string('modulenameplural', 'customcert'));
+$PAGE->navbar->add(get_string('modulenameplural', 'tool_certificate'));
 
 // Add the page view to the Moodle log.
 $event = \tool_certificate\event\course_module_instance_list_viewed::create(array(
@@ -48,9 +48,9 @@ $event->add_record_snapshot('course', $course);
 $event->trigger();
 
 // Get the customcerts, if there are none display a notice.
-if (!$customcerts = get_all_instances_in_course('customcert', $course)) {
+if (!$customcerts = get_all_instances_in_course('tool_certificate', $course)) {
     echo $OUTPUT->header();
-    notice(get_string('nocustomcerts', 'customcert'), new moodle_url('/course/view.php', array('id' => $course->id)));
+    notice(get_string('nocustomcerts', 'tool_certificate'), new moodle_url('/course/view.php', array('id' => $course->id)));
     echo $OUTPUT->footer();
     exit();
 }
@@ -60,9 +60,9 @@ $table = new html_table();
 
 if ($usesections = course_format_uses_sections($course->format)) {
     $table->head = array(get_string('sectionname', 'format_'.$course->format), get_string('name'),
-        get_string('receiveddate', 'customcert'));
+        get_string('receiveddate', 'tool_certificate'));
 } else {
-    $table->head = array(get_string('name'), get_string('receiveddate', 'customcert'));
+    $table->head = array(get_string('name'), get_string('receiveddate', 'tool_certificate'));
 }
 
 $currentsection = '';
@@ -83,10 +83,10 @@ foreach ($customcerts as $customcert) {
         $currentsection = $customcert->section;
     }
     // Check if there is was an issue provided for this user.
-    if ($certrecord = $DB->get_record('customcert_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id))) {
+    if ($certrecord = $DB->get_record('tool_certificate_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id))) {
         $issued = userdate($certrecord->timecreated);
     } else {
-        $issued = get_string('notissued', 'customcert');
+        $issued = get_string('notissued', 'tool_certificate');
     }
     // Only display the section column if the course format uses sections.
     if ($usesections) {

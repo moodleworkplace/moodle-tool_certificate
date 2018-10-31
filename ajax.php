@@ -33,7 +33,7 @@ $values = required_param('values', PARAM_RAW);
 $values = json_decode($values);
 
 // Make sure the template exists.
-$template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
 
 // Set the template.
 $template = new \tool_certificate\template($template);
@@ -53,5 +53,5 @@ foreach ($values as $value) {
     $element->id = $value->id;
     $element->posx = $value->posx;
     $element->posy = $value->posy;
-    $DB->update_record('customcert_elements', $element);
+    $DB->update_record('tool_certificate_elements', $element);
 }

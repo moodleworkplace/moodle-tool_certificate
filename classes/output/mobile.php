@@ -49,19 +49,19 @@ class mobile {
         $groupid = empty($args->group) ? 0 : $args->group; // By default, group 0.
 
         // Capabilities check.
-        $cm = get_coursemodule_from_id('customcert', $cmid);
+        $cm = get_coursemodule_from_id('tool_certificate', $cmid);
         $context = \context_module::instance($cm->id);
         self::require_capability($cm, $context, 'mod/customcert:view');
 
         // Set some variables we are going to be using.
-        $certificate = $DB->get_record('customcert', ['id' => $cm->instance], '*', MUST_EXIST);
+        $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
         $certificate->name = format_string($certificate->name);
         list($certificate->intro, $certificate->introformat) = external_format_text($certificate->intro,
             $certificate->introformat, $context->id, 'tool_certificate', 'intro');
 
         // Get any issues this person may have.
         $issue = false;
-        if ($issues = $DB->get_records('customcert_issues', ['userid' => $USER->id, 'customcertid' => $certificate->id],
+        if ($issues = $DB->get_records('tool_certificate_issues', ['userid' => $USER->id, 'customcertid' => $certificate->id],
                 'timecreated DESC')) {
             $issue = reset($issues);
         }

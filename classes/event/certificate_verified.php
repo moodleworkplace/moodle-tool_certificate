@@ -43,7 +43,7 @@ class certificate_verified extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'customcert_issues';
+        $this->data['objecttable'] = 'tool_certificate_issues';
     }
 
     /**
@@ -87,7 +87,7 @@ class certificate_verified extends \core\event\base {
             'relateduserid' => $issue->userid
         );
         $event = self::create($data);
-        $event->add_record_snapshot('customcert_issues', $issue);
+        $event->add_record_snapshot('tool_certificate_issues', $issue);
         return $event;
     }
 }

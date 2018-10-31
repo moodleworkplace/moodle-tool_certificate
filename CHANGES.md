@@ -127,4 +127,4 @@ Note - All hash comments refer to the issue number. Eg. #169 refers to https://g
 
 ## [3.3.6] - 2017-08-05
 ### Changed
-- Renamed the column 'size' in the table 'customcert_elements' to 'fontsize' due to 'size' being a reserved word in Oracle.
+- Renamed the column 'size' in the table 'tool_certificate_elements' to 'fontsize' due to 'size' being a reserved word in Oracle.

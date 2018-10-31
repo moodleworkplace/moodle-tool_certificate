@@ -34,7 +34,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 // Edit an existing template.
 if ($tid) {
     // Create the template object.
-    $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
+    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
     // Set the context.
     $contextid = $template->get_contextid();
@@ -49,10 +49,10 @@ if ($tid) {
 
 $context = context::instance_by_id($contextid);
 if ($context->contextlevel == CONTEXT_MODULE) {
-    $cm = get_coursemodule_from_id('customcert', $context->instanceid, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
     require_login($cm->course, false, $cm);
 
-    $customcert = $DB->get_record('customcert', ['id' => $cm->instance], '*', MUST_EXIST);
+    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
     $title = $customcert->name;
     $heading = format_string($title);
 } else {
@@ -68,12 +68,12 @@ require_capability('mod/customcert:manage', $context);
 
 if ($context->contextlevel == CONTEXT_SYSTEM) {
     // We are managing a template - add some navigation.
-    $PAGE->navbar->add(get_string('managetemplates', 'customcert'),
+    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
         new moodle_url('/mod/customcert/manage_templates.php'));
     if (!$tid) {
-        $PAGE->navbar->add(get_string('editcustomcert', 'customcert'));
+        $PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'));
     } else {
-        $PAGE->navbar->add(get_string('editcustomcert', 'customcert'),
+        $PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'),
             new moodle_url('/mod/customcert/edit.php', ['tid' => $tid]));
     }
 }
@@ -110,7 +110,7 @@ if ($tid) {
                     // Set deletion flag to true.
                     $deleting = true;
                     // Create the message.
-                    $message = get_string('deletepageconfirm', 'customcert');
+                    $message = get_string('deletepageconfirm', 'tool_certificate');
                     // Create the link options.
                     $nourl = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
                     $yesurl = new moodle_url('/mod/customcert/edit.php',
@@ -131,7 +131,7 @@ if ($tid) {
                     // Set deletion flag to true.
                     $deleting = true;
                     // Create the message.
-                    $message = get_string('deleteelementconfirm', 'customcert');
+                    $message = get_string('deleteelementconfirm', 'tool_certificate');
                     // Create the link options.
                     $nourl = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
                     $yesurl = new moodle_url('/mod/customcert/edit.php',
@@ -152,7 +152,7 @@ if ($tid) {
 // Check if we are deleting either a page or an element.
 if ($deleting) {
     // Show a confirmation page.
-    $PAGE->navbar->add(get_string('deleteconfirm', 'customcert'));
+    $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
     echo $OUTPUT->header();
     echo $OUTPUT->heading($heading);
     echo $OUTPUT->confirm($message, $yesurl, $nourl);

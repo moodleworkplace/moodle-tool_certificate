@@ -50,15 +50,15 @@ class provider implements
      */
     public static function get_metadata(collection $items) : collection {
         $items->add_database_table(
-            'customcert_issues',
+            'tool_certificate_issues',
             [
-                'userid' => 'privacy:metadata:customcert_issues:userid',
-                'customcertid' => 'privacy:metadata:customcert_issues:customcertid',
-                'code' => 'privacy:metadata:customcert_issues:code',
-                'emailed' => 'privacy:metadata:customcert_issues:emailed',
-                'timecreated' => 'privacy:metadata:customcert_issues:timecreated',
+                'userid' => 'privacy:metadata:tool_certificate_issues:userid',
+                'customcertid' => 'privacy:metadata:tool_certificate_issues:customcertid',
+                'code' => 'privacy:metadata:tool_certificate_issues:code',
+                'emailed' => 'privacy:metadata:tool_certificate_issues:emailed',
+                'timecreated' => 'privacy:metadata:tool_certificate_issues:timecreated',
             ],
-            'privacy:metadata:customcert_issues'
+            'privacy:metadata:tool_certificate_issues'
         );
 
         return $items;
@@ -81,12 +81,12 @@ class provider implements
                    AND m.name = :modulename
             INNER JOIN {customcert} customcert
                     ON customcert.id = cm.instance
-            INNER JOIN {customcert_issues} customcertissues
+            INNER JOIN {tool_certificate_issues} customcertissues
                     ON customcertissues.customcertid = customcert.id
                  WHERE customcertissues.userid = :userid";
 
         $params = [
-            'modulename' => 'customcert',
+            'modulename' => 'tool_certificate',
             'contextlevel' => CONTEXT_MODULE,
             'userid' => $userid,
         ];
@@ -123,7 +123,7 @@ class provider implements
 
         list($insql, $inparams) = $DB->get_in_or_equal(array_keys($customcertidstocmids), SQL_PARAMS_NAMED);
         $params = array_merge($inparams, ['userid' => $user->id]);
-        $recordset = $DB->get_recordset_select('customcert_issues', "customcertid $insql AND userid = :userid",
+        $recordset = $DB->get_recordset_select('tool_certificate_issues', "customcertid $insql AND userid = :userid",
             $params, 'timecreated, id ASC');
         self::recordset_loop_and_export($recordset, 'customcertid', [], function($carry, $record) {
             $carry[] = [
@@ -153,11 +153,11 @@ class provider implements
             return;
         }
 
-        if (!$cm = get_coursemodule_from_id('customcert', $context->instanceid)) {
+        if (!$cm = get_coursemodule_from_id('tool_certificate', $context->instanceid)) {
             return;
         }
 
-        $DB->delete_records('customcert_issues', ['customcertid' => $cm->instance]);
+        $DB->delete_records('tool_certificate_issues', ['customcertid' => $cm->instance]);
     }
 
     /**
@@ -178,7 +178,7 @@ class provider implements
                 continue;
             }
             $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-            $DB->delete_records('customcert_issues', ['customcertid' => $instanceid, 'userid' => $userid]);
+            $DB->delete_records('tool_certificate_issues', ['customcertid' => $instanceid, 'userid' => $userid]);
         }
     }
 
@@ -200,7 +200,7 @@ class provider implements
                    ON cm.instance = customcert.id
                   AND cm.module = m.id
                 WHERE cm.id $insql";
-        $params = array_merge($inparams, ['modulename' => 'customcert']);
+        $params = array_merge($inparams, ['modulename' => 'tool_certificate']);
 
         return $DB->get_records_sql_menu($sql, $params);
     }

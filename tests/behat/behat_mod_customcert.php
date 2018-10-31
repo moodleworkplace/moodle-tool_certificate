@@ -49,13 +49,13 @@ class behat_tool_certificate extends behat_base {
     public function i_add_the_element_to_the_certificate_template_page($elementname, $pagenum, $templatename) {
         global $DB;
 
-        $template = $DB->get_record('customcert_templates', array('name' => $templatename), '*', MUST_EXIST);
-        $page = $DB->get_record('customcert_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
+        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
+        $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
             '*', MUST_EXIST);
 
         $this->execute('behat_forms::i_set_the_field_to', array($this->escape('element_' . $page->id),
             $this->escape($elementname)));
-        $this->execute('behat_forms::press_button', get_string('addelement', 'customcert'));
+        $this->execute('behat_forms::press_button', get_string('addelement', 'tool_certificate'));
     }
 
     /**
@@ -68,8 +68,8 @@ class behat_tool_certificate extends behat_base {
     public function i_delete_the_certificate_page($pagenum, $templatename) {
         global $DB;
 
-        $template = $DB->get_record('customcert_templates', array('name' => $templatename), '*', MUST_EXIST);
-        $page = $DB->get_record('customcert_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
+        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
+        $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
             '*', MUST_EXIST);
 
         $this->execute('behat_general::i_click_on_in_the', array('Delete page', 'link',
@@ -87,15 +87,15 @@ class behat_tool_certificate extends behat_base {
     public function i_verify_the_custom_certificate_for_user($certificatename, $username) {
         global $DB;
 
-        $certificate = $DB->get_record('customcert', array('name' => $certificatename), '*', MUST_EXIST);
+        $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
         $user = $DB->get_record('user', array('username' => $username), '*', MUST_EXIST);
-        $issue = $DB->get_record('customcert_issues', array('userid' => $user->id, 'customcertid' => $certificate->id),
+        $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $certificate->id),
             '*', MUST_EXIST);
 
-        $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'customcert'), $issue->code));
-        $this->execute('behat_forms::press_button', get_string('verify', 'customcert'));
-        $this->execute('behat_general::assert_page_contains_text', get_string('verified', 'customcert'));
-        $this->execute('behat_general::assert_page_not_contains_text', get_string('notverified', 'customcert'));
+        $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'tool_certificate'), $issue->code));
+        $this->execute('behat_forms::press_button', get_string('verify', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_contains_text', get_string('verified', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_not_contains_text', get_string('notverified', 'tool_certificate'));
     }
 
     /**
@@ -108,15 +108,15 @@ class behat_tool_certificate extends behat_base {
     public function i_can_not_verify_the_custom_certificate_for_user($certificatename, $username) {
         global $DB;
 
-        $certificate = $DB->get_record('customcert', array('name' => $certificatename), '*', MUST_EXIST);
+        $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
         $user = $DB->get_record('user', array('username' => $username), '*', MUST_EXIST);
-        $issue = $DB->get_record('customcert_issues', array('userid' => $user->id, 'customcertid' => $certificate->id),
+        $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $certificate->id),
             '*', MUST_EXIST);
 
-        $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'customcert'), $issue->code));
-        $this->execute('behat_forms::press_button', get_string('verify', 'customcert'));
-        $this->execute('behat_general::assert_page_contains_text', get_string('notverified', 'customcert'));
-        $this->execute('behat_general::assert_page_not_contains_text', get_string('verified', 'customcert'));
+        $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'tool_certificate'), $issue->code));
+        $this->execute('behat_forms::press_button', get_string('verify', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_contains_text', get_string('notverified', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_not_contains_text', get_string('verified', 'tool_certificate'));
     }
 
     /**
@@ -131,8 +131,8 @@ class behat_tool_certificate extends behat_base {
     public function i_visit_the_verification_url_for_custom_certificate($certificatename) {
         global $DB;
 
-        $certificate = $DB->get_record('customcert', array('name' => $certificatename), '*', MUST_EXIST);
-        $template = $DB->get_record('customcert_templates', array('id' => $certificate->templateid), '*', MUST_EXIST);
+        $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
+        $template = $DB->get_record('tool_certificate_templates', array('id' => $certificate->templateid), '*', MUST_EXIST);
 
         $url = new moodle_url('/mod/customcert/verify_certificate.php', array('contextid' => $template->contextid));
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));

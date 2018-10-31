@@ -33,10 +33,10 @@ $confirm = optional_param('confirm', false, PARAM_BOOL);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 
-$cm = get_coursemodule_from_id('customcert', $id, 0, false, MUST_EXIST);
+$cm = get_coursemodule_from_id('tool_certificate', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$customcert = $DB->get_record('customcert', array('id' => $cm->instance), '*', MUST_EXIST);
-$template = $DB->get_record('customcert_templates', array('id' => $customcert->templateid), '*', MUST_EXIST);
+$customcert = $DB->get_record('tool_certificate', array('id' => $cm->instance), '*', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', array('id' => $customcert->templateid), '*', MUST_EXIST);
 
 // Ensure the user is allowed to view this page.
 require_login($course, false, $cm);
@@ -55,7 +55,7 @@ if ($customcert->requiredtime && !$canmanage) {
     if (\tool_certificate\certificate::get_course_time($course->id) < ($customcert->requiredtime * 60)) {
         $a = new stdClass;
         $a->requiredtime = $customcert->requiredtime;
-        notice(get_string('requiredtimenotmet', 'customcert', $a), "$CFG->wwwroot/course/view.php?id=$course->id");
+        notice(get_string('requiredtimenotmet', 'tool_certificate', $a), "$CFG->wwwroot/course/view.php?id=$course->id");
         die;
     }
 }
@@ -74,8 +74,8 @@ if ($deleteissue && $canmanage && confirm_sesskey()) {
         );
 
         // Show a confirmation page.
-        $PAGE->navbar->add(get_string('deleteconfirm', 'customcert'));
-        $message = get_string('deleteissueconfirm', 'customcert');
+        $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
+        $message = get_string('deleteissueconfirm', 'tool_certificate');
         echo $OUTPUT->header();
         echo $OUTPUT->heading(format_string($customcert->name));
         echo $OUTPUT->confirm($message, $yesurl, $nourl);
@@ -83,11 +83,11 @@ if ($deleteissue && $canmanage && confirm_sesskey()) {
         exit();
     }
 
-    $issue = $DB->get_record('customcert_issues', ['id' => $deleteissue]);
+    $issue = $DB->get_record('tool_certificate_issues', ['id' => $deleteissue]);
     \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
 
     // Delete the issue.
-    $DB->delete_records('customcert_issues', array('id' => $deleteissue, 'customcertid' => $customcert->id));
+    $DB->delete_records('tool_certificate_issues', array('id' => $deleteissue, 'customcertid' => $customcert->id));
 
     // Redirect back to the manage templates page.
     redirect(new moodle_url('/mod/customcert/view.php', array('id' => $id)));
@@ -98,7 +98,7 @@ $event = \tool_certificate\event\course_module_viewed::create(array(
     'context' => $context,
 ));
 $event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('customcert', $customcert);
+$event->add_record_snapshot('tool_certificate', $customcert);
 $event->trigger();
 
 // Check that we are not downloading a certificate PDF.
@@ -123,21 +123,21 @@ if (!$downloadown && !$downloadissue) {
     // Generate the intro content if it exists.
     $intro = '';
     if (!empty($customcert->intro)) {
-        $intro = $OUTPUT->box(format_module_intro('customcert', $customcert, $cm->id), 'generalbox', 'intro');
+        $intro = $OUTPUT->box(format_module_intro('tool_certificate', $customcert, $cm->id), 'generalbox', 'intro');
     }
 
     // If the current user has been issued a customcert generate HTML to display the details.
     $issuehtml = '';
-    $issues = $DB->get_records('customcert_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id));
+    $issues = $DB->get_records('tool_certificate_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id));
     if ($issues && !$canmanage) {
         // Get the most recent issue (there should only be one).
         $issue = reset($issues);
-        $issuestring = get_string('receiveddate', 'customcert') . ': ' . userdate($issue->timecreated);
+        $issuestring = get_string('receiveddate', 'tool_certificate') . ': ' . userdate($issue->timecreated);
         $issuehtml = $OUTPUT->box($issuestring);
     }
 
     // Create the button to download the customcert.
-    $linkname = get_string('getcustomcert', 'customcert');
+    $linkname = get_string('getcustomcert', 'tool_certificate');
     $link = new moodle_url('/mod/customcert/view.php', array('id' => $cm->id, 'downloadown' => true));
     $downloadbutton = new single_button($link, $linkname, 'post', true);
     $downloadbutton = $OUTPUT->render($downloadbutton);
@@ -149,7 +149,7 @@ if (!$downloadown && !$downloadissue) {
     echo $issuehtml;
     echo $downloadbutton;
     if (isset($reporttable)) {
-        echo $OUTPUT->heading(get_string('listofissues', 'customcert'), 3);
+        echo $OUTPUT->heading(get_string('listofissues', 'tool_certificate'), 3);
         groups_print_activity_menu($cm, $pageurl);
         echo $reporttable->out($perpage, false);
     }
@@ -160,7 +160,7 @@ if (!$downloadown && !$downloadissue) {
     $userid = $USER->id;
     if ($downloadown) {
         // Create new customcert issue record if one does not already exist.
-        if (!$DB->record_exists('customcert_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id))) {
+        if (!$DB->record_exists('tool_certificate_issues', array('userid' => $USER->id, 'customcertid' => $customcert->id))) {
             \tool_certificate\certificate::issue_certificate($customcert->id, $USER->id);
         }
 

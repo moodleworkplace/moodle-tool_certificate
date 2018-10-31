@@ -39,7 +39,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      * Initialises the event.
      */
     protected function init() {
-        $this->data['objecttable'] = 'customcert';
+        $this->data['objecttable'] = 'tool_certificate';
         parent::init();
     }
 }

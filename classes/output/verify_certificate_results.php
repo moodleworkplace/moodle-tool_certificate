@@ -61,9 +61,9 @@ class verify_certificate_results implements templatable, renderable {
     public function __construct($result) {
         $this->success = $result->success;
         if ($this->success) {
-            $this->message = get_string('verified', 'customcert');
+            $this->message = get_string('verified', 'tool_certificate');
         } else {
-            $this->message = get_string('notverified', 'customcert');
+            $this->message = get_string('notverified', 'tool_certificate');
         }
         $this->issues = $result->issues;
     }

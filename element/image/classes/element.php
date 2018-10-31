@@ -75,11 +75,11 @@ class element extends \tool_certificate\element {
         $mform->setDefault('height', 0);
         $mform->addHelpButton('height', 'height', 'certificateelement_image');
 
-        if (get_config('customcert', 'showposxy')) {
+        if (get_config('tool_certificate', 'showposxy')) {
             \tool_certificate\element_helper::render_form_element_position($mform);
         }
 
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
+        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
     }
 
@@ -105,7 +105,7 @@ class element extends \tool_certificate\element {
         }
 
         // Validate the position.
-        if (get_config('customcert', 'showposxy')) {
+        if (get_config('tool_certificate', 'showposxy')) {
             $errors += \tool_certificate\element_helper::validate_form_element_position($data);
         }
 
@@ -137,7 +137,7 @@ class element extends \tool_certificate\element {
 
     /**
      * This will handle how form data will be saved into the data column in the
-     * customcert_elements table.
+     * tool_certificate_elements table.
      *
      * @param \stdClass $data the form data
      * @return string the json encoded array
@@ -314,7 +314,7 @@ class element extends \tool_certificate\element {
         $elementinfo = json_encode($elementinfo);
 
         // Perform the update.
-        $DB->set_field('customcert_elements', 'data', $elementinfo, array('id' => $this->get_id()));
+        $DB->set_field('tool_certificate_elements', 'data', $elementinfo, array('id' => $this->get_id()));
     }
 
     /**
@@ -359,7 +359,7 @@ class element extends \tool_certificate\element {
         }
 
         \core_collator::asort($arrfiles);
-        $arrfiles = array('0' => get_string('noimage', 'customcert')) + $arrfiles;
+        $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
 
         return $arrfiles;
     }

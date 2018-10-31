@@ -1,32 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/customcert/db" VERSION="20170530" COMMENT="XMLDB file for Moodle mod/customcert"
+<XMLDB PATH="admin/tool/certificate/db" VERSION="20170530" COMMENT="XMLDB file for Moodle tool_certificate"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="customcert" COMMENT="Defines customcerts">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="templateid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="requiredtime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="verifyany" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="emailstudents" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="emailteachers" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="emailothers" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="protection" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for customcert"/>
-        <KEY NAME="template" TYPE="foreign" FIELDS="templateid" REFTABLE="customcert_template" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="customcert_templates" COMMENT="Stores each customcert template">
+    <TABLE NAME="tool_certificate_templates" COMMENT="Stores each customcert template">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
@@ -39,7 +17,7 @@
         <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="customcert_issues" COMMENT="Stores each issue of a customcert">
+    <TABLE NAME="tool_certificate_issues" COMMENT="Stores each issue of a customcert">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -49,12 +27,12 @@
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for customcert_issues"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tool_certificate_issues"/>
         <KEY NAME="customcert" TYPE="foreign" FIELDS="customcertid" REFTABLE="customcert" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="customcert_pages" COMMENT="Stores each page of a custom cert">
+    <TABLE NAME="tool_certificate_pages" COMMENT="Stores each page of a custom cert">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="templateid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -67,11 +45,11 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for customcert_pages"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tool_certificate_pages"/>
         <KEY NAME="template" TYPE="foreign" FIELDS="templateid" REFTABLE="customcert_template" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="customcert_elements" COMMENT="Stores the elements for a given page">
+    <TABLE NAME="tool_certificate_elements" COMMENT="Stores the elements for a given page">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="pageid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
@@ -90,8 +68,8 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for customcert_elements"/>
-        <KEY NAME="page" TYPE="foreign" FIELDS="pageid" REFTABLE="customcert_pages" REFFIELDS="id"/>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for tool_certificate_elements"/>
+        <KEY NAME="page" TYPE="foreign" FIELDS="pageid" REFTABLE="tool_certificate_pages" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

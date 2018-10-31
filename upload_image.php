@@ -29,7 +29,7 @@ require_login();
 $context = context_system::instance();
 require_capability('moodle/site:config', $context);
 
-$struploadimage = get_string('uploadimage', 'customcert');
+$struploadimage = get_string('uploadimage', 'tool_certificate');
 
 // Set the page variables.
 $pageurl = new moodle_url('/mod/customcert/upload_image.php');

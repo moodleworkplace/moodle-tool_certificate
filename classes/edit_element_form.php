@@ -57,11 +57,11 @@ class edit_element_form extends \moodleform {
         $element = $this->_customdata['element'];
 
         // Add the field for the name of the element, this is required for all elements.
-        $mform->addElement('text', 'name', get_string('elementname', 'customcert'), 'maxlength="255"');
+        $mform->addElement('text', 'name', get_string('elementname', 'tool_certificate'), 'maxlength="255"');
         $mform->setType('name', PARAM_TEXT);
         $mform->setDefault('name', get_string('pluginname', 'certificateelement_' . $element->element));
         $mform->addRule('name', get_string('required'), 'required', null, 'client');
-        $mform->addHelpButton('name', 'elementname', 'customcert');
+        $mform->addHelpButton('name', 'elementname', 'tool_certificate');
 
         $this->element = \tool_certificate\element_factory::get_element_instance($element);
         $this->element->render_form_elements($mform);
@@ -87,7 +87,7 @@ class edit_element_form extends \moodleform {
         $errors = array();
 
         if (\core_text::strlen($data['name']) > 255) {
-            $errors['name'] = get_string('nametoolong', 'customcert');
+            $errors['name'] = get_string('nametoolong', 'tool_certificate');
         }
 
         $errors += $this->element->validate_form_elements($data, $files);

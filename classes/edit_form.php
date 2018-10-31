@@ -59,14 +59,14 @@ class edit_form extends \moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('text', 'name', get_string('name', 'customcert'), 'maxlength="255"');
+        $mform->addElement('text', 'name', get_string('name', 'tool_certificate'), 'maxlength="255"');
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required');
 
         // Get the number of pages for this module.
         if (isset($this->_customdata['tid'])) {
             $this->tid = $this->_customdata['tid'];
-            if ($pages = $DB->get_records('customcert_pages', array('templateid' => $this->tid), 'sequence')) {
+            if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid), 'sequence')) {
                 $this->numpages = count($pages);
                 foreach ($pages as $p) {
                     $this->add_customcert_page_elements($p);
@@ -90,15 +90,15 @@ class edit_form extends \moodleform {
                     'sesskey' => sesskey()
                 )
             );
-            $icon = $OUTPUT->pix_icon('t/switch_plus', get_string('addcertpage', 'customcert'));
-            $addpagehtml = \html_writer::link($addpagelink, $icon . get_string('addcertpage', 'customcert'));
+            $icon = $OUTPUT->pix_icon('t/switch_plus', get_string('addcertpage', 'tool_certificate'));
+            $addpagehtml = \html_writer::link($addpagelink, $icon . get_string('addcertpage', 'tool_certificate'));
             $mform->addElement('html', \html_writer::tag('div', $addpagehtml, array('class' => 'addpage')));
         }
 
         // Add the submit buttons.
         $group = array();
         $group[] = $mform->createElement('submit', 'submitbtn', get_string('savechanges'));
-        $group[] = $mform->createElement('submit', 'previewbtn', get_string('savechangespreview', 'customcert'), array(), false);
+        $group[] = $mform->createElement('submit', 'previewbtn', get_string('savechangespreview', 'tool_certificate'), array(), false);
         $mform->addElement('group', 'submitbtngroup', '', $group, '', false);
 
         $mform->addElement('hidden', 'tid');
@@ -117,7 +117,7 @@ class edit_form extends \moodleform {
         // Check that we are updating a current customcert.
         if ($this->tid) {
             // Get the pages for this customcert.
-            if ($pages = $DB->get_records('customcert_pages', array('templateid' => $this->tid))) {
+            if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid))) {
                 // Loop through the pages.
                 foreach ($pages as $p) {
                     // Set the width.
@@ -148,7 +148,7 @@ class edit_form extends \moodleform {
         $errors = parent::validation($data, $files);
 
         if (\core_text::strlen($data['name']) > 255) {
-            $errors['name'] = get_string('nametoolong', 'customcert');
+            $errors['name'] = get_string('nametoolong', 'tool_certificate');
         }
 
         // Go through the data and check any width, height or margin  values.
@@ -158,7 +158,7 @@ class edit_form extends \moodleform {
                 $widthid = 'pagewidth_' . $page;
                 // Validate that the width is a valid value.
                 if ((!isset($data[$widthid])) || (!is_numeric($data[$widthid])) || ($data[$widthid] <= 0)) {
-                    $errors[$widthid] = get_string('invalidwidth', 'customcert');
+                    $errors[$widthid] = get_string('invalidwidth', 'tool_certificate');
                 }
             }
             if (strpos($key, 'pageheight_') !== false) {
@@ -166,19 +166,19 @@ class edit_form extends \moodleform {
                 $heightid = 'pageheight_' . $page;
                 // Validate that the height is a valid value.
                 if ((!isset($data[$heightid])) || (!is_numeric($data[$heightid])) || ($data[$heightid] <= 0)) {
-                    $errors[$heightid] = get_string('invalidheight', 'customcert');
+                    $errors[$heightid] = get_string('invalidheight', 'tool_certificate');
                 }
             }
             if (strpos($key, 'pageleftmargin_') !== false) {
                 // Validate that the left margin is a valid value.
                 if (isset($data[$key]) && ($data[$key] < 0)) {
-                    $errors[$key] = get_string('invalidmargin', 'customcert');
+                    $errors[$key] = get_string('invalidmargin', 'tool_certificate');
                 }
             }
             if (strpos($key, 'pagerightmargin_') !== false) {
                 // Validate that the right margin is a valid value.
                 if (isset($data[$key]) && ($data[$key] < 0)) {
-                    $errors[$key] = get_string('invalidmargin', 'customcert');
+                    $errors[$key] = get_string('invalidmargin', 'tool_certificate');
                 }
             }
         }
@@ -198,7 +198,7 @@ class edit_form extends \moodleform {
         $mform =& $this->_form;
 
         if ($this->numpages > 1) {
-            $mform->addElement('header', 'page_' . $page->id, get_string('page', 'customcert', $page->sequence));
+            $mform->addElement('header', 'page_' . $page->id, get_string('page', 'tool_certificate', $page->sequence));
         }
 
         $editlink = '/mod/customcert/edit.php';
@@ -218,36 +218,36 @@ class edit_form extends \moodleform {
             $mform->addElement('html', $OUTPUT->action_icon($url, new \pix_icon('t/down', get_string('movedown'))));
         }
 
-        $mform->addElement('text', 'pagewidth_' . $page->id, get_string('width', 'customcert'));
+        $mform->addElement('text', 'pagewidth_' . $page->id, get_string('width', 'tool_certificate'));
         $mform->setType('pagewidth_' . $page->id, PARAM_INT);
         $mform->setDefault('pagewidth_' . $page->id, '210');
         $mform->addRule('pagewidth_' . $page->id, null, 'required', null, 'client');
-        $mform->addHelpButton('pagewidth_' . $page->id, 'width', 'customcert');
+        $mform->addHelpButton('pagewidth_' . $page->id, 'width', 'tool_certificate');
 
-        $mform->addElement('text', 'pageheight_' . $page->id, get_string('height', 'customcert'));
+        $mform->addElement('text', 'pageheight_' . $page->id, get_string('height', 'tool_certificate'));
         $mform->setType('pageheight_' . $page->id, PARAM_INT);
         $mform->setDefault('pageheight_' . $page->id, '297');
         $mform->addRule('pageheight_' . $page->id, null, 'required', null, 'client');
-        $mform->addHelpButton('pageheight_' . $page->id, 'height', 'customcert');
+        $mform->addHelpButton('pageheight_' . $page->id, 'height', 'tool_certificate');
 
-        $mform->addElement('text', 'pageleftmargin_' . $page->id, get_string('leftmargin', 'customcert'));
+        $mform->addElement('text', 'pageleftmargin_' . $page->id, get_string('leftmargin', 'tool_certificate'));
         $mform->setType('pageleftmargin_' . $page->id, PARAM_INT);
         $mform->setDefault('pageleftmargin_' . $page->id, 0);
-        $mform->addHelpButton('pageleftmargin_' . $page->id, 'leftmargin', 'customcert');
+        $mform->addHelpButton('pageleftmargin_' . $page->id, 'leftmargin', 'tool_certificate');
 
-        $mform->addElement('text', 'pagerightmargin_' . $page->id, get_string('rightmargin', 'customcert'));
+        $mform->addElement('text', 'pagerightmargin_' . $page->id, get_string('rightmargin', 'tool_certificate'));
         $mform->setType('pagerightmargin_' . $page->id, PARAM_INT);
         $mform->setDefault('pagerightmargin_' . $page->id, 0);
-        $mform->addHelpButton('pagerightmargin_' . $page->id, 'rightmargin', 'customcert');
+        $mform->addHelpButton('pagerightmargin_' . $page->id, 'rightmargin', 'tool_certificate');
 
         // Check if there are elements to add.
-        if ($elements = $DB->get_records('customcert_elements', array('pageid' => $page->id), 'sequence ASC')) {
+        if ($elements = $DB->get_records('tool_certificate_elements', array('pageid' => $page->id), 'sequence ASC')) {
             // Get the total number of elements.
             $numelements = count($elements);
             // Create a table to display these elements.
             $table = new \html_table();
             $table->attributes = array('class' => 'generaltable elementstable');
-            $table->head  = array(get_string('name', 'customcert'), get_string('type', 'customcert'), '');
+            $table->head  = array(get_string('name', 'tool_certificate'), get_string('type', 'tool_certificate'), '');
             $table->align = array('left', 'left', 'left');
             // Loop through and add the elements to the table.
             foreach ($elements as $element) {
@@ -289,16 +289,16 @@ class edit_form extends \moodleform {
             }
             // Create link to order the elements.
             $link = \html_writer::link(new \moodle_url('/mod/customcert/rearrange.php', array('pid' => $page->id)),
-                get_string('rearrangeelements', 'customcert'));
+                get_string('rearrangeelements', 'tool_certificate'));
             // Add the table to the form.
-            $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'customcert'), \html_writer::table($table)
+            $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'tool_certificate'), \html_writer::table($table)
                 . \html_writer::tag( 'div', $link));
-            $mform->addHelpButton('elements_' . $page->id, 'elements', 'customcert');
+            $mform->addHelpButton('elements_' . $page->id, 'elements', 'tool_certificate');
         }
 
         $group = array();
         $group[] = $mform->createElement('select', 'element_' . $page->id, '', element_helper::get_available_element_types());
-        $group[] = $mform->createElement('submit', 'addelement_' . $page->id, get_string('addelement', 'customcert'),
+        $group[] = $mform->createElement('submit', 'addelement_' . $page->id, get_string('addelement', 'tool_certificate'),
             array(), false);
         $mform->addElement('group', 'elementgroup', '', $group, '', false);
 
@@ -306,8 +306,8 @@ class edit_form extends \moodleform {
         if ($this->numpages > 1) {
             // Link to delete the page.
             $deletelink = new \moodle_url($editlink, $editlinkparams + array('action' => 'deletepage', 'aid' => $page->id));
-            $icon = $OUTPUT->pix_icon('t/delete', get_string('deletecertpage', 'customcert'));
-            $deletepagehtml = \html_writer::link($deletelink, $icon . get_string('deletecertpage', 'customcert'));
+            $icon = $OUTPUT->pix_icon('t/delete', get_string('deletecertpage', 'tool_certificate'));
+            $deletepagehtml = \html_writer::link($deletelink, $icon . get_string('deletecertpage', 'tool_certificate'));
             $mform->addElement('html', \html_writer::tag('div', $deletepagehtml, array('class' => 'deletebutton')));
         }
     }

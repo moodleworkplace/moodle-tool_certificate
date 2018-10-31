@@ -29,7 +29,7 @@ $download = optional_param('download', null, PARAM_ALPHA);
 $downloadcert = optional_param('downloadcert', '', PARAM_BOOL);
 if ($downloadcert) {
     $certificateid = required_param('certificateid', PARAM_INT);
-    $customcert = $DB->get_record('customcert', array('id' => $certificateid), '*', MUST_EXIST);
+    $customcert = $DB->get_record('tool_certificate', array('id' => $certificateid), '*', MUST_EXIST);
 }
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
@@ -49,7 +49,7 @@ if (($userid != $USER->id) && !has_capability('mod/customcert:viewallcertificate
 
 // Check if we requested to download a certificate.
 if ($downloadcert) {
-    $template = $DB->get_record('customcert_templates', array('id' => $customcert->templateid), '*', MUST_EXIST);
+    $template = $DB->get_record('tool_certificate_templates', array('id' => $customcert->templateid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
     $template->generate_pdf(false, $userid);
     exit();
@@ -65,16 +65,16 @@ if ($table->is_downloading()) {
 
 $PAGE->set_url($pageurl);
 $PAGE->set_context(context_user::instance($userid));
-$PAGE->set_title(get_string('mycertificates', 'customcert'));
+$PAGE->set_title(get_string('mycertificates', 'tool_certificate'));
 $PAGE->set_pagelayout('standard');
 $PAGE->navigation->extend_for_user($user);
 
 // Additional page setup.
 $PAGE->navbar->add(get_string('profile'), new moodle_url('/user/profile.php', array('id' => $userid)));
-$PAGE->navbar->add(get_string('mycertificates', 'customcert'));
+$PAGE->navbar->add(get_string('mycertificates', 'tool_certificate'));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('mycertificates', 'customcert'));
-echo html_writer::div(get_string('mycertificatesdescription', 'customcert'));
+echo $OUTPUT->heading(get_string('mycertificates', 'tool_certificate'));
+echo html_writer::div(get_string('mycertificatesdescription', 'tool_certificate'));
 $table->out($perpage, false);
 echo $OUTPUT->footer();

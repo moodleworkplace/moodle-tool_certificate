@@ -43,7 +43,7 @@ class template_updated extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;
-        $this->data['objecttable'] = 'customcert_templates';
+        $this->data['objecttable'] = 'tool_certificate_templates';
     }
 
     /**
@@ -85,7 +85,7 @@ class template_updated extends \core\event\base {
             'objectid' => $template->id,
         );
         $event = self::create($data);
-        $event->add_record_snapshot('customcert_templates', $template);
+        $event->add_record_snapshot('tool_certificate_templates', $template);
         return $event;
     }
 }

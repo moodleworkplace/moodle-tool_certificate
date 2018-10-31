@@ -263,7 +263,7 @@ class certificate {
         $ufields = \user_picture::fields('u');
         $sql = "SELECT $ufields, ci.id as issueid, ci.code, ci.timecreated
                   FROM {user} u
-            INNER JOIN {customcert_issues} ci
+            INNER JOIN {tool_certificate_issues} ci
                     ON u.id = ci.userid
                  WHERE u.deleted = 0
                    AND ci.customcertid = :customcertid
@@ -302,7 +302,7 @@ class certificate {
         // Return the number of issues.
         $sql = "SELECT COUNT(u.id) as count
                   FROM {user} u
-            INNER JOIN {customcert_issues} ci
+            INNER JOIN {tool_certificate_issues} ci
                     ON u.id = ci.userid
                  WHERE u.deleted = 0
                    AND ci.customcertid = :customcertid
@@ -384,7 +384,7 @@ class certificate {
 
         $sql = "SELECT COUNT(*)
                   FROM {customcert} c
-            INNER JOIN {customcert_issues} ci
+            INNER JOIN {tool_certificate_issues} ci
                     ON c.id = ci.customcertid
                  WHERE ci.userid = :userid";
         return $DB->count_records_sql($sql, array('userid' => $userid));
@@ -408,7 +408,7 @@ class certificate {
 
         $sql = "SELECT c.id, c.name, co.fullname as coursename, ci.code, ci.timecreated
                   FROM {customcert} c
-            INNER JOIN {customcert_issues} ci
+            INNER JOIN {tool_certificate_issues} ci
                     ON c.id = ci.customcertid
             INNER JOIN {course} co
                     ON c.course = co.id
@@ -435,7 +435,7 @@ class certificate {
         $issue->timecreated = time();
 
         // Insert the record into the database.
-        if ($issue->id = $DB->insert_record('customcert_issues', $issue)) {
+        if ($issue->id = $DB->insert_record('tool_certificate_issues', $issue)) {
             \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
         }
 
@@ -453,7 +453,7 @@ class certificate {
         $uniquecodefound = false;
         $code = random_string(10);
         while (!$uniquecodefound) {
-            if (!$DB->record_exists('customcert_issues', array('code' => $code))) {
+            if (!$DB->record_exists('tool_certificate_issues', array('code' => $code))) {
                 $uniquecodefound = true;
             } else {
                 $code = random_string(10);
@@ -470,6 +470,6 @@ class certificate {
      * @return \context_module
      */
     public static function get_context($certificateid) {
-        return \context_module::instance(get_coursemodule_from_instance('customcert', $certificateid)->id);
+        return \context_module::instance(get_coursemodule_from_instance('tool_certificate', $certificateid)->id);
     }
 }

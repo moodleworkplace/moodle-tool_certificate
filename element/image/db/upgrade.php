@@ -35,7 +35,7 @@ function xmldb_certificateelement_image_upgrade($oldversion) {
 
     if ($oldversion < 2016120501) {
         // Go through each 'image' element and update the file stored information.
-        if ($images = $DB->get_records_select('customcert_elements', $DB->sql_compare_text('element') . ' = \'image\'')) {
+        if ($images = $DB->get_records_select('tool_certificate_elements', $DB->sql_compare_text('element') . ' = \'image\'')) {
             // Create a file storage instance we are going to use to create pathname hashes.
             $fs = get_file_storage();
             // Go through and update the details.
@@ -53,7 +53,7 @@ function xmldb_certificateelement_image_upgrade($oldversion) {
                         'height' => (int) $elementinfo->height
                     );
                     $arrtostore = json_encode($arrtostore);
-                    $DB->set_field('customcert_elements', 'data', $arrtostore,  array('id' => $image->id));
+                    $DB->set_field('tool_certificate_elements', 'data', $arrtostore,  array('id' => $image->id));
                 }
             }
         }

@@ -100,11 +100,11 @@ class element extends \certificateelement_image\element {
         $mform->setDefault('height', 0);
         $mform->addHelpButton('height', 'height', 'certificateelement_image');
 
-        if (get_config('customcert', 'showposxy')) {
+        if (get_config('tool_certificate', 'showposxy')) {
             \tool_certificate\element_helper::render_form_element_position($mform);
         }
 
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
+        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
 
         $mform->addElement('filemanager', 'digitalsignature',
@@ -140,7 +140,7 @@ class element extends \certificateelement_image\element {
 
     /**
      * This will handle how form data will be saved into the data column in the
-     * customcert_elements table.
+     * tool_certificate_elements table.
      *
      * @param \stdClass $data the form data
      * @return string the json encoded array

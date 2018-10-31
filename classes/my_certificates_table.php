@@ -62,8 +62,8 @@ class my_certificates_table extends \table_sql {
         $headers = array(
             get_string('name'),
             get_string('course'),
-            get_string('receiveddate', 'customcert'),
-            get_string('code', 'customcert')
+            get_string('receiveddate', 'tool_certificate'),
+            get_string('code', 'tool_certificate')
         );
 
         // Check if we were passed a filename, which means we want to download it.
@@ -94,7 +94,7 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_name($certificate) {
-        $cm = get_coursemodule_from_instance('customcert', $certificate->id);
+        $cm = get_coursemodule_from_instance('tool_certificate', $certificate->id);
         $context = \context_module::instance($cm->id);
 
         return format_string($certificate->name, true, ['context' => $context]);
@@ -107,7 +107,7 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_coursename($certificate) {
-        $cm = get_coursemodule_from_instance('customcert', $certificate->id);
+        $cm = get_coursemodule_from_instance('tool_certificate', $certificate->id);
         $context = \context_module::instance($cm->id);
 
         return format_string($certificate->coursename, true, ['context' => $context]);
@@ -142,7 +142,7 @@ class my_certificates_table extends \table_sql {
     public function col_download($certificate) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('download', get_string('download'), 'customcert');
+        $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
         $link = new \moodle_url('/mod/customcert/my_certificates.php',
             array('userid' => $this->userid,
                   'certificateid' => $certificate->id,

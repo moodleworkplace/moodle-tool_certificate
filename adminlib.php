@@ -42,6 +42,6 @@ class customcert_admin_page_manage_element_plugins extends admin_externalpage {
      */
     public function __construct() {
         $url = new moodle_url('/mod/customcert/adminmanageplugins.php');
-        parent::__construct('manageelementplugins', get_string('manageelementplugins', 'customcert'), $url);
+        parent::__construct('manageelementplugins', get_string('manageelementplugins', 'tool_certificate'), $url);
     }
 }

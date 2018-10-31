@@ -41,14 +41,14 @@ $addons = [
             ]
         ],
         'lang' => [ // Language strings that are used in all the handlers.
-            ['deleteissueconfirm', 'customcert'],
-            ['getcustomcert', 'customcert'],
-            ['listofissues', 'customcert'],
+            ['deleteissueconfirm', 'tool_certificate'],
+            ['getcustomcert', 'tool_certificate'],
+            ['listofissues', 'tool_certificate'],
             ['nothingtodisplay', 'moodle'],
-            ['notissued', 'customcert'],
-            ['pluginname', 'customcert'],
-            ['receiveddate', 'customcert'],
-            ['requiredtimenotmet', 'customcert'],
+            ['notissued', 'tool_certificate'],
+            ['pluginname', 'tool_certificate'],
+            ['receiveddate', 'tool_certificate'],
+            ['requiredtimenotmet', 'tool_certificate'],
             ['selectagroup', 'moodle']
         ]
     ]
