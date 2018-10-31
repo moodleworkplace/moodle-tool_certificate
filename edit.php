@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,12 +39,12 @@ if ($tid) {
     // Set the context.
     $contextid = $template->get_contextid();
     // Set the page url.
-    $pageurl = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
 } else { // Adding a new template.
     // Need to supply the contextid.
     $contextid = required_param('contextid', PARAM_INT);
     // Set the page url.
-    $pageurl = new moodle_url('/mod/customcert/edit.php', array('contextid' => $contextid));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('contextid' => $contextid));
 }
 
 $context = context::instance_by_id($contextid);
@@ -61,7 +61,7 @@ if ($context->contextlevel == CONTEXT_MODULE) {
     $heading = $title;
 }
 
-require_capability('mod/customcert:manage', $context);
+require_capability('tool/certificate:manage', $context);
 
 // Set up the page.
 \tool_certificate\page_helper::page_setup($pageurl, $context, $title);
@@ -69,12 +69,12 @@ require_capability('mod/customcert:manage', $context);
 if ($context->contextlevel == CONTEXT_SYSTEM) {
     // We are managing a template - add some navigation.
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
-        new moodle_url('/mod/customcert/manage_templates.php'));
+        new moodle_url('/admin/tool/certificate/manage_templates.php'));
     if (!$tid) {
         $PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'));
     } else {
         $PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'),
-            new moodle_url('/mod/customcert/edit.php', ['tid' => $tid]));
+            new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $tid]));
     }
 }
 
@@ -98,13 +98,13 @@ if ($tid) {
                 break;
             case 'addpage' :
                 $template->add_page();
-                $url = new \moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+                $url = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
                 redirect($url);
                 break;
             case 'deletepage' :
                 if (!empty($confirm)) { // Check they have confirmed the deletion.
                     $template->delete_page($actionid);
-                    $url = new \moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+                    $url = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
                     redirect($url);
                 } else {
                     // Set deletion flag to true.
@@ -112,8 +112,8 @@ if ($tid) {
                     // Create the message.
                     $message = get_string('deletepageconfirm', 'tool_certificate');
                     // Create the link options.
-                    $nourl = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
-                    $yesurl = new moodle_url('/mod/customcert/edit.php',
+                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+                    $yesurl = new moodle_url('/admin/tool/certificate/edit.php',
                         array(
                             'tid' => $tid,
                             'action' => 'deletepage',
@@ -133,8 +133,8 @@ if ($tid) {
                     // Create the message.
                     $message = get_string('deleteelementconfirm', 'tool_certificate');
                     // Create the link options.
-                    $nourl = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
-                    $yesurl = new moodle_url('/mod/customcert/edit.php',
+                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+                    $yesurl = new moodle_url('/admin/tool/certificate/edit.php',
                         array(
                             'tid' => $tid,
                             'action' => 'deleteelement',
@@ -223,7 +223,7 @@ if ($data = $mform->get_data()) {
             $params['action'] = 'add';
             $params['element'] = $element;
             $params['pageid'] = $pageid;
-            $url = new moodle_url('/mod/customcert/edit_element.php', $params);
+            $url = new moodle_url('/admin/tool/certificate/edit_element.php', $params);
             redirect($url);
         }
     }
@@ -235,7 +235,7 @@ if ($data = $mform->get_data()) {
     }
 
     // Redirect to the editing page to show form with recent updates.
-    $url = new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id()));
+    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
     redirect($url);
 }
 

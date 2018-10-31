@@ -71,7 +71,7 @@ class certificate_verified extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/customcert/edit.php', array('tid' => $this->objectid));
+        return new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $this->objectid));
     }
 
     /**

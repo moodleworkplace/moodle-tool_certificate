@@ -213,7 +213,7 @@ class external extends \external_api {
         // Make sure the user has the required capabilities.
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
-        require_capability('mod/customcert:manage', $context);
+        require_capability('tool/certificate:manage', $context);
 
         // Delete the issue.
         return $DB->delete_records('tool_certificate_issues', ['id' => $issue->id]);

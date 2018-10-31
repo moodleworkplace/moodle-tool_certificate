@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the customcert element date's core interaction API.
+ * This file contains the certificate element date's core interaction API.
  *
  * @package    certificateelement_date
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -54,7 +54,7 @@ define('CUSTOMCERT_DATE_COURSE_END', '-4');
 require_once($CFG->dirroot . '/lib/grade/constants.php');
 
 /**
- * The customcert element date's core interaction API.
+ * The certificate element date's core interaction API.
  *
  * @package    certificateelement_date
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -63,7 +63,7 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
 class element extends \tool_certificate\element {
 
     /**
-     * This function renders the form elements when adding a customcert element.
+     * This function renders the form elements when adding a certificate element.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
      */

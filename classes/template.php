@@ -467,7 +467,7 @@ class template {
      * @throws \required_capability_exception if the user does not have the necessary capabilities (ie. Fred)
      */
     public function require_manage() {
-        require_capability('mod/customcert:manage', $this->get_context());
+        require_capability('tool/certificate:manage', $this->get_context());
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,19 +33,9 @@ $string['coursetimereq'] = 'Required minutes in course';
 $string['coursetimereq_help'] = 'Enter here the minimum amount of time, in minutes, that a student must be logged into the course before they will be able to receive
 the certificate.';
 $string['createtemplate'] = 'Create template';
-$string['customcert:addinstance'] = 'Add a new custom certificate instance';
-$string['customcert:manage'] = 'Manage a custom certificate';
-$string['customcert:manageemailstudents'] = 'Manage email students setting';
-$string['customcert:manageemailteachers'] = 'Manage email teachers setting';
-$string['customcert:manageemailothers'] = 'Manage email others setting';
-$string['customcert:manageverifyany'] = 'Manage verification setting';
-$string['customcert:managerequiredtime'] = 'Manage time required setting';
-$string['customcert:manageprotection'] = 'Manage protection setting';
-$string['customcert:view'] = 'View a custom certificate';
-$string['customcert:viewreport'] = 'View course report';
-$string['customcert:viewallcertificates'] = 'View all certificates';
-$string['customcert:verifyallcertificates'] = 'Verify all certificates on the site';
-$string['customcert:verifycertificate'] = 'Verify a certificate';
+$string['certificate:manage'] = 'Manage a custom certificate';
+$string['certificate:viewallcertificates'] = 'View all certificates';
+$string['certificate:verifyallcertificates'] = 'Verify all certificates on the site';
 $string['customcertsettings'] = 'Custom certificate settings';
 $string['deletecertpage'] = 'Delete page';
 $string['deleteconfirm'] = 'Delete confirmation';

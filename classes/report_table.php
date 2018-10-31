@@ -84,7 +84,7 @@ class report_table extends \table_sql {
             $headers[] = get_string('file');
         }
 
-        if (!$this->is_downloading() && has_capability('mod/customcert:manage', \context_module::instance($cm->id))) {
+        if (!$this->is_downloading() && has_capability('tool/certificate:manage', \context_module::instance($cm->id))) {
             $columns[] = 'actions';
             $headers[] = '';
         }

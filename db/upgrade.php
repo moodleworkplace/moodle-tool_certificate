@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param int $oldversion the version we are upgrading from
  * @return bool always true
  */
-function xmldb_customcert_upgrade($oldversion) {
+function xmldb_tool_certificate_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();

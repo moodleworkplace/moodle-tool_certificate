@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certific
 $context = context::instance_by_id($contextid);
 
 // Set up the page.
-$pageurl = new moodle_url('/mod/customcert/verify_certificate.php', array('contextid' => $contextid));
+$pageurl = new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $contextid));
 
 if ($code) {
     $pageurl->param('code', $code);
@@ -49,7 +49,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {
         // Need to be logged in.
         require_login($course, false, $cm);
         // Ok, now check the user has the ability to verify certificates.
-        require_capability('mod/customcert:verifycertificate', $context);
+        require_capability('tool/certificate:verifycertificate', $context);
     } else {
         $PAGE->set_cm($cm, $course);
     }
@@ -71,10 +71,10 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
 }
 
 if ($checkallofsite) {
-    // If the 'verifyallcertificates' is not set and the user does not have the capability 'mod/customcert:verifyallcertificates'
+    // If the 'verifyallcertificates' is not set and the user does not have the capability 'tool/certificate:verifyallcertificates'
     // then show them a message letting them know they can not proceed.
     $verifyallcertificates = get_config('tool_certificate', 'verifyallcertificates');
-    $canverifyallcertificates = has_capability('mod/customcert:verifyallcertificates', $context);
+    $canverifyallcertificates = has_capability('tool/certificate:verifyallcertificates', $context);
     if (!$verifyallcertificates && !$canverifyallcertificates) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($heading);

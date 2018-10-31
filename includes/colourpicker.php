@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/lib/form/editor.php');
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class moodlequickform_customcert_colourpicker extends moodlequickform_editor {
+class moodlequickform_tool_certificate_colourpicker extends moodlequickform_editor {
 
     /**
      * Sets the value of the form element

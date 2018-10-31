@@ -90,11 +90,11 @@ class manage_templates_table extends \table_sql {
         global $OUTPUT;
 
         // Link to edit the template.
-        $editlink = new \moodle_url('/mod/customcert/edit.php', array('tid' => $template->id));
+        $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->id));
         $editicon = $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit')));
 
         // Link to duplicate the template.
-        $duplicatelink = new \moodle_url('/mod/customcert/manage_templates.php',
+        $duplicatelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
             array(
                 'tid' => $template->id,
                 'action' => 'duplicate',
@@ -105,7 +105,7 @@ class manage_templates_table extends \table_sql {
             array('class' => 'action-icon duplicate-icon'));
 
         // Link to delete the template.
-        $deletelink = new \moodle_url('/mod/customcert/manage_templates.php',
+        $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
             array(
                 'tid' => $template->id,
                 'action' => 'delete',

@@ -24,9 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/mod/customcert/adminlib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
-$url = $CFG->wwwroot . '/mod/customcert/verify_certificate.php';
+$url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/certificate/verify_certificate.php';
 
 $ADMIN->add('modsettings', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
 $settings = new admin_settingpage('modsettingcustomcert', new lang_string('customcertsettings', 'tool_certificate'));
@@ -43,11 +43,11 @@ $settings->add(new admin_setting_configcheckbox('customcert/showposxy',
 
 $settings->add(new \tool_certificate\admin_setting_link('customcert/verifycertificate',
     get_string('verifycertificate', 'tool_certificate'), get_string('verifycertificatedesc', 'tool_certificate'),
-    get_string('verifycertificate', 'tool_certificate'), new moodle_url('/mod/customcert/verify_certificate.php'), ''));
+    get_string('verifycertificate', 'tool_certificate'), new moodle_url('/admin/tool/certificate/verify_certificate.php'), ''));
 
 $settings->add(new \tool_certificate\admin_setting_link('customcert/managetemplates',
     get_string('managetemplates', 'tool_certificate'), get_string('managetemplatesdesc', 'tool_certificate'),
-    get_string('managetemplates', 'tool_certificate'), new moodle_url('/mod/customcert/manage_templates.php'), ''));
+    get_string('managetemplates', 'tool_certificate'), new moodle_url('/admin/tool/certificate/manage_templates.php'), ''));
 
 $settings->add(new \tool_certificate\admin_setting_link('customcert/uploadimage',
     get_string('uploadimage', 'tool_certificate'), get_string('uploadimagedesc', 'tool_certificate'),
@@ -87,7 +87,7 @@ $settings->add(new admin_setting_configcheckbox('customcert/protection_copy',
 
 $ADMIN->add('tool_certificate', $settings);
 
-$ADMIN->add('tool_certificate', new customcert_admin_page_manage_element_plugins());
+$ADMIN->add('tool_certificate', new tool_certificate_admin_page_manage_element_plugins());
 
 // Element plugin settings.
 $ADMIN->add('tool_certificate', new admin_category('certificateelements', get_string('elementplugins', 'tool_certificate')));

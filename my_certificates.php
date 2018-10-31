@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ if ($downloadcert) {
 }
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
-$pageurl = $url = new moodle_url('/mod/customcert/my_certificates.php', array('userid' => $userid,
+$pageurl = $url = new moodle_url('/admin/tool/certificate/my_certificates.php', array('userid' => $userid,
     'page' => $page, 'perpage' => $perpage));
 
 // Requires a login.
@@ -43,7 +43,7 @@ require_login();
 $user = \core_user::get_user($userid, '*', MUST_EXIST);
 
 // If we are viewing certificates that are not for the currently logged in user then do a capability check.
-if (($userid != $USER->id) && !has_capability('mod/customcert:viewallcertificates', context_system::instance())) {
+if (($userid != $USER->id) && !has_capability('tool/certificate:viewallcertificates', context_system::instance())) {
     print_error('You are not allowed to view these certificates');
 }
 

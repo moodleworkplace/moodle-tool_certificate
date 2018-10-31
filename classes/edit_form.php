@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@ namespace tool_certificate;
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/customcert/includes/colourpicker.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
 \MoodleQuickForm::registerElementType('customcert_colourpicker',
-    $CFG->dirroot . '/mod/customcert/includes/colourpicker.php', 'MoodleQuickForm_customcert_colourpicker');
+    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php', 'moodlequickform_tool_certificate_colourpicker');
 
 /**
  * The form for handling the layout of the customcert instance.
@@ -82,7 +82,7 @@ class edit_form extends \moodleform {
 
         // Link to add another page, only display it when the template has been created.
         if (isset($this->_customdata['tid'])) {
-            $addpagelink = new \moodle_url('/mod/customcert/edit.php',
+            $addpagelink = new \moodle_url('/admin/tool/certificate/edit.php',
                 array(
                     'tid' => $this->tid,
                     'aid' => 1,
@@ -201,9 +201,9 @@ class edit_form extends \moodleform {
             $mform->addElement('header', 'page_' . $page->id, get_string('page', 'tool_certificate', $page->sequence));
         }
 
-        $editlink = '/mod/customcert/edit.php';
+        $editlink = '/admin/tool/certificate/edit.php';
         $editlinkparams = array('tid' => $this->tid, 'sesskey' => sesskey());
-        $editelementlink = '/mod/customcert/edit_element.php';
+        $editelementlink = '/admin/tool/certificate/edit_element.php';
         $editelementlinkparams = array('tid' => $this->tid, 'sesskey' => sesskey());
 
         // Place the ordering arrows.
@@ -288,7 +288,7 @@ class edit_form extends \moodleform {
                 $table->data[] = $row;
             }
             // Create link to order the elements.
-            $link = \html_writer::link(new \moodle_url('/mod/customcert/rearrange.php', array('pid' => $page->id)),
+            $link = \html_writer::link(new \moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $page->id)),
                 get_string('rearrangeelements', 'tool_certificate'));
             // Add the table to the form.
             $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'tool_certificate'), \html_writer::table($table)

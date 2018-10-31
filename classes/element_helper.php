@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ class element_helper {
      * Common behaviour for rendering specified content on the pdf.
      *
      * @param \pdf $pdf the pdf object
-     * @param \tool_certificate\element $element the customcert element
+     * @param \tool_certificate\element $element the certificate element
      * @param string $content the content to render
      */
     public static function render_content($pdf, $element, $content) {
@@ -110,7 +110,7 @@ class element_helper {
     /**
      * Common behaviour for rendering specified content on the drag and drop page.
      *
-     * @param \tool_certificate\element $element the customcert element
+     * @param \tool_certificate\element $element the certificate element
      * @param string $content the content to render
      * @return string the html
      */
@@ -252,7 +252,7 @@ class element_helper {
     /**
      * Returns the font used for this element.
      *
-     * @param \tool_certificate\element $element the customcert element
+     * @param \tool_certificate\element $element the certificate element
      * @return array the font and font attributes
      */
     public static function get_font($element) {
