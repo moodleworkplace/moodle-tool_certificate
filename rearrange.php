@@ -17,7 +17,7 @@
 /**
  * Handles position elements on the PDF via drag and drop.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ $template = $DB->get_record('customcert_templates', array('id' => $page->templat
 $elements = $DB->get_records('customcert_elements', array('pageid' => $pid), 'sequence');
 
 // Set the template.
-$template = new \mod_customcert\template($template);
+$template = new \tool_certificate\template($template);
 // Perform checks.
 if ($cm = $template->get_cm()) {
     require_login($cm->course, false, $cm);
@@ -53,7 +53,7 @@ if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
 
 // Set the $PAGE settings.
 $pageurl = new moodle_url('/mod/customcert/rearrange.php', array('pid' => $pid));
-\mod_customcert\page_helper::page_setup($pageurl, $template->get_context(), $title);
+\tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
 // Add more links to the navigation.
 if (!$cm = $template->get_cm()) {
@@ -69,7 +69,7 @@ $PAGE->navbar->add($str, new \action_link($link, $str));
 $PAGE->navbar->add(get_string('rearrangeelements', 'customcert'));
 
 // Include the JS we need.
-$PAGE->requires->yui_module('moodle-mod_customcert-rearrange', 'Y.M.mod_customcert.rearrange.init',
+$PAGE->requires->yui_module('moodle-tool_certificate-rearrange', 'Y.M.tool_certificate.rearrange.init',
     array($template->get_id(),
           $page,
           $elements));
@@ -100,15 +100,15 @@ if ($page->leftmargin) {
 if ($elements) {
     foreach ($elements as $element) {
         // Get an instance of the element class.
-        if ($e = \mod_customcert\element_factory::get_element_instance($element)) {
+        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
             switch ($element->refpoint) {
-                case \mod_customcert\element_helper::CUSTOMCERT_REF_POINT_TOPRIGHT:
+                case \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPRIGHT:
                     $class = 'element refpoint-right';
                     break;
-                case \mod_customcert\element_helper::CUSTOMCERT_REF_POINT_TOPCENTER:
+                case \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPCENTER:
                     $class = 'element refpoint-center';
                     break;
-                case \mod_customcert\element_helper::CUSTOMCERT_REF_POINT_TOPLEFT:
+                case \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPLEFT:
                 default:
                     $class = 'element refpoint-left';
             }
@@ -127,5 +127,5 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 echo $OUTPUT->heading(get_string('rearrangeelementsheading', 'customcert'), 4);
 echo $html;
-$PAGE->requires->js_call_amd('mod_customcert/rearrange-area', 'init', array('#pdf'));
+$PAGE->requires->js_call_amd('tool_certificate/rearrange-area', 'init', array('#pdf'));
 echo $OUTPUT->footer();

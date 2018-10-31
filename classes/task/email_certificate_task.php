@@ -17,18 +17,18 @@
 /**
  * A scheduled task for emailing certificates.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_customcert\task;
+namespace tool_certificate\task;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * A scheduled task for emailing certificates.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,8 +63,8 @@ class email_certificate_task extends \core\task\scheduled_task {
                         OR $emailotherslengthsql >= 3)";
         if ($customcerts = $DB->get_records_sql($sql, array('emailstudents' => 1, 'emailteachers' => 1))) {
             // The renderers used for sending emails.
-            $htmlrenderer = $PAGE->get_renderer('mod_customcert', 'email', 'htmlemail');
-            $textrenderer = $PAGE->get_renderer('mod_customcert', 'email', 'textemail');
+            $htmlrenderer = $PAGE->get_renderer('tool_certificate', 'email', 'htmlemail');
+            $textrenderer = $PAGE->get_renderer('tool_certificate', 'email', 'textemail');
             foreach ($customcerts as $customcert) {
                 // Get the context.
                 $context = \context::instance_by_id($customcert->contextid);
@@ -119,7 +119,7 @@ class email_certificate_task extends \core\task\scheduled_task {
 
                     // Check that they have passed the required time.
                     if (!empty($customcert->requiredtime)) {
-                        if (\mod_customcert\certificate::get_course_time($customcert->courseid,
+                        if (\tool_certificate\certificate::get_course_time($customcert->courseid,
                                 $enroluser->id) < ($customcert->requiredtime * 60)) {
                             continue;
                         }
@@ -130,7 +130,7 @@ class email_certificate_task extends \core\task\scheduled_task {
                         array('userid' => $enroluser->id, 'customcertid' => $customcert->id));
                     if (empty($issueid)) {
                         // Ok, issue them the certificate.
-                        $issueid = \mod_customcert\certificate::issue_certificate($customcert->id, $enroluser->id);
+                        $issueid = \tool_certificate\certificate::issue_certificate($customcert->id, $enroluser->id);
                     }
 
                     // Add them to the array so we email them.
@@ -163,7 +163,7 @@ class email_certificate_task extends \core\task\scheduled_task {
                         $template->name = $customcert->templatename;
                         $template->contextid = $customcert->contextid;
                         $template->timecreated = $customcert->timecreated;
-                        $template = new \mod_customcert\template($template);
+                        $template = new \tool_certificate\template($template);
                         $filecontents = $template->generate_pdf(false, $user->id, true);
 
                         // Set the name of the file we are going to send.
@@ -178,7 +178,7 @@ class email_certificate_task extends \core\task\scheduled_task {
                         file_put_contents($tempfile, $filecontents);
 
                         if ($customcert->emailstudents) {
-                            $renderable = new \mod_customcert\output\email_certificate(true, $userfullname, $courseshortname,
+                            $renderable = new \tool_certificate\output\email_certificate(true, $userfullname, $courseshortname,
                                 $coursefullname, $certificatename, $customcert->contextid);
 
                             $subject = get_string('emailstudentsubject', 'customcert', $info);
@@ -188,7 +188,7 @@ class email_certificate_task extends \core\task\scheduled_task {
                         }
 
                         if ($customcert->emailteachers) {
-                            $renderable = new \mod_customcert\output\email_certificate(false, $userfullname, $courseshortname,
+                            $renderable = new \tool_certificate\output\email_certificate(false, $userfullname, $courseshortname,
                                 $coursefullname, $certificatename, $customcert->contextid);
 
                             $subject = get_string('emailnonstudentsubject', 'customcert', $info);
@@ -205,7 +205,7 @@ class email_certificate_task extends \core\task\scheduled_task {
                             foreach ($others as $email) {
                                 $email = trim($email);
                                 if (validate_email($email)) {
-                                    $renderable = new \mod_customcert\output\email_certificate(false, $userfullname,
+                                    $renderable = new \tool_certificate\output\email_certificate(false, $userfullname,
                                         $courseshortname, $coursefullname, $certificatename, $customcert->contextid);
 
                                     $subject = get_string('emailnonstudentsubject', 'customcert', $info);

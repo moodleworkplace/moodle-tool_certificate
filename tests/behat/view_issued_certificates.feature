@@ -1,4 +1,4 @@
-@mod @mod_customcert
+@mod @tool_certificate
 Feature: Being able to view the certificates that have been issued
   In order to ensure that a user can view the certificates that have been issued
   As a teacher

@@ -1,4 +1,4 @@
-@mod @mod_customcert
+@mod @tool_certificate
 Feature: Being able to manage pages in a certificate template
   In order to ensure managing pages in a certificate template works as expected
   As a teacher

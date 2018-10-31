@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element code's core interaction API.
  *
- * @package    customcertelement_code
+ * @package    certificateelement_code
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_code;
+namespace certificateelement_code;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element code's core interaction API.
  *
- * @package    customcertelement_code
+ * @package    certificateelement_code
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * Handles rendering the element on the pdf.
@@ -46,7 +46,7 @@ class element extends \mod_customcert\element {
         global $DB;
 
         if ($preview) {
-            $code = \mod_customcert\certificate::generate_code();
+            $code = \tool_certificate\certificate::generate_code();
         } else {
             // Get the page.
             $page = $DB->get_record('customcert_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
@@ -58,7 +58,7 @@ class element extends \mod_customcert\element {
             $code = $issue->code;
         }
 
-        \mod_customcert\element_helper::render_content($pdf, $this, $code);
+        \tool_certificate\element_helper::render_content($pdf, $this, $code);
     }
 
     /**
@@ -70,8 +70,8 @@ class element extends \mod_customcert\element {
      * @return string the html
      */
     public function render_html() {
-        $code = \mod_customcert\certificate::generate_code();
+        $code = \tool_certificate\certificate::generate_code();
 
-        return \mod_customcert\element_helper::render_html_content($this, $code);
+        return \tool_certificate\element_helper::render_html_content($this, $code);
     }
 }

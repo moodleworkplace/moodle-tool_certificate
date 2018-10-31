@@ -17,8 +17,8 @@
  * Wrapper for the YUI M.core.notification class. Allows us to
  * use the YUI version in AMD code until it is replaced.
  *
- * @module     mod_customcert/dialogue
- * @package    mod_customcert
+ * @module     tool_certificate/dialogue
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

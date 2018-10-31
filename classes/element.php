@@ -17,12 +17,12 @@
 /**
  * The base class for the customcert elements.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * All customcert element plugins are based on this class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -323,7 +323,7 @@ abstract class element {
         } else { // Must be adding a new one.
             $element->element = $data->element;
             $element->pageid = $data->pageid;
-            $element->sequence = \mod_customcert\element_helper::get_element_sequence($element->pageid);
+            $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
             $element->timecreated = time();
             return $DB->insert_record('customcert_elements', $element, false);
         }

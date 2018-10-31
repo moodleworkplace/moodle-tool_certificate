@@ -17,7 +17,7 @@
 /**
  * Handles viewing the certificates for a certain user.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,7 +32,7 @@ if ($downloadcert) {
     $customcert = $DB->get_record('customcert', array('id' => $certificateid), '*', MUST_EXIST);
 }
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', \mod_customcert\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
+$perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 $pageurl = $url = new moodle_url('/mod/customcert/my_certificates.php', array('userid' => $userid,
     'page' => $page, 'perpage' => $perpage));
 
@@ -50,12 +50,12 @@ if (($userid != $USER->id) && !has_capability('mod/customcert:viewallcertificate
 // Check if we requested to download a certificate.
 if ($downloadcert) {
     $template = $DB->get_record('customcert_templates', array('id' => $customcert->templateid), '*', MUST_EXIST);
-    $template = new \mod_customcert\template($template);
+    $template = new \tool_certificate\template($template);
     $template->generate_pdf(false, $userid);
     exit();
 }
 
-$table = new \mod_customcert\my_certificates_table($userid, $download);
+$table = new \tool_certificate\my_certificates_table($userid, $download);
 $table->define_baseurl($pageurl);
 
 if ($table->is_downloading()) {

@@ -17,23 +17,23 @@
 /**
  * Email certificate as text renderer.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\output\email;
+namespace tool_certificate\output\email;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Email certificate as text renderer.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renderer_textemail extends \mod_customcert\output\renderer {
+class renderer_textemail extends \tool_certificate\output\renderer {
 
     /**
      * The template name for this renderer.

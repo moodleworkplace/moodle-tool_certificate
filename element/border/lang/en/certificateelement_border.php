@@ -15,14 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_userfield', language 'en'.
+ * Strings for component 'certificateelement_border', language 'en'.
  *
- * @package    customcertelement_userfield
+ * @package    certificateelement_border
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'User field';
-$string['privacy:metadata'] = 'The User field plugin does not store any personal data.';
-$string['userfield'] = 'User field';
-$string['userfield_help'] = 'This is the user field that will be displayed on the PDF.';
+$string['pluginname'] = 'Border';
+$string['privacy:metadata'] = 'The Border plugin does not store any personal data.';
+$string['invalidwidth'] = 'The width has to be a valid number greater than 0.';
+$string['width'] = 'Width';
+$string['width_help'] = 'Width of the border in mm.';

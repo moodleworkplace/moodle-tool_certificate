@@ -17,12 +17,12 @@
 /**
  * Contains the mobile output class for the custom certificate.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\output;
+namespace tool_certificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -57,7 +57,7 @@ class mobile {
         $certificate = $DB->get_record('customcert', ['id' => $cm->instance], '*', MUST_EXIST);
         $certificate->name = format_string($certificate->name);
         list($certificate->intro, $certificate->introformat) = external_format_text($certificate->intro,
-            $certificate->introformat, $context->id, 'mod_customcert', 'intro');
+            $certificate->introformat, $context->id, 'tool_certificate', 'intro');
 
         // Get any issues this person may have.
         $issue = false;
@@ -69,7 +69,7 @@ class mobile {
         $requiredtimemet = true;
         $canmanage = has_capability('mod/customcert:manage', $context);
         if ($certificate->requiredtime && !$canmanage) {
-            if (\mod_customcert\certificate::get_course_time($certificate->course) < ($certificate->requiredtime * 60)) {
+            if (\tool_certificate\certificate::get_course_time($certificate->course) < ($certificate->requiredtime * 60)) {
                 $requiredtimemet = false;
             }
         }
@@ -94,7 +94,7 @@ class mobile {
                 $groupmode = 'aag';
             }
 
-            $recipients = \mod_customcert\certificate::get_issues($certificate->id, $groupmode, $cm, 0, 0);
+            $recipients = \tool_certificate\certificate::get_issues($certificate->id, $groupmode, $cm, 0, 0);
             foreach ($recipients as $recipient) {
                 $recipient->displayname = fullname($recipient);
                 $recipient->fileurl = new \moodle_url('/mod/customcert/mobile/pluginfile.php', ['certificateid' => $certificate->id,
@@ -121,7 +121,7 @@ class mobile {
             'templates' => [
                 [
                     'id' => 'main',
-                    'html' => $OUTPUT->render_from_template('mod_customcert/mobile_view_activity_page', $data),
+                    'html' => $OUTPUT->render_from_template('tool_certificate/mobile_view_activity_page', $data),
                 ],
             ],
             'javascript' => '',

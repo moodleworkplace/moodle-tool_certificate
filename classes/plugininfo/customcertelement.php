@@ -17,11 +17,11 @@
 /**
  * Subplugin info class.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2013 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_customcert\plugininfo;
+namespace tool_certificate\plugininfo;
 
 use core\plugininfo\base;
 
@@ -30,11 +30,11 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Subplugin info class.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2013 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customcertelement extends base {
+class certificateelement extends base {
 
     /**
      * Do not allow users to uninstall these plugins as it could cause customcerts to break.
@@ -79,7 +79,7 @@ class customcertelement extends base {
      */
     public function get_settings_section_name() {
         if (file_exists($this->full_path('settings.php'))) {
-            return 'customcertelement_' . $this->name;
+            return 'certificateelement_' . $this->name;
         } else {
             return null;
         }

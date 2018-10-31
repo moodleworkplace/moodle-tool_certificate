@@ -17,7 +17,7 @@
 /**
  * Customcert image element upgrade code.
  *
- * @package    customcertelement_image
+ * @package    certificateelement_image
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die;
  * @param int $oldversion the version we are upgrading from
  * @return bool always true
  */
-function xmldb_customcertelement_image_upgrade($oldversion) {
+function xmldb_certificateelement_image_upgrade($oldversion) {
     global $DB;
 
     if ($oldversion < 2016120501) {
@@ -59,7 +59,7 @@ function xmldb_customcertelement_image_upgrade($oldversion) {
         }
 
         // Savepoint reached.
-        upgrade_plugin_savepoint(true, 2016120501, 'customcertelement', 'image');
+        upgrade_plugin_savepoint(true, 2016120501, 'certificateelement', 'image');
     }
 
     return true;

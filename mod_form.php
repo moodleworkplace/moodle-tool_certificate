@@ -17,7 +17,7 @@
 /**
  * This file contains the instance add/edit form.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,11 +29,11 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
 /**
  * Instance add/edit form.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_customcert_mod_form extends moodleform_mod {
+class tool_certificate_mod_form extends moodleform_mod {
 
     /**
      * Form definition.
@@ -227,13 +227,13 @@ class mod_customcert_mod_form extends moodleform_mod {
 
         $protection = explode(', ', $protection);
 
-        if (in_array(\mod_customcert\certificate::PROTECTION_PRINT, $protection)) {
+        if (in_array(\tool_certificate\certificate::PROTECTION_PRINT, $protection)) {
             $data->protection_print = 1;
         }
-        if (in_array(\mod_customcert\certificate::PROTECTION_MODIFY, $protection)) {
+        if (in_array(\tool_certificate\certificate::PROTECTION_MODIFY, $protection)) {
             $data->protection_modify = 1;
         }
-        if (in_array(\mod_customcert\certificate::PROTECTION_COPY, $protection)) {
+        if (in_array(\tool_certificate\certificate::PROTECTION_COPY, $protection)) {
             $data->protection_copy = 1;
         }
 

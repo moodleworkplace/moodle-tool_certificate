@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element userfield's core interaction API.
  *
- * @package    customcertelement_userfield
+ * @package    certificateelement_userfield
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_userfield;
+namespace certificateelement_userfield;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element userfield's core interaction API.
  *
- * @package    customcertelement_userfield
+ * @package    certificateelement_userfield
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * This function renders the form elements when adding a customcert element.
@@ -72,9 +72,9 @@ class element extends \mod_customcert\element {
         \core_collator::asort($fields);
 
         // Create the select box where the user field is selected.
-        $mform->addElement('select', 'userfield', get_string('userfield', 'customcertelement_userfield'), $fields);
+        $mform->addElement('select', 'userfield', get_string('userfield', 'certificateelement_userfield'), $fields);
         $mform->setType('userfield', PARAM_ALPHANUM);
-        $mform->addHelpButton('userfield', 'userfield', 'customcertelement_userfield');
+        $mform->addHelpButton('userfield', 'userfield', 'certificateelement_userfield');
 
         parent::render_form_elements($mform);
     }
@@ -119,9 +119,9 @@ class element extends \mod_customcert\element {
             $value = $user->$field;
         }
 
-        $courseid = \mod_customcert\element_helper::get_courseid($this->get_id());
+        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
         $value = format_string($value, true, ['context' => \context_course::instance($courseid)]);
-        \mod_customcert\element_helper::render_content($pdf, $this, $value);
+        \tool_certificate\element_helper::render_content($pdf, $this, $value);
     }
 
     /**
@@ -157,9 +157,9 @@ class element extends \mod_customcert\element {
             $value = $USER->$field;
         }
 
-        $courseid = \mod_customcert\element_helper::get_courseid($this->get_id());
+        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
         $value = format_string($value, true, ['context' => \context_course::instance($courseid)]);
-        return \mod_customcert\element_helper::render_html_content($this, $value);
+        return \tool_certificate\element_helper::render_html_content($this, $value);
     }
 
     /**

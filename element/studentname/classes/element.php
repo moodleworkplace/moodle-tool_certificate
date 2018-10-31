@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element studentname's core interaction API.
  *
- * @package    customcertelement_studentname
+ * @package    certificateelement_studentname
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_studentname;
+namespace certificateelement_studentname;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element studentname's core interaction API.
  *
- * @package    customcertelement_studentname
+ * @package    certificateelement_studentname
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * Handles rendering the element on the pdf.
@@ -43,7 +43,7 @@ class element extends \mod_customcert\element {
      * @param \stdClass $user the user we are rendering this for
      */
     public function render($pdf, $preview, $user) {
-        \mod_customcert\element_helper::render_content($pdf, $this, fullname($user));
+        \tool_certificate\element_helper::render_content($pdf, $this, fullname($user));
     }
 
     /**
@@ -57,6 +57,6 @@ class element extends \mod_customcert\element {
     public function render_html() {
         global $USER;
 
-        return \mod_customcert\element_helper::render_html_content($this, fullname($USER));
+        return \tool_certificate\element_helper::render_html_content($this, fullname($USER));
     }
 }

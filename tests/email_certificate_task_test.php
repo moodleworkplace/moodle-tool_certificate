@@ -17,7 +17,7 @@
 /**
  * File contains the unit tests for the email certificate task.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @category   test
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,12 +30,12 @@ global $CFG;
 /**
  * Unit tests for the email certificate task.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @category   test
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_customcert_task_email_certificate_task_testcase extends advanced_testcase {
+class tool_certificate_task_email_certificate_task_testcase extends advanced_testcase {
 
     /**
      * Test set up.
@@ -71,14 +71,14 @@ class mod_customcert_task_email_certificate_task_testcase extends advanced_testc
             'emailstudents' => 1));
 
         // Ok, now issue this to one user.
-        \mod_customcert\certificate::issue_certificate($customcert->id, $user1->id);
+        \tool_certificate\certificate::issue_certificate($customcert->id, $user1->id);
 
         // Confirm there is only one entry in this table.
         $this->assertEquals(1, $DB->count_records('customcert_issues'));
 
         // Run the task.
         $sink = $this->redirectEmails();
-        $task = new \mod_customcert\task\email_certificate_task();
+        $task = new \tool_certificate\task\email_certificate_task();
         $task->execute();
         $emails = $sink->get_messages();
 
@@ -105,7 +105,7 @@ class mod_customcert_task_email_certificate_task_testcase extends advanced_testc
 
         // Now, run the task again and ensure we did not issue any more certificates.
         $sink = $this->redirectEmails();
-        $task = new \mod_customcert\task\email_certificate_task();
+        $task = new \tool_certificate\task\email_certificate_task();
         $task->execute();
         $emails = $sink->get_messages();
 
@@ -143,7 +143,7 @@ class mod_customcert_task_email_certificate_task_testcase extends advanced_testc
 
         // Run the task.
         $sink = $this->redirectEmails();
-        $task = new \mod_customcert\task\email_certificate_task();
+        $task = new \tool_certificate\task\email_certificate_task();
         $task->execute();
         $emails = $sink->get_messages();
 
@@ -182,7 +182,7 @@ class mod_customcert_task_email_certificate_task_testcase extends advanced_testc
 
         // Run the task.
         $sink = $this->redirectEmails();
-        $task = new \mod_customcert\task\email_certificate_task();
+        $task = new \tool_certificate\task\email_certificate_task();
         $task->execute();
         $emails = $sink->get_messages();
 
@@ -222,7 +222,7 @@ class mod_customcert_task_email_certificate_task_testcase extends advanced_testc
 
         // Run the task.
         $sink = $this->redirectEmails();
-        $task = new \mod_customcert\task\email_certificate_task();
+        $task = new \tool_certificate\task\email_certificate_task();
         $task->execute();
         $emails = $sink->get_messages();
 
@@ -258,7 +258,7 @@ class mod_customcert_task_email_certificate_task_testcase extends advanced_testc
 
         // Run the task.
         $sink = $this->redirectEmails();
-        $task = new \mod_customcert\task\email_certificate_task();
+        $task = new \tool_certificate\task\email_certificate_task();
         $task->execute();
         $emails = $sink->get_messages();
 

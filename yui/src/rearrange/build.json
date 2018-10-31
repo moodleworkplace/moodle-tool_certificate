@@ -1,7 +1,7 @@
 {
-  "name": "moodle-mod_customcert-rearrange",
+  "name": "moodle-tool_certificate-rearrange",
   "builds": {
-    "moodle-mod_customcert-rearrange": {
+    "moodle-tool_certificate-rearrange": {
       "jsfiles": [
         "rearrange.js"
       ]

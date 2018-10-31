@@ -17,7 +17,7 @@
 /**
  * Handles AJAX requests for the customcert module.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -36,7 +36,7 @@ $values = json_decode($values);
 $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
 
 // Set the template.
-$template = new \mod_customcert\template($template);
+$template = new \tool_certificate\template($template);
 // Perform checks.
 if ($cm = $template->get_cm()) {
     $courseid = $cm->course;

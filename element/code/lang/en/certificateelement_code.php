@@ -15,14 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_teachername', language 'en'.
+ * Strings for component 'certificateelement_code', language 'en'.
  *
- * @package    customcertelement_teachername
+ * @package    certificateelement_code
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Teacher name';
-$string['privacy:metadata'] = 'The Teacher name plugin does not store any personal data.';
-$string['teacher'] = 'Teacher';
-$string['teacher_help'] = 'This is the teacher name that will be displayed.';
+$string['pluginname'] = 'Code';
+$string['privacy:metadata'] = 'The Code plugin does not store any personal data.';

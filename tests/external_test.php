@@ -17,7 +17,7 @@
 /**
  * File contains the unit tests for the webservices.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @category   test
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,12 +30,12 @@ global $CFG;
 /**
  * Unit tests for the webservices.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @category   test
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_customcert_external_test_testcase extends advanced_testcase {
+class tool_certificate_external_test_testcase extends advanced_testcase {
 
     /**
      * Test set up.
@@ -67,15 +67,15 @@ class mod_customcert_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \mod_customcert\certificate::issue_certificate($customcert->id, $student1->id);
-        $i2 = \mod_customcert\certificate::issue_certificate($customcert->id, $student2->id);
+        $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
+        $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
 
         $this->assertEquals(2, $DB->count_records('customcert_issues'));
 
-        $result = \mod_customcert\external::delete_issue($customcert->id, $i2);
+        $result = \tool_certificate\external::delete_issue($customcert->id, $i2);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        external_api::clean_returnvalue(\mod_customcert\external::delete_issue_returns(), $result);
+        external_api::clean_returnvalue(\tool_certificate\external::delete_issue_returns(), $result);
 
         $issues = $DB->get_records('customcert_issues');
         $this->assertCount(1, $issues);
@@ -105,14 +105,14 @@ class mod_customcert_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \mod_customcert\certificate::issue_certificate($customcert->id, $student1->id);
-        $i2 = \mod_customcert\certificate::issue_certificate($customcert->id, $student2->id);
+        $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
+        $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
 
         $this->assertEquals(2, $DB->count_records('customcert_issues'));
 
         // Try and delete without logging in.
         $this->expectException('require_login_exception');
-        \mod_customcert\external::delete_issue($customcert->id, $i2);
+        \tool_certificate\external::delete_issue($customcert->id, $i2);
     }
 
     /**
@@ -138,13 +138,13 @@ class mod_customcert_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \mod_customcert\certificate::issue_certificate($customcert->id, $student1->id);
-        $i2 = \mod_customcert\certificate::issue_certificate($customcert->id, $student2->id);
+        $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
+        $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
 
         $this->assertEquals(2, $DB->count_records('customcert_issues'));
 
         // Try and delete without the required capability.
         $this->expectException('required_capability_exception');
-        \mod_customcert\external::delete_issue($customcert->id, $i2);
+        \tool_certificate\external::delete_issue($customcert->id, $i2);
     }
 }

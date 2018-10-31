@@ -15,14 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_text', language 'en'.
+ * Strings for component 'certificateelement_userfield', language 'en'.
  *
- * @package    customcertelement_text
+ * @package    certificateelement_userfield
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Text';
-$string['privacy:metadata'] = 'The Text plugin does not store any personal data.';
-$string['text'] = 'Text';
-$string['text_help'] = 'This is the text that will display on the PDF.';
+$string['pluginname'] = 'User field';
+$string['privacy:metadata'] = 'The User field plugin does not store any personal data.';
+$string['userfield'] = 'User field';
+$string['userfield_help'] = 'This is the user field that will be displayed on the PDF.';

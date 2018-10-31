@@ -17,7 +17,7 @@
 /**
  * Allows the admin to manage assignment plugins
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ if (!empty($plugin)) {
 
 $subtype = 'element';
 
-$pluginmanager = new \mod_customcert\plugin_manager();
+$pluginmanager = new \tool_certificate\plugin_manager();
 
 \admin_externalpage_setup('manageelementplugins');
 // Print the page heading.

@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for customcertelement_studentname.
+ * Privacy Subsystem implementation for certificateelement_studentname.
  *
- * @package    customcertelement_studentname
+ * @package    certificateelement_studentname
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_studentname\privacy;
+namespace certificateelement_studentname\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for customcertelement_studentname implementing null_provider.
+ * Privacy Subsystem for certificateelement_studentname implementing null_provider.
  *
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

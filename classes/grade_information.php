@@ -17,19 +17,19 @@
 /**
  * Contains the class that provides a grade object to be used by elements for display purposes.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The class that provides a grade object to be used by elements for display purposes.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

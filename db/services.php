@@ -17,7 +17,7 @@
 /**
  * Web service for mod customcert.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = array(
-    'mod_customcert_delete_issue' => array(
-        'classname'   => 'mod_customcert\external',
+    'tool_certificate_delete_issue' => array(
+        'classname'   => 'tool_certificate\external',
         'methodname'  => 'delete_issue',
         'classpath'   => '',
         'description' => 'Delete an issue for a certificate',
@@ -34,16 +34,16 @@ $functions = array(
         'ajax'        => true,
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-    'mod_customcert_save_element' => array(
-        'classname'   => 'mod_customcert\external',
+    'tool_certificate_save_element' => array(
+        'classname'   => 'tool_certificate\external',
         'methodname'  => 'save_element',
         'classpath'   => '',
         'description' => 'Saves data for an element',
         'type'        => 'write',
         'ajax'        => true
     ),
-    'mod_customcert_get_element_html' => array(
-        'classname'   => 'mod_customcert\external',
+    'tool_certificate_get_element_html' => array(
+        'classname'   => 'tool_certificate\external',
         'methodname'  => 'get_element_html',
         'classpath'   => '',
         'description' => 'Returns the HTML to display for an element',

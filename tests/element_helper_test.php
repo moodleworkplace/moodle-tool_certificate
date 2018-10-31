@@ -17,7 +17,7 @@
 /**
  * File contains the unit tests for the element helper class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @category   test
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -30,12 +30,12 @@ global $CFG;
 /**
  * Unit tests for the element helper class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @category   test
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_customcert_element_helper_testcase extends advanced_testcase {
+class tool_certificate_element_helper_testcase extends advanced_testcase {
 
     /**
      * Test set up.
@@ -58,7 +58,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
 
         // Get the template to add elements to.
         $template = $DB->get_record('customcert_templates', array('contextid' => context_module::instance($customcert->cmid)->id));
-        $template = new \mod_customcert\template($template);
+        $template = new \tool_certificate\template($template);
 
         // Add a page to the template.
         $pageid = $template->add_page();
@@ -68,12 +68,12 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $element->name = 'Test element';
         $element->element = 'testelement';
         $element->pageid = $pageid;
-        $element->sequence = \mod_customcert\element_helper::get_element_sequence($element->pageid);
+        $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
         $element->timecreated = time();
         $element->id = $DB->insert_record('customcert_elements', $element);
 
         // Confirm the correct course id is returned.
-        $this->assertEquals($course->id, \mod_customcert\element_helper::get_courseid($element->id));
+        $this->assertEquals($course->id, \tool_certificate\element_helper::get_courseid($element->id));
     }
 
     /**
@@ -83,7 +83,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         global $DB, $SITE;
 
         // Add a template to the site.
-        $template = \mod_customcert\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
         // Add a page to the template.
         $pageid = $template->add_page();
@@ -93,12 +93,12 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $element->name = 'Test element';
         $element->element = 'testelement';
         $element->pageid = $pageid;
-        $element->sequence = \mod_customcert\element_helper::get_element_sequence($element->pageid);
+        $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
         $element->timecreated = time();
         $element->id = $DB->insert_record('customcert_elements', $element);
 
         // Confirm the correct course id is returned.
-        $this->assertEquals($SITE->id, \mod_customcert\element_helper::get_courseid($element->id));
+        $this->assertEquals($SITE->id, \tool_certificate\element_helper::get_courseid($element->id));
     }
 
     /**
@@ -123,7 +123,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $gc = $DB->get_record('grade_items', ['itemtype' => 'category', 'iteminstance' => $gc->id]);
 
         // Confirm the function returns the correct number of grade items.
-        $gradeitems = \mod_customcert\element_helper::get_grade_items($course);
+        $gradeitems = \tool_certificate\element_helper::get_grade_items($course);
         $this->assertCount(5, $gradeitems);
         $this->assertArrayHasKey($assign1->cmid, $gradeitems);
         $this->assertArrayHasKey($assign2->cmid, $gradeitems);
@@ -173,7 +173,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $grade->insert();
 
         // Check that the user received the grade.
-        $grade = \mod_customcert\element_helper::get_mod_grade_info(
+        $grade = \tool_certificate\element_helper::get_mod_grade_info(
             $assign->cmid,
             GRADE_DISPLAY_TYPE_PERCENTAGE,
             $student1->id
@@ -185,7 +185,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $this->assertEquals($time, $grade->get_dategraded());
 
         // Check that the user we did not grade has no grade.
-        $grade = \mod_customcert\element_helper::get_mod_grade_info(
+        $grade = \tool_certificate\element_helper::get_mod_grade_info(
             $assign->cmid,
             GRADE_DISPLAY_TYPE_PERCENTAGE,
             $student2->id
@@ -233,7 +233,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $grade->insert();
 
         // Check that the user received the grade.
-        $grade = \mod_customcert\element_helper::get_course_grade_info(
+        $grade = \tool_certificate\element_helper::get_course_grade_info(
             $course->id,
             GRADE_DISPLAY_TYPE_PERCENTAGE,
             $student1->id
@@ -245,7 +245,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $this->assertEquals($time, $grade->get_dategraded());
 
         // Check that the user we did not grade has no grade.
-        $grade = \mod_customcert\element_helper::get_course_grade_info(
+        $grade = \tool_certificate\element_helper::get_course_grade_info(
             $course->id,
             GRADE_DISPLAY_TYPE_PERCENTAGE,
             $student2->id
@@ -290,7 +290,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $grade->insert();
 
         // Check that the user received the grade.
-        $grade = \mod_customcert\element_helper::get_grade_item_info(
+        $grade = \tool_certificate\element_helper::get_grade_item_info(
             $gi->id,
             GRADE_DISPLAY_TYPE_PERCENTAGE,
             $student1->id
@@ -302,7 +302,7 @@ class mod_customcert_element_helper_testcase extends advanced_testcase {
         $this->assertEquals($time, $grade->get_dategraded());
 
         // Check that the user we did not grade has no grade.
-        $grade = \mod_customcert\element_helper::get_grade_item_info(
+        $grade = \tool_certificate\element_helper::get_grade_item_info(
             $gi->id,
             GRADE_DISPLAY_TYPE_PERCENTAGE,
             $student2->id

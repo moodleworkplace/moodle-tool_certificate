@@ -17,7 +17,7 @@
 /**
  * This file contains the form element for handling the colour picker.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/lib/form/editor.php');
 /**
  * Form element for handling the colour picker.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

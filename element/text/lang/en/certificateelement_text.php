@@ -15,20 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'customcertelement_digitalsignature', language 'en'.
+ * Strings for component 'certificateelement_text', language 'en'.
  *
- * @package    customcertelement_digitalsignature
- * @copyright  2017 Mark Nelson <markn@moodle.com>
+ * @package    certificateelement_text
+ * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['digitalsignature'] = 'Digital signature';
-$string['nosignature'] = 'No signature';
-$string['pluginname'] = 'Digital signature';
-$string['privacy:metadata'] = 'The Digital signature plugin does not store any personal data.';
-$string['signaturename'] = 'Signature name';
-$string['signaturepassword'] = 'Signature password';
-$string['signaturelocation'] = 'Signature location';
-$string['signaturereason'] = 'Signature reason';
-$string['signaturecontactinfo'] = 'Signature contact info';
-$string['uploaddigitalsignature'] = 'Upload digital signature';
+$string['pluginname'] = 'Text';
+$string['privacy:metadata'] = 'The Text plugin does not store any personal data.';
+$string['text'] = 'Text';
+$string['text_help'] = 'This is the text that will display on the PDF.';

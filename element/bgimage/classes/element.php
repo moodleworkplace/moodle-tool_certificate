@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element background image's core interaction API.
  *
- * @package    customcertelement_bgimage
+ * @package    certificateelement_bgimage
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_bgimage;
+namespace certificateelement_bgimage;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element background image's core interaction API.
  *
- * @package    customcertelement_bgimage
+ * @package    certificateelement_bgimage
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \customcertelement_image\element {
+class element extends \certificateelement_image\element {
 
     /**
      * This function renders the form elements when adding a customcert element.
@@ -41,7 +41,7 @@ class element extends \customcertelement_image\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('select', 'fileid', get_string('image', 'customcertelement_image'), self::get_images());
+        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
         $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
             $this->filemanageroptions);
     }
@@ -116,7 +116,7 @@ class element extends \customcertelement_image\element {
         }
 
         if ($file = $this->get_file()) {
-            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'mod_customcert', 'image', $file->get_itemid(),
+            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'tool_certificate', 'image', $file->get_itemid(),
                 $file->get_filepath(), $file->get_filename());
             // Get the page we are rendering this on.
             $page = $DB->get_record('customcert_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);

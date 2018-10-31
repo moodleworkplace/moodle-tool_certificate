@@ -17,7 +17,7 @@
 /**
  * This file contains the backup tasks that provides all the settings and steps to perform a backup of the activity.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ require_once($CFG->dirroot . '/mod/customcert/backup/moodle2/backup_customcert_s
 /**
  * Handles creating tasks to peform in order to create the backup.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

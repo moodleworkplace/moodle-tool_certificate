@@ -17,7 +17,7 @@
 /**
  * Edit a customcert element.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ $action = required_param('action', PARAM_ALPHA);
 $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
 
 // Set the template object.
-$template = new \mod_customcert\template($template);
+$template = new \tool_certificate\template($template);
 
 // Perform checks.
 if ($cm = $template->get_cm()) {
@@ -65,7 +65,7 @@ if ($action == 'edit') {
 }
 
 // Set up the page.
-\mod_customcert\page_helper::page_setup($pageurl, $template->get_context(), $title);
+\tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
 // Additional page setup.
 if ($template->get_context()->contextlevel == CONTEXT_SYSTEM) {
@@ -76,7 +76,7 @@ $PAGE->navbar->add(get_string('editcustomcert', 'customcert'), new moodle_url('/
     array('tid' => $tid)));
 $PAGE->navbar->add(get_string('editelement', 'customcert'));
 
-$mform = new \mod_customcert\edit_element_form($pageurl, array('element' => $element));
+$mform = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
 
 // Check if they cancelled.
 if ($mform->is_cancelled()) {
@@ -94,7 +94,7 @@ if ($data = $mform->get_data()) {
     // Set the element variable.
     $data->element = $element->element;
     // Get an instance of the element class.
-    if ($e = \mod_customcert\element_factory::get_element_instance($data)) {
+    if ($e = \tool_certificate\element_factory::get_element_instance($data)) {
         $e->save_form_elements($data);
     }
 

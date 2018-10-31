@@ -15,19 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Privacy Subsystem implementation for customcertelement_userfield.
+ * Privacy Subsystem implementation for certificateelement_userfield.
  *
- * @package    customcertelement_userfield
+ * @package    certificateelement_userfield
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_userfield\privacy;
+namespace certificateelement_userfield\privacy;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for customcertelement_userfield implementing null_provider.
+ * Privacy Subsystem for certificateelement_userfield implementing null_provider.
  *
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

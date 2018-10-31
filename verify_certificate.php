@@ -17,7 +17,7 @@
 /**
  * Handles verifying the code for a certificate.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -63,7 +63,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {
     $checkallofsite = true;
 }
 
-\mod_customcert\page_helper::page_setup($pageurl, $context, $title);
+\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
 // Additional page setup.
 if ($context->contextlevel == CONTEXT_SYSTEM) {
@@ -85,7 +85,7 @@ if ($checkallofsite) {
 }
 
 // The form we are using to verify these codes.
-$form = new \mod_customcert\verify_certificate_form($pageurl);
+$form = new \tool_certificate\verify_certificate_form($pageurl);
 
 if ($form->get_data()) {
     $result = new stdClass();
@@ -133,13 +133,13 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 echo $form->display();
 if (isset($result)) {
-    $renderer = $PAGE->get_renderer('mod_customcert');
+    $renderer = $PAGE->get_renderer('tool_certificate');
     if ($result->success) {
         foreach ($result->issues as $issue) {
-            \mod_customcert\event\certificate_verified::create_from_issue($issue)->trigger();
+            \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
         }
     }
-    $result = new \mod_customcert\output\verify_certificate_results($result);
+    $result = new \tool_certificate\output\verify_certificate_results($result);
     echo $renderer->render($result);
 }
 echo $OUTPUT->footer();

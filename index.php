@@ -17,7 +17,7 @@
 /**
  * This page lists all the instances of customcert in a particular course.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,7 +33,7 @@ require_login($course);
 
 // Set up the page variables.
 $pageurl = new moodle_url('/mod/customcert/index.php', array('id' => $course->id));
-\mod_customcert\page_helper::page_setup($pageurl, context_course::instance($id),
+\tool_certificate\page_helper::page_setup($pageurl, context_course::instance($id),
     get_string('modulenameplural', 'customcert'));
 
 // Additional page setup needed.
@@ -41,7 +41,7 @@ $PAGE->set_pagelayout('incourse');
 $PAGE->navbar->add(get_string('modulenameplural', 'customcert'));
 
 // Add the page view to the Moodle log.
-$event = \mod_customcert\event\course_module_instance_list_viewed::create(array(
+$event = \tool_certificate\event\course_module_instance_list_viewed::create(array(
     'context' => context_course::instance($course->id)
 ));
 $event->add_record_snapshot('course', $course);

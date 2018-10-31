@@ -1,4 +1,4 @@
-@mod @mod_customcert
+@mod @tool_certificate
 Feature: Being able to set the required minutes in a course before viewing the certificate
   In order to ensure the required minutes in a course setting works as expected
   As a teacher

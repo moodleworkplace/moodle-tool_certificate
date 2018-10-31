@@ -17,23 +17,23 @@
 /**
  * Privacy provider tests.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_customcert\privacy\provider;
+use tool_certificate\privacy\provider;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * Privacy provider tests class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_customcert_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
      * Test for provider::get_contexts_for_userid().
@@ -84,7 +84,7 @@ class mod_customcert_privacy_provider_testcase extends \core_privacy\tests\provi
 
         // Export all of the data for the context for user 1.
         $cmcontext = context_module::instance($customcert->cmid);
-        $this->export_context_data_for_user($user1->id, $cmcontext, 'mod_customcert');
+        $this->export_context_data_for_user($user1->id, $cmcontext, 'tool_certificate');
         $writer = \core_privacy\local\request\writer::with_context($cmcontext);
 
         $this->assertTrue($writer->has_any_data());
@@ -196,7 +196,7 @@ class mod_customcert_privacy_provider_testcase extends \core_privacy\tests\provi
         $customcertissue = new stdClass();
         $customcertissue->customcertid = $customcertid;
         $customcertissue->userid = $userid;
-        $customcertissue->code = \mod_customcert\certificate::generate_code();
+        $customcertissue->code = \tool_certificate\certificate::generate_code();
         $customcertissue->timecreated = time() + $i;
 
         // Insert the record into the database.

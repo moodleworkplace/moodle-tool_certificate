@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element text's core interaction API.
  *
- * @package    customcertelement_text
+ * @package    certificateelement_text
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_text;
+namespace certificateelement_text;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element text's core interaction API.
  *
- * @package    customcertelement_text
+ * @package    certificateelement_text
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \mod_customcert\element {
+class element extends \tool_certificate\element {
 
     /**
      * This function renders the form elements when adding a customcert element.
@@ -41,9 +41,9 @@ class element extends \mod_customcert\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('textarea', 'text', get_string('text', 'customcertelement_text'));
+        $mform->addElement('textarea', 'text', get_string('text', 'certificateelement_text'));
         $mform->setType('text', PARAM_RAW);
-        $mform->addHelpButton('text', 'text', 'customcertelement_text');
+        $mform->addHelpButton('text', 'text', 'certificateelement_text');
 
         parent::render_form_elements($mform);
     }
@@ -67,9 +67,9 @@ class element extends \mod_customcert\element {
      * @param \stdClass $user the user we are rendering this for
      */
     public function render($pdf, $preview, $user) {
-        $courseid = \mod_customcert\element_helper::get_courseid($this->get_id());
+        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
         $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_course::instance($courseid)]);
-        \mod_customcert\element_helper::render_content($pdf, $this, $text);
+        \tool_certificate\element_helper::render_content($pdf, $this, $text);
     }
 
     /**
@@ -81,9 +81,9 @@ class element extends \mod_customcert\element {
      * @return string the html
      */
     public function render_html() {
-        $courseid = \mod_customcert\element_helper::get_courseid($this->get_id());
+        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
         $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_course::instance($courseid)]);
-        return \mod_customcert\element_helper::render_html_content($this, $text);
+        return \tool_certificate\element_helper::render_html_content($this, $text);
     }
 
     /**

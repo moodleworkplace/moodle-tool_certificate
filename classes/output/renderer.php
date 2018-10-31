@@ -17,12 +17,12 @@
 /**
  * Contains renderer class.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert\output;
+namespace tool_certificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,7 +31,7 @@ use plugin_renderer_base;
 /**
  * Renderer class.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -42,12 +42,12 @@ class renderer extends plugin_renderer_base {
      *
      * Defer to template.
      *
-     * @param \mod_customcert\output\verify_certificate_results $page
+     * @param \tool_certificate\output\verify_certificate_results $page
      * @return string html for the page
      */
     public function render_verify_certificate_results(verify_certificate_results $page) {
         $data = $page->export_for_template($this);
-        return parent::render_from_template('mod_customcert/verify_certificate_results', $data);
+        return parent::render_from_template('tool_certificate/verify_certificate_results', $data);
     }
 
     /**
@@ -58,6 +58,6 @@ class renderer extends plugin_renderer_base {
      */
     public function render_email_certificate(email_certificate $certificate) {
         $data = $certificate->export_for_template($this);
-        return $this->render_from_template('mod_customcert/' . $this->get_template_name(), $data);
+        return $this->render_from_template('tool_certificate/' . $this->get_template_name(), $data);
     }
 }

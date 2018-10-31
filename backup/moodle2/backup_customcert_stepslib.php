@@ -17,7 +17,7 @@
 /**
  * Define all the backup steps that will be used by the backup_customcert_activity_task.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 /**
  * Define the complete customcert structure for backup, with file and id annotations.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -95,8 +95,8 @@ class backup_customcert_activity_structure_step extends backup_activity_structur
         $issue->annotate_ids('user', 'userid');
 
         // Define file annotations.
-        $customcert->annotate_files('mod_customcert', 'intro', null);
-        $customcert->annotate_files('mod_customcert', 'image', null, context_course::instance($this->get_courseid())->id);
+        $customcert->annotate_files('tool_certificate', 'intro', null);
+        $customcert->annotate_files('tool_certificate', 'image', null, context_course::instance($this->get_courseid())->id);
 
         // Return the root element (customcert), wrapped into standard activity structure.
         return $this->prepare_activity_structure($customcert);

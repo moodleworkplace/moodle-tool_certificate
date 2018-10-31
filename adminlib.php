@@ -17,7 +17,7 @@
 /**
  * This file contains the classes for the admin settings of the customcert module.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/adminlib.php');
 /**
  * Admin page to manage element plugins
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

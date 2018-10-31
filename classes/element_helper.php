@@ -17,12 +17,12 @@
 /**
  * Provides useful functions related to elements.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_customcert;
+namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/grade/querylib.php');
  *
  * Provides useful functions related to elements.
  *
- * @package    mod_customcert
+ * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +60,7 @@ class element_helper {
      * Common behaviour for rendering specified content on the pdf.
      *
      * @param \pdf $pdf the pdf object
-     * @param \mod_customcert\element $element the customcert element
+     * @param \tool_certificate\element $element the customcert element
      * @param string $content the content to render
      */
     public static function render_content($pdf, $element, $content) {
@@ -110,7 +110,7 @@ class element_helper {
     /**
      * Common behaviour for rendering specified content on the drag and drop page.
      *
-     * @param \mod_customcert\element $element the customcert element
+     * @param \tool_certificate\element $element the customcert element
      * @param string $content the content to render
      * @return string the html
      */
@@ -137,12 +137,12 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_font($mform) {
-        $mform->addElement('select', 'font', get_string('font', 'customcert'), \mod_customcert\certificate::get_fonts());
+        $mform->addElement('select', 'font', get_string('font', 'customcert'), \tool_certificate\certificate::get_fonts());
         $mform->setType('font', PARAM_TEXT);
         $mform->setDefault('font', 'times');
         $mform->addHelpButton('font', 'font', 'customcert');
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'customcert'),
-            \mod_customcert\certificate::get_font_sizes());
+            \tool_certificate\certificate::get_font_sizes());
         $mform->setType('fontsize', PARAM_INT);
         $mform->setDefault('fontsize', 12);
         $mform->addHelpButton('fontsize', 'fontsize', 'customcert');
@@ -252,7 +252,7 @@ class element_helper {
     /**
      * Returns the font used for this element.
      *
-     * @param \mod_customcert\element $element the customcert element
+     * @param \tool_certificate\element $element the customcert element
      * @return array the font and font attributes
      */
     public static function get_font($element) {
@@ -398,12 +398,12 @@ class element_helper {
 
         // Loop through the enabled plugins.
         foreach ($plugins as $plugin) {
-            $classname = '\\customcertelement_' . $plugin. '\\element';
+            $classname = '\\certificateelement_' . $plugin. '\\element';
             // Ensure the necessary class exists.
             if (class_exists($classname)) {
                 // Additionally, check if the user is allowed to add the element at all.
                 if ($classname::can_add()) {
-                    $component = "customcertelement_{$plugin}";
+                    $component = "certificateelement_{$plugin}";
                     $options[$plugin] = get_string('pluginname', $component);
                 }
             }
@@ -425,7 +425,7 @@ class element_helper {
         // Check they are enabled using get_config (which is cached and hopefully fast).
         $enabled = array();
         foreach ($plugins as $plugin) {
-            $disabled = get_config('customcertelement_' . $plugin, 'disabled');
+            $disabled = get_config('certificateelement_' . $plugin, 'disabled');
             if (empty($disabled)) {
                 $enabled[$plugin] = $plugin;
             }

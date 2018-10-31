@@ -1,7 +1,7 @@
 /**
  * Rearrange elements in the custom certificate
  *
- * @class Y.M.mod_customcert.rearrange
+ * @class Y.M.tool_certificate.rearrange
  * @constructor
  */
 var Rearrange = function() {
@@ -280,6 +280,6 @@ Y.extend(Rearrange, Y.Base, {
     }
 });
 
-Y.namespace('M.mod_customcert.rearrange').init = function(templateid, page, elements) {
+Y.namespace('M.tool_certificate.rearrange').init = function(templateid, page, elements) {
     new Rearrange(templateid, page, elements);
 };

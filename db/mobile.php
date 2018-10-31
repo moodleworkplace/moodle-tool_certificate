@@ -17,7 +17,7 @@
 /**
  * Defines mobile handlers.
  *
- * @package   mod_customcert
+ * @package   tool_certificate
  * @copyright 2018 Mark Nelson <markn@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $addons = [
-    'mod_customcert' => [ // Plugin identifier.
+    'tool_certificate' => [ // Plugin identifier.
         'handlers' => [ // Different places where the plugin will display content.
             'issueview' => [ // Handler unique name.
                 'displaydata' => [
@@ -33,7 +33,7 @@ $addons = [
                     'class' => '',
                 ],
                 'delegate' => 'CoreCourseModuleDelegate', // Delegate (where to display the link to the plugin).
-                'method' => 'mobile_view_activity', // Main function in \mod_customcert\output\mobile.
+                'method' => 'mobile_view_activity', // Main function in \tool_certificate\output\mobile.
                 'styles' => [
                     'url' => '/mod/customcert/mobile/styles.css',
                     'version' => 1

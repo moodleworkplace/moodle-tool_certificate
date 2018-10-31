@@ -17,23 +17,23 @@
 /**
  * This file contains the customcert element digitial signature's core interaction API.
  *
- * @package    customcertelement_digitalsignature
+ * @package    certificateelement_digitalsignature
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace customcertelement_digitalsignature;
+namespace certificateelement_digitalsignature;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * The customcert element digital signature's core interaction API.
  *
- * @package    customcertelement_digitalsignature
+ * @package    certificateelement_digitalsignature
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element extends \customcertelement_image\element {
+class element extends \certificateelement_image\element {
 
     /**
      * @var array The file manager options for the certificate.
@@ -63,52 +63,52 @@ class element extends \customcertelement_image\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('select', 'fileid', get_string('image', 'customcertelement_image'), self::get_images());
+        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
 
-        $mform->addElement('select', 'signaturefileid', get_string('digitalsignature', 'customcertelement_digitalsignature'),
+        $mform->addElement('select', 'signaturefileid', get_string('digitalsignature', 'certificateelement_digitalsignature'),
             self::get_signatures());
 
-        $mform->addElement('text', 'signaturename', get_string('signaturename', 'customcertelement_digitalsignature'));
+        $mform->addElement('text', 'signaturename', get_string('signaturename', 'certificateelement_digitalsignature'));
         $mform->setType('signaturename', PARAM_TEXT);
         $mform->setDefault('signaturename', '');
 
         $mform->addElement('passwordunmask', 'signaturepassword',
-            get_string('signaturepassword', 'customcertelement_digitalsignature'));
+            get_string('signaturepassword', 'certificateelement_digitalsignature'));
         $mform->setType('signaturepassword', PARAM_TEXT);
         $mform->setDefault('signaturepassword', '');
 
-        $mform->addElement('text', 'signaturelocation', get_string('signaturelocation', 'customcertelement_digitalsignature'));
+        $mform->addElement('text', 'signaturelocation', get_string('signaturelocation', 'certificateelement_digitalsignature'));
         $mform->setType('signaturelocation', PARAM_TEXT);
         $mform->setDefault('signaturelocation', '');
 
-        $mform->addElement('text', 'signaturereason', get_string('signaturereason', 'customcertelement_digitalsignature'));
+        $mform->addElement('text', 'signaturereason', get_string('signaturereason', 'certificateelement_digitalsignature'));
         $mform->setType('signaturereason', PARAM_TEXT);
         $mform->setDefault('signaturereason', '');
 
         $mform->addElement('text', 'signaturecontactinfo',
-            get_string('signaturecontactinfo', 'customcertelement_digitalsignature'));
+            get_string('signaturecontactinfo', 'certificateelement_digitalsignature'));
         $mform->setType('signaturecontactinfo', PARAM_TEXT);
         $mform->setDefault('signaturecontactinfo', '');
 
-        $mform->addElement('text', 'width', get_string('width', 'customcertelement_image'), array('size' => 10));
+        $mform->addElement('text', 'width', get_string('width', 'certificateelement_image'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'customcertelement_image');
+        $mform->addHelpButton('width', 'width', 'certificateelement_image');
 
-        $mform->addElement('text', 'height', get_string('height', 'customcertelement_image'), array('size' => 10));
+        $mform->addElement('text', 'height', get_string('height', 'certificateelement_image'), array('size' => 10));
         $mform->setType('height', PARAM_INT);
         $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'customcertelement_image');
+        $mform->addHelpButton('height', 'height', 'certificateelement_image');
 
         if (get_config('customcert', 'showposxy')) {
-            \mod_customcert\element_helper::render_form_element_position($mform);
+            \tool_certificate\element_helper::render_form_element_position($mform);
         }
 
         $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
             $this->filemanageroptions);
 
         $mform->addElement('filemanager', 'digitalsignature',
-            get_string('uploaddigitalsignature', 'customcertelement_digitalsignature'), '',
+            get_string('uploaddigitalsignature', 'certificateelement_digitalsignature'), '',
             $this->signaturefilemanageroptions);
     }
 
@@ -130,10 +130,10 @@ class element extends \customcertelement_image\element {
         }
 
         // Handle file uploads.
-        \mod_customcert\certificate::upload_files($data->customcertimage, $context->id);
+        \tool_certificate\certificate::upload_files($data->customcertimage, $context->id);
 
         // Handle file certificate uploads.
-        \mod_customcert\certificate::upload_files($data->digitalsignature, $context->id, 'signature');
+        \tool_certificate\certificate::upload_files($data->digitalsignature, $context->id, 'signature');
 
         return parent::save_form_elements($data);
     }
@@ -280,7 +280,7 @@ class element extends \customcertelement_image\element {
 
         // Editing existing instance - copy existing files into draft area.
         $draftitemid = file_get_submitted_draft_itemid('digitalsignature');
-        file_prepare_draft_area($draftitemid, $context->id, 'mod_customcert', 'signature', 0,
+        file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'signature', 0,
             $this->signaturefilemanageroptions);
         $element = $mform->getElement('digitalsignature');
         $element->setValue($draftitemid);
@@ -302,14 +302,14 @@ class element extends \customcertelement_image\element {
         // The array used to store the digital signatures.
         $arrfiles = array();
         // Loop through the files uploaded in the system context.
-        if ($files = $fs->get_area_files(\context_system::instance()->id, 'mod_customcert', 'signature', false,
+        if ($files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'signature', false,
                 'filename', false)) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
             }
         }
         // Loop through the files uploaded in the course context.
-        if ($files = $fs->get_area_files(\context_course::instance($COURSE->id)->id, 'mod_customcert', 'signature', false,
+        if ($files = $fs->get_area_files(\context_course::instance($COURSE->id)->id, 'tool_certificate', 'signature', false,
                 'filename', false)) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
@@ -317,7 +317,7 @@ class element extends \customcertelement_image\element {
         }
 
         \core_collator::asort($arrfiles);
-        $arrfiles = array('0' => get_string('nosignature', 'customcertelement_digitalsignature')) + $arrfiles;
+        $arrfiles = array('0' => get_string('nosignature', 'certificateelement_digitalsignature')) + $arrfiles;
 
         return $arrfiles;
     }
@@ -332,7 +332,7 @@ class element extends \customcertelement_image\element {
 
         $fs = get_file_storage();
 
-        return $fs->get_file($imageinfo->signaturecontextid, 'mod_customcert', $imageinfo->signaturefilearea,
+        return $fs->get_file($imageinfo->signaturecontextid, 'tool_certificate', $imageinfo->signaturefilearea,
             $imageinfo->signatureitemid, $imageinfo->signaturefilepath, $imageinfo->signaturefilename);
     }
 }
