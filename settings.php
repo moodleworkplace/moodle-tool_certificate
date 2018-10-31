@@ -23,7 +23,7 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+/*
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
 $url = $CFG->wwwroot . '/' . $CFG->admin . '/tool/certificate/verify_certificate.php';
@@ -95,6 +95,6 @@ $plugins = \core_plugin_manager::instance()->get_plugins_of_type('certificateele
 foreach ($plugins as $plugin) {
     $plugin->load_settings($ADMIN, 'certificateelements', $hassiteconfig);
 }
-
+*/
 // Tell core we already added the settings structure.
 $settings = null;

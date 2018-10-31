@@ -24,7 +24,7 @@
 
 // This file does not need require_login because capability to verify can be granted to guests, skip codechecker here.
 // @codingStandardsIgnoreLine
-require_once('../../config.php');
+require_once('../../../config.php');
 
 $contextid = optional_param('contextid', context_system::instance()->id, PARAM_INT);
 $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certificate we are verifying.
