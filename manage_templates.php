@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,27 +44,27 @@ if ($tid) {
 $context = context::instance_by_id($contextid);
 
 require_login();
-require_capability('mod/customcert:manage', $context);
+require_capability('tool/certificate:manage', $context);
 
 $title = $SITE->fullname;
 $heading = $title;
 
 // Set up the page.
-$pageurl = new moodle_url('/mod/customcert/manage_templates.php');
+$pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
 \tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
 // Additional page setup.
 if ($tid && $action && confirm_sesskey()) {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
-        new moodle_url('/mod/customcert/manage_templates.php'));
+        new moodle_url('/admin/tool/certificate/manage_templates.php'));
 } else {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'));
 }
 
 if ($tid) {
     if ($action && confirm_sesskey()) {
-        $nourl = new moodle_url('/mod/customcert/manage_templates.php');
-        $yesurl = new moodle_url('/mod/customcert/manage_templates.php',
+        $nourl = new moodle_url('/admin/tool/certificate/manage_templates.php');
+        $yesurl = new moodle_url('/admin/tool/certificate/manage_templates.php',
             array(
                 'tid' => $tid,
                 'action' => $action,
@@ -90,7 +90,7 @@ if ($tid) {
             $template->delete();
 
             // Redirect back to the manage templates page.
-            redirect(new moodle_url('/mod/customcert/manage_templates.php'));
+            redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
         } else if ($action == 'duplicate') {
             if (!$confirm) {
                 // Show a confirmation page.
@@ -115,7 +115,7 @@ if ($tid) {
             $template->copy_to_template($newtemplateid);
 
             // Redirect back to the manage templates page.
-            redirect(new moodle_url('/mod/customcert/manage_templates.php'));
+            redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
         }
     }
 }
@@ -126,6 +126,6 @@ $table->define_baseurl($pageurl);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 $table->out($perpage, false);
-$url = new moodle_url('/mod/customcert/edit.php?contextid=' . $contextid);
+$url = new moodle_url('/admin/tool/certificate/edit.php?contextid=' . $contextid);
 echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
 echo $OUTPUT->footer();

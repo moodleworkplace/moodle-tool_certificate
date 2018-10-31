@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,12 +74,12 @@ if ($confirm && confirm_sesskey()) {
     $loadtemplate->copy_to_template($template->get_id());
 
     // Redirect.
-    $url = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
     redirect($url);
 }
 
 // Create the link options.
-$nourl = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+$nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
 $yesurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid,
                                                                     'ltid' => $ltid,
                                                                     'confirm' => 1,
@@ -89,7 +89,7 @@ $pageurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $t
 \tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
 $str = get_string('editcustomcert', 'tool_certificate');
-$link = new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id()));
+$link = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
 $PAGE->navbar->add($str, new \action_link($link, $str));
 $PAGE->navbar->add(get_string('loadtemplate', 'tool_certificate'));
 

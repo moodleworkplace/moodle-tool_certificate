@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
     if ($filearea === 'image') {
         if ($context->contextlevel == CONTEXT_MODULE) {
             require_login($course, false, $cm);
-        } else if ($context->contextlevel == CONTEXT_SYSTEM && !has_capability('mod/customcert:manage', $context)) {
+        } else if ($context->contextlevel == CONTEXT_SYSTEM && !has_capability('tool/certificate:manage', $context)) {
             return false;
         }
 
@@ -72,7 +72,7 @@ function tool_certificate_output_fragment_editelement($args) {
     // Get the element.
     $element = $DB->get_record('tool_certificate_elements', array('id' => $args['elementid']), '*', MUST_EXIST);
 
-    $pageurl = new moodle_url('/mod/customcert/rearrange.php', array('pid' => $element->pageid));
+    $pageurl = new moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $element->pageid));
     $form = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
 
     return $form->render();
@@ -99,19 +99,19 @@ function tool_certificate_extend_settings_navigation(settings_navigation $settin
         $beforekey = $keys[$i + 1];
     }
 
-    if (has_capability('mod/customcert:manage', $PAGE->cm->context)) {
+    if (has_capability('tool/certificate:manage', $PAGE->cm->context)) {
         // Get the template id.
         $templateid = $DB->get_field('tool_certificate', 'templateid', array('id' => $PAGE->cm->instance));
         $node = navigation_node::create(get_string('editcustomcert', 'tool_certificate'),
-                new moodle_url('/mod/customcert/edit.php', array('tid' => $templateid)),
+                new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid)),
                 navigation_node::TYPE_SETTING, null, 'tool_certificate_edit',
                 new pix_icon('t/edit', ''));
         $customcertnode->add_node($node, $beforekey);
     }
 
-    if (has_capability('mod/customcert:verifycertificate', $PAGE->cm->context)) {
+    if (has_capability('tool/certificate:verifycertificate', $PAGE->cm->context)) {
         $node = navigation_node::create(get_string('verifycertificate', 'tool_certificate'),
-            new moodle_url('/mod/customcert/verify_certificate.php', array('contextid' => $PAGE->cm->context->id)),
+            new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $PAGE->cm->context->id)),
             navigation_node::TYPE_SETTING, null, 'tool_certificate_verify_certificate',
             new pix_icon('t/check', ''));
         $customcertnode->add_node($node, $beforekey);
@@ -130,7 +130,7 @@ function tool_certificate_extend_settings_navigation(settings_navigation $settin
  * @return bool
  */
 function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    $url = new moodle_url('/mod/customcert/my_certificates.php', array('userid' => $user->id));
+    $url = new moodle_url('/admin/tool/certificate/my_certificates.php', array('userid' => $user->id));
     $node = new core_user\output\myprofile\node('miscellaneous', 'mycustomcerts',
         get_string('mycertificates', 'tool_certificate'), null, $url);
     $tree->add_node($node);

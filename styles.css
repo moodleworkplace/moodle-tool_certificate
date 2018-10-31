@@ -1,34 +1,34 @@
-#page-mod-customcert-edit .deletebutton {
+#page-tool-certificate-edit .deletebutton {
     text-align: right;
 }
 
-#page-mod-customcert-edit .addpage {
+#page-tool-certificate-edit .addpage {
     border-top: 1px solid #f4f4f4;
     text-align: right;
 }
 
-#page-mod-customcert-edit #id_replace {
+#page-tool-certificate-edit #id_replace {
     margin-left: 10px;
 }
 
-#page-mod-customcert-report .centre {
+#page-tool-certificate-report .centre {
     margin-left: auto;
     margin-right: auto;
 }
 
-#page-mod-customcert-rearrange .savepositionsbtn,
-#page-mod-customcert-rearrange .applypositionsbtn,
-#page-mod-customcert-rearrange .cancelbtn {
+#page-tool-certificate-rearrange .savepositionsbtn,
+#page-tool-certificate-rearrange .applypositionsbtn,
+#page-tool-certificate-rearrange .cancelbtn {
     float: left;
 }
 
-#page-mod-customcert-rearrange .element {
+#page-tool-certificate-rearrange .element {
     display: inline-block;
     position: absolute;
     word-wrap: break-word;
 }
 
-#page-mod-customcert-rearrange .element:before {
+#page-tool-certificate-rearrange .element:before {
     background-image: url([[pix:tool_certificate|target]]);
     background-repeat: no-repeat;
     content: "";
@@ -38,36 +38,36 @@
     width: 100%;
 }
 
-#page-mod-customcert-rearrange .element:hover {
+#page-tool-certificate-rearrange .element:hover {
     cursor: move;
 }
 
-#page-mod-customcert-rearrange .element.refpoint-left:before {
+#page-tool-certificate-rearrange .element.refpoint-left:before {
     background-position: left top;
     margin: -4px -5px -5px -4px;
 }
 
-#page-mod-customcert-rearrange .element.refpoint-center:before {
+#page-tool-certificate-rearrange .element.refpoint-center:before {
     background-position: center top;
     margin: -4px 0 -5px 0;
 }
 
-#page-mod-customcert-rearrange .element.refpoint-right:before {
+#page-tool-certificate-rearrange .element.refpoint-right:before {
     background-position: right top;
     margin: -4px -5px -5px 4px;
 }
 
-#page-mod-customcert-rearrange #pdf {
+#page-tool-certificate-rearrange #pdf {
     border-style: solid;
     border-width: 1px;
     clear: both;
 }
 
-#page-mod-customcert-rearrange div#leftmargin {
+#page-tool-certificate-rearrange div#leftmargin {
     border-left: 1px dotted black;
 }
 
-#page-mod-customcert-rearrange div#rightmargin {
+#page-tool-certificate-rearrange div#rightmargin {
     border-right: 1px dotted black;
 }
 

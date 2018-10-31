@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The base class for the customcert elements.
+ * The base class for the certificate elements.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class element
  *
- * All customcert element plugins are based on this class.
+ * All certificate element plugins are based on this class.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -227,7 +227,7 @@ abstract class element {
     }
 
     /**
-     * This function renders the form elements when adding a customcert element.
+     * This function renders the form elements when adding a certificate element.
      * Can be overridden if more functionality is needed.
      *
      * @param \MoodleQuickForm $mform the edit_form instance.

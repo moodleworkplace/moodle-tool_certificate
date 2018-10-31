@@ -134,7 +134,7 @@ class behat_tool_certificate extends behat_base {
         $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
         $template = $DB->get_record('tool_certificate_templates', array('id' => $certificate->templateid), '*', MUST_EXIST);
 
-        $url = new moodle_url('/mod/customcert/verify_certificate.php', array('contextid' => $template->contextid));
+        $url = new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $template->contextid));
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
 
@@ -144,7 +144,7 @@ class behat_tool_certificate extends behat_base {
      * @Given /^I visit the verification url for the site$/
      */
     public function i_visit_the_verification_url_for_the_site() {
-        $url = new moodle_url('/mod/customcert/verify_certificate.php');
+        $url = new moodle_url('/admin/tool/certificate/verify_certificate.php');
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
 }

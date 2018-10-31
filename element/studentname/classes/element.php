@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the customcert element studentname's core interaction API.
+ * This file contains the certificate element studentname's core interaction API.
  *
  * @package    certificateelement_studentname
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -27,7 +27,7 @@ namespace certificateelement_studentname;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The customcert element studentname's core interaction API.
+ * The certificate element studentname's core interaction API.
  *
  * @package    certificateelement_studentname
  * @copyright  2013 Mark Nelson <markn@moodle.com>

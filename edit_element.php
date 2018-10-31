@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit a customcert element.
+ * Edit a certificate element.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -54,13 +54,13 @@ if ($action == 'edit') {
     // The id of the element must be supplied if we are currently editing one.
     $id = required_param('id', PARAM_INT);
     $element = $DB->get_record('tool_certificate_elements', array('id' => $id), '*', MUST_EXIST);
-    $pageurl = new moodle_url('/mod/customcert/edit_element.php', array('id' => $id, 'tid' => $tid, 'action' => $action));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('id' => $id, 'tid' => $tid, 'action' => $action));
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
     $pageid = required_param('pageid', PARAM_INT);
     $element = new stdClass();
     $element->element = required_param('element', PARAM_ALPHA);
-    $pageurl = new moodle_url('/mod/customcert/edit_element.php', array('tid' => $tid, 'element' => $element->element,
+    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('tid' => $tid, 'element' => $element->element,
         'pageid' => $pageid, 'action' => $action));
 }
 
@@ -70,9 +70,9 @@ if ($action == 'edit') {
 // Additional page setup.
 if ($template->get_context()->contextlevel == CONTEXT_SYSTEM) {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
-        new moodle_url('/mod/customcert/manage_templates.php'));
+        new moodle_url('/admin/tool/certificate/manage_templates.php'));
 }
-$PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'), new moodle_url('/mod/customcert/edit.php',
+$PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'), new moodle_url('/admin/tool/certificate/edit.php',
     array('tid' => $tid)));
 $PAGE->navbar->add(get_string('editelement', 'tool_certificate'));
 
@@ -80,7 +80,7 @@ $mform = new \tool_certificate\edit_element_form($pageurl, array('element' => $e
 
 // Check if they cancelled.
 if ($mform->is_cancelled()) {
-    $url = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
     redirect($url);
 }
 
@@ -98,7 +98,7 @@ if ($data = $mform->get_data()) {
         $e->save_form_elements($data);
     }
 
-    $url = new moodle_url('/mod/customcert/edit.php', array('tid' => $tid));
+    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
     redirect($url);
 }
 

@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the customcert element digitial signature's core interaction API.
+ * This file contains the certificate element digitial signature's core interaction API.
  *
  * @package    certificateelement_digitalsignature
  * @copyright  2017 Mark Nelson <markn@moodle.com>
@@ -27,7 +27,7 @@ namespace certificateelement_digitalsignature;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * The customcert element digital signature's core interaction API.
+ * The certificate element digital signature's core interaction API.
  *
  * @package    certificateelement_digitalsignature
  * @copyright  2017 Mark Nelson <markn@moodle.com>
@@ -58,7 +58,7 @@ class element extends \certificateelement_image\element {
     }
 
     /**
-     * This function renders the form elements when adding a customcert element.
+     * This function renders the form elements when adding a certificate element.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
      */

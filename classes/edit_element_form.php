@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the form for handling editing a customcert element.
+ * This file contains the form for handling editing a certificate element.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -27,13 +27,13 @@ namespace tool_certificate;
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
-require_once($CFG->dirroot . '/mod/customcert/includes/colourpicker.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
 \MoodleQuickForm::registerElementType('customcert_colourpicker',
-    $CFG->dirroot . '/mod/customcert/includes/colourpicker.php', 'MoodleQuickForm_customcert_colourpicker');
+    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php', 'moodlequickform_tool_certificate_colourpicker');
 
 /**
- * The form for handling editing a customcert element.
+ * The form for handling editing a certificate element.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>

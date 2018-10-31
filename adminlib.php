@@ -33,7 +33,7 @@ require_once($CFG->libdir . '/adminlib.php');
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class customcert_admin_page_manage_element_plugins extends admin_externalpage {
+class tool_certificate_admin_page_manage_element_plugins extends admin_externalpage {
 
     /**
      * The constructor - calls parent constructor
@@ -41,7 +41,7 @@ class customcert_admin_page_manage_element_plugins extends admin_externalpage {
      * @param string $subtype
      */
     public function __construct() {
-        $url = new moodle_url('/mod/customcert/adminmanageplugins.php');
+        $url = new moodle_url('/admin/tool/certificate/adminmanageplugins.php');
         parent::__construct('manageelementplugins', get_string('manageelementplugins', 'tool_certificate'), $url);
     }
 }

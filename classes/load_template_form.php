@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,8 +51,8 @@ class load_template_form extends \moodleform {
         $mform->addElement('header', 'loadtemplateheader', get_string('loadtemplate', 'tool_certificate'));
 
         // Display a link to the manage templates page.
-        if ($context->contextlevel != CONTEXT_SYSTEM && has_capability('mod/customcert:manage', \context_system::instance())) {
-            $link = \html_writer::link(new \moodle_url('/mod/customcert/manage_templates.php'),
+        if ($context->contextlevel != CONTEXT_SYSTEM && has_capability('tool/certificate:manage', \context_system::instance())) {
+            $link = \html_writer::link(new \moodle_url('/admin/tool/certificate/manage_templates.php'),
                 get_string('managetemplates', 'tool_certificate'));
             $mform->addElement('static', 'managetemplates', '', $link);
         }

@@ -80,12 +80,12 @@ Feature: Being able to verify that a certificate is valid or not
     And I press "View certificate"
     And I log out
     And I log in as "admin"
-    # The admin (or anyone with the capability 'mod/customcert:verifyallcertificates') can visit the URL regardless of the setting.
+    # The admin (or anyone with the capability 'tool/certificate:verifyallcertificates') can visit the URL regardless of the setting.
     And I visit the verification url for the site
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     And I should see "Not verified"
-    # The admin (or anyone with the capability 'mod/customcert:verifyallcertificates') can verify any certificate regardless of the 'verifyany' setting.
+    # The admin (or anyone with the capability 'tool/certificate:verifyallcertificates') can verify any certificate regardless of the 'verifyany' setting.
     And I verify the "Custom certificate 1" certificate for the user "student1"
     And I verify the "Custom certificate 2" certificate for the user "student1"
 

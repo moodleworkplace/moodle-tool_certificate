@@ -1,5 +1,5 @@
 <?php
-// This file is part of the customcert module for Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,18 +52,18 @@ if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
 }
 
 // Set the $PAGE settings.
-$pageurl = new moodle_url('/mod/customcert/rearrange.php', array('pid' => $pid));
+$pageurl = new moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $pid));
 \tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
 // Add more links to the navigation.
 if (!$cm = $template->get_cm()) {
     $str = get_string('managetemplates', 'tool_certificate');
-    $link = new moodle_url('/mod/customcert/manage_templates.php');
+    $link = new moodle_url('/admin/tool/certificate/manage_templates.php');
     $PAGE->navbar->add($str, new \action_link($link, $str));
 }
 
 $str = get_string('editcustomcert', 'tool_certificate');
-$link = new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id()));
+$link = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
 $PAGE->navbar->add($str, new \action_link($link, $str));
 
 $PAGE->navbar->add(get_string('rearrangeelements', 'tool_certificate'));
@@ -76,11 +76,11 @@ $PAGE->requires->yui_module('moodle-tool_certificate-rearrange', 'Y.M.tool_certi
 
 // Create the buttons to save the position of the elements.
 $html = html_writer::start_tag('div', array('class' => 'buttons'));
-$html .= $OUTPUT->single_button(new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id())),
+$html .= $OUTPUT->single_button(new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id())),
         get_string('saveandclose', 'tool_certificate'), 'get', array('class' => 'savepositionsbtn'));
-$html .= $OUTPUT->single_button(new moodle_url('/mod/customcert/rearrange.php', array('pid' => $pid)),
+$html .= $OUTPUT->single_button(new moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $pid)),
         get_string('saveandcontinue', 'tool_certificate'), 'get', array('class' => 'applypositionsbtn'));
-$html .= $OUTPUT->single_button(new moodle_url('/mod/customcert/edit.php', array('tid' => $template->get_id())),
+$html .= $OUTPUT->single_button(new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id())),
         get_string('cancel'), 'get', array('class' => 'cancelbtn'));
 $html .= html_writer::end_tag('div');
 

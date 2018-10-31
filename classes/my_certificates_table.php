@@ -143,7 +143,7 @@ class my_certificates_table extends \table_sql {
         global $OUTPUT;
 
         $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
-        $link = new \moodle_url('/mod/customcert/my_certificates.php',
+        $link = new \moodle_url('/admin/tool/certificate/my_certificates.php',
             array('userid' => $this->userid,
                   'certificateid' => $certificate->id,
                   'downloadcert' => '1'));
