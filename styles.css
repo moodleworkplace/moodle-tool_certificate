@@ -1,34 +1,34 @@
-#page-tool-certificate-edit .deletebutton {
+#page-admin-tool-certificate-edit .deletebutton {
     text-align: right;
 }
 
-#page-tool-certificate-edit .addpage {
+#page-admin-tool-certificate-edit .addpage {
     border-top: 1px solid #f4f4f4;
     text-align: right;
 }
 
-#page-tool-certificate-edit #id_replace {
+#page-admin-tool-certificate-edit #id_replace {
     margin-left: 10px;
 }
 
-#page-tool-certificate-report .centre {
+#page-admin-tool-certificate-report .centre {
     margin-left: auto;
     margin-right: auto;
 }
 
-#page-tool-certificate-rearrange .savepositionsbtn,
-#page-tool-certificate-rearrange .applypositionsbtn,
-#page-tool-certificate-rearrange .cancelbtn {
+#page-admin-tool-certificate-rearrange .savepositionsbtn,
+#page-admin-tool-certificate-rearrange .applypositionsbtn,
+#page-admin-tool-certificate-rearrange .cancelbtn {
     float: left;
 }
 
-#page-tool-certificate-rearrange .element {
+#page-admin-tool-certificate-rearrange .element {
     display: inline-block;
     position: absolute;
     word-wrap: break-word;
 }
 
-#page-tool-certificate-rearrange .element:before {
+#page-admin-tool-certificate-rearrange .element:before {
     background-image: url([[pix:tool_certificate|target]]);
     background-repeat: no-repeat;
     content: "";
@@ -38,36 +38,36 @@
     width: 100%;
 }
 
-#page-tool-certificate-rearrange .element:hover {
+#page-admin-tool-certificate-rearrange .element:hover {
     cursor: move;
 }
 
-#page-tool-certificate-rearrange .element.refpoint-left:before {
+#page-admin-tool-certificate-rearrange .element.refpoint-left:before {
     background-position: left top;
     margin: -4px -5px -5px -4px;
 }
 
-#page-tool-certificate-rearrange .element.refpoint-center:before {
+#page-admin-tool-certificate-rearrange .element.refpoint-center:before {
     background-position: center top;
     margin: -4px 0 -5px 0;
 }
 
-#page-tool-certificate-rearrange .element.refpoint-right:before {
+#page-admin-tool-certificate-rearrange .element.refpoint-right:before {
     background-position: right top;
     margin: -4px -5px -5px 4px;
 }
 
-#page-tool-certificate-rearrange #pdf {
+#page-admin-tool-certificate-rearrange #pdf {
     border-style: solid;
     border-width: 1px;
     clear: both;
 }
 
-#page-tool-certificate-rearrange div#leftmargin {
+#page-admin-tool-certificate-rearrange div#leftmargin {
     border-left: 1px dotted black;
 }
 
-#page-tool-certificate-rearrange div#rightmargin {
+#page-admin-tool-certificate-rearrange div#rightmargin {
     border-right: 1px dotted black;
 }
 
