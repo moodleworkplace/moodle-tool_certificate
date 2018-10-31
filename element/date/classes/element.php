@@ -90,7 +90,7 @@ class element extends \tool_certificate\element {
 
     /**
      * This will handle how form data will be saved into the data column in the
-     * customcert_elements table.
+     * tool_certificate_elements table.
      *
      * @param \stdClass $data the form data
      * @return string the json encoded array
@@ -133,11 +133,11 @@ class element extends \tool_certificate\element {
             $date = time();
         } else {
             // Get the page.
-            $page = $DB->get_record('customcert_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
+            $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
             // Get the customcert this page belongs to.
-            $customcert = $DB->get_record('customcert', array('templateid' => $page->templateid), '*', MUST_EXIST);
+            $customcert = $DB->get_record('tool_certificate', array('templateid' => $page->templateid), '*', MUST_EXIST);
             // Now we can get the issue for this user.
-            $issue = $DB->get_record('customcert_issues', array('userid' => $user->id, 'customcertid' => $customcert->id),
+            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $customcert->id),
                 '*', MUST_EXIST);
 
             if ($dateitem == CUSTOMCERT_DATE_ISSUE) {
@@ -246,7 +246,7 @@ class element extends \tool_certificate\element {
         $dateinfo = json_decode($this->get_data());
         if ($newitem = \restore_dbops::get_backup_ids_record($restore->get_restoreid(), 'course_module', $dateinfo->dateitem)) {
             $dateinfo->dateitem = $newitem->newitemid;
-            $DB->set_field('customcert_elements', 'data', $this->save_unique_data($dateinfo), array('id' => $this->get_id()));
+            $DB->set_field('tool_certificate_elements', 'data', $this->save_unique_data($dateinfo), array('id' => $this->get_id()));
         }
     }
 

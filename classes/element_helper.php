@@ -137,15 +137,15 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_font($mform) {
-        $mform->addElement('select', 'font', get_string('font', 'customcert'), \tool_certificate\certificate::get_fonts());
+        $mform->addElement('select', 'font', get_string('font', 'tool_certificate'), \tool_certificate\certificate::get_fonts());
         $mform->setType('font', PARAM_TEXT);
         $mform->setDefault('font', 'times');
-        $mform->addHelpButton('font', 'font', 'customcert');
-        $mform->addElement('select', 'fontsize', get_string('fontsize', 'customcert'),
+        $mform->addHelpButton('font', 'font', 'tool_certificate');
+        $mform->addElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'),
             \tool_certificate\certificate::get_font_sizes());
         $mform->setType('fontsize', PARAM_INT);
         $mform->setDefault('fontsize', 12);
-        $mform->addHelpButton('fontsize', 'fontsize', 'customcert');
+        $mform->addHelpButton('fontsize', 'fontsize', 'tool_certificate');
     }
 
     /**
@@ -154,10 +154,10 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_colour($mform) {
-        $mform->addElement('customcert_colourpicker', 'colour', get_string('fontcolour', 'customcert'));
+        $mform->addElement('customcert_colourpicker', 'colour', get_string('fontcolour', 'tool_certificate'));
         $mform->setType('colour', PARAM_RAW); // Need to validate that this is a valid colour.
         $mform->setDefault('colour', '#000000');
-        $mform->addHelpButton('colour', 'fontcolour', 'customcert');
+        $mform->addHelpButton('colour', 'fontcolour', 'tool_certificate');
     }
 
     /**
@@ -166,14 +166,14 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_position($mform) {
-        $mform->addElement('text', 'posx', get_string('posx', 'customcert'), array('size' => 10));
+        $mform->addElement('text', 'posx', get_string('posx', 'tool_certificate'), array('size' => 10));
         $mform->setType('posx', PARAM_INT);
         $mform->setDefault('posx', 0);
-        $mform->addHelpButton('posx', 'posx', 'customcert');
-        $mform->addElement('text', 'posy', get_string('posy', 'customcert'), array('size' => 10));
+        $mform->addHelpButton('posx', 'posx', 'tool_certificate');
+        $mform->addElement('text', 'posy', get_string('posy', 'tool_certificate'), array('size' => 10));
         $mform->setType('posy', PARAM_INT);
         $mform->setDefault('posy', 0);
-        $mform->addHelpButton('posy', 'posy', 'customcert');
+        $mform->addHelpButton('posy', 'posy', 'tool_certificate');
     }
 
     /**
@@ -182,18 +182,18 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_width($mform) {
-        $mform->addElement('text', 'width', get_string('elementwidth', 'customcert'), array('size' => 10));
+        $mform->addElement('text', 'width', get_string('elementwidth', 'tool_certificate'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'elementwidth', 'customcert');
+        $mform->addHelpButton('width', 'elementwidth', 'tool_certificate');
         $refpointoptions = array();
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('topleft', 'customcert');
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('topcenter', 'customcert');
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('topright', 'customcert');
-        $mform->addElement('select', 'refpoint', get_string('refpoint', 'customcert'), $refpointoptions);
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('topleft', 'tool_certificate');
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('topcenter', 'tool_certificate');
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('topright', 'tool_certificate');
+        $mform->addElement('select', 'refpoint', get_string('refpoint', 'tool_certificate'), $refpointoptions);
         $mform->setType('refpoint', PARAM_INT);
         $mform->setDefault('refpoint', self::CUSTOMCERT_REF_POINT_TOPCENTER);
-        $mform->addHelpButton('refpoint', 'refpoint', 'customcert');
+        $mform->addHelpButton('refpoint', 'refpoint', 'tool_certificate');
     }
 
     /**
@@ -206,7 +206,7 @@ class element_helper {
         $errors = array();
         // Validate the colour.
         if (!self::validate_colour($data['colour'])) {
-            $errors['colour'] = get_string('invalidcolour', 'customcert');
+            $errors['colour'] = get_string('invalidcolour', 'tool_certificate');
         }
         return $errors;
     }
@@ -222,11 +222,11 @@ class element_helper {
 
         // Check if posx is not set, or not numeric or less than 0.
         if ((!isset($data['posx'])) || (!is_numeric($data['posx'])) || ($data['posx'] < 0)) {
-            $errors['posx'] = get_string('invalidposition', 'customcert', 'X');
+            $errors['posx'] = get_string('invalidposition', 'tool_certificate', 'X');
         }
         // Check if posy is not set, or not numeric or less than 0.
         if ((!isset($data['posy'])) || (!is_numeric($data['posy'])) || ($data['posy'] < 0)) {
-            $errors['posy'] = get_string('invalidposition', 'customcert', 'Y');
+            $errors['posy'] = get_string('invalidposition', 'tool_certificate', 'Y');
         }
 
         return $errors;
@@ -243,7 +243,7 @@ class element_helper {
 
         // Check if width is less than 0.
         if (isset($data['width']) && $data['width'] < 0) {
-            $errors['width'] = get_string('invalidelementwidth', 'customcert');
+            $errors['width'] = get_string('invalidelementwidth', 'tool_certificate');
         }
 
         return $errors;
@@ -348,7 +348,7 @@ class element_helper {
         $sequence = 1;
         // Check if there already elements that exist, if so, overwrite value.
         $sql = "SELECT MAX(sequence) as maxsequence
-                  FROM {customcert_elements}
+                  FROM {tool_certificate_elements}
                  WHERE pageid = :id";
         // Get the current max sequence on this page and add 1 to get the new sequence.
         if ($maxseq = $DB->get_record_sql($sql, array('id' => $pageid))) {
@@ -369,9 +369,9 @@ class element_helper {
 
         $sql = "SELECT course
                   FROM {customcert} c
-            INNER JOIN {customcert_pages} cp
+            INNER JOIN {tool_certificate_pages} cp
                     ON c.templateid = cp.templateid
-            INNER JOIN {customcert_elements} ce
+            INNER JOIN {tool_certificate_elements} ce
                     ON cp.id = ce.pageid
                  WHERE ce.id = :elementid";
 

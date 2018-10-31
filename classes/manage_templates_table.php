@@ -127,11 +127,11 @@ class manage_templates_table extends \table_sql {
     public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
 
-        $total = $DB->count_records('customcert_templates', array('contextid' => $this->context->id));
+        $total = $DB->count_records('tool_certificate_templates', array('contextid' => $this->context->id));
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = $DB->get_records('customcert_templates', array('contextid' => $this->context->id),
+        $this->rawdata = $DB->get_records('tool_certificate_templates', array('contextid' => $this->context->id),
             $this->get_sql_sort(), '*', $this->get_page_start(), $this->get_page_size());
 
         // Set initial bars.

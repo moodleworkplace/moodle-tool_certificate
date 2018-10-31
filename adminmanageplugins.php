@@ -38,7 +38,7 @@ $pluginmanager = new \tool_certificate\plugin_manager();
 \admin_externalpage_setup('manageelementplugins');
 // Print the page heading.
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('manageelementplugins', 'customcert'));
+echo $OUTPUT->heading(get_string('manageelementplugins', 'tool_certificate'));
 
 // Print the page heading.
 $pluginmanager->execute($action, $plugin);

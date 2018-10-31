@@ -24,4 +24,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array('certificateelement' => 'mod/customcert/element');
+$subplugins = array('certificateelement' => 'admin/tool/certificate/element');

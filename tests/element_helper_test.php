@@ -54,10 +54,10 @@ class tool_certificate_element_helper_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('customcert', array('course' => $course->id));
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
 
         // Get the template to add elements to.
-        $template = $DB->get_record('customcert_templates', array('contextid' => context_module::instance($customcert->cmid)->id));
+        $template = $DB->get_record('tool_certificate_templates', array('contextid' => context_module::instance($customcert->cmid)->id));
         $template = new \tool_certificate\template($template);
 
         // Add a page to the template.
@@ -70,7 +70,7 @@ class tool_certificate_element_helper_testcase extends advanced_testcase {
         $element->pageid = $pageid;
         $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
         $element->timecreated = time();
-        $element->id = $DB->insert_record('customcert_elements', $element);
+        $element->id = $DB->insert_record('tool_certificate_elements', $element);
 
         // Confirm the correct course id is returned.
         $this->assertEquals($course->id, \tool_certificate\element_helper::get_courseid($element->id));
@@ -95,7 +95,7 @@ class tool_certificate_element_helper_testcase extends advanced_testcase {
         $element->pageid = $pageid;
         $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
         $element->timecreated = time();
-        $element->id = $DB->insert_record('customcert_elements', $element);
+        $element->id = $DB->insert_record('tool_certificate_elements', $element);
 
         // Confirm the correct course id is returned.
         $this->assertEquals($SITE->id, \tool_certificate\element_helper::get_courseid($element->id));

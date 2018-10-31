@@ -49,11 +49,11 @@ class element extends \tool_certificate\element {
             $code = \tool_certificate\certificate::generate_code();
         } else {
             // Get the page.
-            $page = $DB->get_record('customcert_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
+            $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
             // Get the customcert this page belongs to.
-            $customcert = $DB->get_record('customcert', array('templateid' => $page->templateid), '*', MUST_EXIST);
+            $customcert = $DB->get_record('tool_certificate', array('templateid' => $page->templateid), '*', MUST_EXIST);
             // Now we can get the issue for this user.
-            $issue = $DB->get_record('customcert_issues', array('userid' => $user->id, 'customcertid' => $customcert->id),
+            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $customcert->id),
                 '*', MUST_EXIST);
             $code = $issue->code;
         }

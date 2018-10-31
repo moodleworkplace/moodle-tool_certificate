@@ -51,7 +51,7 @@ class element extends \tool_certificate\element {
         $mform->setDefault('height', 0);
         $mform->addHelpButton('height', 'height', 'certificateelement_userpicture');
 
-        if (get_config('customcert', 'showposxy')) {
+        if (get_config('tool_certificate', 'showposxy')) {
             \tool_certificate\element_helper::render_form_element_position($mform);
         }
     }
@@ -78,7 +78,7 @@ class element extends \tool_certificate\element {
         }
 
         // Validate the position.
-        if (get_config('customcert', 'showposxy')) {
+        if (get_config('tool_certificate', 'showposxy')) {
             $errors += \tool_certificate\element_helper::validate_form_element_position($data);
         }
 
@@ -87,7 +87,7 @@ class element extends \tool_certificate\element {
 
     /**
      * This will handle how form data will be saved into the data column in the
-     * customcert_elements table.
+     * tool_certificate_elements table.
      *
      * @param \stdClass $data the form data
      * @return string the json encoded array

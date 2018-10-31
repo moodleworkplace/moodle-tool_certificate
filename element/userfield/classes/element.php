@@ -81,7 +81,7 @@ class element extends \tool_certificate\element {
 
     /**
      * This will handle how form data will be saved into the data column in the
-     * customcert_elements table.
+     * tool_certificate_elements table.
      *
      * @param \stdClass $data the form data
      * @return string the text

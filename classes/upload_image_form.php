@@ -51,7 +51,7 @@ class upload_image_form extends \moodleform {
             'maxbytes' => $CFG->maxbytes,
             'subdirs' => 1,
             'accepted_types' => 'image');
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
+        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
 
         $this->add_action_buttons();

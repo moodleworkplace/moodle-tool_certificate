@@ -53,9 +53,9 @@ if (empty($enabledfiledownload)) {
     throw new webservice_access_exception('Web service file downloading must be enabled in external service settings');
 }
 
-$cm = get_coursemodule_from_instance('customcert', $certificateid, 0, false, MUST_EXIST);
-$certificate = $DB->get_record('customcert', ['id' => $certificateid], '*', MUST_EXIST);
-$template = $DB->get_record('customcert_templates', ['id' => $certificate->templateid], '*', MUST_EXIST);
+$cm = get_coursemodule_from_instance('tool_certificate', $certificateid, 0, false, MUST_EXIST);
+$certificate = $DB->get_record('tool_certificate', ['id' => $certificateid], '*', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', ['id' => $certificate->templateid], '*', MUST_EXIST);
 
 // Capabilities check.
 require_capability('mod/customcert:view', \context_module::instance($cm->id));
@@ -70,7 +70,7 @@ if ($userid != $USER->id) {
     }
 }
 
-$issue = $DB->get_record('customcert_issues', ['customcertid' => $certificateid, 'userid' => $userid]);
+$issue = $DB->get_record('tool_certificate_issues', ['customcertid' => $certificateid, 'userid' => $userid]);
 
 // If we are doing it for the logged in user then we want to issue the certificate.
 if (!$issue) {

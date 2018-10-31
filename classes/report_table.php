@@ -71,7 +71,7 @@ class report_table extends \table_sql {
         );
         $headers = array(
             get_string('fullname'),
-            get_string('receiveddate', 'customcert')
+            get_string('receiveddate', 'tool_certificate')
         );
 
         // Check if we were passed a filename, which means we want to download it.
@@ -136,7 +136,7 @@ class report_table extends \table_sql {
     public function col_download($user) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('download', get_string('download'), 'customcert');
+        $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
         $link = new \moodle_url('/mod/customcert/view.php',
             [
                 'id' => $this->cm->id,

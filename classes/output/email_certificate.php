@@ -100,15 +100,15 @@ class email_certificate implements \renderable, \templatable {
         $info->coursefullname = $this->coursefullname;
 
         if ($this->isstudent) {
-            $data->emailgreeting = get_string('emailstudentgreeting', 'customcert', $this->userfullname);
-            $data->emailbody = get_string('emailstudentbody', 'customcert', $info);
+            $data->emailgreeting = get_string('emailstudentgreeting', 'tool_certificate', $this->userfullname);
+            $data->emailbody = get_string('emailstudentbody', 'tool_certificate', $info);
             $data->emailcertificatelink = new \moodle_url('/mod/customcert/view.php', array('id' => $this->cmid));
-            $data->emailcertificatetext = get_string('emailstudentcertificatelinktext', 'customcert');
+            $data->emailcertificatetext = get_string('emailstudentcertificatelinktext', 'tool_certificate');
         } else {
-            $data->emailgreeting = get_string('emailnonstudentgreeting', 'customcert');
-            $data->emailbody = get_string('emailnonstudentbody', 'customcert', $info);
+            $data->emailgreeting = get_string('emailnonstudentgreeting', 'tool_certificate');
+            $data->emailbody = get_string('emailnonstudentbody', 'tool_certificate', $info);
             $data->emailcertificatelink = new \moodle_url('/mod/customcert/view.php', array('id' => $this->cmid));
-            $data->emailcertificatetext = get_string('emailnonstudentcertificatelinktext', 'customcert');
+            $data->emailcertificatetext = get_string('emailnonstudentcertificatelinktext', 'tool_certificate');
         }
 
         return $data;

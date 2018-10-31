@@ -40,9 +40,9 @@ if ($code) {
 
 // Ok, a certificate was specified.
 if ($context->contextlevel != CONTEXT_SYSTEM) {
-    $cm = get_coursemodule_from_id('customcert', $context->instanceid, 0, false, MUST_EXIST);
+    $cm = get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $customcert = $DB->get_record('customcert', array('id' => $cm->instance), '*', MUST_EXIST);
+    $customcert = $DB->get_record('tool_certificate', array('id' => $cm->instance), '*', MUST_EXIST);
 
     // Check if we are allowing anyone to verify, if so, no need to check login, or permissions.
     if (!$customcert->verifyany) {
@@ -67,18 +67,18 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {
 
 // Additional page setup.
 if ($context->contextlevel == CONTEXT_SYSTEM) {
-    $PAGE->navbar->add(get_string('verifycertificate', 'customcert'));
+    $PAGE->navbar->add(get_string('verifycertificate', 'tool_certificate'));
 }
 
 if ($checkallofsite) {
     // If the 'verifyallcertificates' is not set and the user does not have the capability 'mod/customcert:verifyallcertificates'
     // then show them a message letting them know they can not proceed.
-    $verifyallcertificates = get_config('customcert', 'verifyallcertificates');
+    $verifyallcertificates = get_config('tool_certificate', 'verifyallcertificates');
     $canverifyallcertificates = has_capability('mod/customcert:verifyallcertificates', $context);
     if (!$verifyallcertificates && !$canverifyallcertificates) {
         echo $OUTPUT->header();
         echo $OUTPUT->heading($heading);
-        echo $OUTPUT->notification(get_string('cannotverifyallcertificates', 'customcert'));
+        echo $OUTPUT->notification(get_string('cannotverifyallcertificates', 'tool_certificate'));
         echo $OUTPUT->footer();
         exit();
     }
@@ -98,7 +98,7 @@ if ($form->get_data()) {
                    co.fullname as coursefullname, c.id as certificateid,
                    c.name as certificatename, c.verifyany
               FROM {customcert} c
-              JOIN {customcert_issues} ci
+              JOIN {tool_certificate_issues} ci
                 ON c.id = ci.customcertid
               JOIN {course} co
                 ON c.course = co.id

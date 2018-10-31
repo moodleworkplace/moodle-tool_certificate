@@ -42,7 +42,7 @@ class element extends \certificateelement_image\element {
      */
     public function render_form_elements($mform) {
         $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'customcert'), '',
+        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
     }
 
@@ -119,7 +119,7 @@ class element extends \certificateelement_image\element {
             $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'tool_certificate', 'image', $file->get_itemid(),
                 $file->get_filepath(), $file->get_filename());
             // Get the page we are rendering this on.
-            $page = $DB->get_record('customcert_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
+            $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
 
             // Set the image to the size of the page.
             $style = 'width: ' . $page->width . 'mm; height: ' . $page->height . 'mm';

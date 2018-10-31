@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $logs = array(
-    array('module' => 'customcert', 'action' => 'view', 'mtable' => 'customcert', 'field' => 'name'),
-    array('module' => 'customcert', 'action' => 'add', 'mtable' => 'customcert', 'field' => 'name'),
-    array('module' => 'customcert', 'action' => 'update', 'mtable' => 'customcert', 'field' => 'name'),
-    array('module' => 'customcert', 'action' => 'received', 'mtable' => 'customcert', 'field' => 'name'),
+    array('module' => 'tool_certificate', 'action' => 'view', 'mtable' => 'tool_certificate', 'field' => 'name'),
+    array('module' => 'tool_certificate', 'action' => 'add', 'mtable' => 'tool_certificate', 'field' => 'name'),
+    array('module' => 'tool_certificate', 'action' => 'update', 'mtable' => 'tool_certificate', 'field' => 'name'),
+    array('module' => 'tool_certificate', 'action' => 'received', 'mtable' => 'tool_certificate', 'field' => 'name'),
 );

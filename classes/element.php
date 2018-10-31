@@ -108,7 +108,7 @@ abstract class element {
      * @param \stdClass $element the element data
      */
     public function __construct($element) {
-        $showposxy = get_config('customcert', 'showposxy');
+        $showposxy = get_config('tool_certificate', 'showposxy');
 
         // Keeping this for legacy reasons so we do not break third-party elements.
         $this->element = clone($element);
@@ -319,19 +319,19 @@ abstract class element {
         // Check if we are updating, or inserting a new element.
         if (!empty($this->id)) { // Must be updating a record in the database.
             $element->id = $this->id;
-            return $DB->update_record('customcert_elements', $element);
+            return $DB->update_record('tool_certificate_elements', $element);
         } else { // Must be adding a new one.
             $element->element = $data->element;
             $element->pageid = $data->pageid;
             $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
             $element->timecreated = time();
-            return $DB->insert_record('customcert_elements', $element, false);
+            return $DB->insert_record('tool_certificate_elements', $element, false);
         }
     }
 
     /**
      * This will handle how form data will be saved into the data column in the
-     * customcert_elements table.
+     * tool_certificate_elements table.
      * Can be overridden if more functionality is needed.
      *
      * @param \stdClass $data the form data
@@ -394,7 +394,7 @@ abstract class element {
     public function delete() {
         global $DB;
 
-        return $DB->delete_records('customcert_elements', array('id' => $this->id));
+        return $DB->delete_records('tool_certificate_elements', array('id' => $this->id));
     }
 
     /**

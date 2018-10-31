@@ -27,7 +27,7 @@ require_once('../../config.php');
 $tid = required_param('tid', PARAM_INT);
 $action = required_param('action', PARAM_ALPHA);
 
-$template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
 
 // Set the template object.
 $template = new \tool_certificate\template($template);
@@ -42,7 +42,7 @@ if ($cm = $template->get_cm()) {
 $template->require_manage();
 
 if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $customcert = $DB->get_record('customcert', ['id' => $cm->instance], '*', MUST_EXIST);
+    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
     $title = $customcert->name;
     $heading = format_string($title);
 } else {
@@ -53,7 +53,7 @@ if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
 if ($action == 'edit') {
     // The id of the element must be supplied if we are currently editing one.
     $id = required_param('id', PARAM_INT);
-    $element = $DB->get_record('customcert_elements', array('id' => $id), '*', MUST_EXIST);
+    $element = $DB->get_record('tool_certificate_elements', array('id' => $id), '*', MUST_EXIST);
     $pageurl = new moodle_url('/mod/customcert/edit_element.php', array('id' => $id, 'tid' => $tid, 'action' => $action));
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
@@ -69,12 +69,12 @@ if ($action == 'edit') {
 
 // Additional page setup.
 if ($template->get_context()->contextlevel == CONTEXT_SYSTEM) {
-    $PAGE->navbar->add(get_string('managetemplates', 'customcert'),
+    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
         new moodle_url('/mod/customcert/manage_templates.php'));
 }
-$PAGE->navbar->add(get_string('editcustomcert', 'customcert'), new moodle_url('/mod/customcert/edit.php',
+$PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'), new moodle_url('/mod/customcert/edit.php',
     array('tid' => $tid)));
-$PAGE->navbar->add(get_string('editelement', 'customcert'));
+$PAGE->navbar->add(get_string('editelement', 'tool_certificate'));
 
 $mform = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
 

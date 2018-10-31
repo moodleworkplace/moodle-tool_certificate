@@ -88,7 +88,7 @@ class template {
 
         \tool_certificate\event\template_updated::create_from_template($savedata)->trigger();
 
-        $DB->update_record('customcert_templates', $savedata);
+        $DB->update_record('tool_certificate_templates', $savedata);
     }
 
     /**
@@ -103,7 +103,7 @@ class template {
         $sequence = 1;
         // Get the max page number.
         $sql = "SELECT MAX(sequence) as maxpage
-                  FROM {customcert_pages} cp
+                  FROM {tool_certificate_pages} cp
                  WHERE cp.templateid = :templateid";
         if ($maxpage = $DB->get_record_sql($sql, array('templateid' => $this->id))) {
             $sequence = $maxpage->maxpage + 1;
@@ -119,7 +119,7 @@ class template {
         $page->timemodified = $page->timecreated;
 
         // Insert the page.
-        return $DB->insert_record('customcert_pages', $page);
+        return $DB->insert_record('tool_certificate_pages', $page);
     }
 
     /**
@@ -134,7 +134,7 @@ class template {
         $time = time();
 
         // Get the existing pages and save the page data.
-        if ($pages = $DB->get_records('customcert_pages', array('templateid' => $data->tid))) {
+        if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $data->tid))) {
             // Loop through existing pages.
             foreach ($pages as $page) {
                 // Get the name of the fields we want from the form.
@@ -151,7 +151,7 @@ class template {
                 $p->rightmargin = $data->$rightmargin;
                 $p->timemodified = $time;
                 // Update the page.
-                $DB->update_record('customcert_pages', $p);
+                $DB->update_record('tool_certificate_pages', $p);
             }
         }
     }
@@ -166,8 +166,8 @@ class template {
 
         // Delete the elements.
         $sql = "SELECT e.*
-                  FROM {customcert_elements} e
-            INNER JOIN {customcert_pages} p
+                  FROM {tool_certificate_elements} e
+            INNER JOIN {tool_certificate_pages} p
                     ON e.pageid = p.id
                  WHERE p.templateid = :templateid";
         if ($elements = $DB->get_records_sql($sql, array('templateid' => $this->id))) {
@@ -177,21 +177,21 @@ class template {
                     $e->delete();
                 } else {
                     // The plugin files are missing, so just remove the entry from the DB.
-                    $DB->delete_records('customcert_elements', array('id' => $element->id));
+                    $DB->delete_records('tool_certificate_elements', array('id' => $element->id));
                 }
             }
         }
 
         // Delete the pages.
-        if (!$DB->delete_records('customcert_pages', array('templateid' => $this->id))) {
+        if (!$DB->delete_records('tool_certificate_pages', array('templateid' => $this->id))) {
             return false;
         }
 
-        $deletedtemplate = $DB->get_record('customcert_templates', ['id' => $this->id]);
+        $deletedtemplate = $DB->get_record('tool_certificate_templates', ['id' => $this->id]);
         \tool_certificate\event\template_deleted::create_from_template($deletedtemplate)->trigger();
 
         // Now, finally delete the actual template.
-        if (!$DB->delete_records('customcert_templates', array('id' => $this->id))) {
+        if (!$DB->delete_records('tool_certificate_templates', array('id' => $this->id))) {
             return false;
         }
 
@@ -207,27 +207,27 @@ class template {
         global $DB;
 
         // Get the page.
-        $page = $DB->get_record('customcert_pages', array('id' => $pageid), '*', MUST_EXIST);
+        $page = $DB->get_record('tool_certificate_pages', array('id' => $pageid), '*', MUST_EXIST);
 
         // Delete this page.
-        $DB->delete_records('customcert_pages', array('id' => $page->id));
+        $DB->delete_records('tool_certificate_pages', array('id' => $page->id));
 
         // The element may have some extra tasks it needs to complete to completely delete itself.
-        if ($elements = $DB->get_records('customcert_elements', array('pageid' => $page->id))) {
+        if ($elements = $DB->get_records('tool_certificate_elements', array('pageid' => $page->id))) {
             foreach ($elements as $element) {
                 // Get an instance of the element class.
                 if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                     $e->delete();
                 } else {
                     // The plugin files are missing, so just remove the entry from the DB.
-                    $DB->delete_records('customcert_elements', array('id' => $element->id));
+                    $DB->delete_records('tool_certificate_elements', array('id' => $element->id));
                 }
             }
         }
 
         // Now we want to decrease the page number values of
         // the pages that are greater than the page we deleted.
-        $sql = "UPDATE {customcert_pages}
+        $sql = "UPDATE {tool_certificate_pages}
                    SET sequence = sequence - 1
                  WHERE templateid = :templateid
                    AND sequence > :sequence";
@@ -243,19 +243,19 @@ class template {
         global $DB;
 
         // Ensure element exists and delete it.
-        $element = $DB->get_record('customcert_elements', array('id' => $elementid), '*', MUST_EXIST);
+        $element = $DB->get_record('tool_certificate_elements', array('id' => $elementid), '*', MUST_EXIST);
 
         // Get an instance of the element class.
         if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
             $e->delete();
         } else {
             // The plugin files are missing, so just remove the entry from the DB.
-            $DB->delete_records('customcert_elements', array('id' => $elementid));
+            $DB->delete_records('tool_certificate_elements', array('id' => $elementid));
         }
 
         // Now we want to decrease the sequence numbers of the elements
         // that are greater than the element we deleted.
-        $sql = "UPDATE {customcert_elements}
+        $sql = "UPDATE {tool_certificate_elements}
                    SET sequence = sequence - 1
                  WHERE pageid = :pageid
                    AND sequence > :sequence";
@@ -282,12 +282,12 @@ class template {
         require_once($CFG->libdir . '/pdflib.php');
 
         // Get the pages for the template, there should always be at least one page for each template.
-        if ($pages = $DB->get_records('customcert_pages', array('templateid' => $this->id), 'sequence ASC')) {
+        if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->id), 'sequence ASC')) {
             // Create the pdf object.
             $pdf = new \pdf();
 
             // If the template belongs to a certificate then we need to check what permissions we set for it.
-            if ($protection = $DB->get_field('customcert', 'protection', array('templateid' => $this->id))) {
+            if ($protection = $DB->get_field('tool_certificate', 'protection', array('templateid' => $this->id))) {
                 if (!empty($protection)) {
                     $protection = explode(', ', $protection);
                     $pdf->SetProtection($protection);
@@ -312,7 +312,7 @@ class template {
                 $pdf->AddPage($orientation, array($page->width, $page->height));
                 $pdf->SetMargins($page->leftmargin, 0, $page->rightmargin);
                 // Get the elements for the page.
-                if ($elements = $DB->get_records('customcert_elements', array('pageid' => $page->id), 'sequence ASC')) {
+                if ($elements = $DB->get_records('tool_certificate_elements', array('pageid' => $page->id), 'sequence ASC')) {
                     // Loop through and display.
                     foreach ($elements as $element) {
                         // Get an instance of the element class.
@@ -338,7 +338,7 @@ class template {
         global $DB;
 
         // Get the pages for the template, there should always be at least one page for each template.
-        if ($templatepages = $DB->get_records('customcert_pages', array('templateid' => $this->id))) {
+        if ($templatepages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->id))) {
             // Loop through the pages.
             foreach ($templatepages as $templatepage) {
                 $page = clone($templatepage);
@@ -346,16 +346,16 @@ class template {
                 $page->timecreated = time();
                 $page->timemodified = $page->timecreated;
                 // Insert into the database.
-                $page->id = $DB->insert_record('customcert_pages', $page);
+                $page->id = $DB->insert_record('tool_certificate_pages', $page);
                 // Now go through the elements we want to load.
-                if ($templateelements = $DB->get_records('customcert_elements', array('pageid' => $templatepage->id))) {
+                if ($templateelements = $DB->get_records('tool_certificate_elements', array('pageid' => $templatepage->id))) {
                     foreach ($templateelements as $templateelement) {
                         $element = clone($templateelement);
                         $element->pageid = $page->id;
                         $element->timecreated = time();
                         $element->timemodified = $element->timecreated;
                         // Ok, now we want to insert this into the database.
-                        $element->id = $DB->insert_record('customcert_elements', $element);
+                        $element->id = $DB->insert_record('tool_certificate_elements', $element);
                         // Load any other information the element may need to for the template.
                         if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
                             if (!$e->copy_element($templateelement)) {
@@ -455,7 +455,7 @@ class template {
     public function get_cm() {
         $context = $this->get_context();
         if ($context->contextlevel === CONTEXT_MODULE) {
-            return get_coursemodule_from_id('customcert', $context->instanceid, 0, false, MUST_EXIST);
+            return get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
         }
 
         return null;
@@ -485,7 +485,7 @@ class template {
         $template->contextid = $contextid;
         $template->timecreated = time();
         $template->timemodified = $template->timecreated;
-        $template->id = $DB->insert_record('customcert_templates', $template);
+        $template->id = $DB->insert_record('tool_certificate_templates', $template);
 
         \tool_certificate\event\template_created::create_from_template($template)->trigger();
 

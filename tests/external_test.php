@@ -56,7 +56,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -70,14 +70,14 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
         $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
 
-        $this->assertEquals(2, $DB->count_records('customcert_issues'));
+        $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
         $result = \tool_certificate\external::delete_issue($customcert->id, $i2);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         external_api::clean_returnvalue(\tool_certificate\external::delete_issue_returns(), $result);
 
-        $issues = $DB->get_records('customcert_issues');
+        $issues = $DB->get_records('tool_certificate_issues');
         $this->assertCount(1, $issues);
 
         $issue = reset($issues);
@@ -94,7 +94,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -108,7 +108,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
         $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
 
-        $this->assertEquals(2, $DB->count_records('customcert_issues'));
+        $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
         // Try and delete without logging in.
         $this->expectException('require_login_exception');
@@ -125,7 +125,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -141,7 +141,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
         $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
 
-        $this->assertEquals(2, $DB->count_records('customcert_issues'));
+        $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
         // Try and delete without the required capability.
         $this->expectException('required_capability_exception');

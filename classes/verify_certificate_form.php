@@ -43,10 +43,10 @@ class verify_certificate_form extends \moodleform {
     public function definition() {
         $mform =& $this->_form;
 
-        $mform->addElement('text', 'code', get_string('code', 'customcert'));
+        $mform->addElement('text', 'code', get_string('code', 'tool_certificate'));
         $mform->setType('code', PARAM_ALPHANUM);
 
-        $mform->addElement('submit', 'verify', get_string('verify', 'customcert'));
+        $mform->addElement('submit', 'verify', get_string('verify', 'tool_certificate'));
     }
 
     /**
@@ -60,7 +60,7 @@ class verify_certificate_form extends \moodleform {
         $errors = array();
 
         if ($data['code'] === '') {
-            $errors['code'] = get_string('invalidcode', 'customcert');
+            $errors['code'] = get_string('invalidcode', 'tool_certificate');
         }
 
         return $errors;

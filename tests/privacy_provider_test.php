@@ -44,10 +44,10 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $course = $this->getDataGenerator()->create_course();
 
         // The customcert activity the user will have an issue from.
-        $customcert = $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
 
         // Another customcert activity that has no issued certificates.
-        $this->getDataGenerator()->create_module('customcert', ['course' => $course->id]);
+        $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
 
         // Create a user who will be issued a certificate.
         $user = $this->getDataGenerator()->create_user();
@@ -72,7 +72,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $customcert = $this->getDataGenerator()->create_module('customcert', array('course' => $course->id));
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -110,8 +110,8 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $customcert = $this->getDataGenerator()->create_module('customcert', array('course' => $course->id));
-        $customcert2 = $this->getDataGenerator()->create_module('customcert', array('course' => $course->id));
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
+        $customcert2 = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -124,7 +124,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $this->create_certificate_issue($customcert2->id, $user2->id);
 
         // Before deletion, we should have 2 issued certificates for the first certificate.
-        $count = $DB->count_records('customcert_issues', ['customcertid' => $customcert->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id]);
         $this->assertEquals(2, $count);
 
         // Delete data based on context.
@@ -132,11 +132,11 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         provider::delete_data_for_all_users_in_context($cmcontext);
 
         // After deletion, the issued certificates for the activity should have been deleted.
-        $count = $DB->count_records('customcert_issues', ['customcertid' => $customcert->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id]);
         $this->assertEquals(0, $count);
 
         // We should still have the issues for the second certificate.
-        $count = $DB->count_records('customcert_issues', ['customcertid' => $customcert2->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert2->id]);
         $this->assertEquals(2, $count);
     }
 
@@ -150,7 +150,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $customcert = $this->getDataGenerator()->create_module('customcert', array('course' => $course->id));
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -160,20 +160,20 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $this->create_certificate_issue($customcert->id, $user2->id);
 
         // Before deletion we should have 2 issued certificates.
-        $count = $DB->count_records('customcert_issues', ['customcertid' => $customcert->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id]);
         $this->assertEquals(2, $count);
 
         $context = \context_module::instance($customcert->cmid);
-        $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'customcert',
+        $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'tool_certificate',
             [$context->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, the issued certificates for the first user should have been deleted.
-        $count = $DB->count_records('customcert_issues', ['customcertid' => $customcert->id, 'userid' => $user1->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id, 'userid' => $user1->id]);
         $this->assertEquals(0, $count);
 
         // Check the issue for the other user is still there.
-        $customcertissue = $DB->get_records('customcert_issues');
+        $customcertissue = $DB->get_records('tool_certificate_issues');
         $this->assertCount(1, $customcertissue);
         $lastissue = reset($customcertissue);
         $this->assertEquals($user2->id, $lastissue->userid);
@@ -200,7 +200,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $customcertissue->timecreated = time() + $i;
 
         // Insert the record into the database.
-        $DB->insert_record('customcert_issues', $customcertissue);
+        $DB->insert_record('tool_certificate_issues', $customcertissue);
 
         $i++;
     }

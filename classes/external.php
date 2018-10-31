@@ -74,8 +74,8 @@ class external extends \external_api {
         );
         self::validate_parameters(self::save_element_parameters(), $params);
 
-        $template = $DB->get_record('customcert_templates', array('id' => $templateid), '*', MUST_EXIST);
-        $element = $DB->get_record('customcert_elements', array('id' => $elementid), '*', MUST_EXIST);
+        $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
+        $element = $DB->get_record('tool_certificate_elements', array('id' => $elementid), '*', MUST_EXIST);
 
         // Set the template.
         $template = new \tool_certificate\template($template);
@@ -145,8 +145,8 @@ class external extends \external_api {
         );
         self::validate_parameters(self::get_element_html_parameters(), $params);
 
-        $template = $DB->get_record('customcert_templates', array('id' => $templateid), '*', MUST_EXIST);
-        $element = $DB->get_record('customcert_elements', array('id' => $elementid), '*', MUST_EXIST);
+        $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
+        $element = $DB->get_record('tool_certificate_elements', array('id' => $elementid), '*', MUST_EXIST);
 
         // Set the template.
         $template = new \tool_certificate\template($template);
@@ -205,10 +205,10 @@ class external extends \external_api {
         ];
         self::validate_parameters(self::delete_issue_parameters(), $params);
 
-        $certificate = $DB->get_record('customcert', ['id' => $certificateid], '*', MUST_EXIST);
-        $issue = $DB->get_record('customcert_issues', ['id' => $issueid, 'customcertid' => $certificateid], '*', MUST_EXIST);
+        $certificate = $DB->get_record('tool_certificate', ['id' => $certificateid], '*', MUST_EXIST);
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid, 'customcertid' => $certificateid], '*', MUST_EXIST);
 
-        $cm = get_coursemodule_from_instance('customcert', $certificate->id, 0, false, MUST_EXIST);
+        $cm = get_coursemodule_from_instance('tool_certificate', $certificate->id, 0, false, MUST_EXIST);
 
         // Make sure the user has the required capabilities.
         $context = \context_module::instance($cm->id);
@@ -216,7 +216,7 @@ class external extends \external_api {
         require_capability('mod/customcert:manage', $context);
 
         // Delete the issue.
-        return $DB->delete_records('customcert_issues', ['id' => $issue->id]);
+        return $DB->delete_records('tool_certificate_issues', ['id' => $issue->id]);
     }
 
     /**

@@ -37,7 +37,7 @@ if ($action) {
 }
 
 if ($tid) {
-    $template = $DB->get_record('customcert_templates', array('id' => $tid), '*', MUST_EXIST);
+    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
 }
 
@@ -55,10 +55,10 @@ $pageurl = new moodle_url('/mod/customcert/manage_templates.php');
 
 // Additional page setup.
 if ($tid && $action && confirm_sesskey()) {
-    $PAGE->navbar->add(get_string('managetemplates', 'customcert'),
+    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
         new moodle_url('/mod/customcert/manage_templates.php'));
 } else {
-    $PAGE->navbar->add(get_string('managetemplates', 'customcert'));
+    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'));
 }
 
 if ($tid) {
@@ -77,8 +77,8 @@ if ($tid) {
         if ($action == 'delete') {
             if (!$confirm) {
                 // Show a confirmation page.
-                $PAGE->navbar->add(get_string('deleteconfirm', 'customcert'));
-                $message = get_string('deletetemplateconfirm', 'customcert');
+                $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
+                $message = get_string('deletetemplateconfirm', 'tool_certificate');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading($heading);
                 echo $OUTPUT->confirm($message, $yesurl, $nourl);
@@ -94,8 +94,8 @@ if ($tid) {
         } else if ($action == 'duplicate') {
             if (!$confirm) {
                 // Show a confirmation page.
-                $PAGE->navbar->add(get_string('duplicateconfirm', 'customcert'));
-                $message = get_string('duplicatetemplateconfirm', 'customcert');
+                $PAGE->navbar->add(get_string('duplicateconfirm', 'tool_certificate'));
+                $message = get_string('duplicatetemplateconfirm', 'tool_certificate');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading($heading);
                 echo $OUTPUT->confirm($message, $yesurl, $nourl);
@@ -105,11 +105,11 @@ if ($tid) {
 
             // Create another template to copy the data to.
             $newtemplate = new \stdClass();
-            $newtemplate->name = $template->get_name() . ' (' . strtolower(get_string('duplicate', 'customcert')) . ')';
+            $newtemplate->name = $template->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
             $newtemplate->contextid = $template->get_contextid();
             $newtemplate->timecreated = time();
             $newtemplate->timemodified = $newtemplate->timecreated;
-            $newtemplateid = $DB->insert_record('customcert_templates', $newtemplate);
+            $newtemplateid = $DB->insert_record('tool_certificate_templates', $newtemplate);
 
             // Copy the data to the new template.
             $template->copy_to_template($newtemplateid);
@@ -127,5 +127,5 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 $table->out($perpage, false);
 $url = new moodle_url('/mod/customcert/edit.php?contextid=' . $contextid);
-echo $OUTPUT->single_button($url, get_string('createtemplate', 'customcert'), 'get');
+echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
 echo $OUTPUT->footer();

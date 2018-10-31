@@ -67,14 +67,14 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $this->getDataGenerator()->enrol_user($user3->id, $course->id, $roleids['editingteacher']);
 
         // Create a custom certificate.
-        $customcert = $this->getDataGenerator()->create_module('customcert', array('course' => $course->id,
+        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id,
             'emailstudents' => 1));
 
         // Ok, now issue this to one user.
         \tool_certificate\certificate::issue_certificate($customcert->id, $user1->id);
 
         // Confirm there is only one entry in this table.
-        $this->assertEquals(1, $DB->count_records('customcert_issues'));
+        $this->assertEquals(1, $DB->count_records('tool_certificate_issues'));
 
         // Run the task.
         $sink = $this->redirectEmails();
@@ -83,7 +83,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $emails = $sink->get_messages();
 
         // Get the issues from the issues table now.
-        $issues = $DB->get_records('customcert_issues');
+        $issues = $DB->get_records('tool_certificate_issues');
         $this->assertCount(2, $issues);
 
         // Confirm that it was marked as emailed and was not issued to the teacher.
@@ -109,7 +109,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $task->execute();
         $emails = $sink->get_messages();
 
-        $issues = $DB->get_records('customcert_issues');
+        $issues = $DB->get_records('tool_certificate_issues');
 
         $this->assertCount(2, $issues);
         $this->assertCount(0, $emails);
@@ -138,7 +138,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $this->getDataGenerator()->enrol_user($user3->id, $course->id, $roleids['editingteacher']);
 
         // Create a custom certificate.
-        $this->getDataGenerator()->create_module('customcert', array('course' => $course->id,
+        $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id,
             'emailteachers' => 1));
 
         // Run the task.
@@ -177,7 +177,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $this->getDataGenerator()->enrol_user($user2->id, $course->id);
 
         // Create a custom certificate.
-        $this->getDataGenerator()->create_module('customcert', array('course' => $course->id,
+        $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id,
             'emailothers' => 'testcustomcert@example.com, doo@dah'));
 
         // Run the task.
@@ -215,7 +215,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $this->getDataGenerator()->enrol_user($user1->id, $course->id);
 
         // Create a custom certificate.
-        $this->getDataGenerator()->create_module('customcert', array('course' => $course->id, 'emailstudents' => 1));
+        $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id, 'emailstudents' => 1));
 
         // Remove the permission for the user to view the certificate.
         assign_capability('mod/customcert:view', CAP_PROHIBIT, $roleids['student'], \context_course::instance($course->id));
@@ -227,7 +227,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $emails = $sink->get_messages();
 
         // Confirm there are no issues as the user did not have permissions to view it.
-        $issues = $DB->get_records('customcert_issues');
+        $issues = $DB->get_records('tool_certificate_issues');
         $this->assertCount(0, $issues);
 
         // Confirm no emails were sent.
@@ -253,7 +253,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $this->getDataGenerator()->enrol_user($user1->id, $course->id);
 
         // Create a custom certificate.
-        $this->getDataGenerator()->create_module('customcert', array('course' => $course->id, 'emailstudents' => 1,
+        $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id, 'emailstudents' => 1,
             'requiredtime' => '60'));
 
         // Run the task.
@@ -263,7 +263,7 @@ class tool_certificate_task_email_certificate_task_testcase extends advanced_tes
         $emails = $sink->get_messages();
 
         // Confirm there are no issues as the user did not meet the required time.
-        $issues = $DB->get_records('customcert_issues');
+        $issues = $DB->get_records('tool_certificate_issues');
         $this->assertCount(0, $issues);
 
         // Confirm no emails were sent.

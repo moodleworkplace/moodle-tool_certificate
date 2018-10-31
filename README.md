@@ -28,7 +28,7 @@ Use `git pull` to update this repository periodically to ensure you have the mos
 
 ### Download the zip
 
-Visit the [Moodle plugins website](https://moodle.org/plugins/tool_certificate "Moodle plugins website") and download the zip corresponding to the version of Moodle you are using. Extract the zip and place the 'customcert' folder in the mod folder in your Moodle directory.
+Visit the [Moodle plugins website](https://moodle.org/plugins/tool_certificate "Moodle plugins website") and download the zip corresponding to the version of Moodle you are using. Extract the zip and place the 'tool_certificate' folder in the mod folder in your Moodle directory.
 
 ## More information
 
