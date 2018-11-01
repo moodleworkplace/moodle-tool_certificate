@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../../config.php');
 
 $action = optional_param('action', null, PARAM_PLUGIN);
 $plugin = optional_param('plugin', null, PARAM_PLUGIN);
@@ -30,8 +30,6 @@ $plugin = optional_param('plugin', null, PARAM_PLUGIN);
 if (!empty($plugin)) {
     require_sesskey();
 }
-
-$subtype = 'element';
 
 $pluginmanager = new \tool_certificate\plugin_manager();
 
