@@ -72,6 +72,9 @@ class certificates_table extends \table_sql {
         if (!$this->is_downloading()) {
             $columns[] = 'download';
             $headers[] = get_string('file');
+
+            $columns[] = 'revoke';
+            $headers[] = get_string('revoke', 'tool_certificate');
         }
 
         $this->define_columns($columns);
@@ -80,6 +83,7 @@ class certificates_table extends \table_sql {
         $this->sortable(true);
         $this->no_sorting('code');
         $this->no_sorting('download');
+        $this->no_sorting('revoke');
         $this->is_downloadable(true);
 
         $this->templateid = $templateid;
@@ -142,6 +146,25 @@ class certificates_table extends \table_sql {
             array('templateid' => $this->templateid,
                   'userid' => $issue->userid,
                   'downloadcert' => '1'));
+
+        return $OUTPUT->action_link($link, '', null, null, $icon);
+    }
+
+    /**
+     * Generate the revoke column.
+     *
+     * @param \stdClass $certificate
+     * @return string
+     */
+    public function col_revoke($issue) {
+        global $OUTPUT;
+
+        $icon = new \pix_icon('remove', get_string('revoke', 'tool_certificate'), 'tool_certificate');
+        $link = new \moodle_url('/admin/tool/certificate/certificates.php',
+            array('issueid' => $issue->id,
+                  'templateid' => $issue->templateid,
+                  'sesskey' => sesskey(),
+                  'revokecert' => '1'));
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }

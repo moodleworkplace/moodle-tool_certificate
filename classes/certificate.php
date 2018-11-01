@@ -302,7 +302,7 @@ class certificate {
 
         $conditions = [];
 
-        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid,
+        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid,
                        t.name, ' .
                        get_all_user_name_fields(true, 'u') . '
                   FROM {tool_certificate_templates} t
@@ -515,5 +515,12 @@ class certificate {
      */
     public static function get_context($certificateid) {
         return \context_module::instance(get_coursemodule_from_instance('tool_certificate', $certificateid)->id);
+    }
+
+    public static function revoke_issue($issueid) {
+        global $DB;
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid]);
+        \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+        return $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
     }
 }
