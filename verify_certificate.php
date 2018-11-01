@@ -122,7 +122,7 @@ if (isset($result)) {
     $renderer = $PAGE->get_renderer('tool_certificate');
     if ($result->success) {
         foreach ($result->issues as $issue) {
-            //\tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
+            \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
         }
     }
     $result = new \tool_certificate\output\verify_certificate_results($result);
