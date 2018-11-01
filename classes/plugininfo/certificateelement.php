@@ -42,7 +42,7 @@ class certificateelement extends base {
      * @return bool
      */
     public function is_uninstall_allowed() {
-        return false;
+        return true;
     }
 
     /**
@@ -83,5 +83,17 @@ class certificateelement extends base {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Return true if a plugin is enabled.
+     *
+     * @return bool
+     */
+    public function is_enabled() {
+        if ($disabled = get_config('customcertelement_' . $this->name, 'disabled')) {
+            return $disabled == 0;
+        }
+        return true;
     }
 }

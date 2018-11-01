@@ -69,7 +69,7 @@ class certificate_issued extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The certificate issue with id '$this->objectid' has been created for user with id '$this->userid'.";
+        return "The certificate issue with id '$this->objectid' has been created for user with id '$this->relateduserid'.";
     }
 
     /**
@@ -78,7 +78,7 @@ class certificate_issued extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatecreated', 'tool_certificate');
+        return get_string('eventcertificateissued', 'tool_certificate');
     }
 
     /**
@@ -87,6 +87,6 @@ class certificate_issued extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $this->objectid));
+        return new \moodle_url('/mod/customcert/view.php', array('id' => $this->contextinstanceid, 'downloadissue' => $this->objectid));
     }
 }

@@ -62,7 +62,7 @@ class certificate_revoked extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatecreated', 'tool_certificate');
+        return get_string('eventcertificaterevoked', 'tool_certificate');
     }
 
     /**
@@ -71,7 +71,7 @@ class certificate_revoked extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $this->objectid));
+        return new \moodle_url('/mod/customcert/view.php', array('id' => $this->contextinstanceid, 'deleteissue' => $this->objectid));
     }
 
     /**

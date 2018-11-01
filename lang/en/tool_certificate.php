@@ -75,7 +75,12 @@ $string['emailteachers'] = 'Email teachers';
 $string['emailteachers_help'] = 'If set this will email the teachers a copy of the certificate when it becomes available.';
 $string['emailothers'] = 'Email others';
 $string['emailothers_help'] = 'If set this will email the email addresses listed here (separated by a comma) with a copy of the certificate when it becomes available.';
+$string['eventcertificateissued'] = 'Certificate issued';
+$string['eventcertificaterevoked'] = 'Certificate revoked';
+$string['eventcertificateverified'] = 'Certificate verified';
 $string['eventtemplatecreated'] = 'Template created';
+$string['eventtemplatedeleted'] = 'Template deleted';
+$string['eventtemplateupdated'] = 'Template updated';
 $string['font'] = 'Font';
 $string['font_help'] = 'The font used when generating this element.';
 $string['fontcolour'] = 'Colour';
@@ -161,6 +166,7 @@ $string['showposxy'] = 'Show position X and Y';
 $string['showposxy_desc'] = 'This will show the X and Y position when editing of an element, allowing the user to accurately specify the location.
 
 This isn\'t required if you plan on solely using the drag and drop interface for this purpose.';
+$string['subplugintype_customcertelement_plural'] = 'Element plugins';
 $string['taskemailcertificate'] = 'Handles emailing certificates.';
 $string['templatename'] = 'Template name';
 $string['templatenameexists'] = 'That template name is currently in use, please choose another.';
