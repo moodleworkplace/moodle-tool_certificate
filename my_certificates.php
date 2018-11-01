@@ -28,8 +28,7 @@ $userid = optional_param('userid', $USER->id, PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
 $downloadcert = optional_param('downloadcert', '', PARAM_BOOL);
 if ($downloadcert) {
-    $certificateid = required_param('certificateid', PARAM_INT);
-    $customcert = $DB->get_record('tool_certificate', array('id' => $certificateid), '*', MUST_EXIST);
+    $templateid = required_param('tid', PARAM_INT);
 }
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
@@ -49,7 +48,7 @@ if (($userid != $USER->id) && !has_capability('tool/certificate:viewallcertifica
 
 // Check if we requested to download a certificate.
 if ($downloadcert) {
-    $template = $DB->get_record('tool_certificate_templates', array('id' => $customcert->templateid), '*', MUST_EXIST);
+    $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
     $template->generate_pdf(false, $userid);
     exit();

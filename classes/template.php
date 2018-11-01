@@ -286,14 +286,6 @@ class template {
             // Create the pdf object.
             $pdf = new \pdf();
 
-            // If the template belongs to a certificate then we need to check what permissions we set for it.
-            if ($protection = $DB->get_field('tool_certificate', 'protection', array('templateid' => $this->id))) {
-                if (!empty($protection)) {
-                    $protection = explode(', ', $protection);
-                    $pdf->SetProtection($protection);
-                }
-            }
-
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
             $pdf->SetTitle($this->name);

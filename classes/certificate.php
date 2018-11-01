@@ -383,9 +383,7 @@ class certificate {
         global $DB;
 
         $sql = "SELECT COUNT(*)
-                  FROM {customcert} c
-            INNER JOIN {tool_certificate_issues} ci
-                    ON c.id = ci.customcertid
+                  FROM {tool_certificate_issues} ci
                  WHERE ci.userid = :userid";
         return $DB->count_records_sql($sql, array('userid' => $userid));
     }
@@ -406,12 +404,10 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $sql = "SELECT c.id, c.name, co.fullname as coursename, ci.code, ci.timecreated
-                  FROM {customcert} c
+        $sql = "SELECT t.id, t.name, ci.code, ci.timecreated
+                  FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
-                    ON c.id = ci.customcertid
-            INNER JOIN {course} co
-                    ON c.course = co.id
+                    ON t.id = ci.templateid
                  WHERE ci.userid = :userid
               ORDER BY $sort";
         return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);

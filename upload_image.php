@@ -41,7 +41,7 @@ $PAGE->navbar->add($struploadimage);
 $uploadform = new \tool_certificate\upload_image_form();
 
 if ($uploadform->is_cancelled()) {
-    redirect(new moodle_url('/admin/settings.php?section=modsettingcustomcert'));
+    redirect(new moodle_url('/admin/settings.php?section=toolcertificatemanagetemplates'));
 } else if ($data = $uploadform->get_data()) {
     // Handle file uploads.
     \tool_certificate\certificate::upload_files($data->customcertimage, $context->id);

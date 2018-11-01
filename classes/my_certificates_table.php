@@ -55,13 +55,11 @@ class my_certificates_table extends \table_sql {
 
         $columns = array(
             'name',
-            'coursename',
             'timecreated',
             'code'
         );
         $headers = array(
             get_string('name'),
-            get_string('course'),
             get_string('receiveddate', 'tool_certificate'),
             get_string('code', 'tool_certificate')
         );
@@ -94,23 +92,9 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_name($certificate) {
-        $cm = get_coursemodule_from_instance('tool_certificate', $certificate->id);
-        $context = \context_module::instance($cm->id);
+        $context = \context_system::instance(); // TODO template context?
 
         return format_string($certificate->name, true, ['context' => $context]);
-    }
-
-    /**
-     * Generate the course name column.
-     *
-     * @param \stdClass $certificate
-     * @return string
-     */
-    public function col_coursename($certificate) {
-        $cm = get_coursemodule_from_instance('tool_certificate', $certificate->id);
-        $context = \context_module::instance($cm->id);
-
-        return format_string($certificate->coursename, true, ['context' => $context]);
     }
 
     /**
@@ -145,7 +129,7 @@ class my_certificates_table extends \table_sql {
         $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
         $link = new \moodle_url('/admin/tool/certificate/my_certificates.php',
             array('userid' => $this->userid,
-                  'certificateid' => $certificate->id,
+                  'tid' => $certificate->id,
                   'downloadcert' => '1'));
 
         return $OUTPUT->action_link($link, '', null, null, $icon);

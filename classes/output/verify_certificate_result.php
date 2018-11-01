@@ -49,16 +49,6 @@ class verify_certificate_result implements templatable, renderable {
     public $userfullname;
 
     /**
-     * @var string The URL to the course page.
-     */
-    public $courseurl;
-
-    /**
-     * @var string The course's fullname.
-     */
-    public $coursefullname;
-
-    /**
      * @var string The certificate's name.
      */
     public $certificatename;
@@ -69,15 +59,10 @@ class verify_certificate_result implements templatable, renderable {
      * @param \stdClass $result
      */
     public function __construct($result) {
-        $cm = get_coursemodule_from_instance('tool_certificate', $result->certificateid);
-        $context = \context_module::instance($cm->id);
+        $context = \context_system::instance(); // TODO template context?
 
-        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $result->userid,
-            'course' => $result->courseid));
+        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $result->userid));
         $this->userfullname = fullname($result);
-        $this->courseurl = new \moodle_url('/course/view.php', array('id' => $result->courseid));
-        $this->coursefullname = format_string($result->coursefullname, true, ['context' => $context]);
-        $this->certificatename = format_string($result->certificatename, true, ['context' => $context]);
     }
 
     /**
@@ -90,8 +75,6 @@ class verify_certificate_result implements templatable, renderable {
         $result = new \stdClass();
         $result->userprofileurl = $this->userprofileurl;
         $result->userfullname = $this->userfullname;
-        $result->coursefullname = $this->coursefullname;
-        $result->courseurl = $this->courseurl;
         $result->certificatename = $this->certificatename;
 
         return $result;

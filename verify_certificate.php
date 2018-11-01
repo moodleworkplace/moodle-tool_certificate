@@ -93,34 +93,20 @@ if ($form->get_data()) {
 
     // Ok, now check if the code is valid.
     $userfields = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT ci.id, ci.customcertid, ci.code, ci.emailed, ci.timecreated,
-                   u.id as userid, $userfields, co.id as courseid,
-                   co.fullname as coursefullname, c.id as certificateid,
-                   c.name as certificatename, c.verifyany
-              FROM {customcert} c
+    $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
+                   u.id as userid, $userfields,
+                   t.name as certificatename
+              FROM {tool_certificate_templates} t
               JOIN {tool_certificate_issues} ci
-                ON c.id = ci.customcertid
-              JOIN {course} co
-                ON c.course = co.id
+                ON t.id = ci.templateid
               JOIN {user} u
                 ON ci.userid = u.id
              WHERE ci.code = :code";
 
-    if ($checkallofsite) {
-        // Only people with the capability to verify all the certificates can verify any.
-        if (!$canverifyallcertificates) {
-            $sql .= " AND c.verifyany = 1";
-        }
-        $params = ['code' => $code];
-    } else {
-        $sql .= " AND c.id = :customcertid";
-        $params = ['code' => $code, 'customcertid' => $customcert->id];
-    }
-
     $sql .= " AND u.deleted = 0";
 
     // It is possible (though unlikely) that there is the same code for issued certificates.
-    if ($issues = $DB->get_records_sql($sql, $params)) {
+    if ($issues = $DB->get_records_sql($sql, ['code' => $code])) {
         $result->success = true;
         $result->issues = $issues;
     } else {
@@ -136,7 +122,7 @@ if (isset($result)) {
     $renderer = $PAGE->get_renderer('tool_certificate');
     if ($result->success) {
         foreach ($result->issues as $issue) {
-            \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
+            //\tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
         }
     }
     $result = new \tool_certificate\output\verify_certificate_results($result);

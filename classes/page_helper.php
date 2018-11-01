@@ -56,7 +56,7 @@ class page_helper {
             $PAGE->set_pagelayout('admin');
             $PAGE->set_heading($SITE->fullname);
 
-            $urloverride = new \moodle_url('/admin/settings.php?section=modsettingcustomcert');
+            $urloverride = new \moodle_url('/admin/settings.php?section=toolcertificatemanagetemplates');
             \navigation_node::override_active_url($urloverride);
         } else {
             $PAGE->set_heading(format_string($COURSE->fullname));
