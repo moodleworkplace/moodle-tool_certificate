@@ -26,10 +26,16 @@ require_once('../../../config.php');
 
 $templateid = required_param('templateid', PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
-$downloadcert = optional_param('downloadcert', '', PARAM_BOOL);
+$downloadcert = optional_param('downloadcert', false, PARAM_BOOL);
+$revokecert = optional_param('revokecert', false, PARAM_BOOL);
 if ($downloadcert) {
     $userid = required_param('userid', PARAM_INT);
 }
+if ($revokecert) {
+    $issueid = required_param('issueid', PARAM_INT);
+}
+
+$confirm = optional_param('confirm', 0, PARAM_INT);
 
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
@@ -65,8 +71,32 @@ $PAGE->set_pagelayout('standard');
 
 $PAGE->navbar->add(get_string('mycertificates', 'tool_certificate'));
 
+$heading = get_string('certificates', 'tool_certificate');
+
+if ($revokecert && confirm_sesskey()) {
+    $nourl = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
+    $yesurl = new moodle_url('/admin/tool/certificate/certificates.php',
+        array('templateid' => $templateid, 'revokecert' => 1, 'issueid' => $issueid, 'confirm' => 1, 'sesskey' => sesskey()));
+
+    if (!$confirm) {
+        // Show a confirmation page.
+        $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
+        $message = get_string('revokecertificateconfirm', 'tool_certificate');
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading($heading);
+        echo $OUTPUT->confirm($message, $yesurl, $nourl);
+        echo $OUTPUT->footer();
+        exit();
+    }
+    // Delete the template.
+    \tool_certificate\certificate::revoke_issue($issueid);
+
+    // Redirect back to the manage templates page.
+    redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
+}
+
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('certificates', 'tool_certificate'));
+echo $OUTPUT->heading($heading);
 echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template));
 $table->out($perpage, false);
 echo $OUTPUT->footer();
