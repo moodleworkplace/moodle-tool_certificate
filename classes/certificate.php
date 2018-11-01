@@ -278,6 +278,49 @@ class certificate {
     }
 
     /**
+     * Returns the total number of issues for a given template.
+     *
+     * @param int $templateid
+     * @return int the number of issues
+     */
+    public static function get_number_of_issues_for_template($templateid) {
+        global $DB;
+        if ($templateid > 0) {
+            $conditions = ['templateid' => $templateid];
+        } else  {
+            $conditions = [];
+        }
+        return $DB->count_records('tool_certificate_issues', $conditions);
+    }
+
+    public static function get_issues_for_template($templateid, $limitfrom, $limitnum, $sort = '') {
+        global $DB;
+
+        if (empty($sort)) {
+            $sort = 'ci.timecreated DESC';
+        }
+
+        $conditions = [];
+
+        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid,
+                       t.name, ' .
+                       get_all_user_name_fields(true, 'u') . '
+                  FROM {tool_certificate_templates} t
+                  JOIN {tool_certificate_issues} ci
+                    ON (ci.templateid = t.id)
+                  JOIN {user} u
+                    ON (u.id = ci.userid)';
+
+        if ($templateid > 0) {
+            $sql .= " WHERE t.id = :templateid";
+            $conditions['templateid'] = $templateid;
+        }
+
+        $sql .= " ORDER BY {$sort}";
+        return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
+    }
+
+    /**
      * Returns the total number of issues for a given customcert.
      *
      * @param int $customcertid
@@ -382,9 +425,14 @@ class certificate {
     public static function get_number_of_certificates_for_user($userid) {
         global $DB;
 
-        $sql = "SELECT COUNT(*)
-                  FROM {tool_certificate_issues} ci
-                 WHERE ci.userid = :userid";
+        if ($userid == 0) {
+            $sql = "SELECT COUNT(*)
+                      FROM {tool_certificate_templates} t
+                INNER JOIN {tool_certificate_issues} ci
+                        ON t.id = ci.templateid";
+            return $DB->count_records_sql($sql);
+        }
+        $sql .= " WHERE ci.userid = :userid";
         return $DB->count_records_sql($sql, array('userid' => $userid));
     }
 
@@ -410,7 +458,7 @@ class certificate {
                     ON t.id = ci.templateid
                  WHERE ci.userid = :userid
               ORDER BY $sort";
-        return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);
+            return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);
     }
 
     /**
