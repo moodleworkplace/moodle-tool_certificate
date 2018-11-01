@@ -131,7 +131,7 @@ function tool_certificate_extend_settings_navigation(settings_navigation $settin
  */
 function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     $url = new moodle_url('/admin/tool/certificate/my_certificates.php', array('userid' => $user->id));
-    $node = new core_user\output\myprofile\node('miscellaneous', 'mycustomcerts',
+    $node = new core_user\output\myprofile\node('miscellaneous', 'toolcertificatemy',
         get_string('mycertificates', 'tool_certificate'), null, $url);
     $tree->add_node($node);
 }
