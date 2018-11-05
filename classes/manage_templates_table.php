@@ -105,7 +105,7 @@ class manage_templates_table extends \table_sql {
         $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
         $issuesicon = $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', get_string('certificatesissued', 'tool_certificate')));
 
-        $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('tid' => $template->id));
+        $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
         $newissueicon = $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', get_string('issuenewcertificate', 'tool_certificate')));
 
         // Link to delete the template.

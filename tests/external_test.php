@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
  * Unit tests for the webservices.
  *
@@ -55,8 +53,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
-        // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
+        // Create a certificate template.
+        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -67,12 +65,12 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
+        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
+        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
-        $result = \tool_certificate\external::delete_issue($customcert->id, $i2);
+        $result = \tool_certificate\external::delete_issue($i2);
 
         // We need to execute the return values cleaning process to simulate the web service server.
         external_api::clean_returnvalue(\tool_certificate\external::delete_issue_returns(), $result);
@@ -93,8 +91,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
-        // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
+        // Create a certificate template.
+        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -105,14 +103,14 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
+        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
+        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
         // Try and delete without logging in.
         $this->expectException('require_login_exception');
-        \tool_certificate\external::delete_issue($customcert->id, $i2);
+        \tool_certificate\external::delete_issue($i2);
     }
 
     /**
@@ -124,8 +122,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
-        // Create a custom certificate in the course.
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
+        // Create a certificate template.
+        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -138,13 +136,13 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($customcert->id, $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($customcert->id, $student2->id);
+        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
+        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
         // Try and delete without the required capability.
         $this->expectException('required_capability_exception');
-        \tool_certificate\external::delete_issue($customcert->id, $i2);
+        \tool_certificate\external::delete_issue($i2);
     }
 }

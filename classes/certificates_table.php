@@ -54,13 +54,11 @@ class certificates_table extends \table_sql {
         $columns = array(
             'userfullname',
             'code',
-            'emailed',
             'timecreated',
         );
         $headers = array(
             get_string('fullname'),
             get_string('code', 'tool_certificate'),
-            get_string('emailed', 'tool_certificate'),
             get_string('receiveddate', 'tool_certificate'),
         );
 
@@ -97,19 +95,6 @@ class certificates_table extends \table_sql {
      */
     public function col_userfullname($issue) {
         return fullname($issue);
-    }
-
-    /**
-     * Generate the emailed column.
-     *
-     * @param \stdClass $certificate
-     * @return string
-     */
-    public function col_emailed($issue) {
-        if ($issue->emailed) {
-            return get_string('yes');
-        }
-        return get_string('no');
     }
 
     /**

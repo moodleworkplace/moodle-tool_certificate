@@ -183,7 +183,6 @@ class external extends \external_api {
     public static function delete_issue_parameters() {
         return new \external_function_parameters(
             array(
-                'certificateid' => new \external_value(PARAM_INT, 'The certificate id'),
                 'issueid' => new \external_value(PARAM_INT, 'The issue id'),
             )
         );
@@ -196,22 +195,16 @@ class external extends \external_api {
      * @param int $issueid The issue id.
      * @return bool
      */
-    public static function delete_issue($certificateid, $issueid) {
+    public static function delete_issue($issueid) {
         global $DB;
 
-        $params = [
-            'certificateid' => $certificateid,
-            'issueid' => $issueid
-        ];
+        $params = ['issueid' => $issueid];
         self::validate_parameters(self::delete_issue_parameters(), $params);
 
-        $certificate = $DB->get_record('tool_certificate', ['id' => $certificateid], '*', MUST_EXIST);
-        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid, 'customcertid' => $certificateid], '*', MUST_EXIST);
-
-        $cm = get_coursemodule_from_instance('tool_certificate', $certificate->id, 0, false, MUST_EXIST);
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid], '*', MUST_EXIST);
 
         // Make sure the user has the required capabilities.
-        $context = \context_module::instance($cm->id);
+        $context = \context_system::instance();
         self::validate_context($context);
         require_capability('tool/certificate:manage', $context);
 
