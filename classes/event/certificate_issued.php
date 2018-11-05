@@ -54,7 +54,7 @@ class certificate_issued extends \core\event\base {
      */
     public static function create_from_issue(\stdClass $issue) {
         $data = array(
-            'context' => \tool_certificate\certificate::get_context($issue->customcertid),
+            'context' => \context_system::instance(),
             'objectid' => $issue->id,
             'relateduserid' => $issue->userid
         );

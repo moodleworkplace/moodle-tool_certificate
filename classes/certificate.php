@@ -464,16 +464,16 @@ class certificate {
     /**
      * Issues a certificate to a user.
      *
-     * @param int $certificateid The ID of the certificate
+     * @param int $certificateid The ID of the template
      * @param int $userid The ID of the user to issue the certificate to
      * @return int The ID of the issue
      */
-    public static function issue_certificate($certificateid, $userid) {
+    public static function issue_certificate($templateid, $userid) {
         global $DB;
 
         $issue = new \stdClass();
         $issue->userid = $userid;
-        $issue->customcertid = $certificateid;
+        $issue->templateid = $templateid;
         $issue->code = self::generate_code();
         $issue->emailed = 0;
         $issue->timecreated = time();

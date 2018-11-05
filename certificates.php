@@ -69,9 +69,9 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_title(get_string('certificates', 'tool_certificate'));
 $PAGE->set_pagelayout('standard');
 
-$PAGE->navbar->add(get_string('mycertificates', 'tool_certificate'));
-
 $heading = get_string('certificates', 'tool_certificate');
+
+$PAGE->navbar->add($heading);
 
 if ($revokecert && confirm_sesskey()) {
     $nourl = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
