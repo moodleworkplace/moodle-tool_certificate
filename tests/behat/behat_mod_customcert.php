@@ -84,12 +84,12 @@ class behat_tool_certificate extends behat_base {
      * @param string $certificatename
      * @param string $username
      */
-    public function i_verify_the_custom_certificate_for_user($certificatename, $username) {
+    public function i_verify_the_custom_certificate_for_user($templatename, $username) {
         global $DB;
 
-        $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
+        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
         $user = $DB->get_record('user', array('username' => $username), '*', MUST_EXIST);
-        $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $certificate->id),
+        $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $template->id),
             '*', MUST_EXIST);
 
         $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'tool_certificate'), $issue->code));
@@ -105,12 +105,12 @@ class behat_tool_certificate extends behat_base {
      * @param string $certificatename
      * @param string $username
      */
-    public function i_can_not_verify_the_custom_certificate_for_user($certificatename, $username) {
+    public function i_can_not_verify_the_custom_certificate_for_user($templatetename, $username) {
         global $DB;
 
-        $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
+        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
         $user = $DB->get_record('user', array('username' => $username), '*', MUST_EXIST);
-        $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $certificate->id),
+        $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $template->id),
             '*', MUST_EXIST);
 
         $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'tool_certificate'), $issue->code));
@@ -128,11 +128,10 @@ class behat_tool_certificate extends behat_base {
      * @Given /^I visit the verification url for the "(?P<certificate_name>(?:[^"]|\\")*)" certificate$/
      * @param string $certificatename
      */
-    public function i_visit_the_verification_url_for_custom_certificate($certificatename) {
+    public function i_visit_the_verification_url_for_custom_certificate($templatename) {
         global $DB;
 
-        $certificate = $DB->get_record('tool_certificate', array('name' => $certificatename), '*', MUST_EXIST);
-        $template = $DB->get_record('tool_certificate_templates', array('id' => $certificate->templateid), '*', MUST_EXIST);
+        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
 
         $url = new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $template->contextid));
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
