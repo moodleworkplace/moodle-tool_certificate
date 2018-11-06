@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings for the customcert module.
+ * Language strings for the certificate tool.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -39,7 +39,7 @@ $string['certificate:verifyallcertificates'] = 'Verify all certificates on the s
 $string['certificates'] = 'Certificates';
 $string['certificatesdescription'] = 'These are all the certificates issued for the "{$a->name}" template.';
 $string['certificatesissued'] = 'Certificates issued';
-$string['customcertsettings'] = 'Certificate tool settings';
+$string['settings'] = 'Certificate tool settings';
 $string['deletecertpage'] = 'Delete page';
 $string['deleteconfirm'] = 'Delete confirmation';
 $string['deleteelement'] = 'Delete element';
@@ -52,7 +52,7 @@ $string['description'] = 'Description';
 $string['duplicate'] = 'Duplicate';
 $string['duplicateconfirm'] = 'Duplicate confirmation';
 $string['duplicatetemplateconfirm'] = 'Are you sure you want to duplicate this certificate template?';
-$string['editcustomcert'] = 'Edit certificate';
+$string['editcertificate'] = 'Edit certificate';
 $string['editelement'] = 'Edit element';
 $string['edittemplate'] = 'Edit template';
 $string['elementname'] = 'Element name';

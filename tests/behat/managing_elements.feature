@@ -1,7 +1,7 @@
 @mod @tool_certificate
 Feature: Being able to manage elements in a certificate template
   In order to ensure managing elements in a certificate template works as expected
-  As a teacher
+  As an admin
   I need to manage elements in a certificate template
 
   Background:
@@ -9,15 +9,11 @@ Feature: Being able to manage elements in a certificate template
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | teacher2 | Teacher   | 2        | teacher2@example.com |
-    And the following "activities" exist:
-      | activity   | name                 | intro                      | course | idnumber    |
-      | assign     | Assignment 1         | Assignment 1 intro         | C1     | assign1     |
-      | assign     | Assignment 2         | Assignment 2 intro         | C1     | assign2     |
-      | customcert | Custom certificate 1 | Custom certificate 1 intro | C1     | customcert1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
-    And I navigate to "Edit certificate" in current page administration
+    And the following "certificate templates" exist:
+      | name |
+      | Test template 1 |
+    And I log in as "admin"
+    And I navigate to "Courses > Manage certificate templates" in site administration
 
   Scenario: Add and edit elements in a certificate template
     # Background image.
