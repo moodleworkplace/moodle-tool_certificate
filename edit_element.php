@@ -42,8 +42,8 @@ if ($cm = $template->get_cm()) {
 $template->require_manage();
 
 if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $customcert->name;
+    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
+    $title = $certificate->name;
     $heading = format_string($title);
 } else {
     $title = $SITE->fullname;
@@ -72,7 +72,7 @@ if ($template->get_context()->contextlevel == CONTEXT_SYSTEM) {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
         new moodle_url('/admin/tool/certificate/manage_templates.php'));
 }
-$PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'), new moodle_url('/admin/tool/certificate/edit.php',
+$PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'), new moodle_url('/admin/tool/certificate/edit.php',
     array('tid' => $tid)));
 $PAGE->navbar->add(get_string('editelement', 'tool_certificate'));
 

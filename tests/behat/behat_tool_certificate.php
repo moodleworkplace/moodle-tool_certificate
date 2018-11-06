@@ -27,6 +27,8 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
+use Behat\Gherkin\Node\TableNode as TableNode;
+
 /**
  * The class responsible for step definitions related to tool_certificate.
  *
@@ -36,6 +38,7 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_tool_certificate extends behat_base {
+
 
     /**
      * Adds an element to the specified page of a template.
@@ -148,7 +151,7 @@ class behat_tool_certificate extends behat_base {
     }
 
     /**
-     * Click on an entry in the edit menu.
+     * Generates a template with a given name
      *
      * @Given /^the following certificate templates exist:$/
      *
@@ -159,6 +162,14 @@ class behat_tool_certificate extends behat_base {
      * @param TableNode $data
      */
     public function the_following_certificate_templates_exist(TableNode $data) {
-        die('here I am as easy as should be');
+        $contextid = \context_system::instance()->id;
+        foreach ($data->getHash() as $elementdata) {
+            $template = \tool_certificate\template::create($elementdata['name'], $contextid);
+            if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
+                for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
+                    $template->add_page();
+                }
+            }
+        }
     }
 }

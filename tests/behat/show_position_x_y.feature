@@ -15,9 +15,9 @@ Feature: Being able to set a site setting to determine whether or not to display
   Scenario: Adding an element with the show position X and Y setting disabled
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I navigate to "Edit certificate" in current page administration
-    And I add the element "Code" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I should not see "Position X"
     And I should not see "Position Y"
 
@@ -31,9 +31,9 @@ Feature: Being able to set a site setting to determine whether or not to display
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I navigate to "Edit certificate" in current page administration
-    And I add the element "Code" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I should see "Position X"
     And I should see "Position Y"
     And I set the following fields to these values:

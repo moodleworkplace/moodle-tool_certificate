@@ -67,8 +67,7 @@ class element extends \tool_certificate\element {
      * @param \stdClass $user the user we are rendering this for
      */
     public function render($pdf, $preview, $user) {
-        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
-        $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_course::instance($courseid)]);
+        $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_system::instance()]);
         \tool_certificate\element_helper::render_content($pdf, $this, $text);
     }
 
@@ -81,8 +80,7 @@ class element extends \tool_certificate\element {
      * @return string the html
      */
     public function render_html() {
-        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
-        $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_course::instance($courseid)]);
+        $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_system::instance()]);
         return \tool_certificate\element_helper::render_html_content($this, $text);
     }
 

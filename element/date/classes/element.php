@@ -121,12 +121,14 @@ class element extends \tool_certificate\element {
             return;
         }
 
-        $courseid = \tool_certificate\element_helper::get_courseid($this->id);
-
         // Decode the information stored in the database.
         $dateinfo = json_decode($this->get_data());
         $dateitem = $dateinfo->dateitem;
         $dateformat = $dateinfo->dateformat;
+
+        if ($dateitem != CUSTOMCERT_DATE_ISSUE) {
+            $courseid = \tool_certificate\element_helper::get_courseid($this->id);
+        }
 
         // If we are previewing this certificate then just show a demonstration date.
         if ($preview) {
