@@ -1,25 +1,21 @@
-@mod @tool_certificate
+@tool @tool_certificate
 Feature: Being able to verify that a certificate is valid or not
   In order to ensure that a user can verify a certificate is valid
   As a teacher and non-user
   I need to be able to verify a certificate
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
-    And the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | student1 | Student   | 1        | student1@example.com |
-    And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-      | student1 | C1     | student        |
-    And the following "activities" exist:
-      | activity   | name                 | intro                      | course | idnumber    | verifyany |
-      | customcert | Custom certificate 1 | Custom certificate 1 intro | C1     | customcert1 | 0         |
-      | customcert | Custom certificate 2 | Custom certificate 2 intro | C1     | customcert2 | 1         |
+    And the following "certificate templates" exist:
+      | name |
+      | Test template 1 |
+      | Test template 2 |
+    And the following "certificate issues" exist:
+      | template | user |
+      | Test template 1 | student1 |
 
   Scenario: Verify a certificate as a teacher
     And I log in as "student1"
