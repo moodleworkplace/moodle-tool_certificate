@@ -119,8 +119,7 @@ class element extends \tool_certificate\element {
             $value = $user->$field;
         }
 
-        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
-        $value = format_string($value, true, ['context' => \context_course::instance($courseid)]);
+        $value = format_string($value, true, ['context' => \context_system::instance()]);
         \tool_certificate\element_helper::render_content($pdf, $this, $value);
     }
 
@@ -157,8 +156,7 @@ class element extends \tool_certificate\element {
             $value = $USER->$field;
         }
 
-        $courseid = \tool_certificate\element_helper::get_courseid($this->get_id());
-        $value = format_string($value, true, ['context' => \context_course::instance($courseid)]);
+        $value = format_string($value, true, ['context' => \context_system::instance()]);
         return \tool_certificate\element_helper::render_html_content($this, $value);
     }
 

@@ -16,17 +16,17 @@ Feature: Being able to set the required minutes in a course before viewing the c
   Scenario: Check the user can not access the certificate before the required time
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I should see "You must spend at least a minimum of"
     And I should not see "View certificate"
     And I press "Continue"
-    And I should see "Custom certificate 1"
+    And I should see "Certificate 1"
 
   Scenario: Check the user can access the certificate after the required time
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I wait "60" seconds
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I should not see "You must spend at least a minimum of"
     And I should see "View certificate"

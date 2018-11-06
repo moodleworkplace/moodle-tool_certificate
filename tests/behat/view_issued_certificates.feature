@@ -20,34 +20,34 @@ Feature: Being able to view the certificates that have been issued
   Scenario: View the issued certificates
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I press "View certificate"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I press "View certificate"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I should see "Student 1"
     And I should see "Student 2"
 
   Scenario: Delete an issued certificate
     And I log in as "student1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I press "View certificate"
     And I log out
     And I log in as "student2"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I press "View certificate"
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I should see "Student 1"
     And I should see "Student 2"
     And I click on ".delete-icon" "css_element" in the "Student 2" "table_row"

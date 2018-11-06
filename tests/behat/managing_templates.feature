@@ -26,16 +26,8 @@ Feature: Being able to manage site templates
       | Width  | 5 |
       | Colour | #045ECD |
     And I press "Save changes"
-    And I add the element "Category name" to page "1" of the "Site template" certificate template
-    And I set the following fields to these values:
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
     And I am on "Course 1" course homepage
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I navigate to "Edit certificate" in current page administration
     And I set the field "ltid" to "Site template"
     And I click on "Load" "button" in the "#loadtemplateform" "css_element"
@@ -47,19 +39,11 @@ Feature: Being able to manage site templates
     And I should see "Are you sure you wish to load this template"
     And I press "Continue"
     And I should see "Border" in the "elementstable" "table"
-    And I should see "Category name" in the "elementstable" "table"
     And I click on ".edit-icon" "css_element" in the "Border" "table_row"
     And the following fields match these values:
       | Width  | 5 |
       | Colour | #045ECD |
     And I press "Save changes"
-    And I click on ".edit-icon" "css_element" in the "Category name" "table_row"
-    And the following fields match these values:
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
 
   Scenario: Deleting a site template
     And I navigate to "Plugins" in site administration

@@ -15,12 +15,12 @@ Feature: Being able to correctly display options on the certificate activity edi
       | manager1 | C1     | manager        |
     And the following "activities" exist:
       | activity   | name                 | intro                      | course | idnumber    |
-      | customcert | Custom certificate 1 | Custom certificate 1 intro | C1     | customcert1 |
+      | customcert | Certificate 1 | Certificate 1 intro | C1     | customcert1 |
 
   Scenario: Edit an activity as an Editing Teacher I can see all custom certificate options
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I navigate to "Edit settings" in current page administration
     And I should see "Email students"
     And I should see "Email teachers"
@@ -54,7 +54,7 @@ Feature: Being able to correctly display options on the certificate activity edi
   Scenario: Edit an activity as a Manager Teacher I can see all custom certificate options
     And I log in as "manager1"
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I navigate to "Edit settings" in current page administration
     And I should see "Email students"
     And I should see "Email teachers"
@@ -97,7 +97,7 @@ Feature: Being able to correctly display options on the certificate activity edi
     And I log out
     When I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I follow "Custom certificate 1"
+    And I follow "Certificate 1"
     And I navigate to "Edit settings" in current page administration
     And I should not see "Email students"
     And I should not see "Email teachers"

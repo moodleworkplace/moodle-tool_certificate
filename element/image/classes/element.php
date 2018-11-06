@@ -308,7 +308,7 @@ class element extends \tool_certificate\element {
         $elementinfo = json_decode($this->get_data());
 
         // Update the context.
-        $elementinfo->contextid = \context_course::instance($restore->get_courseid())->id;
+        $elementinfo->contextid = \context_system::instance()->id;
 
         // Encode again before saving.
         $elementinfo = json_encode($elementinfo);

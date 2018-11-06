@@ -9,19 +9,20 @@ Feature: Being able to manage elements in a certificate template
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | teacher2 | Teacher   | 2        | teacher2@example.com |
-    And the following "certificate templates" exist:
-      | name |
-      | Test template 1 |
+    And the following certificate templates exist:
+      | name | numberofpages |
+      | Certificate 1 | 1 |
     And I log in as "admin"
     And I navigate to "Courses > Manage certificate templates" in site administration
+    And I click on "Edit" "link"
 
   Scenario: Add and edit elements in a certificate template
     # Background image.
-   When I add the element "Background image" to page "1" of the "Custom certificate 1" certificate template
+   When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save changes"
     And I should see "Background image" in the "elementstable" "table"
     # Border.
-    And I add the element "Border" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Border" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 2 |
       | Colour | #045ECD |
@@ -32,26 +33,8 @@ Feature: Being able to manage elements in a certificate template
       | Width  | 2 |
       | Colour | #045ECD |
     And I press "Save changes"
-    # Category name.
-    And I add the element "Category name" to page "1" of the "Custom certificate 1" certificate template
-    And I set the following fields to these values:
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
-    And I should see "Category name" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Category name" "table_row"
-    And the following fields match these values:
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
     # Code.
-    And I add the element "Code" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Font                     | Helvetica |
       | Size                     | 20        |
@@ -68,28 +51,10 @@ Feature: Being able to manage elements in a certificate template
       | Width                    | 20        |
       | Reference point location | Top left  |
     And I press "Save changes"
-    # Course name.
-    And I add the element "Course name" to page "1" of the "Custom certificate 1" certificate template
-    And I set the following fields to these values:
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
-    And I should see "Course name" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Course name" "table_row"
-    And the following fields match these values:
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
     # Date.
-    And I add the element "Date" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Date" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
-      | Date item                | Course start date |
+      | Date item                | Issued date |
       | Date format              | 2                 |
       | Font                     | Helvetica         |
       | Size                     | 20                |
@@ -100,7 +65,7 @@ Feature: Being able to manage elements in a certificate template
     And I should see "Date" in the "elementstable" "table"
     And I click on ".edit-icon" "css_element" in the "Date" "table_row"
     And the following fields match these values:
-      | Date item                | Course start date |
+      | Date item                | Issued date |
       | Date format              | 2                 |
       | Font                     | Helvetica         |
       | Size                     | 20                |
@@ -109,7 +74,7 @@ Feature: Being able to manage elements in a certificate template
       | Reference point location | Top left          |
     And I press "Save changes"
     # Digital signature.
-    And I add the element "Digital signature" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Digital signature" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Signature name         | This is the signature name |
       | Signature password     | Some awesome password      |
@@ -130,50 +95,8 @@ Feature: Being able to manage elements in a certificate template
       | Width                  | 25                         |
       | Height                 | 15                         |
     And I press "Save changes"
-    # Grade.
-    And I add the element "Grade" to page "1" of the "Custom certificate 1" certificate template
-    And I set the following fields to these values:
-      | Grade item               | Topic 0 : Assignment 1 |
-      | Grade format             | Percentage             |
-      | Font                     | Helvetica              |
-      | Size                     | 20                     |
-      | Colour                   | #045ECD                |
-      | Width                    | 20                     |
-      | Reference point location | Top left               |
-    And I press "Save changes"
-    And I should see "Grade" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Grade" "table_row"
-    And the following fields match these values:
-      | Grade item               | Topic 0 : Assignment 1 |
-      | Grade format             | Percentage             |
-      | Font                     | Helvetica              |
-      | Size                     | 20                     |
-      | Colour                   | #045ECD                |
-      | Width                    | 20                     |
-      | Reference point location | Top left               |
-    And I press "Save changes"
-    # Grade item name.
-    And I add the element "Grade item name" to page "1" of the "Custom certificate 1" certificate template
-    And I set the following fields to these values:
-      | Grade item               | Topic 0 : Assignment 2 |
-      | Font                     | Helvetica              |
-      | Size                     | 20                     |
-      | Colour                   | #045ECD                |
-      | Width                    | 20                     |
-      | Reference point location | Top left               |
-    And I press "Save changes"
-    And I should see "Grade item name" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Grade item name" "table_row"
-    And the following fields match these values:
-      | Grade item               | Topic 0 : Assignment 2 |
-      | Font                     | Helvetica              |
-      | Size                     | 20                     |
-      | Colour                   | #045ECD                |
-      | Width                    | 20                     |
-      | Reference point location | Top left               |
-    And I press "Save changes"
     # Image.
-    And I add the element "Image" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Image" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 25 |
       | Height | 15 |
@@ -185,7 +108,7 @@ Feature: Being able to manage elements in a certificate template
       | Height | 15 |
     And I press "Save changes"
     # Student name.
-    And I add the element "Student name" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Font                     | Helvetica |
       | Size                     | 20        |
@@ -202,28 +125,8 @@ Feature: Being able to manage elements in a certificate template
       | Width                    | 20        |
       | Reference point location | Top left  |
     And I press "Save changes"
-    # Teacher name.
-    And I add the element "Teacher name" to page "1" of the "Custom certificate 1" certificate template
-    And I set the following fields to these values:
-      | Teacher                  | Teacher 2 |
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
-    And I should see "Teacher name" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Teacher name" "table_row"
-    And the following fields match these values:
-      | Teacher                  | Teacher 2 |
-      | Font                     | Helvetica |
-      | Size                     | 20        |
-      | Colour                   | #045ECD   |
-      | Width                    | 20        |
-      | Reference point location | Top left  |
-    And I press "Save changes"
     # Text.
-    And I add the element "Text" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Text" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Text                     | Test this |
       | Font                     | Helvetica |
@@ -243,7 +146,7 @@ Feature: Being able to manage elements in a certificate template
       | Reference point location | Top left  |
     And I press "Save changes"
     # User field.
-    And I add the element "User field" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "User field" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | User field               | Country   |
       | Font                     | Helvetica |
@@ -263,7 +166,7 @@ Feature: Being able to manage elements in a certificate template
       | Reference point location | Top left  |
     And I press "Save changes"
     # User picture.
-    And I add the element "User picture" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "User picture" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 10 |
       | Height | 10 |
@@ -280,10 +183,10 @@ Feature: Being able to manage elements in a certificate template
     And I press "Save changes and preview"
 
   Scenario: Delete an element from a certificate template
-    When I add the element "Background image" to page "1" of the "Custom certificate 1" certificate template
+    When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save changes"
     And I should see "Background image" in the "elementstable" "table"
-    And I add the element "Student name" to page "1" of the "Custom certificate 1" certificate template
+    And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I press "Save changes"
     And I should see "Student name" in the "elementstable" "table"
     And I click on ".delete-icon" "css_element" in the "Student name" "table_row"
