@@ -1,22 +1,16 @@
-@mod @tool_certificate
+@tool @tool_certificate
 Feature: Being able to set a site setting to determine whether or not to display the position X and Y fields
   In order to ensure the show position X and Y fields setting works as expected
   As an admin
   I need to ensure teachers can see the position X and Y fields depending on the site setting
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
-    And the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
-    And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-    And the following "activities" exist:
-      | activity   | name                 | intro                      | course | idnumber    |
-      | customcert | Custom certificate 1 | Custom certificate 1 intro | C1     | customcert1 |
+    And the following "certificate templates" exist:
+      | name |
+      | Test template 1 |
 
   Scenario: Adding an element with the show position X and Y setting disabled
     And I log in as "teacher1"

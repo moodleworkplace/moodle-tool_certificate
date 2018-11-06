@@ -1,26 +1,21 @@
-@mod @tool_certificate
+@tool @tool_certificate
 Feature: Being able to view the certificates that have been issued
   In order to ensure that a user can view the certificates that have been issued
   As a teacher
   I need to view the certificates that have been issued
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
-    And the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
-    And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-      | student1 | C1     | student        |
-      | student2 | C1     | student        |
-    And the following "activities" exist:
-      | activity   | name                 | intro                      | course | idnumber    |
-      | customcert | Custom certificate 1 | Custom certificate 1 intro | C1     | customcert1 |
+    And the following "certificate templates" exist:
+      | name |
+      | Test template |
+    And the following "certificate issues" exist:
+      | template | user |
+      | Test template | student1 |
 
   Scenario: View the issued certificates
     And I log in as "student1"

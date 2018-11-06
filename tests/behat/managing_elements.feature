@@ -5,17 +5,10 @@ Feature: Being able to manage elements in a certificate template
   I need to manage elements in a certificate template
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
-    And the following "users" exist:
+    Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | teacher2 | Teacher   | 2        | teacher2@example.com |
-    And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher1 | C1     | editingteacher |
-      | teacher2 | C1     | editingteacher |
     And the following "activities" exist:
       | activity   | name                 | intro                      | course | idnumber    |
       | assign     | Assignment 1         | Assignment 1 intro         | C1     | assign1     |
@@ -28,7 +21,7 @@ Feature: Being able to manage elements in a certificate template
 
   Scenario: Add and edit elements in a certificate template
     # Background image.
-    And I add the element "Background image" to page "1" of the "Custom certificate 1" certificate template
+   When I add the element "Background image" to page "1" of the "Custom certificate 1" certificate template
     And I press "Save changes"
     And I should see "Background image" in the "elementstable" "table"
     # Border.
@@ -291,7 +284,7 @@ Feature: Being able to manage elements in a certificate template
     And I press "Save changes and preview"
 
   Scenario: Delete an element from a certificate template
-    And I add the element "Background image" to page "1" of the "Custom certificate 1" certificate template
+    When I add the element "Background image" to page "1" of the "Custom certificate 1" certificate template
     And I press "Save changes"
     And I should see "Background image" in the "elementstable" "table"
     And I add the element "Student name" to page "1" of the "Custom certificate 1" certificate template
