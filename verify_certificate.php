@@ -42,10 +42,10 @@ if ($code) {
 if ($context->contextlevel != CONTEXT_SYSTEM) {
     $cm = get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $customcert = $DB->get_record('tool_certificate', array('id' => $cm->instance), '*', MUST_EXIST);
+    $certificate = $DB->get_record('tool_certificate', array('id' => $cm->instance), '*', MUST_EXIST);
 
     // Check if we are allowing anyone to verify, if so, no need to check login, or permissions.
-    if (!$customcert->verifyany) {
+    if (!$certificate->verifyany) {
         // Need to be logged in.
         require_login($course, false, $cm);
         // Ok, now check the user has the ability to verify certificates.
@@ -54,7 +54,7 @@ if ($context->contextlevel != CONTEXT_SYSTEM) {
         $PAGE->set_cm($cm, $course);
     }
 
-    $title = $customcert->name;
+    $title = $certificate->name;
     $heading = format_string($title);
     $checkallofsite = false;
 } else {

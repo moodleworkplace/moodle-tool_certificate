@@ -25,7 +25,7 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
+require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 /**
  * The class responsible for step definitions related to tool_certificate.
@@ -145,5 +145,20 @@ class behat_tool_certificate extends behat_base {
     public function i_visit_the_verification_url_for_the_site() {
         $url = new moodle_url('/admin/tool/certificate/verify_certificate.php');
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
+    }
+
+    /**
+     * Click on an entry in the edit menu.
+     *
+     * @Given /^the following certificate templates exist:$/
+     *
+     * Supported table fields:
+     *
+     * - Name: Template name (required).
+     *
+     * @param TableNode $data
+     */
+    public function the_following_certificate_templates_exist(TableNode $data) {
+        die('here I am as easy as should be');
     }
 }

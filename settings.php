@@ -37,8 +37,8 @@ if ($hassiteconfig) {
 
     $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
 
-    $settings = new admin_settingpage('toolcertificatemanagetemplates', new lang_string('customcertsettings', 'tool_certificate'));
-    $settings->add(new \tool_certificate\admin_setting_link('customcert/uploadimage',
+    $settings = new admin_settingpage('toolcertificatemanagetemplates', new lang_string('settings', 'tool_certificate'));
+    $settings->add(new \tool_certificate\admin_setting_link('tool_certificate/uploadimage',
         get_string('uploadimage', 'tool_certificate'), get_string('uploadimagedesc', 'tool_certificate'),
         get_string('uploadimage', 'tool_certificate'), new moodle_url('/tool/certificate/upload_image.php'), ''));
 

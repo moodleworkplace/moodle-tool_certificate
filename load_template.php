@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handles loading a customcert template.
+ * Handles loading a certificate template.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -42,8 +42,8 @@ if ($cm = $template->get_cm()) {
 $template->require_manage();
 
 if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $customcert->name;
+    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
+    $title = $certificate->name;
     $heading = format_string($title);
 } else {
     $title = $SITE->fullname;
@@ -80,15 +80,15 @@ if ($confirm && confirm_sesskey()) {
 
 // Create the link options.
 $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
-$yesurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid,
+$yesurl = new moodle_url('/admin/tool/certificate/load_template.php', array('tid' => $tid,
                                                                     'ltid' => $ltid,
                                                                     'confirm' => 1,
                                                                     'sesskey' => sesskey()));
 
-$pageurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid, 'ltid' => $ltid));
+$pageurl = new moodle_url('/admin/tool/certificate/load_template.php', array('tid' => $tid, 'ltid' => $ltid));
 \tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
 
-$str = get_string('editcustomcert', 'tool_certificate');
+$str = get_string('editcertificate', 'tool_certificate');
 $link = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
 $PAGE->navbar->add($str, new \action_link($link, $str));
 $PAGE->navbar->add(get_string('loadtemplate', 'tool_certificate'));
