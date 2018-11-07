@@ -42,6 +42,9 @@ if ($hassiteconfig) {
         get_string('uploadimage', 'tool_certificate'), get_string('uploadimagedesc', 'tool_certificate'),
         get_string('uploadimage', 'tool_certificate'), new moodle_url('/tool/certificate/upload_image.php'), ''));
 
+    $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyallcertificates', get_string('verifyallcertificates',
+        'tool_certificate'), '', '0'));
+
     $ADMIN->add('tool_certificate', $settings);
 
     $ADMIN->add('tool_certificate', new tool_certificate_admin_page_manage_element_plugins());

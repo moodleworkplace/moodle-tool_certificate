@@ -13,12 +13,12 @@ Feature: Being able to verify that a certificate is valid or not
       | name |
       | Certificate 1 |
       | Certificate 2 |
-    And the following certificate issues exist:
-      | template | user |
-      | Certificate 1 | student1 |
 
   Scenario: Verify a certificate as admin
     When I log in as "admin"
+    And the following certificate issues exist:
+      | template | user |
+      | Certificate 1 | student1 |
     And I navigate to "Courses > Verify certificate" in site administration
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
@@ -28,28 +28,29 @@ Feature: Being able to verify that a certificate is valid or not
   Scenario: Attempt to verify a certificate as a non-user
     When I visit the verification url for the "Certificate 1" certificate
     # User should get redirected to log in as we do not allow non-users to verify.
-    Then I should see "Remember username"
+    Then I should see "Log in"
 
   Scenario: Verify a certificate as a non-user
-    When the following certificate issues exist:
-      | Certificate 2 | student1 |
-    And I log out
-    And I visit the verification url for the "Custom certificate 2" certificate
+    When I log in as "admin"
+    And I visit the verification url for the site
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
+    And the following certificate issues exist:
+      | template | user |
+      | Certificate 2 | student1 |
     Then I should see "Not verified"
-    And I verify the "Custom certificate 2" certificate for the user "student1"
+    And I verify the "Certificate 2" certificate for the user "student1"
 
   Scenario: Attempt to verify a certificate as a non-user using the site-wide URL
     When the following config values are set as admin:
-      | verifyallcertificates | 0 | customcert |
+      | verifyallcertificates | 0 | tool_certificate |
     And I visit the verification url for the site
     # User should see an error message as we do not allow non-users to verify all certificates on the site.
     Then I should see "You do not have the permission to verify all certificates on the site"
 
   Scenario: Attempt to verify a certificate as a teacher using the site-wide URL
     When the following config values are set as admin:
-      | verifyallcertificates | 0 | customcert |
+      | verifyallcertificates | 0 | tool_certificate |
     And I log in as "teacher1"
     And I visit the verification url for the site
     # User should see an error message as we do not allow teachers to verify all certificates on the site.
@@ -57,8 +58,11 @@ Feature: Being able to verify that a certificate is valid or not
 
   Scenario: Verify a certificate as an admin using the site-wide URL
     When the following config values are set as admin:
-      | verifyallcertificates | 0 | customcert |
-    And I log out
+      | verifyallcertificates | 0 | tool_certificate |
+    And the following certificate issues exist:
+      | template | user |
+      | Certificate 1 | student1 |
+      | Certificate 2 | student1 |
     And I log in as "admin"
     # The admin (or anyone with the capability 'tool/certificate:verifyallcertificates') can visit the URL regardless of the setting.
     And I visit the verification url for the site
@@ -67,17 +71,18 @@ Feature: Being able to verify that a certificate is valid or not
     Then I should see "Not verified"
     # The admin (or anyone with the capability 'tool/certificate:verifyallcertificates') can verify any certificate regardless of the 'verifyany' setting.
     And I verify the "Certificate 1" certificate for the user "student1"
-    And I verify the "Custom certificate 2" certificate for the user "student1"
+    And I verify the "Certificate 2" certificate for the user "student1"
 
   Scenario: Verify a certificate as a non-user using the site-wide URL
     When the following config values are set as admin:
-      | verifyallcertificates | 1 | customcert |
+      | verifyallcertificates | 1 | tool_certificate |
     And the following certificate issues exist:
+      | template | user |
+      | Certificate 1 | student1 |
       | Certificate 2 | student1 |
-    And I log out
     And I visit the verification url for the site
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     Then I should see "Not verified"
-    And I can not verify the "Certificate 1" certificate for the user "student1"
-    And I verify the "Custom certificate 2" certificate for the user "student1"
+    And I verify the "Certificate 1" certificate for the user "student1"
+    And I verify the "Certificate 2" certificate for the user "student1"

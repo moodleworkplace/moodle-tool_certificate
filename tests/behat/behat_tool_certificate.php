@@ -39,7 +39,6 @@ use Behat\Gherkin\Node\TableNode as TableNode;
  */
 class behat_tool_certificate extends behat_base {
 
-
     /**
      * Adds an element to the specified page of a template.
      *
@@ -87,7 +86,7 @@ class behat_tool_certificate extends behat_base {
      * @param string $certificatename
      * @param string $username
      */
-    public function i_verify_the_custom_certificate_for_user($templatename, $username) {
+    public function i_verify_the_certificate_for_user($templatename, $username) {
         global $DB;
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
@@ -108,7 +107,7 @@ class behat_tool_certificate extends behat_base {
      * @param string $certificatename
      * @param string $username
      */
-    public function i_can_not_verify_the_custom_certificate_for_user($templatetename, $username) {
+    public function i_can_not_verify_the_certificate_for_user($templatename, $username) {
         global $DB;
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
@@ -131,7 +130,7 @@ class behat_tool_certificate extends behat_base {
      * @Given /^I visit the verification url for the "(?P<certificate_name>(?:[^"]|\\")*)" certificate$/
      * @param string $certificatename
      */
-    public function i_visit_the_verification_url_for_custom_certificate($templatename) {
+    public function i_visit_the_verification_url_for_certificate($templatename) {
         global $DB;
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
