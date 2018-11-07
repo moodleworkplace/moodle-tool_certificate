@@ -17,16 +17,9 @@ Feature: Being able to verify that a certificate is valid or not
       | template | user |
       | Certificate 1 | student1 |
 
-  Scenario: Verify a certificate as a teacher
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Certificate 1"
-    And I press "View certificate"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I follow "Certificate 1"
-    And I navigate to "Verify certificate" in current page administration
+  Scenario: Verify a certificate as admin
+    When I log in as "admin"
+    And I navigate to "Courses > Verify certificate" in site administration
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     Then I should see "Not verified"
@@ -38,10 +31,8 @@ Feature: Being able to verify that a certificate is valid or not
     Then I should see "Remember username"
 
   Scenario: Verify a certificate as a non-user
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Custom certificate 2"
-    And I press "View certificate"
+    When the following certificate issues exist:
+      | Certificate 2 | student1 |
     And I log out
     And I visit the verification url for the "Custom certificate 2" certificate
     And I set the field "Code" to "NOTAVALIDCODE"
@@ -67,13 +58,6 @@ Feature: Being able to verify that a certificate is valid or not
   Scenario: Verify a certificate as an admin using the site-wide URL
     When the following config values are set as admin:
       | verifyallcertificates | 0 | customcert |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Certificate 1"
-    And I press "View certificate"
-    And I am on "Course 1" course homepage
-    And I follow "Custom certificate 2"
-    And I press "View certificate"
     And I log out
     And I log in as "admin"
     # The admin (or anyone with the capability 'tool/certificate:verifyallcertificates') can visit the URL regardless of the setting.
@@ -88,13 +72,8 @@ Feature: Being able to verify that a certificate is valid or not
   Scenario: Verify a certificate as a non-user using the site-wide URL
     When the following config values are set as admin:
       | verifyallcertificates | 1 | customcert |
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I follow "Certificate 1"
-    And I press "View certificate"
-    And I am on "Course 1" course homepage
-    And I follow "Custom certificate 2"
-    And I press "View certificate"
+    And the following certificate issues exist:
+      | Certificate 2 | student1 |
     And I log out
     And I visit the verification url for the site
     And I set the field "Code" to "NOTAVALIDCODE"
