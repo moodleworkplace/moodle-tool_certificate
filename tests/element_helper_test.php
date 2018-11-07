@@ -171,7 +171,7 @@ class tool_certificate_element_helper_testcase extends advanced_testcase {
         global $CFG;
 
         // Including to use constant.
-        require_once($CFG->dirroot . '/mod/customcert/element/grade/classes/element.php');
+        require_once($CFG->libdir . '/grade/constants.php');
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
