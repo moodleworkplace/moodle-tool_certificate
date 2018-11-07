@@ -151,7 +151,7 @@ class certificates_table extends \table_sql {
                   'sesskey' => sesskey(),
                   'revokecert' => '1'));
 
-        return $OUTPUT->action_link($link, '', null, null, $icon);
+        return $OUTPUT->action_link($link, '', null, ['class' => 'delete-icon'], $icon);
     }
 
     /**
