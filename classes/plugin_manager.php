@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the classes for the admin settings of the customcert module.
+ * This file contains the classes for the admin settings of the certificate tool.
  *
  * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
@@ -66,9 +66,9 @@ class plugin_manager {
         } else if ($action == 'movedown' && $plugin != null) {
             $action = $this->move_plugin($plugin, 'down');
         } else if ($action == 'view') {
-            // Print the page heading.
+
             echo $OUTPUT->header();
-            echo $OUTPUT->heading(get_string('manageelementplugins', 'customcert'));
+            echo $OUTPUT->heading(get_string('manageelementplugins', 'tool_certificate'));
 
             $this->view_plugins_table();
 
