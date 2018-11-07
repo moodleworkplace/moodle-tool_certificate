@@ -485,6 +485,7 @@ class template {
     }
 
     public static function find_by_name($name) {
+        global $DB;
         if ($template = $DB->get_record('tool_certificate_templates', ['name' => $name])) {
             return new \tool_certificate\template($template);
         }

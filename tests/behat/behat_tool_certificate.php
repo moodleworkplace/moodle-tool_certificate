@@ -172,4 +172,30 @@ class behat_tool_certificate extends behat_base {
             }
         }
     }
+
+    /**
+     * Issues certificate from a given template name and user shortname
+     *
+     * @Given /^the following certificate issues exist:$/
+     *
+     * Supported table fields:
+     *
+     * - Name: Template name (required).
+     *
+     * @param TableNode $data
+     */
+    public function the_following_certificate_issues_exist(TableNode $data) {
+        global $DB;
+        $contextid = \context_system::instance()->id;
+        foreach ($data->getHash() as $elementdata) {
+            if (!isset($elementdata['template']) || !isset($elementdata['user'])) {
+                continue;
+            }
+            if ($template = \tool_certificate\template::find_by_name($elementdata['template'], $contextid)) {
+                if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
+                    \tool_certificate\certificate::issue_certificate($template->get_id(), $userid);
+                }
+            }
+        }
+    }
 }
