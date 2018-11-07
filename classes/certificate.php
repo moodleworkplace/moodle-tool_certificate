@@ -422,18 +422,20 @@ class certificate {
      * @param int $userid
      * @return int
      */
-    public static function get_number_of_certificates_for_user($userid) {
+    public static function get_number_of_certificates_for_user(int $userid = 0): int {
         global $DB;
 
-        if ($userid == 0) {
-            $sql = "SELECT COUNT(*)
-                      FROM {tool_certificate_templates} t
-                INNER JOIN {tool_certificate_issues} ci
-                        ON t.id = ci.templateid";
-            return $DB->count_records_sql($sql);
+        $sql = "SELECT COUNT(*)
+                  FROM {tool_certificate_templates} t
+            INNER JOIN {tool_certificate_issues} ci
+                    ON t.id = ci.templateid";
+
+        $params = [];
+        if ($userid > 0) {
+            $sql .= " WHERE ci.userid = :userid";
+            $params['userid'] = $userid;
         }
-        $sql .= " WHERE ci.userid = :userid";
-        return $DB->count_records_sql($sql, array('userid' => $userid));
+        return $DB->count_records_sql($sql, $params);
     }
 
     /**
