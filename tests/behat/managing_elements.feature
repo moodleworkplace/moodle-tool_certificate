@@ -1,4 +1,4 @@
-@mod @tool_certificate
+@tool @tool_certificate
 Feature: Being able to manage elements in a certificate template
   In order to ensure managing elements in a certificate template works as expected
   As an admin

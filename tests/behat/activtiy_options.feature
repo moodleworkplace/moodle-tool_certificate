@@ -1,4 +1,4 @@
-@mod @tool_certificate
+@tool @tool_certificate
 Feature: Being able to correctly display options on the certificate activity edit form
 
   Background:

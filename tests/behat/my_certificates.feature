@@ -1,4 +1,4 @@
-@mod @tool_certificate
+@tool @tool_certificate
 Feature: Being able to view the certificates you have been issued
   In order to ensure that a user can view the certificates they have been issued
   As a student
