@@ -79,7 +79,7 @@ class element extends \tool_certificate\element {
             \tool_certificate\element_helper::render_form_element_position($mform);
         }
 
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
+        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
     }
 
@@ -130,7 +130,7 @@ class element extends \tool_certificate\element {
         }
 
         // Handle file uploads.
-        \tool_certificate\certificate::upload_files($data->customcertimage, $context->id);
+        \tool_certificate\certificate::upload_files($data->certificateimage, $context->id);
 
         return parent::save_form_elements($data);
     }
@@ -286,9 +286,9 @@ class element extends \tool_certificate\element {
         }
 
         // Editing existing instance - copy existing files into draft area.
-        $draftitemid = file_get_submitted_draft_itemid('customcertimage');
+        $draftitemid = file_get_submitted_draft_itemid('certificateimage');
         file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'image', 0, $this->filemanageroptions);
-        $element = $mform->getElement('customcertimage');
+        $element = $mform->getElement('certificateimage');
         $element->setValue($draftitemid);
 
         parent::definition_after_data($mform);
@@ -299,7 +299,7 @@ class element extends \tool_certificate\element {
      *
      * We will want to update the file's pathname hash.
      *
-     * @param \restore_customcert_activity_task $restore
+     * @param \restore_certificate_activity_task $restore
      */
     public function after_restore($restore) {
         global $DB;

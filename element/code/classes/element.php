@@ -50,10 +50,10 @@ class element extends \tool_certificate\element {
         } else {
             // Get the page.
             $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
-            // Get the customcert this page belongs to.
-            $customcert = $DB->get_record('tool_certificate', array('templateid' => $page->templateid), '*', MUST_EXIST);
+            // Get the certificate this page belongs to.
+            $certificate = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
             // Now we can get the issue for this user.
-            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $customcert->id),
+            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $certificate->id),
                 '*', MUST_EXIST);
             $code = $issue->code;
         }

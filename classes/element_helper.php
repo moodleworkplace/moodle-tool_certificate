@@ -154,7 +154,7 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_colour($mform) {
-        $mform->addElement('customcert_colourpicker', 'colour', get_string('fontcolour', 'tool_certificate'));
+        $mform->addElement('certificate_colourpicker', 'colour', get_string('fontcolour', 'tool_certificate'));
         $mform->setType('colour', PARAM_RAW); // Need to validate that this is a valid colour.
         $mform->setDefault('colour', '#000000');
         $mform->addHelpButton('colour', 'fontcolour', 'tool_certificate');
@@ -335,7 +335,7 @@ class element_helper {
     }
 
     /**
-     * Helper function that returns the sequence on a specified customcert page for a
+     * Helper function that returns the sequence on a specified certificate page for a
      * newly created element.
      *
      * @param int $pageid the id of the page we are adding this element to

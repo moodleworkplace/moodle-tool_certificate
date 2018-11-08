@@ -51,23 +51,23 @@ class upload_image_form extends \moodleform {
             'maxbytes' => $CFG->maxbytes,
             'subdirs' => 1,
             'accepted_types' => 'image');
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
+        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
 
         $this->add_action_buttons();
     }
 
     /**
-     * Fill in the current page data for this customcert.
+     * Fill in the current page data for this certificate.
      */
     public function definition_after_data() {
         $mform = $this->_form;
 
         // Editing existing instance - copy existing files into draft area.
-        $draftitemid = file_get_submitted_draft_itemid('customcertimage');
+        $draftitemid = file_get_submitted_draft_itemid('certificateimage');
         file_prepare_draft_area($draftitemid, \context_system::instance()->id, 'tool_certificate', 'image', 0,
             $this->filemanageroptions);
-        $element = $mform->getElement('customcertimage');
+        $element = $mform->getElement('certificateimage');
         $element->setValue($draftitemid);
     }
 }

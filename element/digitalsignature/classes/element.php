@@ -104,7 +104,7 @@ class element extends \certificateelement_image\element {
             \tool_certificate\element_helper::render_form_element_position($mform);
         }
 
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
+        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
 
         $mform->addElement('filemanager', 'digitalsignature',
@@ -130,7 +130,7 @@ class element extends \certificateelement_image\element {
         }
 
         // Handle file uploads.
-        \tool_certificate\certificate::upload_files($data->customcertimage, $context->id);
+        \tool_certificate\certificate::upload_files($data->certificateimage, $context->id);
 
         // Handle file certificate uploads.
         \tool_certificate\certificate::upload_files($data->digitalsignature, $context->id, 'signature');

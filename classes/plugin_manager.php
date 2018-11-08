@@ -215,7 +215,7 @@ class plugin_manager {
         $url = $this->pageurl;
 
         if ($action === 'delete') {
-            $url = \core_plugin_manager::instance()->get_uninstall_url('customcertelement_'.$plugin, 'manage');
+            $url = \core_plugin_manager::instance()->get_uninstall_url('certificateelement_'.$plugin, 'manage');
             if (!$url) {
                 return '&nbsp;';
             }

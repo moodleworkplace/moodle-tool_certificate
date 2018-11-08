@@ -64,7 +64,7 @@ class certificates_table extends \table_sql {
 
         // Check if we were passed a filename, which means we want to download it.
         if ($download) {
-            $this->is_downloading($download, 'customcert-report');
+            $this->is_downloading($download, 'certificate-report');
         }
 
         if (!$this->is_downloading()) {
