@@ -1,7 +1,7 @@
 @tool @tool_certificate
 Feature: Being able to verify that a certificate is valid or not
   In order to ensure that a user can verify a certificate is valid
-  As a teacher and non-user
+  As an admin and non-user
   I need to be able to verify a certificate
 
   Background:

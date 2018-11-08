@@ -30,20 +30,39 @@ require_login();
 
 require_capability('tool/certificate:manage', context_system::instance());
 
-$template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), 'id', MUST_EXIST);
 
-$pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid,
-    'page' => $page, 'perpage' => $perpage));
+$url = new moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $templateid));
 
 $heading = get_string('issuenewcertificates', 'tool_certificate');
 
+$PAGE->set_url($url);
+$PAGE->set_context(context_system::instance());
+
 $PAGE->navbar->add($heading);
 
-if ($userids && confirm_sesskey()) {
-
-    // Delete the template.
-    \tool_certificate\certificate::issue($userids);
-
-    // Redirect back to the manage templates page.
-    redirect(new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]));
+$form = new \tool_certificate\form\certificate_issues($url->out(false));
+if ($form->is_cancelled()) {
+    redirect(new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid)));
+} else if (($data = $form->get_data()) && !empty($data->users)) {
+    $i = 0;
+    foreach ($data->users as $userid) {
+        $result = \tool_certificate\certificate::issue_certificate($template->id, $userid);
+        if ($result) {
+            $i++;
+        }
+    }
+    if ($i == 0) {
+        $notification = get_string('noissueswerecreated', 'tool_certificate');
+    } else if ($i == 1) {
+        $notification = get_string('oneissuewascreated', 'tool_certificate');
+    } else {
+        $notification = get_string('aissueswerecreated', 'tool_certificate', $i);
+    }
+    redirect($url, $notification);
 }
+
+echo $OUTPUT->header();
+echo $OUTPUT->heading($heading);
+echo $form->display();
+echo $OUTPUT->footer();
