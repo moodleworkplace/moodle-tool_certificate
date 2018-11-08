@@ -45,31 +45,6 @@ class tool_certificate_element_helper_testcase extends advanced_testcase {
     }
 
     /**
-     * Tests we are returning the correct course id for an element in a site template.
-     */
-    public function test_get_courseid_element_in_site_template() {
-        global $DB, $SITE;
-
-        // Add a template to the site.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
-
-        // Add a page to the template.
-        $pageid = $template->add_page();
-
-        // Add an element to this page.
-        $element = new \stdClass();
-        $element->name = 'Test element';
-        $element->element = 'testelement';
-        $element->pageid = $pageid;
-        $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
-        $element->timecreated = time();
-        $element->id = $DB->insert_record('tool_certificate_elements', $element);
-
-        // Confirm the correct course id is returned.
-        $this->assertEquals($SITE->id, \tool_certificate\element_helper::get_courseid($element->id));
-    }
-
-    /**
      * Test we return the correct grade items in a course.
      */
     public function test_get_grade_items() {

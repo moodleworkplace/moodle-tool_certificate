@@ -359,31 +359,6 @@ class element_helper {
     }
 
     /**
-     * Helper function that returns the course id for this element.
-     *
-     * @param int $elementid The element id
-     * @return int The course id
-     */
-    public static function get_courseid($elementid) {
-        global $DB, $SITE;
-
-        $sql = "SELECT course
-                  FROM {customcert} c
-            INNER JOIN {tool_certificate_pages} cp
-                    ON c.templateid = cp.templateid
-            INNER JOIN {tool_certificate_elements} ce
-                    ON cp.id = ce.pageid
-                 WHERE ce.id = :elementid";
-
-        // Check if there is a course associated with this element.
-        if ($course = $DB->get_record_sql($sql, array('elementid' => $elementid))) {
-            return $course->course;
-        } else { // Must be in a site template.
-            return $SITE->id;
-        }
-    }
-
-    /**
      * Return the list of possible elements to add.
      *
      * @return array the list of element types that can be used.
