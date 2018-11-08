@@ -30,7 +30,8 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
 \MoodleQuickForm::registerElementType('customcert_colourpicker',
-    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php', 'moodlequickform_tool_certificate_colourpicker');
+    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php',
+    'moodlequickform_tool_certificate_colourpicker');
 
 /**
  * The form for handling editing a certificate element.

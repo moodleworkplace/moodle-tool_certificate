@@ -30,7 +30,8 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
 \MoodleQuickForm::registerElementType('customcert_colourpicker',
-    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php', 'moodlequickform_tool_certificate_colourpicker');
+    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php',
+    'moodlequickform_tool_certificate_colourpicker');
 
 /**
  * The form for handling the layout of the customcert instance.
@@ -96,9 +97,11 @@ class edit_form extends \moodleform {
         }
 
         // Add the submit buttons.
+        $previewstring = get_string('savechangespreview', 'tool_certificate');
+        $savestring = get_string('savechanges');
         $group = array();
-        $group[] = $mform->createElement('submit', 'submitbtn', get_string('savechanges'));
-        $group[] = $mform->createElement('submit', 'previewbtn', get_string('savechangespreview', 'tool_certificate'), array(), false);
+        $group[] = $mform->createElement('submit', 'submitbtn', $savestring);
+        $group[] = $mform->createElement('submit', 'previewbtn', $previewstring, array(), false);
         $mform->addElement('group', 'submitbtngroup', '', $group, '', false);
 
         $mform->addElement('hidden', 'tid');
@@ -290,9 +293,11 @@ class edit_form extends \moodleform {
             // Create link to order the elements.
             $link = \html_writer::link(new \moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $page->id)),
                 get_string('rearrangeelements', 'tool_certificate'));
+
             // Add the table to the form.
-            $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'tool_certificate'), \html_writer::table($table)
-                . \html_writer::tag( 'div', $link));
+            $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'tool_certificate'),
+                               \html_writer::table($table) . \html_writer::tag( 'div', $link));
+
             $mform->addHelpButton('elements_' . $page->id, 'elements', 'tool_certificate');
         }
 
