@@ -5,10 +5,7 @@ Feature: Being able to manage pages in a certificate template
   I need to manage pages in a certificate template
 
   Background:
-    Given the following "users" exist:
-      | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | 1        | teacher1@example.com |
-    And the following certificate templates exist:
+    Given the following certificate templates exist:
       | name | numberofpages |
       | Certificate 1 | 1 |
     And I log in as "admin"

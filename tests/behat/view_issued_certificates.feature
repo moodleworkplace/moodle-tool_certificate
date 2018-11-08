@@ -1,13 +1,12 @@
 @tool @tool_certificate
 Feature: Being able to view the certificates that have been issued
   In order to ensure that a user can view the certificates that have been issued
-  As a teacher
+  As an admin
   I need to view the certificates that have been issued
 
   Background:
     Given the following "users" exist:
       | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | 1        | teacher1@example.com |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
     And the following certificate templates exist:
