@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class represents a customcert template.
+ * Class represents a certificate template.
  *
  * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
@@ -27,7 +27,7 @@ namespace tool_certificate;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Class represents a customcert template.
+ * Class represents a certificate template.
  *
  * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
@@ -371,7 +371,7 @@ class template {
     public function move_item($itemname, $itemid, $direction) {
         global $DB;
 
-        $table = 'customcert_';
+        $table = 'tool_certificate_';
         if ($itemname == 'page') {
             $table .= 'pages';
         } else { // Must be an element.

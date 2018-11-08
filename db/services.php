@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Web service for mod customcert.
+ * Web service for tool certificate.
  *
  * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>

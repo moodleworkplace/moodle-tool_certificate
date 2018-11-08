@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handles AJAX requests for the customcert module.
+ * Handles AJAX requests for the certificate module.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>

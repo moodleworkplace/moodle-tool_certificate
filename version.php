@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of the customcert module
+ * Code fragment to define the version of the certificate tool
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>

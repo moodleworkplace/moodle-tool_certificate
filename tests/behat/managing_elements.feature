@@ -14,7 +14,7 @@ Feature: Being able to manage elements in a certificate template
 
   Scenario: Add and edit elements in a certificate template
     # Background image.
-   When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
+    When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save changes"
     And I should see "Background image" in the "elementstable" "table"
     # Border.

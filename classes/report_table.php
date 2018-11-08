@@ -40,9 +40,9 @@ require_once($CFG->libdir . '/tablelib.php');
 class report_table extends \table_sql {
 
     /**
-     * @var int $customcertid The custom certificate id
+     * @var int $certificateid The custom certificate id
      */
-    protected $customcertid;
+    protected $certificateid;
 
     /**
      * @var \stdClass $cm The course module.
@@ -57,12 +57,12 @@ class report_table extends \table_sql {
     /**
      * Sets up the table.
      *
-     * @param int $customcertid
+     * @param int $certificateid
      * @param \stdClass $cm the course module
      * @param bool $groupmode are we in group mode?
      * @param string|null $download The file type, null if we are not downloading
      */
-    public function __construct($customcertid, $cm, $groupmode, $download = null) {
+    public function __construct($certificateid, $cm, $groupmode, $download = null) {
         parent::__construct('tool_certificate_report_table');
 
         $columns = array(
@@ -76,7 +76,7 @@ class report_table extends \table_sql {
 
         // Check if we were passed a filename, which means we want to download it.
         if ($download) {
-            $this->is_downloading($download, 'customcert-report');
+            $this->is_downloading($download, 'certificate-report');
         }
 
         if (!$this->is_downloading()) {
@@ -96,7 +96,7 @@ class report_table extends \table_sql {
         $this->no_sorting('download');
         $this->is_downloadable(true);
 
-        $this->customcertid = $customcertid;
+        $this->certificateid = $certificateid;
         $this->cm = $cm;
         $this->groupmode = $groupmode;
     }
@@ -137,7 +137,7 @@ class report_table extends \table_sql {
         global $OUTPUT;
 
         $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
-        $link = new \moodle_url('/mod/customcert/view.php',
+        $link = new \moodle_url('/admin/tool/certificate/view.php',
             [
                 'id' => $this->cm->id,
                 'downloadissue' => $user->id
@@ -157,7 +157,7 @@ class report_table extends \table_sql {
         global $OUTPUT;
 
         $icon = new \pix_icon('i/delete', get_string('delete'));
-        $link = new \moodle_url('/mod/customcert/view.php',
+        $link = new \moodle_url('/admin/tool/certificate/view.php',
             [
                 'id' => $this->cm->id,
                 'deleteissue' => $user->issueid,
@@ -175,11 +175,11 @@ class report_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = \tool_certificate\certificate::get_number_of_issues($this->customcertid, $this->cm, $this->groupmode);
+        $total = \tool_certificate\certificate::get_number_of_issues($this->certificateid, $this->cm, $this->groupmode);
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = \tool_certificate\certificate::get_issues($this->customcertid, $this->groupmode, $this->cm,
+        $this->rawdata = \tool_certificate\certificate::get_issues($this->certificateid, $this->groupmode, $this->cm,
             $this->get_page_start(), $this->get_page_size(), $this->get_sql_sort());
 
         // Set initial bars.
@@ -193,7 +193,7 @@ class report_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = \tool_certificate\certificate::get_number_of_issues($this->customcertid, $this->cm, $this->groupmode);
+        $total = \tool_certificate\certificate::get_number_of_issues($this->certificateid, $this->cm, $this->groupmode);
         $this->out($total, false);
         exit;
     }

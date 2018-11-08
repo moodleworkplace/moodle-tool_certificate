@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides functionality needed by customcert activities.
+ * Provides functionality needed by certificate activities.
  *
  * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>
@@ -54,12 +54,12 @@ class certificate {
 
     /**
      * @var int the number of issues that will be displayed on each page in the report
-     *      If you want to display all customcerts on a page set this to 0.
+     *      If you want to display all certificates on a page set this to 0.
      */
     const CUSTOMCERT_PER_PAGE = '50';
 
     /**
-     * Handles setting the protection field for the customcert
+     * Handles setting the protection field for the certificate
      *
      * @param \stdClass $data
      * @return string the value to insert into the protection field
@@ -82,7 +82,7 @@ class certificate {
     }
 
     /**
-     * Handles uploading an image for the customcert module.
+     * Handles uploading an image for the certificate module.
      *
      * @param int $draftitemid the draft area containing the files
      * @param int $contextid the context we are storing this image in
@@ -235,9 +235,9 @@ class certificate {
     }
 
     /**
-     * Returns a list of issued customcerts.
+     * Returns a list of issued certificates.
      *
-     * @param int $customcertid
+     * @param int $templateid
      * @param bool $groupmode are we in group mode
      * @param \stdClass $cm the course module
      * @param int $limitfrom
@@ -245,7 +245,7 @@ class certificate {
      * @param string $sort
      * @return array the users
      */
-    public static function get_issues($customcertid, $groupmode, $cm, $limitfrom, $limitnum, $sort = '') {
+    public static function get_issues($templateid, $groupmode, $cm, $limitfrom, $limitnum, $sort = '') {
         global $DB;
 
         // Get the conditional SQL.
@@ -256,8 +256,8 @@ class certificate {
             return array();
         }
 
-        // Add the conditional SQL and the customcertid to form all used parameters.
-        $allparams = $conditionsparams + array('customcertid' => $customcertid);
+        // Add the conditional SQL and the templateid to form all used parameters.
+        $allparams = $conditionsparams + array('templateid' => $templateid);
 
         // Return the issues.
         $ufields = \user_picture::fields('u');
@@ -266,7 +266,7 @@ class certificate {
             INNER JOIN {tool_certificate_issues} ci
                     ON u.id = ci.userid
                  WHERE u.deleted = 0
-                   AND ci.customcertid = :customcertid
+                   AND ci.templateid = :templateid
                        $conditionssql";
         if ($sort) {
             $sql .= "ORDER BY " . $sort;
@@ -321,14 +321,14 @@ class certificate {
     }
 
     /**
-     * Returns the total number of issues for a given customcert.
+     * Returns the total number of issues for a given certificate.
      *
-     * @param int $customcertid
+     * @param int $templateid
      * @param \stdClass $cm the course module
      * @param bool $groupmode the group mode
      * @return int the number of issues
      */
-    public static function get_number_of_issues($customcertid, $cm, $groupmode) {
+    public static function get_number_of_issues($templateid, $cm, $groupmode) {
         global $DB;
 
         // Get the conditional SQL.
@@ -339,8 +339,8 @@ class certificate {
             return 0;
         }
 
-        // Add the conditional SQL and the customcertid to form all used parameters.
-        $allparams = $conditionsparams + array('customcertid' => $customcertid);
+        // Add the conditional SQL and the templateid to form all used parameters.
+        $allparams = $conditionsparams + array('templateid' => $templateid);
 
         // Return the number of issues.
         $sql = "SELECT COUNT(u.id) as count
@@ -348,7 +348,7 @@ class certificate {
             INNER JOIN {tool_certificate_issues} ci
                     ON u.id = ci.userid
                  WHERE u.deleted = 0
-                   AND ci.customcertid = :customcertid
+                   AND ci.templateid = :templateid
                        $conditionssql";
         return $DB->count_records_sql($sql, $allparams);
     }
@@ -363,7 +363,7 @@ class certificate {
     public static function get_conditional_issues_sql($cm, $groupmode) {
         global $DB, $USER;
 
-        // Get all users that can manage this customcert to exclude them from the report.
+        // Get all users that can manage this certificate to exclude them from the report.
         $context = \context_module::instance($cm->id);
         $conditionssql = '';
         $conditionsparams = array();
@@ -466,7 +466,7 @@ class certificate {
     /**
      * Issues a certificate to a user.
      *
-     * @param int $certificateid The ID of the template
+     * @param int $templateid The ID of the template
      * @param int $userid The ID of the user to issue the certificate to
      * @return int The ID of the issue
      */
@@ -512,11 +512,11 @@ class certificate {
     /**
      * Returns the \context_module of a given certificate
      *
-     * @param int $certificateid
+     * @param int $templateid
      * @return \context_module
      */
-    public static function get_context($certificateid) {
-        return \context_module::instance(get_coursemodule_from_instance('tool_certificate', $certificateid)->id);
+    public static function get_context($templateid) {
+        return \context_system::instance();
     }
 
     public static function revoke_issue($issueid) {
