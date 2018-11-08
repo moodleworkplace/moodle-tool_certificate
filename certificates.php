@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage all issued certificates on site.
+ * Manage issued certificates for a given templateid.
  *
  * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
@@ -98,5 +98,8 @@ if ($revokecert && confirm_sesskey()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template));
+$newissueurl = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
+$newissuestr = get_string('issuenewcertificates', 'tool_certificate');
+echo html_writer::link($newissueurl, $newissuestr, ['class' => 'btn btn-primary']);
 $table->out($perpage, false);
 echo $OUTPUT->footer();
