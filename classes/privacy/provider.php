@@ -74,7 +74,7 @@ class provider implements
         $sql = "SELECT c.id
                   FROM {context} c
                  WHERE c.contextlevel = :contextlevel
-                 AND EXISTS (SELECT i.id 
+                 AND EXISTS (SELECT i.id
                               FROM {tool_certificate_issues} i
                              WHERE i.userid = :userid)";
 

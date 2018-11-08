@@ -103,10 +103,12 @@ class manage_templates_table extends \table_sql {
             array('class' => 'action-icon duplicate-icon'));
 
         $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
-        $issuesicon = $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', get_string('certificatesissued', 'tool_certificate')));
+        $issuesstr  = get_string('certificatesissued', 'tool_certificate');
+        $issuesicon = $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', $issuesstr));
 
         $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
-        $newissueicon = $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', get_string('issuenewcertificate', 'tool_certificate')));
+        $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
+        $newissueicon = $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', $newissuestr));
 
         // Link to delete the template.
         $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',

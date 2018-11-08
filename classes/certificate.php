@@ -287,7 +287,7 @@ class certificate {
         global $DB;
         if ($templateid > 0) {
             $conditions = ['templateid' => $templateid];
-        } else  {
+        } else {
             $conditions = [];
         }
         return $DB->count_records('tool_certificate_issues', $conditions);
