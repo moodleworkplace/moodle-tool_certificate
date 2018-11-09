@@ -46,7 +46,8 @@ class certificate_issues extends moodleform {
             'multiple' => true,
             'data-capability' => 'tool/certificate:manage'
         );
-        $mform->addElement('autocomplete', 'users', get_string('selectuserstoissuecertificatefor', 'tool_certificate'), array(), $options);
+        $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
+        $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
         $mform->addElement('submit', 'submit', get_string('issuecertificates', 'tool_certificate'));
         $mform->addElement('cancel');
     }
