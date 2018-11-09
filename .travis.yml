@@ -13,7 +13,7 @@ php:
 
 addons:
  firefox: 47.0.1
- postgresql: 9.3
+ postgresql: 9.4
  apt:
    packages:
    - oracle-java8-installer
@@ -38,6 +38,7 @@ install:
   - moodle-plugin-ci add-plugin moodlesp/moodle-theme_workplace
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
   - moodle-plugin-ci install
+  - moodle-plugin-ci add-config '$CFG->theme = "workplace";'
 
 script:
   - moodle-plugin-ci phplint
