@@ -404,7 +404,7 @@ abstract class element {
      * data will need to be updated if we are restoring the course as the course module id will
      * be different in the new course.
      *
-     * @param \restore_customcert_activity_task $restore
+     * @param \restore_certificate_activity_task $restore
      */
     public function after_restore($restore) {
 

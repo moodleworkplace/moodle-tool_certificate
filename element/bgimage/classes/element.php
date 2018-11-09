@@ -42,7 +42,7 @@ class element extends \certificateelement_image\element {
      */
     public function render_form_elements($mform) {
         $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
-        $mform->addElement('filemanager', 'customcertimage', get_string('uploadimage', 'tool_certificate'), '',
+        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
     }
 

@@ -15,7 +15,7 @@ Y.extend(Rearrange, Y.Base, {
     templateid: 0,
 
     /**
-     * The customcert page we are displaying.
+     * The certificate page we are displaying.
      */
     page: [],
 

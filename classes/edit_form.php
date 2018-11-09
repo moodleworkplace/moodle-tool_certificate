@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the form for handling the layout of the customcert instance.
+ * This file contains the form for handling the layout of the certificate instance.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -29,11 +29,12 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
-\MoodleQuickForm::registerElementType('customcert_colourpicker',
-    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php', 'moodlequickform_tool_certificate_colourpicker');
+\MoodleQuickForm::registerElementType('certificate_colourpicker',
+    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php',
+    'moodlequickform_tool_certificate_colourpicker');
 
 /**
- * The form for handling the layout of the customcert instance.
+ * The form for handling the layout of the certificate instance.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -69,7 +70,7 @@ class edit_form extends \moodleform {
             if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid), 'sequence')) {
                 $this->numpages = count($pages);
                 foreach ($pages as $p) {
-                    $this->add_customcert_page_elements($p);
+                    $this->add_certificate_page_elements($p);
                 }
             }
         } else { // Add a new template.
@@ -77,7 +78,7 @@ class edit_form extends \moodleform {
             $page = new \stdClass();
             $page->id = 0;
             $page->sequence = 1;
-            $this->add_customcert_page_elements($page);
+            $this->add_certificate_page_elements($page);
         }
 
         // Link to add another page, only display it when the template has been created.
@@ -96,9 +97,11 @@ class edit_form extends \moodleform {
         }
 
         // Add the submit buttons.
+        $previewstring = get_string('savechangespreview', 'tool_certificate');
+        $savestring = get_string('savechanges');
         $group = array();
-        $group[] = $mform->createElement('submit', 'submitbtn', get_string('savechanges'));
-        $group[] = $mform->createElement('submit', 'previewbtn', get_string('savechangespreview', 'tool_certificate'), array(), false);
+        $group[] = $mform->createElement('submit', 'submitbtn', $savestring);
+        $group[] = $mform->createElement('submit', 'previewbtn', $previewstring, array(), false);
         $mform->addElement('group', 'submitbtngroup', '', $group, '', false);
 
         $mform->addElement('hidden', 'tid');
@@ -107,16 +110,16 @@ class edit_form extends \moodleform {
     }
 
     /**
-     * Fill in the current page data for this customcert.
+     * Fill in the current page data for this certificate.
      */
     public function definition_after_data() {
         global $DB;
 
         $mform = $this->_form;
 
-        // Check that we are updating a current customcert.
+        // Check that we are updating a current certificate.
         if ($this->tid) {
-            // Get the pages for this customcert.
+            // Get the pages for this certificate.
             if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid))) {
                 // Loop through the pages.
                 foreach ($pages as $p) {
@@ -189,9 +192,9 @@ class edit_form extends \moodleform {
     /**
      * Adds the page elements to the form.
      *
-     * @param \stdClass $page the customcert page
+     * @param \stdClass $page the certificate page
      */
-    protected function add_customcert_page_elements($page) {
+    protected function add_certificate_page_elements($page) {
         global $DB, $OUTPUT;
 
         // Create the form object.
@@ -290,9 +293,11 @@ class edit_form extends \moodleform {
             // Create link to order the elements.
             $link = \html_writer::link(new \moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $page->id)),
                 get_string('rearrangeelements', 'tool_certificate'));
+
             // Add the table to the form.
-            $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'tool_certificate'), \html_writer::table($table)
-                . \html_writer::tag( 'div', $link));
+            $mform->addElement('static', 'elements_' . $page->id, get_string('elements', 'tool_certificate'),
+                               \html_writer::table($table) . \html_writer::tag( 'div', $link));
+
             $mform->addHelpButton('elements_' . $page->id, 'elements', 'tool_certificate');
         }
 

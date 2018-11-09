@@ -29,8 +29,9 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
-\MoodleQuickForm::registerElementType('customcert_colourpicker',
-    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php', 'moodlequickform_tool_certificate_colourpicker');
+\MoodleQuickForm::registerElementType('certificate_colourpicker',
+    $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php',
+    'moodlequickform_tool_certificate_colourpicker');
 
 /**
  * The form for handling editing a certificate element.
@@ -70,7 +71,7 @@ class edit_element_form extends \moodleform {
     }
 
     /**
-     * Fill in the current page data for this customcert.
+     * Fill in the current page data for this certificate.
      */
     public function definition_after_data() {
         $this->element->definition_after_data($this->_form);

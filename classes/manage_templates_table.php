@@ -26,8 +26,6 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die;
 
-global $CFG;
-
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
@@ -104,6 +102,14 @@ class manage_templates_table extends \table_sql {
         $duplicateicon = $OUTPUT->action_icon($duplicatelink, new \pix_icon('t/copy', get_string('duplicate')), null,
             array('class' => 'action-icon duplicate-icon'));
 
+        $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
+        $issuesstr  = get_string('certificatesissued', 'tool_certificate');
+        $issuesicon = $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', $issuesstr));
+
+        $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
+        $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
+        $newissueicon = $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', $newissuestr));
+
         // Link to delete the template.
         $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
             array(
@@ -115,7 +121,7 @@ class manage_templates_table extends \table_sql {
         $deleteicon = $OUTPUT->action_icon($deletelink, new \pix_icon('t/delete', get_string('delete')), null,
             array('class' => 'action-icon delete-icon'));
 
-        return $editicon . $duplicateicon . $deleteicon;
+        return $editicon . $duplicateicon . $issuesicon . $newissueicon . $deleteicon;
     }
 
     /**

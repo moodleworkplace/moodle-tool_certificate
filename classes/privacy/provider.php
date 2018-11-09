@@ -53,7 +53,7 @@ class provider implements
             'tool_certificate_issues',
             [
                 'userid' => 'privacy:metadata:tool_certificate_issues:userid',
-                'customcertid' => 'privacy:metadata:tool_certificate_issues:customcertid',
+                'templateid' => 'privacy:metadata:tool_certificate_issues:templateid',
                 'code' => 'privacy:metadata:tool_certificate_issues:code',
                 'emailed' => 'privacy:metadata:tool_certificate_issues:emailed',
                 'timecreated' => 'privacy:metadata:tool_certificate_issues:timecreated',
@@ -73,21 +73,13 @@ class provider implements
     public static function get_contexts_for_userid(int $userid) : contextlist {
         $sql = "SELECT c.id
                   FROM {context} c
-            INNER JOIN {course_modules} cm
-                    ON cm.id = c.instanceid
-                   AND c.contextlevel = :contextlevel
-            INNER JOIN {modules} m
-                    ON m.id = cm.module
-                   AND m.name = :modulename
-            INNER JOIN {customcert} customcert
-                    ON customcert.id = cm.instance
-            INNER JOIN {tool_certificate_issues} customcertissues
-                    ON customcertissues.customcertid = customcert.id
-                 WHERE customcertissues.userid = :userid";
+                 WHERE c.contextlevel = :contextlevel
+                 AND EXISTS (SELECT i.id
+                              FROM {tool_certificate_issues} i
+                             WHERE i.userid = :userid)";
 
         $params = [
-            'modulename' => 'tool_certificate',
-            'contextlevel' => CONTEXT_MODULE,
+            'contextlevel' => CONTEXT_SYSTEM,
             'userid' => $userid,
         ];
         $contextlist = new contextlist();
@@ -104,36 +96,22 @@ class provider implements
     public static function export_user_data(approved_contextlist $contextlist) {
         global $DB;
 
-        // Filter out any contexts that are not related to modules.
-        $cmids = array_reduce($contextlist->get_contexts(), function($carry, $context) {
-            if ($context->contextlevel == CONTEXT_MODULE) {
-                $carry[] = $context->instanceid;
-            }
-            return $carry;
-        }, []);
-
-        if (empty($cmids)) {
-            return;
-        }
-
         $user = $contextlist->get_user();
 
-        // Get all the customcert activities associated with the above course modules.
-        $customcertidstocmids = self::get_customcert_ids_to_cmids_from_cmids($cmids);
+        $params = ['userid' => $user->id];
+        $recordset = $DB->get_recordset_select('tool_certificate_issues', "userid = :userid", $params, 'timecreated, id ASC');
 
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($customcertidstocmids), SQL_PARAMS_NAMED);
-        $params = array_merge($inparams, ['userid' => $user->id]);
-        $recordset = $DB->get_recordset_select('tool_certificate_issues', "customcertid $insql AND userid = :userid",
-            $params, 'timecreated, id ASC');
-        self::recordset_loop_and_export($recordset, 'customcertid', [], function($carry, $record) {
+        self::recordset_loop_and_export($recordset, 'templateid', [], function($carry, $record) {
+
             $carry[] = [
                 'code' => $record->code,
-                'emailed' => transform::yesno($record->emailed),
                 'timecreated' => transform::datetime($record->timecreated)
             ];
             return $carry;
-        }, function($customcertid, $data) use ($user, $customcertidstocmids) {
-            $context = \context_module::instance($customcertidstocmids[$customcertid]);
+
+        }, function($templateid, $data) use ($user) {
+
+            $context = \context_system::instance();
             $contextdata = helper::get_context_data($context, $user);
             $finaldata = (object) array_merge((array) $contextdata, ['issues' => $data]);
             helper::export_context_files($context, $user);
@@ -149,15 +127,11 @@ class provider implements
     public static function delete_data_for_all_users_in_context(\context $context) {
         global $DB;
 
-        if (!$context instanceof \context_module) {
+        if (!$context instanceof \context_system) {
             return;
         }
 
-        if (!$cm = get_coursemodule_from_id('tool_certificate', $context->instanceid)) {
-            return;
-        }
-
-        $DB->delete_records('tool_certificate_issues', ['customcertid' => $cm->instance]);
+        $DB->delete_records('tool_certificate_issues');
     }
 
     /**
@@ -174,35 +148,11 @@ class provider implements
 
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist->get_contexts() as $context) {
-            if (!$context instanceof \context_module) {
+            if (!$context instanceof \context_system) {
                 continue;
             }
-            $instanceid = $DB->get_field('course_modules', 'instance', ['id' => $context->instanceid], MUST_EXIST);
-            $DB->delete_records('tool_certificate_issues', ['customcertid' => $instanceid, 'userid' => $userid]);
+            $DB->delete_records('tool_certificate_issues', ['userid' => $userid]);
         }
-    }
-
-    /**
-     * Return a list of Customcert IDs mapped to their course module ID.
-     *
-     * @param array $cmids The course module IDs.
-     * @return array In the form of [$customcertid => $cmid].
-     */
-    protected static function get_customcert_ids_to_cmids_from_cmids(array $cmids) {
-        global $DB;
-
-        list($insql, $inparams) = $DB->get_in_or_equal($cmids, SQL_PARAMS_NAMED);
-        $sql = "SELECT customcert.id, cm.id AS cmid
-                 FROM {customcert} customcert
-                 JOIN {modules} m
-                   ON m.name = :modulename
-                 JOIN {course_modules} cm
-                   ON cm.instance = customcert.id
-                  AND cm.module = m.id
-                WHERE cm.id $insql";
-        $params = array_merge($inparams, ['modulename' => 'tool_certificate']);
-
-        return $DB->get_records_sql_menu($sql, $params);
     }
 
     /**
@@ -217,6 +167,7 @@ class provider implements
      */
     protected static function recordset_loop_and_export(\moodle_recordset $recordset, $splitkey, $initial,
             callable $reducer, callable $export) {
+
         $data = $initial;
         $lastid = null;
 

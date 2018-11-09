@@ -85,12 +85,12 @@ function tool_certificate_output_fragment_editelement($args) {
  * context when this is called.
  *
  * @param settings_navigation $settings
- * @param navigation_node $customcertnode
+ * @param navigation_node $certificatenode
  */
-function tool_certificate_extend_settings_navigation(settings_navigation $settings, navigation_node $customcertnode) {
+function tool_certificate_extend_settings_navigation(settings_navigation $settings, navigation_node $certificatenode) {
     global $DB, $PAGE;
 
-    $keys = $customcertnode->get_children_key_list();
+    $keys = $certificatenode->get_children_key_list();
     $beforekey = null;
     $i = array_search('modedit', $keys);
     if ($i === false and array_key_exists(0, $keys)) {
@@ -102,11 +102,11 @@ function tool_certificate_extend_settings_navigation(settings_navigation $settin
     if (has_capability('tool/certificate:manage', $PAGE->cm->context)) {
         // Get the template id.
         $templateid = $DB->get_field('tool_certificate', 'templateid', array('id' => $PAGE->cm->instance));
-        $node = navigation_node::create(get_string('editcustomcert', 'tool_certificate'),
+        $node = navigation_node::create(get_string('editcertificate', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid)),
                 navigation_node::TYPE_SETTING, null, 'tool_certificate_edit',
                 new pix_icon('t/edit', ''));
-        $customcertnode->add_node($node, $beforekey);
+        $certificatenode->add_node($node, $beforekey);
     }
 
     if (has_capability('tool/certificate:verifycertificate', $PAGE->cm->context)) {
@@ -114,10 +114,10 @@ function tool_certificate_extend_settings_navigation(settings_navigation $settin
             new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $PAGE->cm->context->id)),
             navigation_node::TYPE_SETTING, null, 'tool_certificate_verify_certificate',
             new pix_icon('t/check', ''));
-        $customcertnode->add_node($node, $beforekey);
+        $certificatenode->add_node($node, $beforekey);
     }
 
-    return $customcertnode->trim_if_empty();
+    return $certificatenode->trim_if_empty();
 }
 
 /**

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage customcert templates.
+ * Manage certificate templates.
  *
  * @package    tool_certificate
  * @copyright  2016 Mark Nelson <markn@moodle.com>

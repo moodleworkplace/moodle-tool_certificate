@@ -73,10 +73,6 @@ class element extends \tool_certificate\element {
         // Get the possible date options.
         $dateoptions = array();
         $dateoptions[CUSTOMCERT_DATE_ISSUE] = get_string('issueddate', 'certificateelement_date');
-        $dateoptions[CUSTOMCERT_DATE_COMPLETION] = get_string('completiondate', 'certificateelement_date');
-        $dateoptions[CUSTOMCERT_DATE_COURSE_START] = get_string('coursestartdate', 'certificateelement_date');
-        $dateoptions[CUSTOMCERT_DATE_COURSE_END] = get_string('courseenddate', 'certificateelement_date');
-        $dateoptions[CUSTOMCERT_DATE_COURSE_GRADE] = get_string('coursegradedate', 'certificateelement_date');
         $dateoptions = $dateoptions + \tool_certificate\element_helper::get_grade_items($COURSE);
 
         $mform->addElement('select', 'dateitem', get_string('dateitem', 'certificateelement_date'), $dateoptions);
@@ -121,8 +117,6 @@ class element extends \tool_certificate\element {
             return;
         }
 
-        $courseid = \tool_certificate\element_helper::get_courseid($this->id);
-
         // Decode the information stored in the database.
         $dateinfo = json_decode($this->get_data());
         $dateitem = $dateinfo->dateitem;
@@ -134,54 +128,16 @@ class element extends \tool_certificate\element {
         } else {
             // Get the page.
             $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
-            // Get the customcert this page belongs to.
-            $customcert = $DB->get_record('tool_certificate', array('templateid' => $page->templateid), '*', MUST_EXIST);
+            // Get the certificate this page belongs to.
+            $certificate = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
             // Now we can get the issue for this user.
-            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'customcertid' => $customcert->id),
+            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $certificate->id),
                 '*', MUST_EXIST);
 
             if ($dateitem == CUSTOMCERT_DATE_ISSUE) {
                 $date = $issue->timecreated;
-            } else if ($dateitem == CUSTOMCERT_DATE_COMPLETION) {
-                // Get the last completion date.
-                $sql = "SELECT MAX(c.timecompleted) as timecompleted
-                          FROM {course_completions} c
-                         WHERE c.userid = :userid
-                           AND c.course = :courseid";
-                if ($timecompleted = $DB->get_record_sql($sql, array('userid' => $issue->userid, 'courseid' => $courseid))) {
-                    if (!empty($timecompleted->timecompleted)) {
-                        $date = $timecompleted->timecompleted;
-                    }
-                }
-            } else if ($dateitem == CUSTOMCERT_DATE_COURSE_START) {
-                $date = $DB->get_field('course', 'startdate', array('id' => $courseid));
-            } else if ($dateitem == CUSTOMCERT_DATE_COURSE_END) {
-                $date = $DB->get_field('course', 'enddate', array('id' => $courseid));
             } else {
-                if ($dateitem == CUSTOMCERT_DATE_COURSE_GRADE) {
-                    $grade = \tool_certificate\element_helper::get_course_grade_info(
-                        $courseid,
-                        GRADE_DISPLAY_TYPE_DEFAULT,
-                        $user->id
-                    );
-                } else if (strpos($dateitem, 'gradeitem:') === 0) {
-                    $gradeitemid = substr($dateitem, 10);
-                    $grade = \tool_certificate\element_helper::get_grade_item_info(
-                        $gradeitemid,
-                        $dateitem,
-                        $user->id
-                    );
-                } else {
-                    $grade = \tool_certificate\element_helper::get_mod_grade_info(
-                        $dateitem,
-                        GRADE_DISPLAY_TYPE_DEFAULT,
-                        $user->id
-                    );
-                }
-
-                if ($grade && !empty($grade->get_dategraded())) {
-                    $date = $grade->get_dategraded();
-                }
+                $date = '';
             }
         }
 
@@ -238,7 +194,7 @@ class element extends \tool_certificate\element {
      * We will want to update the course module the date element is pointing to as it will
      * have changed in the course restore.
      *
-     * @param \restore_customcert_activity_task $restore
+     * @param \restore_certificate_activity_task $restore
      */
     public function after_restore($restore) {
         global $DB;

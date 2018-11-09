@@ -43,25 +43,24 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        // The customcert activity the user will have an issue from.
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
+        // Add a template to the site.
+        $template1 = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
-        // Another customcert activity that has no issued certificates.
-        $this->getDataGenerator()->create_module('tool_certificate', ['course' => $course->id]);
+        // Another template that has no issued certificates.
+        $template2 = \tool_certificate\template::create('No issues template', context_system::instance()->id);
 
         // Create a user who will be issued a certificate.
         $user = $this->getDataGenerator()->create_user();
 
         // Issue the certificate.
-        $this->create_certificate_issue($customcert->id, $user->id);
+        $this->create_certificate_issue($template1->get_id(), $user->id);
 
         // Check the context supplied is correct.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(1, $contextlist);
 
         $contextformodule = $contextlist->current();
-        $cmcontext = context_module::instance($customcert->cmid);
-        $this->assertEquals($cmcontext->id, $contextformodule->id);
+        $this->assertEquals($contextformodule->id, \context_system::instance()->id);
     }
 
     /**
@@ -72,20 +71,21 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
+        // Add a template to the site.
+        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $this->create_certificate_issue($customcert->id, $user1->id);
-        $this->create_certificate_issue($customcert->id, $user1->id);
-        $this->create_certificate_issue($customcert->id, $user2->id);
+        $this->create_certificate_issue($template->get_id(), $user1->id);
+        $this->create_certificate_issue($template->get_id(), $user1->id);
+        $this->create_certificate_issue($template->get_id(), $user2->id);
 
         // Export all of the data for the context for user 1.
-        $cmcontext = context_module::instance($customcert->cmid);
-        $this->export_context_data_for_user($user1->id, $cmcontext, 'tool_certificate');
-        $writer = \core_privacy\local\request\writer::with_context($cmcontext);
+        $context = \context_system::instance();
+        $this->export_context_data_for_user($user1->id, $context, 'tool_certificate');
+        $writer = \core_privacy\local\request\writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
 
@@ -95,7 +95,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $issues = $data->issues;
         foreach ($issues as $issue) {
             $this->assertArrayHasKey('code', $issue);
-            $this->assertArrayHasKey('emailed', $issue);
             $this->assertArrayHasKey('timecreated', $issue);
         }
     }
@@ -110,34 +109,31 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
-        $customcert2 = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
+        // Add a template to the site.
+        $template1 = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template2 = \tool_certificate\template::create('Second template', context_system::instance()->id);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $this->create_certificate_issue($customcert->id, $user1->id);
-        $this->create_certificate_issue($customcert->id, $user2->id);
+        $this->create_certificate_issue($template1->get_id(), $user1->id);
+        $this->create_certificate_issue($template1->get_id(), $user2->id);
 
-        $this->create_certificate_issue($customcert2->id, $user1->id);
-        $this->create_certificate_issue($customcert2->id, $user2->id);
+        $this->create_certificate_issue($template2->get_id(), $user1->id);
+        $this->create_certificate_issue($template2->get_id(), $user2->id);
 
         // Before deletion, we should have 2 issued certificates for the first certificate.
-        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template1->get_id()]);
         $this->assertEquals(2, $count);
 
         // Delete data based on context.
-        $cmcontext = context_module::instance($customcert->cmid);
-        provider::delete_data_for_all_users_in_context($cmcontext);
+        $context = \context_system::instance();
+        provider::delete_data_for_all_users_in_context($context);
 
-        // After deletion, the issued certificates for the activity should have been deleted.
-        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id]);
+        // After deletion, the issued certificates for all templates should have been deleted.
+        $count = $DB->count_records('tool_certificate_issues');
         $this->assertEquals(0, $count);
-
-        // We should still have the issues for the second certificate.
-        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert2->id]);
-        $this->assertEquals(2, $count);
     }
 
     /**
@@ -150,57 +146,56 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $customcert = $this->getDataGenerator()->create_module('tool_certificate', array('course' => $course->id));
+        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $this->create_certificate_issue($customcert->id, $user1->id);
-        $this->create_certificate_issue($customcert->id, $user2->id);
+        $this->create_certificate_issue($template->get_id(), $user1->id);
+        $this->create_certificate_issue($template->get_id(), $user2->id);
 
         // Before deletion we should have 2 issued certificates.
-        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template->get_id()]);
         $this->assertEquals(2, $count);
 
-        $context = \context_module::instance($customcert->cmid);
-        $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'tool_certificate',
-            [$context->id]);
+        $context = \context_system::instance();
+        $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'tool_certificate', [$context->id]);
         provider::delete_data_for_user($contextlist);
 
         // After deletion, the issued certificates for the first user should have been deleted.
-        $count = $DB->count_records('tool_certificate_issues', ['customcertid' => $customcert->id, 'userid' => $user1->id]);
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template->get_id(), 'userid' => $user1->id]);
         $this->assertEquals(0, $count);
 
         // Check the issue for the other user is still there.
-        $customcertissue = $DB->get_records('tool_certificate_issues');
-        $this->assertCount(1, $customcertissue);
-        $lastissue = reset($customcertissue);
+        $templateissue = $DB->get_records('tool_certificate_issues');
+        $this->assertCount(1, $templateissue);
+        $lastissue = reset($templateissue);
         $this->assertEquals($user2->id, $lastissue->userid);
     }
 
     /**
-     * Mimicks the creation of a customcert issue.
+     * Mimicks the creation of a template issue.
      *
-     * There is no API we can use to insert an customcert issue, so we
+     * There is no API we can use to insert an template issue, so we
      * will simply insert directly into the database.
      *
-     * @param int $customcertid
+     * @param int $templateid
      * @param int $userid
      */
-    protected function create_certificate_issue(int $customcertid, int $userid) {
+    protected function create_certificate_issue(int $templateid, int $userid) {
         global $DB;
 
         static $i = 1;
 
-        $customcertissue = new stdClass();
-        $customcertissue->customcertid = $customcertid;
-        $customcertissue->userid = $userid;
-        $customcertissue->code = \tool_certificate\certificate::generate_code();
-        $customcertissue->timecreated = time() + $i;
+        $templateissue = new stdClass();
+        $templateissue->templateid = $templateid;
+        $templateissue->userid = $userid;
+        $templateissue->code = \tool_certificate\certificate::generate_code();
+        $templateissue->timecreated = time() + $i;
 
         // Insert the record into the database.
-        $DB->insert_record('tool_certificate_issues', $customcertissue);
+        $DB->insert_record('tool_certificate_issues', $templateissue);
 
         $i++;
     }

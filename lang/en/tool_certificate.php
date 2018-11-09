@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Language strings for the customcert module.
+ * Language strings for the certificate tool.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -24,6 +24,7 @@
 
 $string['addcertpage'] = 'Add page';
 $string['addelement'] = 'Add element';
+$string['aissueswerecreated'] = '{$a} issues were created';
 $string['awardedto'] = 'Awarded to';
 $string['cannotverifyallcertificates'] = 'You do not have the permission to verify all certificates on the site.';
 $string['certificate'] = 'Certificate';
@@ -33,10 +34,13 @@ $string['coursetimereq'] = 'Required minutes in course';
 $string['coursetimereq_help'] = 'Enter here the minimum amount of time, in minutes, that a student must be logged into the course before they will be able to receive
 the certificate.';
 $string['createtemplate'] = 'Create template';
-$string['certificate:manage'] = 'Manage a custom certificate';
+$string['certificate:manage'] = 'Manage a certificate';
 $string['certificate:viewallcertificates'] = 'View all certificates';
 $string['certificate:verifyallcertificates'] = 'Verify all certificates on the site';
-$string['customcertsettings'] = 'Custom certificate settings';
+$string['certificates'] = 'Certificates';
+$string['certificatesdescription'] = 'These are all the certificates issued for the "{$a->name}" template.';
+$string['certificatesissued'] = 'Certificates issued';
+$string['settings'] = 'Certificate tool settings';
 $string['deletecertpage'] = 'Delete page';
 $string['deleteconfirm'] = 'Delete confirmation';
 $string['deleteelement'] = 'Delete element';
@@ -49,7 +53,7 @@ $string['description'] = 'Description';
 $string['duplicate'] = 'Duplicate';
 $string['duplicateconfirm'] = 'Duplicate confirmation';
 $string['duplicatetemplateconfirm'] = 'Are you sure you want to duplicate this certificate template?';
-$string['editcustomcert'] = 'Edit certificate';
+$string['editcertificate'] = 'Edit certificate';
 $string['editelement'] = 'Edit element';
 $string['edittemplate'] = 'Edit template';
 $string['elementname'] = 'Element name';
@@ -61,6 +65,7 @@ $string['elements_help'] = 'This is the list of elements that will be displayed 
 Please note: The elements are rendered in this order. The order can be changed by using the arrows next to each element.';
 $string['elementwidth'] = 'Width';
 $string['elementwidth_help'] = 'Specify the width of the element - \'0\' means that there is no width constraint.';
+$string['emailed'] = 'Emailed';
 $string['emailnonstudentbody'] = 'Attached is the certificate \'{$a->certificatename}\' for \'{$a->userfullname}\' for the course \'{$a->coursefullname}\'.';
 $string['emailnonstudentcertificatelinktext'] = 'View certificate report';
 $string['emailnonstudentgreeting'] = 'Hi';
@@ -75,17 +80,24 @@ $string['emailteachers'] = 'Email teachers';
 $string['emailteachers_help'] = 'If set this will email the teachers a copy of the certificate when it becomes available.';
 $string['emailothers'] = 'Email others';
 $string['emailothers_help'] = 'If set this will email the email addresses listed here (separated by a comma) with a copy of the certificate when it becomes available.';
+$string['eventcertificateissued'] = 'Certificate issued';
+$string['eventcertificaterevoked'] = 'Certificate revoked';
+$string['eventcertificateverified'] = 'Certificate verified';
 $string['eventtemplatecreated'] = 'Template created';
+$string['eventtemplatedeleted'] = 'Template deleted';
+$string['eventtemplateupdated'] = 'Template updated';
 $string['font'] = 'Font';
 $string['font_help'] = 'The font used when generating this element.';
 $string['fontcolour'] = 'Colour';
 $string['fontcolour_help'] = 'The colour of the font.';
 $string['fontsize'] = 'Size';
 $string['fontsize_help'] = 'The size of the font in points.';
-$string['getcustomcert'] = 'View certificate';
+$string['getcertificate'] = 'View certificate';
 $string['height'] = 'Height';
 $string['height_help'] = 'This is the height of the certificate PDF in mm. For reference an A4 piece of paper is 297mm high and a letter is 279mm high.';
 $string['hideshow'] = 'Hide/show';
+$string['issuecertificates'] = 'Issue new certificates';
+$string['issuenewcertificates'] = 'Issue new certificates';
 $string['invalidcode'] = 'Invalid code supplied.';
 $string['invalidcolour'] = 'Invalid colour chosen, please enter a valid HTML colour name, or a six-digit, or three-digit hexadecimal colour.';
 $string['invalidelementwidth'] = 'Please enter a positive number.';
@@ -93,6 +105,7 @@ $string['invalidposition'] = 'Please select a positive number for position {$a}.
 $string['invalidheight'] = 'The height has to be a valid number greater than 0.';
 $string['invalidmargin'] = 'The margin has to be a valid number greater than 0.';
 $string['invalidwidth'] = 'The width has to be a valid number greater than 0.';
+$string['issuenewcertificate'] = 'Issue new certificate from this template';
 $string['landscape'] = 'Landscape';
 $string['leftmargin'] = 'Left margin';
 $string['leftmargin_help'] = 'This is the left margin of the certificate PDF in mm.';
@@ -100,28 +113,30 @@ $string['listofissues'] = 'Recipients';
 $string['load'] = 'Load';
 $string['loadtemplate'] = 'Load template';
 $string['loadtemplatemsg'] = 'Are you sure you wish to load this template? This will remove any existing pages and elements for this certificate.';
-$string['managetemplates'] = 'Manage templates';
-$string['managetemplatesdesc'] = 'This link will take you to a new screen where you will be able to manage templates used by Custom certificate activities in courses.';
+$string['managetemplates'] = 'Manage certificate templates';
+$string['managetemplatesdesc'] = 'This link will take you to a new screen where you will be able to manage templates used by certificate tool.';
 $string['manageelementplugins'] = 'Manage element plugins';
 $string['modify'] = 'Modify';
-$string['modulename'] = 'Custom certificate';
-$string['modulenameplural'] = 'Custom certificates';
+$string['modulename'] = 'Certificate tool';
+$string['modulenameplural'] = 'Certificates tool';
 $string['modulename_help'] = 'This module allows for the dynamic generation of PDF certificates.';
-$string['modulename_link'] = 'Custom_certificate_module';
+$string['modulename_link'] = 'Certificate_tool';
 $string['mycertificates'] = 'My certificates';
 $string['mycertificatesdescription'] = 'These are the certificates you have been issued by either email or downloading manually.';
 $string['name'] = 'Name';
 $string['nametoolong'] = 'You have exceeded the maximum length allowed for the name';
-$string['nocustomcerts'] = 'There are no certificates for this course';
+$string['nocertificates'] = 'There are no certificates for this course';
 $string['noimage'] = 'No image';
+$string['noissueswerecreated'] = 'No issues were created';
 $string['norecipients'] = 'No recipients';
 $string['notemplates'] = 'No templates';
 $string['notissued'] = 'Not awarded';
 $string['notverified'] = 'Not verified';
+$string['oneissuewascreated'] = 'One issue was created';
 $string['options'] = 'Options';
 $string['page'] = 'Page {$a}';
-$string['pluginadministration'] = 'Custom certificate administration';
-$string['pluginname'] = 'Custom certificate';
+$string['pluginadministration'] = 'Certificate tool administration';
+$string['pluginname'] = 'Certificate tool';
 $string['portrait'] = 'Portrait';
 $string['posx'] = 'Position X';
 $string['posx_help'] = 'This is the position in mm from the top left corner you wish the element\'s reference point to locate in the x direction.';
@@ -136,7 +151,7 @@ $string['preventmodify_desc'] = 'Enable protection from copy action.';
 $string['print'] = 'Print';
 $string['privacy:metadata:tool_certificate_issues'] = 'The list of issued certificates';
 $string['privacy:metadata:tool_certificate_issues:code'] = 'The code that belongs to the certificate';
-$string['privacy:metadata:tool_certificate_issues:customcertid'] = 'The ID of the certificate';
+$string['privacy:metadata:tool_certificate_issues:templateid'] = 'The ID of the certificate';
 $string['privacy:metadata:tool_certificate_issues:emailed'] = 'Whether or not the certificate was emailed';
 $string['privacy:metadata:tool_certificate_issues:timecreated'] = 'The time the certificate was issued';
 $string['privacy:metadata:tool_certificate_issues:userid'] = 'The ID of the user who was issued the certificate';
@@ -145,6 +160,8 @@ $string['rearrangeelementsheading'] = 'Drag and drop elements to change where th
 $string['receiveddate'] = 'Awarded on';
 $string['refpoint'] = 'Reference point location';
 $string['refpoint_help'] = 'The reference point is the location of an element from which its x and y coordinates are determined. It is indicated by the \'+\' that appears in the centre or corners of the element.';
+$string['revoke'] = 'Revoke certificate issue';
+$string['revokecertificateconfirm'] = 'Are you sure you want to revoke this certificate issue from this user?';
 $string['replacetemplate'] = 'Replace';
 $string['requiredtimenotmet'] = 'You must spend at least a minimum of {$a->requiredtime} minutes in the course before you can access this certificate.';
 $string['rightmargin'] = 'Right margin';
@@ -154,13 +171,15 @@ $string['saveandclose'] = 'Save and close';
 $string['saveandcontinue'] = 'Save and continue';
 $string['savechangespreview'] = 'Save changes and preview';
 $string['savetemplate'] = 'Save template';
-$string['search:activity'] = 'Custom certificate - activity information';
+$string['search:activity'] = 'Certificate tool - activity information';
+$string['selectuserstoissuecertificatefor'] = 'Select users to issue certificate for';
 $string['setprotection'] = 'Set protection';
 $string['setprotection_help'] = 'Choose the actions you wish to prevent users from performing on this certificate.';
 $string['showposxy'] = 'Show position X and Y';
 $string['showposxy_desc'] = 'This will show the X and Y position when editing of an element, allowing the user to accurately specify the location.
 
 This isn\'t required if you plan on solely using the drag and drop interface for this purpose.';
+$string['subplugintype_certificateelement_plural'] = 'Element plugins';
 $string['taskemailcertificate'] = 'Handles emailing certificates.';
 $string['templatename'] = 'Template name';
 $string['templatenameexists'] = 'That template name is currently in use, please choose another.';
