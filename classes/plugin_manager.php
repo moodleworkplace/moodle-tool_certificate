@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the classes for the admin settings of the customcert module.
+ * This file contains the classes for the admin settings of the certificate tool.
  *
  * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
@@ -49,6 +49,7 @@ class plugin_manager {
      * @return None
      */
     public function execute($action, $plugin) {
+        global $OUTPUT;
         if ($action == null) {
             $action = 'view';
         }
@@ -64,10 +65,14 @@ class plugin_manager {
             $action = $this->move_plugin($plugin, 'up');
         } else if ($action == 'movedown' && $plugin != null) {
             $action = $this->move_plugin($plugin, 'down');
-        }
+        } else if ($action == 'view') {
 
-        if ($action == 'view') {
+            echo $OUTPUT->header();
+            echo $OUTPUT->heading(get_string('manageelementplugins', 'tool_certificate'));
+
             $this->view_plugins_table();
+
+            echo $OUTPUT->footer();
         }
     }
 
@@ -83,7 +88,7 @@ class plugin_manager {
         // Set up the table.
         $table = new \flexible_table('pluginsadminttable');
         $table->define_baseurl($this->pageurl);
-        $table->define_columns(array('pluginname', 'version', 'hideshow', 'order', 'settings'));
+        $table->define_columns(array('pluginname', 'version', 'hideshow', 'order', 'settings', 'uninstall'));
         $table->define_headers(array(get_string('name'),
                 get_string('version'), get_string('hideshow', 'tool_certificate'),
                 get_string('order'), get_string('settings'), get_string('uninstallplugin', 'core_admin')));
@@ -128,6 +133,8 @@ class plugin_manager {
                 $row[] = '&nbsp;';
             }
 
+            $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('uninstallplugin', 'core_admin'));
+
             $table->add_data($row, $class);
         }
 
@@ -154,6 +161,7 @@ class plugin_manager {
     public function hide_plugin($plugin) {
         set_config('disabled', 1, 'certificateelement_' . $plugin);
         \core_plugin_manager::reset_caches();
+        redirect($this->pageurl);
     }
 
     /**
@@ -164,6 +172,7 @@ class plugin_manager {
     public function show_plugin($plugin) {
         set_config('disabled', 0, 'certificateelement_' . $plugin);
         \core_plugin_manager::reset_caches();
+        redirect($this->pageurl);
     }
 
     /**
@@ -204,6 +213,14 @@ class plugin_manager {
         global $OUTPUT;
 
         $url = $this->pageurl;
+
+        if ($action === 'delete') {
+            $url = \core_plugin_manager::instance()->get_uninstall_url('certificateelement_'.$plugin, 'manage');
+            if (!$url) {
+                return '&nbsp;';
+            }
+            return \html_writer::link($url, get_string('uninstallplugin', 'core_admin'));
+        }
 
         return $OUTPUT->action_icon(new \moodle_url($url,
                 array('action' => $action, 'plugin' => $plugin, 'sesskey' => \sesskey())),
@@ -254,5 +271,6 @@ class plugin_manager {
         foreach ($plugins as $key => $plugin) {
             set_config('sortorder', $key, 'certificateelement_' . $plugin);
         }
+        redirect($this->pageurl);
     }
 }

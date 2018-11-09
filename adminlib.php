@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the classes for the admin settings of the customcert module.
+ * This file contains the classes for the admin settings of the certificate module.
  *
  * @package   tool_certificate
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>

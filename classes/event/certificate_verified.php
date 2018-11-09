@@ -62,7 +62,7 @@ class certificate_verified extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatecreated', 'tool_certificate');
+        return get_string('eventcertificateverified', 'tool_certificate');
     }
 
     /**
@@ -82,7 +82,7 @@ class certificate_verified extends \core\event\base {
      */
     public static function create_from_issue(\stdClass $issue) {
         $data = array(
-            'context' => \tool_certificate\certificate::get_context($issue->customcertid),
+            'context' => \context_system::instance(),
             'objectid' => $issue->id,
             'relateduserid' => $issue->userid
         );

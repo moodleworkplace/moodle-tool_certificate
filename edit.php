@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Edit the customcert settings.
+ * Edit the certificate settings.
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -52,8 +52,8 @@ if ($context->contextlevel == CONTEXT_MODULE) {
     $cm = get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
     require_login($cm->course, false, $cm);
 
-    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $customcert->name;
+    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
+    $title = $certificate->name;
     $heading = format_string($title);
 } else {
     require_login();
@@ -71,9 +71,9 @@ if ($context->contextlevel == CONTEXT_SYSTEM) {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
         new moodle_url('/admin/tool/certificate/manage_templates.php'));
     if (!$tid) {
-        $PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'));
+        $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'));
     } else {
-        $PAGE->navbar->add(get_string('editcustomcert', 'tool_certificate'),
+        $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'),
             new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $tid]));
     }
 }
@@ -243,7 +243,7 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 $mform->display();
 if ($tid && $context->contextlevel == CONTEXT_MODULE) {
-    $loadtemplateurl = new moodle_url('/mod/customcert/load_template.php', array('tid' => $tid));
+    $loadtemplateurl = new moodle_url('/admin/tool/certificate/load_template.php', array('tid' => $tid));
     $loadtemplateform = new \tool_certificate\load_template_form($loadtemplateurl, array('context' => $context), 'post',
         '', array('id' => 'loadtemplateform'));
     $loadtemplateform->display();

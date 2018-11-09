@@ -61,7 +61,7 @@ class template_deleted extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventtemplatecreated', 'tool_certificate');
+        return get_string('eventtemplatedeleted', 'tool_certificate');
     }
 
     /**

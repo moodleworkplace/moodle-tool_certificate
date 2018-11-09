@@ -37,12 +37,12 @@ defined('MOODLE_INTERNAL') || die();
 class certificateelement extends base {
 
     /**
-     * Do not allow users to uninstall these plugins as it could cause customcerts to break.
+     * Do not allow users to uninstall these plugins as it could cause certificates to break.
      *
      * @return bool
      */
     public function is_uninstall_allowed() {
-        return false;
+        return true;
     }
 
     /**
@@ -83,5 +83,17 @@ class certificateelement extends base {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Return true if a plugin is enabled.
+     *
+     * @return bool
+     */
+    public function is_enabled() {
+        if ($disabled = get_config('certificateelement_' . $this->name, 'disabled')) {
+            return $disabled == 0;
+        }
+        return true;
     }
 }

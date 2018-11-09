@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of the customcert module
+ * Code fragment to define the version of the certificate tool
  *
  * @package    tool_certificate
  * @copyright  2013 Mark Nelson <markn@moodle.com>
@@ -31,3 +31,7 @@ $plugin->component = 'tool_certificate';
 
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = "3.5.4"; // User-friendly version number.
+
+$plugin->dependencies   = array(
+    'tool_tenant' => '2018110600',
+);

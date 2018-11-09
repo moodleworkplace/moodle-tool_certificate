@@ -24,7 +24,7 @@
 
 require_once('../../../config.php');
 
-// The page of the customcert we are editing.
+// The page of the certificate we are editing.
 $pid = required_param('pid', PARAM_INT);
 
 $page = $DB->get_record('tool_certificate_pages', array('id' => $pid), '*', MUST_EXIST);
@@ -43,8 +43,8 @@ if ($cm = $template->get_cm()) {
 $template->require_manage();
 
 if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $customcert = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $customcert->name;
+    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
+    $title = $certificate->name;
     $heading = format_string($title);
 } else {
     $title = $SITE->fullname;
@@ -62,7 +62,7 @@ if (!$cm = $template->get_cm()) {
     $PAGE->navbar->add($str, new \action_link($link, $str));
 }
 
-$str = get_string('editcustomcert', 'tool_certificate');
+$str = get_string('editcertificate', 'tool_certificate');
 $link = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
 $PAGE->navbar->add($str, new \action_link($link, $str));
 
