@@ -31,3 +31,7 @@ $plugin->component = 'tool_certificate';
 
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->release   = "3.5.4"; // User-friendly version number.
+
+$plugin->dependencies   = array(
+    'tool_tenant' => '2018110600';
+);
