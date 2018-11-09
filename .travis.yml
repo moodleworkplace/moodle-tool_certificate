@@ -9,8 +9,7 @@ cache:
     - $HOME/.npm
 
 php:
- - 7.0
- - 7.2
+ - 7.1
 
 addons:
  firefox: 47.0.1
@@ -22,11 +21,10 @@ addons:
 
 env:
  global:
-  - MOODLE_BRANCH=MOODLE_35_STABLE
+  - MOODLE_BRANCH=master
   - IGNORE_NAMES=mobile_*.mustache # Mobile mustache has specific syntax, ignore their templates
  matrix:
   - DB=pgsql
-  - DB=mysqli
 
 before_install:
   - phpenv config-rm xdebug.ini
@@ -37,6 +35,8 @@ before_install:
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
+  - moodle-plugin-ci add-plugin moodlesp/moodle-theme_workplace
+  - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
   - moodle-plugin-ci install
 
 script:
