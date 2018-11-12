@@ -103,16 +103,8 @@ if ($tid) {
                 exit();
             }
 
-            // Create another template to copy the data to.
-            $newtemplate = new \stdClass();
-            $newtemplate->name = $template->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
-            $newtemplate->contextid = $template->get_contextid();
-            $newtemplate->timecreated = time();
-            $newtemplate->timemodified = $newtemplate->timecreated;
-            $newtemplateid = $DB->insert_record('tool_certificate_templates', $newtemplate);
-
             // Copy the data to the new template.
-            $template->copy_to_template($newtemplateid);
+            $template->duplicate();
 
             // Redirect back to the manage templates page.
             redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
