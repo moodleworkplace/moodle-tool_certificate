@@ -23,12 +23,15 @@
  */
 
 require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 $templateid = required_param('templateid', PARAM_INT);
 
 require_login();
 
-require_capability('tool/certificate:manage', context_system::instance());
+$context = context_system::instance();
+
+require_capability('tool/certificate:issue', $context);
 
 $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), 'id', MUST_EXIST);
 
@@ -36,10 +39,11 @@ $url = new moodle_url('/admin/tool/certificate/issue.php', array('templateid' =>
 
 $heading = get_string('issuenewcertificates', 'tool_certificate');
 
-$PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
+\tool_certificate\page_helper::page_setup($url, $context, $heading);
 
-$PAGE->navbar->add($heading);
+admin_externalpage_setup('tool_certificate/managetemplates');
+
+$PAGE->navbar->add($heading, $url);
 
 $form = new \tool_certificate\form\certificate_issues($url->out(false));
 if ($form->is_cancelled()) {

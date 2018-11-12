@@ -22,12 +22,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addcertificate'] = 'Add certificate template';
+$string['addcertificatedesc'] = 'Add new certificate template';
 $string['addcertpage'] = 'Add page';
 $string['addelement'] = 'Add element';
 $string['aissueswerecreated'] = '{$a} issues were created';
 $string['awardedto'] = 'Awarded to';
 $string['cannotverifyallcertificates'] = 'You do not have the permission to verify all certificates on the site.';
 $string['certificate'] = 'Certificate';
+$string['certificates'] = 'Certificates';
 $string['code'] = 'Code';
 $string['copy'] = 'Copy';
 $string['coursetimereq'] = 'Required minutes in course';
@@ -37,6 +40,7 @@ $string['createtemplate'] = 'Create template';
 $string['certificate:manage'] = 'Manage a certificate';
 $string['certificate:viewallcertificates'] = 'View all certificates';
 $string['certificate:verifyallcertificates'] = 'Verify all certificates on the site';
+$string['certificateimages'] = 'Certificate images';
 $string['certificates'] = 'Certificates';
 $string['certificatesdescription'] = 'These are all the certificates issued for the "{$a->name}" template.';
 $string['certificatesissued'] = 'Certificates issued';

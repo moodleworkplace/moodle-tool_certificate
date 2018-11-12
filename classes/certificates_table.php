@@ -67,12 +67,17 @@ class certificates_table extends \table_sql {
             $this->is_downloading($download, 'certificate-report');
         }
 
+        $canissue = has_capability('tool/certificate:issue', \context_system::instance());
+        $canmanage = has_capability('tool/certificate:manage', \context_system::instance());
+
         if (!$this->is_downloading()) {
             $columns[] = 'download';
             $headers[] = get_string('file');
 
-            $columns[] = 'revoke';
-            $headers[] = get_string('revoke', 'tool_certificate');
+            if ($canmanage) {
+                $columns[] = 'revoke';
+                $headers[] = get_string('revoke', 'tool_certificate');
+            }
         }
 
         $this->define_columns($columns);
