@@ -15,8 +15,7 @@ Feature: Being able to manually issue a certificate to a user
 
   @javascript
   Scenario: Issue a certificate as admin, from the list of templates
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Issue new certificate from this template" "link"
     And I set the field "Select users to issue certificate for" to "Student"
     And I wait until the page is ready
@@ -25,8 +24,7 @@ Feature: Being able to manually issue a certificate to a user
 
   @javascript
   Scenario: Issue a certificate as admin, from the list of issues
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "Certificates issued"
     And I click on "Issue new certificates" "link"
     And I set the field "Select users to issue certificate for" to "Student"

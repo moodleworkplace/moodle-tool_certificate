@@ -26,11 +26,11 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
-if ($hassiteconfig) {
+$managecaps = ['tool/certificate:manage', 'tool/certificate:manageforalltenants'];
+
+if ($hassiteconfig || has_any_capability($managecaps, context_system::instance())) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')));
-
-    $managecaps = ['tool/certificate:manage'];
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/managetemplates',
                 get_string('managetemplates', 'tool_certificate'),
@@ -48,34 +48,35 @@ if ($hassiteconfig) {
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/images', get_string('certificateimages', 'tool_certificate'),
         new moodle_url('/admin/tool/certificate/upload_image.php'), $managecaps));
 
-    // The category for Certificate settings under Tools.
-    $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
+    if ($hassiteconfig) {
+        $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
 
-    $settings = new admin_settingpage('toolcertificatemanagetemplates', new lang_string('settings', 'tool_certificate'));
+        $settings = new admin_settingpage('toolcertificatemanagetemplates', new lang_string('settings', 'tool_certificate'));
 
-    $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyallcertificates', get_string('verifyallcertificates',
-        'tool_certificate'), '', '0'));
+        $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyallcertificates', get_string('verifyallcertificates',
+            'tool_certificate'), '', '0'));
 
-    $settings->add(new admin_setting_configcheckbox('tool_certificate/showposxy', get_string('verifyallcertificates',
-        'tool_certificate'), '', '0'));
+        $settings->add(new admin_setting_configcheckbox('tool_certificate/showposxy', get_string('verifyallcertificates',
+            'tool_certificate'), '', '0'));
 
-    $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyany', get_string('verifyallcertificates',
-        'tool_certificate'), '', '0'));
+        $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyany', get_string('verifyallcertificates',
+            'tool_certificate'), '', '0'));
 
-    $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_modify', get_string('verifyallcertificates',
-        'tool_certificate'), '', '0'));
+        $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_modify', get_string('verifyallcertificates',
+            'tool_certificate'), '', '0'));
 
-    $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_copy', get_string('verifyallcertificates',
-        'tool_certificate'), '', '0'));
+        $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_copy', get_string('verifyallcertificates',
+            'tool_certificate'), '', '0'));
 
-    $ADMIN->add('tool_certificate', $settings);
+        $ADMIN->add('tool_certificate', $settings);
 
-    $ADMIN->add('tool_certificate', new tool_certificate_admin_page_manage_element_plugins());
+        $ADMIN->add('tool_certificate', new tool_certificate_admin_page_manage_element_plugins());
 
-    // Element plugin settings.
-    $ADMIN->add('tool_certificate', new admin_category('certificateelements', get_string('elementplugins', 'tool_certificate')));
-    $plugins = \core_plugin_manager::instance()->get_plugins_of_type('certificateelement');
-    foreach ($plugins as $plugin) {
-        $plugin->load_settings($ADMIN, 'certificateelements', $hassiteconfig);
+        // Element plugin settings.
+        $ADMIN->add('tool_certificate', new admin_category('certificateelements', get_string('elementplugins', 'tool_certificate')));
+        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('certificateelement');
+        foreach ($plugins as $plugin) {
+            $plugin->load_settings($ADMIN, 'certificateelements', $hassiteconfig);
+        }
     }
 }

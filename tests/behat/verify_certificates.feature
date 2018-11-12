@@ -19,7 +19,7 @@ Feature: Being able to verify that a certificate is valid or not
     And the following certificate issues exist:
       | template | user |
       | Certificate 1 | student1 |
-    And I navigate to "Courses > Verify certificate" in site administration
+    And I navigate to "Certificates > Verify certificates" in site administration
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     Then I should see "Not verified"
