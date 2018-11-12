@@ -362,6 +362,22 @@ class template {
     }
 
     /**
+     * Duplicates the template into a new one
+     *
+     * @return template
+     */
+    public function duplicate() {
+        $name = $this->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
+        $contextid = $this->get_contextid();
+        $newtemplate = self::create($name, $contextid);
+
+        // Copy the data to the new template.
+        $this->copy_to_template($newtemplate->get_id());
+
+        return $newtemplate;
+    }
+
+    /**
      * Handles moving an item on a template.
      *
      * @param string $itemname the item we are moving

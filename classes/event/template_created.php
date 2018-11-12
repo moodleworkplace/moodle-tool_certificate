@@ -70,7 +70,7 @@ class template_created extends \core\event\base {
      * @param \stdClass $template
      * @return template_created
      */
-    public static function create_from_template(\stdClass $template) {
+    public static function create_from_template(\stdClass $template) : template_created {
         $data = array(
             'context' => \context::instance_by_id($template->contextid),
             'objectid' => $template->id,
