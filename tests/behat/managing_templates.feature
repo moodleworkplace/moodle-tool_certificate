@@ -8,8 +8,7 @@ Feature: Being able to manage site templates
     Given I log in as "admin"
 
   Scenario: Adding a site template
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Create template"
     And I set the field "Name" to "Site template"
     And I press "Save changes"
@@ -22,8 +21,7 @@ Feature: Being able to manage site templates
     Then I should see "Site template"
 
   Scenario: Deleting a site template
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Create template"
     And I set the field "Name" to "Site template"
     And I press "Save changes"
@@ -36,8 +34,7 @@ Feature: Being able to manage site templates
     Then I should not see "Site template"
 
   Scenario: Duplicating a site template
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Create template"
     And I set the field "Name" to "Site template"
     And I press "Save changes"
