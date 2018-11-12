@@ -23,6 +23,7 @@
  */
 
 require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 $templateid = required_param('templateid', PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
@@ -42,7 +43,13 @@ $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_P
 
 require_login();
 
-require_capability('tool/certificate:viewallcertificates', context_system::instance());
+$canissue = has_capability('tool/certificate:issue', context_system::instance());
+$canmanage = has_capability('tool/certificate:issue', context_system::instance());
+$canview = has_capability('tool/certificate:viewallcertificates', context_system::instance());
+
+if (!$canmanage && !$canissue && !$canview) {
+    print_error('cantvieworissue', 'tool_certificate');
+}
 
 $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
 
@@ -53,8 +60,16 @@ if ($downloadcert) {
     exit();
 }
 
+$context = context_system::instance();
+$title = $SITE->fullname;
+
 $pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid,
     'page' => $page, 'perpage' => $perpage));
+
+// Set up the page.
+\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
+
+admin_externalpage_setup('tool_certificate/managetemplates');
 
 $table = new \tool_certificate\certificates_table($templateid, $download);
 $table->define_baseurl($pageurl);
@@ -98,8 +113,10 @@ if ($revokecert && confirm_sesskey()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template));
-$newissueurl = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
-$newissuestr = get_string('issuenewcertificates', 'tool_certificate');
-echo html_writer::link($newissueurl, $newissuestr, ['class' => 'btn btn-primary']);
+if ($canmanage) {
+    $newissueurl = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
+    $newissuestr = get_string('issuenewcertificates', 'tool_certificate');
+    echo html_writer::link($newissueurl, $newissuestr, ['class' => 'btn btn-primary']);
+}
 $table->out($perpage, false);
 echo $OUTPUT->footer();

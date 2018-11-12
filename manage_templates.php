@@ -23,8 +23,8 @@
  */
 
 require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-$contextid = optional_param('contextid', context_system::instance()->id, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
@@ -41,10 +41,17 @@ if ($tid) {
     $template = new \tool_certificate\template($template);
 }
 
-$context = context::instance_by_id($contextid);
+$context = context_system::instance();
 
 require_login();
-require_capability('tool/certificate:manage', $context);
+
+$canissue = has_capability('tool/certificate:issue', $context);
+$canmanage = has_capability('tool/certificate:manage', $context);
+$canview = has_capability('tool/certificate:viewallcertificates', $context);
+
+if (!$canmanage && !$canissue && !$canview) {
+    print_error('permissiondenied', 'tool_certificate');
+}
 
 $title = $SITE->fullname;
 $heading = $title;
@@ -53,13 +60,7 @@ $heading = $title;
 $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
 \tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
-// Additional page setup.
-if ($tid && $action && confirm_sesskey()) {
-    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
-        new moodle_url('/admin/tool/certificate/manage_templates.php'));
-} else {
-    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'));
-}
+admin_externalpage_setup('tool_certificate/managetemplates');
 
 if ($tid) {
     if ($action && confirm_sesskey()) {
@@ -125,7 +126,9 @@ $table->define_baseurl($pageurl);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
+if ($canmanage || $canissue) {
+    $url = new moodle_url('/admin/tool/certificate/edit.php');
+    echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
+}
 $table->out($perpage, false);
-$url = new moodle_url('/admin/tool/certificate/edit.php?contextid=' . $contextid);
-echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
 echo $OUTPUT->footer();

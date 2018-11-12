@@ -454,7 +454,7 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $sql = "SELECT t.id, t.name, ci.code, ci.timecreated
+        $sql = "SELECT ci.id, t.id as templateid, t.name, ci.code, ci.timecreated
                   FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
