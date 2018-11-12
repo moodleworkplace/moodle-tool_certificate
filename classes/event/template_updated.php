@@ -77,7 +77,7 @@ class template_updated extends \core\event\base {
      * Create instance of event.
      *
      * @param \stdClass $template
-     * @return template_created
+     * @return template_updated
      */
     public static function create_from_template(\stdClass $template): template_updated {
         $data = array(
