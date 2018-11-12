@@ -27,14 +27,26 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
 if ($hassiteconfig) {
-    // Verify and Manage templates links under Courses.
-    $ADMIN->add('courses', new admin_externalpage('tool_certificate/validate',
-                new lang_string('verifycertificate', 'tool_certificate'),
+
+    $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')));
+
+    $managecaps = ['tool/certificate:manage'];
+
+    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/managetemplates',
+                get_string('managetemplates', 'tool_certificate'),
+                new moodle_url('/admin/tool/certificate/manage_templates.php'), $managecaps));
+
+    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/validate',
+                get_string('verifycertificate', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/verify_certificate.php')));
 
-    $ADMIN->add('courses', new admin_externalpage('tool_certificate/managetemplates',
-                new lang_string('managetemplates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/manage_templates.php')));
+    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
+                get_string('addcertificate', 'tool_certificate'),
+                new moodle_url('/admin/tool/certificate/edit.php'), $managecaps));
+
+    $managecaps = ['tool/certificate:manage'];
+    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/images', get_string('certificateimages', 'tool_certificate'),
+        new moodle_url('/admin/tool/certificate/upload_image.php'), $managecaps));
 
     // The category for Certificate settings under Tools.
     $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
@@ -55,10 +67,6 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_copy', get_string('verifyallcertificates',
         'tool_certificate'), '', '0'));
-
-    $settings->add(new \tool_certificate\admin_setting_link('tool_certificate/uploadimage',
-        get_string('uploadimage', 'tool_certificate'), get_string('uploadimagedesc', 'tool_certificate'),
-        get_string('uploadimage', 'tool_certificate'), new moodle_url('/tool/certificate/upload_image.php'), ''));
 
     $ADMIN->add('tool_certificate', $settings);
 
