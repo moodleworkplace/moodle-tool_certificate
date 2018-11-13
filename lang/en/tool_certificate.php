@@ -91,6 +91,7 @@ $string['height'] = 'Height';
 $string['height_help'] = 'This is the height of the certificate PDF in mm. For reference an A4 piece of paper is 297mm high and a letter is 279mm high.';
 $string['hideshow'] = 'Hide/show';
 $string['issuecertificates'] = 'Issue new certificates';
+$string['issuedon'] = 'Issued on';
 $string['issuenewcertificates'] = 'Issue new certificates';
 $string['invalidcode'] = 'Invalid code supplied.';
 $string['invalidcolour'] = 'Invalid colour chosen, please enter a valid HTML colour name, or a six-digit, or three-digit hexadecimal colour.';
@@ -184,6 +185,7 @@ $string['type'] = 'Type';
 $string['uploadimage'] = 'Upload image';
 $string['uploadimagedesc'] = 'This link will take you to a new screen where you will be able to upload images. Images uploaded using
 this method will be available throughout your site to all users who are able to create a certificate.';
+$string['valid'] = 'Valid';
 $string['verified'] = 'Verified';
 $string['verify'] = 'Verify';
 $string['verifyallcertificates'] = 'Allow verification of all certificates';

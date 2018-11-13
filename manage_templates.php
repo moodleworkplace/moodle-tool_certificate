@@ -43,7 +43,7 @@ if ($tid) {
 
 $context = context_system::instance();
 
-require_login();
+admin_externalpage_setup('tool_certificate/managetemplates');
 
 $canissue = has_capability('tool/certificate:issue', $context);
 $canmanage = has_capability('tool/certificate:manage', $context);
@@ -53,14 +53,9 @@ if (!$canmanage && !$canissue && !$canview) {
     print_error('permissiondenied', 'tool_certificate');
 }
 
-$title = $SITE->fullname;
-$heading = $title;
-
 // Set up the page.
 $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
-\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
-admin_externalpage_setup('tool_certificate/managetemplates');
 
 if ($tid) {
     if ($action && confirm_sesskey()) {
@@ -117,7 +112,7 @@ $table = new \tool_certificate\manage_templates_table($context);
 $table->define_baseurl($pageurl);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
+echo $OUTPUT->heading(get_string('managetemplates', 'tool_certificate'));
 if ($canmanage || $canissue) {
     $url = new moodle_url('/admin/tool/certificate/edit.php');
     echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');

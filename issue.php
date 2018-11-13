@@ -27,7 +27,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $templateid = required_param('templateid', PARAM_INT);
 
-require_login();
+admin_externalpage_setup('tool_certificate/managetemplates');
 
 $context = context_system::instance();
 
@@ -38,10 +38,6 @@ $template = $DB->get_record('tool_certificate_templates', ['id' => $templateid],
 $url = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
 
 $heading = get_string('issuenewcertificates', 'tool_certificate');
-
-\tool_certificate\page_helper::page_setup($url, $context, $heading);
-
-admin_externalpage_setup('tool_certificate/managetemplates');
 
 $PAGE->navbar->add($heading, $url);
 
