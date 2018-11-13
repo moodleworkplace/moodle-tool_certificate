@@ -33,9 +33,9 @@ $context = context_system::instance();
 
 require_capability('tool/certificate:issue', $context);
 
-$template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), 'id', MUST_EXIST);
+$template = $DB->get_record('tool_certificate_templates', ['id' => $templateid], 'id', MUST_EXIST);
 
-$url = new moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $templateid));
+$url = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
 
 $heading = get_string('issuenewcertificates', 'tool_certificate');
 
@@ -47,11 +47,11 @@ $PAGE->navbar->add($heading, $url);
 
 $form = new \tool_certificate\form\certificate_issues($url->out(false));
 if ($form->is_cancelled()) {
-    redirect(new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid)));
+    redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 } else if (($data = $form->get_data()) && !empty($data->users)) {
     $i = 0;
     foreach ($data->users as $userid) {
-        $result = \tool_certificate\certificate::issue_certificate($template->id, $userid);
+        $result = \tool_certificate\certificate::issue_certificate($template->id, $userid, $data->expires);
         if ($result) {
             $i++;
         }
@@ -63,7 +63,7 @@ if ($form->is_cancelled()) {
     } else {
         $notification = get_string('aissueswerecreated', 'tool_certificate', $i);
     }
-    redirect($url, $notification);
+    redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]), $notification);
 }
 
 echo $OUTPUT->header();

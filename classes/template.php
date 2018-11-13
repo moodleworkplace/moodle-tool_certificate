@@ -266,17 +266,17 @@ class template {
      * Generate the PDF for the template.
      *
      * @param bool $preview true if it is a preview, false otherwise
-     * @param int $userid the id of the user whose certificate we want to view
+     * @param int $issue the issued certificate we want to view
      * @param bool $return Do we want to return the contents of the PDF?
      * @return string|void Can return the PDF in string format if specified.
      */
-    public function generate_pdf($preview = false, $userid = null, $return = false) {
+    public function generate_pdf($preview = false, $issue = null, $return = false) {
         global $CFG, $DB, $USER;
 
-        if (empty($userid)) {
+        if (is_null($issue)) {
             $user = $USER;
         } else {
-            $user = \core_user::get_user($userid);
+            $user = \core_user::get_user($issue->userid);
         }
 
         require_once($CFG->libdir . '/pdflib.php');
@@ -309,7 +309,7 @@ class template {
                     foreach ($elements as $element) {
                         // Get an instance of the element class.
                         if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
-                            $e->render($pdf, $preview, $user);
+                            $e->render($pdf, $preview, $user, $issue);
                         }
                     }
                 }

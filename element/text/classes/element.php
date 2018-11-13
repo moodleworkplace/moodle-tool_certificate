@@ -66,7 +66,7 @@ class element extends \tool_certificate\element {
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
      */
-    public function render($pdf, $preview, $user) {
+    public function render($pdf, $preview, $user, $issue) {
         $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_system::instance()]);
         \tool_certificate\element_helper::render_content($pdf, $this, $text);
     }

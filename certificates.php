@@ -25,15 +25,16 @@
 require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$templateid = required_param('templateid', PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
 $downloadcert = optional_param('downloadcert', false, PARAM_BOOL);
 $revokecert = optional_param('revokecert', false, PARAM_BOOL);
-if ($downloadcert) {
-    $userid = required_param('userid', PARAM_INT);
-}
-if ($revokecert) {
+
+if ($downloadcert || $revokecert) {
     $issueid = required_param('issueid', PARAM_INT);
+    $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid], '*', MUST_EXIST);
+    $templateid = $issue->templateid;
+} else {
+    $templateid = required_param('templateid', PARAM_INT);
 }
 
 $confirm = optional_param('confirm', 0, PARAM_INT);
@@ -44,7 +45,7 @@ $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_P
 require_login();
 
 $canissue = has_capability('tool/certificate:issue', context_system::instance());
-$canmanage = has_capability('tool/certificate:issue', context_system::instance());
+$canmanage = has_capability('tool/certificate:manage', context_system::instance());
 $canview = has_capability('tool/certificate:viewallcertificates', context_system::instance());
 
 if (!$canmanage && !$canissue && !$canview) {
@@ -56,7 +57,7 @@ $template = $DB->get_record('tool_certificate_templates', array('id' => $templat
 // Check if we requested to download a certificate.
 if ($downloadcert) {
     $template = new \tool_certificate\template($template);
-    $template->generate_pdf(false, $userid);
+    $template->generate_pdf(false, $issue);
     exit();
 }
 

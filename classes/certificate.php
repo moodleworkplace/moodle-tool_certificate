@@ -302,7 +302,7 @@ class certificate {
 
         $conditions = [];
 
-        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid,
+        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
                        t.name, ' .
                        get_all_user_name_fields(true, 'u') . '
                   FROM {tool_certificate_templates} t
@@ -454,7 +454,8 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $sql = "SELECT ci.id, t.id as templateid, t.name, ci.code, ci.timecreated
+        $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated,
+                       t.id as templateid, t.contextid, t.name
                   FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
@@ -470,7 +471,7 @@ class certificate {
      * @param int $userid The ID of the user to issue the certificate to
      * @return int The ID of the issue
      */
-    public static function issue_certificate($templateid, $userid) {
+    public static function issue_certificate($templateid, $userid, $expires = null, $data = [], $component = 'tool_certificate') {
         global $DB;
 
         $issue = new \stdClass();
@@ -479,6 +480,9 @@ class certificate {
         $issue->code = self::generate_code();
         $issue->emailed = 0;
         $issue->timecreated = time();
+        $issue->expires = $expires;
+        $issue->data = json_encode($data);
+        $issue->component = $component;
 
         // Insert the record into the database.
         if ($issue->id = $DB->insert_record('tool_certificate_issues', $issue)) {
@@ -529,5 +533,37 @@ class certificate {
         $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid]);
         $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
         \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+    }
+
+    public static function verify($code) {
+        global $DB;
+
+        $result = new \stdClass();
+        $result->issues = array();
+
+        $userfields = get_all_user_name_fields(true, 'u');
+
+        $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
+                       ci.expires, ci.data, ci.component,
+                       u.id as userid, {$userfields},
+                       t.name as certificatename,
+                       t.contextid
+                  FROM {tool_certificate_templates} t
+                  JOIN {tool_certificate_issues} ci
+                    ON t.id = ci.templateid
+                  JOIN {user} u
+                    ON ci.userid = u.id
+                 WHERE ci.code = :code
+                   AND u.deleted = 0";
+
+        // It is possible (though unlikely) that there is the same code for issued certificates.
+        if ($issues = $DB->get_records_sql($sql, ['code' => $code])) {
+            $result->success = true;
+            $result->issues = $issues;
+        } else {
+            // Can't find it, let's say it's not verified.
+            $result->success = false;
+        }
+        return $result;
     }
 }
