@@ -19,15 +19,13 @@ Feature: Being able to view the certificates that have been issued
     And I log in as "admin"
 
   Scenario: View the issued certificates
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link"
     And I should see "Student 1"
     And I should see "Student 2"
 
   Scenario: Delete an issued certificate
-    When I navigate to "Courses" in site administration
-    And I follow "Manage certificate templates"
+    When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link"
     And I should see "Student 1"
     And I should see "Student 2"

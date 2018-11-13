@@ -23,6 +23,7 @@
  */
 
 require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 $tid = optional_param('tid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -36,46 +37,35 @@ if ($tid) {
     // Create the template object.
     $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
-    // Set the context.
-    $contextid = $template->get_contextid();
     // Set the page url.
     $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
 } else { // Adding a new template.
-    // Need to supply the contextid.
-    $contextid = required_param('contextid', PARAM_INT);
     // Set the page url.
-    $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('contextid' => $contextid));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit.php');
 }
 
-$context = context::instance_by_id($contextid);
-if ($context->contextlevel == CONTEXT_MODULE) {
-    $cm = get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
-    require_login($cm->course, false, $cm);
+$context = context_system::instance();
 
-    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $certificate->name;
-    $heading = format_string($title);
-} else {
-    require_login();
-    $title = $SITE->fullname;
-    $heading = $title;
+require_login();
+
+$canmanage = has_capability('tool/certificate:manage', $context);
+
+// TODO: check managealltenants
+if (!$canmanage) {
+    print_error('permissiondenied', 'tool_certificate');
 }
 
-require_capability('tool/certificate:manage', $context);
+$title = $SITE->fullname;
 
 // Set up the page.
 \tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
-if ($context->contextlevel == CONTEXT_SYSTEM) {
-    // We are managing a template - add some navigation.
-    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
-        new moodle_url('/admin/tool/certificate/manage_templates.php'));
-    if (!$tid) {
-        $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'));
-    } else {
-        $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'),
-            new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $tid]));
-    }
+if ($tid) {
+    admin_externalpage_setup('tool_certificate/managetemplates');
+    $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'),
+                new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $tid]));
+} else {
+    admin_externalpage_setup('tool_certificate/addcertificate');
 }
 
 // Flag to determine if we are deleting anything.
@@ -154,7 +144,7 @@ if ($deleting) {
     // Show a confirmation page.
     $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($heading);
+    echo $OUTPUT->heading($title);
     echo $OUTPUT->confirm($message, $yesurl, $nourl);
     echo $OUTPUT->footer();
     exit();
@@ -171,7 +161,7 @@ if ($tid) {
 if ($data = $mform->get_data()) {
     // If there is no id, then we are creating a template.
     if (!$tid) {
-        $template = \tool_certificate\template::create($data->name, $contextid);
+        $template = \tool_certificate\template::create($data->name, $context->id);
 
         // Create a page for this template.
         $pageid = $template->add_page();
@@ -240,9 +230,9 @@ if ($data = $mform->get_data()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
+echo $OUTPUT->heading($title);
 $mform->display();
-if ($tid && $context->contextlevel == CONTEXT_MODULE) {
+if ($tid) {
     $loadtemplateurl = new moodle_url('/admin/tool/certificate/load_template.php', array('tid' => $tid));
     $loadtemplateform = new \tool_certificate\load_template_form($loadtemplateurl, array('context' => $context), 'post',
         '', array('id' => 'loadtemplateform'));

@@ -53,11 +53,7 @@ class page_helper {
 
         // If we are in the system context then we are managing templates, and we want to show that in the navigation.
         if ($context->contextlevel == CONTEXT_SYSTEM) {
-            $PAGE->set_pagelayout('admin');
             $PAGE->set_heading($SITE->fullname);
-
-            $urloverride = new \moodle_url('/admin/settings.php?section=toolcertificatemanagetemplates');
-            \navigation_node::override_active_url($urloverride);
         } else {
             $PAGE->set_heading(format_string($COURSE->fullname));
         }

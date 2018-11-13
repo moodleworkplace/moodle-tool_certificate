@@ -22,21 +22,28 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addcertificate'] = 'Add certificate template';
+$string['addcertificatedesc'] = 'Add new certificate template';
 $string['addcertpage'] = 'Add page';
 $string['addelement'] = 'Add element';
 $string['aissueswerecreated'] = '{$a} issues were created';
 $string['awardedto'] = 'Awarded to';
 $string['cannotverifyallcertificates'] = 'You do not have the permission to verify all certificates on the site.';
 $string['certificate'] = 'Certificate';
+$string['certificates'] = 'Certificates';
 $string['code'] = 'Code';
 $string['copy'] = 'Copy';
 $string['coursetimereq'] = 'Required minutes in course';
 $string['coursetimereq_help'] = 'Enter here the minimum amount of time, in minutes, that a student must be logged into the course before they will be able to receive
 the certificate.';
 $string['createtemplate'] = 'Create template';
-$string['certificate:manage'] = 'Manage a certificate';
+$string['certificate:issue'] = 'Issue certificate for users';
+$string['certificate:imageforalltenants'] = 'Manage certificate images';
+$string['certificate:manage'] = 'Manage certificates';
+$string['certificate:manageforalltenants'] = 'Manage certificates in all tenants';
 $string['certificate:viewallcertificates'] = 'View all certificates';
 $string['certificate:verifyallcertificates'] = 'Verify all certificates on the site';
+$string['certificateimages'] = 'Certificate images';
 $string['certificates'] = 'Certificates';
 $string['certificatesdescription'] = 'These are all the certificates issued for the "{$a->name}" template.';
 $string['certificatesissued'] = 'Certificates issued';
@@ -196,7 +203,7 @@ $string['verifyallcertificates'] = 'Allow verification of all certificates';
 $string['verifyallcertificates_desc'] = 'When this setting is enabled any person (including users not logged in) can visit the link \'{$a}\' in order to verify any certificate on the site, rather than having to go to the verification link for each certificate.
 
 Note - this only applies to certificates where \'Allow anyone to verify a certificate\' has been set to \'Yes\' in the certificate settings.';
-$string['verifycertificate'] = 'Verify certificate';
+$string['verifycertificate'] = 'Verify certificates';
 $string['verifycertificatedesc'] = 'This link will take you to a new screen where you will be able to verify certificates on the site';
 $string['verifycertificateanyone'] = 'Allow anyone to verify a certificate';
 $string['verifycertificateanyone_help'] = 'This setting enables anyone with the certificate verification link (including users not logged in) to verify a certificate.';
