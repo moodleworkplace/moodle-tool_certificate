@@ -48,13 +48,6 @@ class element extends \tool_certificate\element {
         if ($preview) {
             $code = \tool_certificate\certificate::generate_code();
         } else {
-            // Get the page.
-            $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
-            // Get the certificate this page belongs to.
-            $certificate = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
-            // Now we can get the issue for this user.
-            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $certificate->id),
-                '*', MUST_EXIST);
             $code = $issue->code;
         }
 
