@@ -45,10 +45,9 @@ $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_P
 require_login();
 
 $canissue = has_capability('tool/certificate:issue', context_system::instance());
-$canmanage = has_capability('tool/certificate:manage', context_system::instance());
 $canview = has_capability('tool/certificate:viewallcertificates', context_system::instance());
 
-if (!$canmanage && !$canissue && !$canview) {
+if (!$canissue && !$canview) {
     print_error('cantvieworissue', 'tool_certificate');
 }
 
@@ -90,12 +89,13 @@ $heading = get_string('certificates', 'tool_certificate');
 $PAGE->navbar->add($heading);
 
 if ($revokecert && confirm_sesskey()) {
+    require_capability('tool/certificate:issue', \context_system::instance());
+
     $nourl = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
     $yesurl = new moodle_url('/admin/tool/certificate/certificates.php',
         array('templateid' => $templateid, 'revokecert' => 1, 'issueid' => $issueid, 'confirm' => 1, 'sesskey' => sesskey()));
 
     if (!$confirm) {
-        // Show a confirmation page.
         $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
         $message = get_string('revokecertificateconfirm', 'tool_certificate');
         echo $OUTPUT->header();
@@ -104,10 +104,9 @@ if ($revokecert && confirm_sesskey()) {
         echo $OUTPUT->footer();
         exit();
     }
-    // Delete the template.
+
     \tool_certificate\certificate::revoke_issue($issueid);
 
-    // Redirect back to the manage templates page.
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 }
 
