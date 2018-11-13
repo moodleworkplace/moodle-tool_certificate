@@ -48,6 +48,8 @@ class certificate_issues extends moodleform {
         );
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
+
+        $mform->addElement('date_time_selector', 'expires', '', ['optional' => true]);
         $mform->addElement('submit', 'submit', get_string('issuecertificates', 'tool_certificate'));
         $mform->addElement('cancel');
     }

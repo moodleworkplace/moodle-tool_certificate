@@ -54,12 +54,14 @@ class my_certificates_table extends \table_sql {
         $columns = array(
             'name',
             'timecreated',
-            'code'
+            'expires',
+            'code',
         );
         $headers = array(
             get_string('name'),
             get_string('receiveddate', 'tool_certificate'),
-            get_string('code', 'tool_certificate')
+            get_string('expires', 'tool_certificate'),
+            get_string('code', 'tool_certificate'),
         );
 
         // Check if we were passed a filename, which means we want to download it.
@@ -90,9 +92,11 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_name($certificate) {
-        $context = \context_system::instance(); // TODO template context?
+        $context = \context::instance_by_id($certificate->contextid);
 
-        return format_string($certificate->name, true, ['context' => $context]);
+        $column = format_string($certificate->name, true, ['context' => $context]);
+        
+        return $column;
     }
 
     /**
@@ -103,6 +107,23 @@ class my_certificates_table extends \table_sql {
      */
     public function col_timecreated($certificate) {
         return userdate($certificate->timecreated);
+    }
+
+    /**
+     * Generate the certificate expires column.
+     *
+     * @param \stdClass $certificate
+     * @return string
+     */
+    public function col_expires($certificate) {
+        if (is_null($certificate->expires)) {
+            return get_string('never');
+        }
+        $column = userdate($certificate->expires);
+        if (!is_null($certificate->expires) && $certificate->expires <= time()) {
+            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'), ['class' => 'badge badge-secondary']);
+        }
+        return $column;
     }
 
     /**

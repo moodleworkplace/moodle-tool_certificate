@@ -370,8 +370,9 @@ abstract class element {
      * @param \pdf $pdf the pdf object
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
+     * @param \stdClass $issue the issue we are rendering
      */
-    public abstract function render($pdf, $preview, $user);
+    public abstract function render($pdf, $preview, $user, $issue);
 
     /**
      * Render the element in html.

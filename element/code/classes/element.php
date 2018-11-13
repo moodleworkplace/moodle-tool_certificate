@@ -42,7 +42,7 @@ class element extends \tool_certificate\element {
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
      */
-    public function render($pdf, $preview, $user) {
+    public function render($pdf, $preview, $user, $issue) {
         global $DB;
 
         if ($preview) {

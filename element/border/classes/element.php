@@ -57,7 +57,7 @@ class element extends \tool_certificate\element {
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
      */
-    public function render($pdf, $preview, $user) {
+    public function render($pdf, $preview, $user, $issue) {
         $colour = \TCPDF_COLORS::convertHTMLColorToDec($this->get_colour(), $colour);
         $pdf->SetLineStyle(array('width' => $this->get_data(), 'color' => $colour));
         $pdf->Line(0, 0, $pdf->getPageWidth(), 0);

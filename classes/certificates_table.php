@@ -53,13 +53,15 @@ class certificates_table extends \table_sql {
 
         $columns = array(
             'userfullname',
-            'code',
             'timecreated',
+            'expires',
+            'code',
         );
         $headers = array(
             get_string('fullname'),
-            get_string('code', 'tool_certificate'),
             get_string('receiveddate', 'tool_certificate'),
+            get_string('expires', 'tool_certificate'),
+            get_string('code', 'tool_certificate'),
         );
 
         // Check if we were passed a filename, which means we want to download it.
@@ -113,6 +115,23 @@ class certificates_table extends \table_sql {
     }
 
     /**
+     * Generate the certificate expires column.
+     *
+     * @param \stdClass $certificate
+     * @return string
+     */
+    public function col_expires($certificate) {
+        if (is_null($certificate->expires)) {
+            return get_string('never');
+        }
+        $column = userdate($certificate->expires);
+        if (!is_null($certificate->expires) && $certificate->expires <= time()) {
+            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'), ['class' => 'badge badge-secondary']);
+        }
+        return $column;
+    }
+
+    /**
      * Generate the code column.
      *
      * @param \stdClass $issue
@@ -133,9 +152,7 @@ class certificates_table extends \table_sql {
 
         $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
         $link = new \moodle_url('/admin/tool/certificate/certificates.php',
-            array('templateid' => $this->templateid,
-                  'userid' => $issue->userid,
-                  'downloadcert' => '1'));
+            array('issueid' => $issue->id, 'downloadcert' => '1'));
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }

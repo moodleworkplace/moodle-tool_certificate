@@ -59,10 +59,11 @@ class verify_certificate_result implements templatable, renderable {
      * @param \stdClass $result
      */
     public function __construct($result) {
-        $context = \context_system::instance(); // TODO template context?
-
         $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $result->userid));
         $this->userfullname = fullname($result);
+        $this->certificatename = $result->certificatename;
+        $this->expires = userdate($result->expires);
+        $this->expired = $result->expires <= time();
     }
 
     /**
@@ -76,6 +77,8 @@ class verify_certificate_result implements templatable, renderable {
         $result->userprofileurl = $this->userprofileurl;
         $result->userfullname = $this->userfullname;
         $result->certificatename = $this->certificatename;
+        $result->expires = $this->expires;
+        $result->expired = $this->expired;
 
         return $result;
     }

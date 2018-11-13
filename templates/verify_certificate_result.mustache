@@ -43,6 +43,7 @@
 }}
 <ul class="list-unstyled unstyled">
     <li><strong>{{#str}}fullname{{/str}}:</strong> <a href="{{{userprofileurl}}}">{{userfullname}}</a></li>
-    <li><strong>{{#str}}course{{/str}}:</strong> <a href="{{{courseurl}}}">{{coursefullname}}</a></li>
     <li><strong>{{#str}}certificate, tool_certificate{{/str}}:</strong> {{certificatename}}</li>
+    <li><strong>{{#str}}expires, tool_certificate{{/str}}:</strong> {{expires}}</li>
+    <li><strong>{{$str}}Status{{/str}}:</strong> {{#expired}}{{#str}}expired, tool_certificate{{/str}}{{/expired}}{{^expired}}{{#str}}valid, tool_certificate{{/str}}{{/expired}}</li>
 </ul>

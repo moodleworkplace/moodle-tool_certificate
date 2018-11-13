@@ -35,5 +35,35 @@ function xmldb_tool_certificate_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2018051709) {
+
+        // Define field expires to be added to tool_certificate_issues.
+        $table = new xmldb_table('tool_certificate_issues');
+        $field = new xmldb_field('expires', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timecreated');
+
+        // Conditionally launch add field expires.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+       $field = new xmldb_field('data', XMLDB_TYPE_TEXT, null, null, null, null, null, 'expires');
+
+        // Conditionally launch add field data.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'data');
+
+        // Conditionally launch add field component.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2018051709, 'tool', 'certificate');
+    }
+
+
     return true;
 }
