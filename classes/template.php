@@ -268,9 +268,8 @@ class template {
      * @param bool $preview true if it is a preview, false otherwise
      * @param int $issue the issued certificate we want to view
      * @param bool $return Do we want to return the contents of the PDF?
-     * @return string|void Can return the PDF in string format if specified.
      */
-    public function generate_pdf($preview = false, $issue = null, $return = false) {
+    public function generate_pdf($preview = false, $issue = null) {
         global $CFG, $DB, $USER;
 
         if (is_null($issue)) {
@@ -314,10 +313,7 @@ class template {
                     }
                 }
             }
-            if ($return) {
-                return $pdf->Output('', 'S');
-            }
-            $pdf->Output($filename, 'D');
+            $pdf->Output($filename);
         }
     }
 
