@@ -27,29 +27,30 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
 $managecaps = ['tool/certificate:manage', 'tool/certificate:manageforalltenants'];
-$viewcaps =  ['tool/certificate:viewallcertificates', 'tool/certificate:verifyallcertificates'];
+$viewcaps = ['tool/certificate:viewallcertificates', 'tool/certificate:verifyallcertificates'];
+$imagecaps = ['tool/certificate:imageforalltenants'];
 $issuecap = ['tool/certificate:issue'];
+$anycaps = array_merge($managecaps, $viewcaps, $imagecaps, $issuecap);
 
-if ($hassiteconfig || has_any_capability($managecaps + $viewcaps + $issuecap, context_system::instance())) {
+if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/managetemplates',
                 get_string('managetemplates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/manage_templates.php'), $managecaps + $viewcaps + $issuecap));
+                new moodle_url('/admin/tool/certificate/manage_templates.php'), $anycaps));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/validate',
                 get_string('verifycertificate', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/verify_certificate.php'), $managecaps + $viewcaps));
+                new moodle_url('/admin/tool/certificate/verify_certificate.php'), array_merge($managecaps, $viewcaps)));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
                 get_string('addcertificate', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/edit.php'), $managecaps));
 
-    $imagecaps = $managecaps + ['tool/certificate:imageforalltenants'];
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/images',
                 get_string('certificateimages', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/upload_image.php'), $imagecaps));
+                new moodle_url('/admin/tool/certificate/upload_image.php'), array_merge($managecaps, $imagecaps)));
 
     if ($hassiteconfig) {
         $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
