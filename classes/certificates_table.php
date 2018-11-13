@@ -76,7 +76,7 @@ class certificates_table extends \table_sql {
             $columns[] = 'download';
             $headers[] = get_string('file');
 
-            if ($canmanage) {
+            if ($canissue) {
                 $columns[] = 'revoke';
                 $headers[] = get_string('revoke', 'tool_certificate');
             }
