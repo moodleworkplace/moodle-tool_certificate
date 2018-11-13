@@ -46,7 +46,7 @@ function xmldb_tool_certificate_upgrade($oldversion) {
             $dbman->add_field($table, $field);
         }
 
-       $field = new xmldb_field('data', XMLDB_TYPE_TEXT, null, null, null, null, null, 'expires');
+        $field = new xmldb_field('data', XMLDB_TYPE_TEXT, null, null, null, null, null, 'expires');
 
         // Conditionally launch add field data.
         if (!$dbman->field_exists($table, $field)) {
@@ -63,7 +63,6 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         // Certificate savepoint reached.
         upgrade_plugin_savepoint(true, 2018051709, 'tool', 'certificate');
     }
-
 
     return true;
 }

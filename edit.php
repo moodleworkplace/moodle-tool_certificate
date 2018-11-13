@@ -25,7 +25,7 @@
 require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$tid = optional_param('tid', 0, PARAM_INT);
+$templateid = optional_param('tid', 0, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action) {
     $actionid = required_param('aid', PARAM_INT);
@@ -33,12 +33,12 @@ if ($action) {
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
 // Edit an existing template.
-if ($tid) {
+if ($templateid) {
     // Create the template object.
-    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
+    $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
     // Set the page url.
-    $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
 } else { // Adding a new template.
     // Set the page url.
     $pageurl = new moodle_url('/admin/tool/certificate/edit.php');
@@ -46,32 +46,26 @@ if ($tid) {
 
 $context = context_system::instance();
 
-require_login();
+if ($templateid) {
+    admin_externalpage_setup('tool_certificate/managetemplates');
+    $heading = get_string('editcertificate', 'tool_certificate');
+    $PAGE->navbar->add($heading, new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $templateid]));
+} else {
+    $heading = get_string('addcertificate', 'tool_certificate');
+    admin_externalpage_setup('tool_certificate/addcertificate');
+}
+$PAGE->set_title(format_string($heading));
 
-$canmanage = has_capability('tool/certificate:manage', $context);
+$canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:managealltenants'], $context);
 
-// TODO: check managealltenants
 if (!$canmanage) {
     print_error('permissiondenied', 'tool_certificate');
-}
-
-$title = $SITE->fullname;
-
-// Set up the page.
-\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
-
-if ($tid) {
-    admin_externalpage_setup('tool_certificate/managetemplates');
-    $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $tid]));
-} else {
-    admin_externalpage_setup('tool_certificate/addcertificate');
 }
 
 // Flag to determine if we are deleting anything.
 $deleting = false;
 
-if ($tid) {
+if ($templateid) {
     if ($action && confirm_sesskey()) {
         switch ($action) {
             case 'pmoveup' :
@@ -88,13 +82,13 @@ if ($tid) {
                 break;
             case 'addpage' :
                 $template->add_page();
-                $url = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+                $url = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
                 redirect($url);
                 break;
             case 'deletepage' :
                 if (!empty($confirm)) { // Check they have confirmed the deletion.
                     $template->delete_page($actionid);
-                    $url = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+                    $url = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
                     redirect($url);
                 } else {
                     // Set deletion flag to true.
@@ -102,10 +96,10 @@ if ($tid) {
                     // Create the message.
                     $message = get_string('deletepageconfirm', 'tool_certificate');
                     // Create the link options.
-                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
                     $yesurl = new moodle_url('/admin/tool/certificate/edit.php',
                         array(
-                            'tid' => $tid,
+                            'tid' => $templateid,
                             'action' => 'deletepage',
                             'aid' => $actionid,
                             'confirm' => 1,
@@ -123,10 +117,10 @@ if ($tid) {
                     // Create the message.
                     $message = get_string('deleteelementconfirm', 'tool_certificate');
                     // Create the link options.
-                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
                     $yesurl = new moodle_url('/admin/tool/certificate/edit.php',
                         array(
-                            'tid' => $tid,
+                            'tid' => $templateid,
                             'action' => 'deleteelement',
                             'aid' => $actionid,
                             'confirm' => 1,
@@ -144,14 +138,14 @@ if ($deleting) {
     // Show a confirmation page.
     $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
     echo $OUTPUT->header();
-    echo $OUTPUT->heading($title);
+    echo $OUTPUT->heading($heading);
     echo $OUTPUT->confirm($message, $yesurl, $nourl);
     echo $OUTPUT->footer();
     exit();
 }
 
-if ($tid) {
-    $mform = new \tool_certificate\edit_form($pageurl, array('tid' => $tid));
+if ($templateid) {
+    $mform = new \tool_certificate\edit_form($pageurl, array('tid' => $templateid));
     // Set the name for the form.
     $mform->set_data(array('name' => $template->get_name()));
 } else {
@@ -160,7 +154,7 @@ if ($tid) {
 
 if ($data = $mform->get_data()) {
     // If there is no id, then we are creating a template.
-    if (!$tid) {
+    if (!$templateid) {
         $template = \tool_certificate\template::create($data->name, $context->id);
 
         // Create a page for this template.
@@ -230,10 +224,10 @@ if ($data = $mform->get_data()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($title);
+echo $OUTPUT->heading($heading);
 $mform->display();
-if ($tid) {
-    $loadtemplateurl = new moodle_url('/admin/tool/certificate/load_template.php', array('tid' => $tid));
+if ($templateid) {
+    $loadtemplateurl = new moodle_url('/admin/tool/certificate/load_template.php', array('tid' => $templateid));
     $loadtemplateform = new \tool_certificate\load_template_form($loadtemplateurl, array('context' => $context), 'post',
         '', array('id' => 'loadtemplateform'));
     $loadtemplateform->display();

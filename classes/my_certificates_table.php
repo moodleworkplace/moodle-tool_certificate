@@ -95,7 +95,7 @@ class my_certificates_table extends \table_sql {
         $context = \context::instance_by_id($certificate->contextid);
 
         $column = format_string($certificate->name, true, ['context' => $context]);
-        
+
         return $column;
     }
 
@@ -116,11 +116,11 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_expires($certificate) {
-        if (is_null($certificate->expires)) {
+        if (!$certificate->expires) {
             return get_string('never');
         }
         $column = userdate($certificate->expires);
-        if (!is_null($certificate->expires) && $certificate->expires <= time()) {
+        if ($certificate->expires && $certificate->expires <= time()) {
             $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'), ['class' => 'badge badge-secondary']);
         }
         return $column;

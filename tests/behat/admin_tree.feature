@@ -36,7 +36,7 @@ Feature: View links on admin tree
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
-    And I should see "Certificate images"
+    And I should not see "Certificate images"
     And I should not see "Add certificate template"
 
   Scenario: Manager without manage and image capabilities should not see option to manage images

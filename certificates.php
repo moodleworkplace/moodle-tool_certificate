@@ -113,7 +113,7 @@ if ($revokecert && confirm_sesskey()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template));
-if ($canmanage) {
+if ($canissue) {
     $newissueurl = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
     $newissuestr = get_string('issuenewcertificates', 'tool_certificate');
     echo html_writer::link($newissueurl, $newissuestr, ['class' => 'btn btn-primary']);
