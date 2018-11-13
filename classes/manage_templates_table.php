@@ -43,6 +43,16 @@ class manage_templates_table extends \table_sql {
     protected $context;
 
     /**
+     * @var bool $canissue
+     */
+    protected $canissue;
+
+    /**
+     * @var bool $canmanage
+     */
+    protected $canmanage;
+
+    /**
      * Sets up the table.
      *
      * @param \context $context
@@ -66,6 +76,9 @@ class manage_templates_table extends \table_sql {
         $this->sortable(true);
 
         $this->context = $context;
+
+        $this->canissue = has_capability('tool/certificate:issue', \context_system::instance());
+        $this->canmanage = has_capability('tool/certificate:manage', \context_system::instance());
     }
 
     /**
@@ -87,41 +100,38 @@ class manage_templates_table extends \table_sql {
     public function col_actions($template) {
         global $OUTPUT;
 
-        // Link to edit the template.
-        $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->id));
-        $editicon = $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit')));
+        $actions = '';
 
-        // Link to duplicate the template.
-        $duplicatelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
-            array(
-                'tid' => $template->id,
-                'action' => 'duplicate',
-                'sesskey' => sesskey()
-            )
-        );
-        $duplicateicon = $OUTPUT->action_icon($duplicatelink, new \pix_icon('t/copy', get_string('duplicate')), null,
-            array('class' => 'action-icon duplicate-icon'));
+        if ($this->canmanage) {
+
+            $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->id));
+            $actions .= $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit')));
+
+            $duplicatelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
+                array('tid' => $template->id, 'action' => 'duplicate', 'sesskey' => sesskey()));
+
+            $actions .= $OUTPUT->action_icon($duplicatelink, new \pix_icon('t/copy', get_string('duplicate')), null,
+                array('class' => 'action-icon duplicate-icon'));
+
+            $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
+                array('tid' => $template->id, 'action' => 'delete', 'sesskey' => sesskey()));
+
+            $actions .= $OUTPUT->action_icon($deletelink, new \pix_icon('t/delete', get_string('delete')), null,
+                array('class' => 'action-icon delete-icon'));
+        }
 
         $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
         $issuesstr  = get_string('certificatesissued', 'tool_certificate');
-        $issuesicon = $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', $issuesstr));
 
-        $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
-        $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
-        $newissueicon = $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', $newissuestr));
+        $actions .= $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', $issuesstr));
 
-        // Link to delete the template.
-        $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
-            array(
-                'tid' => $template->id,
-                'action' => 'delete',
-                'sesskey' => sesskey()
-            )
-        );
-        $deleteicon = $OUTPUT->action_icon($deletelink, new \pix_icon('t/delete', get_string('delete')), null,
-            array('class' => 'action-icon delete-icon'));
+        if ($this->canissue) {
+            $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
+            $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
+            $actions .= $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', $newissuestr));
+        }
 
-        return $editicon . $duplicateicon . $issuesicon . $newissueicon . $deleteicon;
+        return $actions;
     }
 
     /**
