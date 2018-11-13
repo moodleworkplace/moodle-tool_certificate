@@ -32,7 +32,7 @@ $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certific
 $context = context::instance_by_id($contextid);
 
 // Set up the page.
-$pageurl = new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $contextid));
+$pageurl = new moodle_url('/admin/tool/certificate/index.php', array('contextid' => $contextid));
 
 if ($code) {
     $pageurl->param('code', $code);
@@ -86,6 +86,9 @@ if ($checkallofsite) {
 
 // The form we are using to verify these codes.
 $form = new \tool_certificate\verify_certificate_form($pageurl);
+if ($code) {
+    $form->set_data(['code' => $code]);
+}
 
 if ($form->get_data()) {
     $result = \tool_certificate\certificate::verify($code);

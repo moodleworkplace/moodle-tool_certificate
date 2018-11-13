@@ -54,16 +54,33 @@ class verify_certificate_result implements templatable, renderable {
     public $certificatename;
 
     /**
+     * @var string The time the issue was created.
+     */
+    public $timecreated;
+
+    /**
+     * @var string The timestamp the issue expires on.
+     */
+    public $expires;
+
+
+    /**
+     * @var string If issue expired based on current time.
+     */
+    public $expired;
+
+    /**
      * Constructor.
      *
      * @param \stdClass $result
      */
-    public function __construct($result) {
-        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $result->userid));
-        $this->userfullname = fullname($result);
-        $this->certificatename = $result->certificatename;
-        $this->expires = userdate($result->expires);
-        $this->expired = $result->expires <= time();
+    public function __construct($issue) {
+        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $issue->userid));
+        $this->userfullname = fullname($issue);
+        $this->certificatename = $issue->certificatename;
+        $this->timecreated = userdate($issue->timecreated);
+        $this->expires = userdate($issue->expires);
+        $this->expired = $issue->expires <= time();
     }
 
     /**
@@ -77,6 +94,7 @@ class verify_certificate_result implements templatable, renderable {
         $result->userprofileurl = $this->userprofileurl;
         $result->userfullname = $this->userfullname;
         $result->certificatename = $this->certificatename;
+        $result->timecreated = $this->timecreated;
         $result->expires = $this->expires;
         $result->expired = $this->expired;
 

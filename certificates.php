@@ -26,10 +26,9 @@ require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 $download = optional_param('download', null, PARAM_ALPHA);
-$downloadcert = optional_param('downloadcert', false, PARAM_BOOL);
 $revokecert = optional_param('revokecert', false, PARAM_BOOL);
 
-if ($downloadcert || $revokecert) {
+if ($revokecert) {
     $issueid = required_param('issueid', PARAM_INT);
     $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid], '*', MUST_EXIST);
     $templateid = $issue->templateid;
@@ -42,8 +41,6 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 
-require_login();
-
 $canissue = has_capability('tool/certificate:issue', context_system::instance());
 $canview = has_capability('tool/certificate:viewallcertificates', context_system::instance());
 
@@ -53,21 +50,8 @@ if (!$canissue && !$canview) {
 
 $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
 
-// Check if we requested to download a certificate.
-if ($downloadcert) {
-    $template = new \tool_certificate\template($template);
-    $template->generate_pdf(false, $issue);
-    exit();
-}
-
-$context = context_system::instance();
-$title = $SITE->fullname;
-
 $pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid,
     'page' => $page, 'perpage' => $perpage));
-
-// Set up the page.
-\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
 admin_externalpage_setup('tool_certificate/managetemplates');
 
@@ -78,11 +62,6 @@ if ($table->is_downloading()) {
     $table->download();
     exit();
 }
-
-$PAGE->set_url($pageurl);
-$PAGE->set_context(context_system::instance());
-$PAGE->set_title(get_string('certificates', 'tool_certificate'));
-$PAGE->set_pagelayout('standard');
 
 $heading = get_string('certificates', 'tool_certificate');
 

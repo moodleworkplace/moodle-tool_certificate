@@ -132,8 +132,9 @@ class my_certificates_table extends \table_sql {
      * @param \stdClass $certificate
      * @return string
      */
-    public function col_code($certificate) {
-        return $certificate->code;
+    public function col_code($issue) {
+        return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $issue->code]),
+                                  $issue->code, ['title' => get_string('verify', 'tool_certificate')]);
     }
 
     /**
@@ -142,14 +143,11 @@ class my_certificates_table extends \table_sql {
      * @param \stdClass $certificate
      * @return string
      */
-    public function col_download($certificate) {
+    public function col_download($issue) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
-        $link = new \moodle_url('/admin/tool/certificate/my_certificates.php',
-            array('userid' => $this->userid,
-                  'tid' => $certificate->id,
-                  'downloadcert' => '1'));
+        $icon = new \pix_icon('download', get_string('view'), 'tool_certificate');
+        $link = new \moodle_url('/admin/tool/certificate/view.php', array('code' => $issue->code));
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }
