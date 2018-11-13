@@ -73,7 +73,8 @@ if ($tid) {
         if ($action == 'delete') {
             if (!$confirm) {
                 // Show a confirmation page.
-                $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
+                $heading = get_string('deleteconfirm', 'tool_certificate');
+                $PAGE->navbar->add($heading);
                 $message = get_string('deletetemplateconfirm', 'tool_certificate');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading($heading);
