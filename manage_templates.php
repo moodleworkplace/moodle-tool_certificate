@@ -91,7 +91,8 @@ if ($tid) {
         } else if ($action == 'duplicate') {
             if (!$confirm) {
                 // Show a confirmation page.
-                $PAGE->navbar->add(get_string('duplicateconfirm', 'tool_certificate'));
+                $heading = get_string('duplicateconfirm', 'tool_certificate');
+                $PAGE->navbar->add($heading);
                 $message = get_string('duplicatetemplateconfirm', 'tool_certificate');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading($heading);
