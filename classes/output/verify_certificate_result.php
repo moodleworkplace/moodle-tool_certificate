@@ -75,6 +75,7 @@ class verify_certificate_result implements templatable, renderable {
      * @param \stdClass $result
      */
     public function __construct($issue) {
+        $this->viewurl = new \moodle_url('/admin/tool/certificate/view.php', array('code' => $issue->code));
         $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $issue->userid));
         $this->userfullname = fullname($issue);
         $this->certificatename = $issue->certificatename;
@@ -91,6 +92,7 @@ class verify_certificate_result implements templatable, renderable {
      */
     public function export_for_template(\renderer_base $output) {
         $result = new \stdClass();
+        $result->viewurl = $this->viewurl;
         $result->userprofileurl = $this->userprofileurl;
         $result->userfullname = $this->userfullname;
         $result->certificatename = $this->certificatename;
