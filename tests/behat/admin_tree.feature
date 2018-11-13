@@ -30,7 +30,6 @@ Feature: View links on admin tree
     And I set the following system permissions of "Manager" role:
       | capability | permission |
       | tool/certificate:manage | Prevent |
-      | tool/certificate:manageforalltenants | Prevent |
     And I log out
     And I log in as "manager"
     And I am on site homepage
@@ -45,8 +44,6 @@ Feature: View links on admin tree
     And I set the following system permissions of "Manager" role:
       | capability | permission |
       | tool/certificate:manage | Prevent |
-      | tool/certificate:manageforalltenants | Prevent |
-      | tool/certificate:imageforalltenants | Prevent |
     And I log out
     And I log in as "manager"
     And I am on site homepage
@@ -60,7 +57,6 @@ Feature: View links on admin tree
     And I set the following system permissions of "Manager" role:
       | capability | permission |
       | tool/certificate:manage | Prevent |
-      | tool/certificate:manageforalltenants | Prevent |
     And I log out
     And I log in as "manager"
     And I am on site homepage
