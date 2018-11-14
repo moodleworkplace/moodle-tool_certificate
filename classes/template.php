@@ -474,6 +474,15 @@ class template {
         require_capability('tool/certificate:manage', $this->get_context());
     }
 
+    public function preview_url() {
+        return new \moodle_url('/admin/tool/certificate/view.php',
+            ['preview' => 1, 'templateid' => $this->get_id(), 'code' => 'previewing']);
+    }
+
+    public static function view_url($code) {
+        return new \moodle_url('/admin/tool/certificate/view.php', ['code' => $code]);
+    }
+
     /**
      * Creates a template.
      *

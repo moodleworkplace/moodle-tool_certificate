@@ -49,7 +49,7 @@ class my_certificates_table extends \table_sql {
      * @param string|null $download The file type, null if we are not downloading
      */
     public function __construct($userid, $download = null) {
-        parent::__construct('tool_certificate_report_table');
+        parent::__construct('tool_certificate_my_certificates_table');
 
         $columns = array(
             'name',
@@ -147,7 +147,7 @@ class my_certificates_table extends \table_sql {
         global $OUTPUT;
 
         $icon = new \pix_icon('download', get_string('view'), 'tool_certificate');
-        $link = new \moodle_url('/admin/tool/certificate/view.php', array('code' => $issue->code));
+        $link = template::view_url($issue->code);
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }
