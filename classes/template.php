@@ -483,6 +483,10 @@ class template {
         return new \moodle_url('/admin/tool/certificate/view.php', ['code' => $code]);
     }
 
+    public static function verification_url($code) {
+        return new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]);
+    }
+
     /**
      * Creates a template.
      *
