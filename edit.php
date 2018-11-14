@@ -145,9 +145,9 @@ if ($deleting) {
 }
 
 if ($templateid) {
-    $mform = new \tool_certificate\edit_form($pageurl, array('tid' => $templateid));
+    $mform = new \tool_certificate\edit_form($pageurl, ['tid' => $templateid, 'tenantid' => $template->get_tenantid()]);
     // Set the name for the form.
-    $mform->set_data(array('name' => $template->get_name()));
+    $mform->set_data(['name' => $template->get_name()]);
 } else {
     $mform = new \tool_certificate\edit_form($pageurl);
 }
@@ -155,7 +155,7 @@ if ($templateid) {
 if ($data = $mform->get_data()) {
     // If there is no id, then we are creating a template.
     if (!$templateid) {
-        $template = \tool_certificate\template::create($data->name, $context->id);
+        $template = \tool_certificate\template::create($data);
 
         // Create a page for this template.
         $pageid = $template->add_page();

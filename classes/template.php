@@ -41,6 +41,11 @@ class template {
     protected $id;
 
     /**
+     * @var int $tenantid The tenantid of the template.
+     */
+    protected $tenantid;
+
+    /**
      * @var string $name The name of this template
      */
     protected $name;
@@ -62,6 +67,7 @@ class template {
      */
     public function __construct($template) {
         $this->id = $template->id;
+        $this->tenantid = $template->tenantid;
         $this->name = $template->name;
         $this->contextid = $template->contextid;
         if (isset($template->timecreated)) {
@@ -81,6 +87,7 @@ class template {
 
         $savedata = new \stdClass();
         $savedata->id = $this->id;
+        $savedata->tenantid = $this->tenantid;
         $savedata->name = $data->name;
         $savedata->timemodified = time();
         $savedata->timecreated = $this->timecreated;
@@ -425,6 +432,15 @@ class template {
     }
 
     /**
+     * Returns the tenantid of the template.
+     *
+     * @return int the id of the template
+     */
+    public function get_tenantid() {
+        return $this->tenantid;
+    }
+
+    /**
      * Returns the name of the template.
      *
      * @return string the name of the template
@@ -490,18 +506,18 @@ class template {
     /**
      * Creates a template.
      *
-     * @param string $templatename the name of the template
-     * @param int $contextid the context id
+     * @param stdClass $formdata Associative array with data to create template.
      * @return \tool_certificate\template the template object
      */
-    public static function create($templatename, $contextid) {
+    public static function create($formdata) {
         global $DB;
 
         $template = new \stdClass();
-        $template->name = $templatename;
-        $template->contextid = $contextid;
+        $template->name = $formdata->name;
+        $template->contextid = \context_system::instance()->id;
         $template->timecreated = time();
         $template->timemodified = $template->timecreated;
+        $template->tenantid = $formdata->tenantid;
         $template->id = $DB->insert_record('tool_certificate_templates', $template);
 
         \tool_certificate\event\template_created::create_from_template($template)->trigger();

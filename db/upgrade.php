@@ -64,5 +64,25 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018051709, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2018051710) {
+
+        // Define field id to be added to tool_certificate_templates.
+        $table = new xmldb_table('tool_certificate_templates');
+        $field = new xmldb_field('tenantid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'timemodified');
+
+        // Conditionally launch add field id.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $key = new xmldb_key('tenantid', XMLDB_KEY_FOREIGN, ['tenantid'], 'tool_tenant', ['id']);
+
+        // Launch add key tenantid.
+        $dbman->add_key($table, $key);
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2018051710, 'tool', 'certificate');
+    }
+
     return true;
 }

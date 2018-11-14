@@ -162,8 +162,8 @@ $string['savechangespreview'] = 'Save changes and preview';
 $string['savetemplate'] = 'Save template';
 $string['search:activity'] = 'Certificate tool - activity information';
 $string['selectuserstoissuecertificatefor'] = 'Select users to issue certificate for';
-$string['setprotection'] = 'Set protection';
-$string['setprotection_help'] = 'Choose the actions you wish to prevent users from performing on this certificate.';
+$string['selecttenant'] = 'Select tentant';
+$string['selectedtenant'] = 'Selected tentant';
 $string['showposxy'] = 'Show position X and Y';
 $string['showposxy_desc'] = 'This will show the X and Y position when editing of an element, allowing the user to accurately specify the location.
 
