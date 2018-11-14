@@ -135,7 +135,7 @@ class behat_tool_certificate extends behat_base {
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
 
-        $url = new moodle_url('/admin/tool/certificate/index.php', array('contextid' => $template->contextid));
+        $url = new moodle_url('/admin/tool/certificate/index.php');
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
 
@@ -161,9 +161,8 @@ class behat_tool_certificate extends behat_base {
      * @param TableNode $data
      */
     public function the_following_certificate_templates_exist(TableNode $data) {
-        $contextid = \context_system::instance()->id;
         foreach ($data->getHash() as $elementdata) {
-            $template = \tool_certificate\template::create($elementdata['name'], $contextid);
+            $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
                     $template->add_page();

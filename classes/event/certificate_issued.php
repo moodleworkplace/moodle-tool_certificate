@@ -56,7 +56,7 @@ class certificate_issued extends \core\event\base {
         $data = [
             'context' => \context_system::instance(),
             'objectid' => $issue->id,
-            'relateduserid' => $issue->userid
+            'relateduserid' => $issue->userid,
             'other' => [
                 'code' => $issue->code
             ]

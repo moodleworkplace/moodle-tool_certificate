@@ -41,7 +41,7 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
                 new moodle_url('/admin/tool/certificate/manage_templates.php'), $anycaps));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
-                get_string('verifycertificate', 'tool_certificate'),
+                get_string('verifycertificates', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/index.php'), array_merge($managecaps, $issuecaps)));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',

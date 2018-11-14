@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use tool_tenant\tenancy;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -370,9 +372,11 @@ class template {
      * @return template
      */
     public function duplicate() {
-        $name = $this->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
+        $data = new \stdClass();
+        $data->name = $this->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
+        $data->tenantid = $this->get_tenant_id();
         $contextid = $this->get_contextid();
-        $newtemplate = self::create($name, $contextid);
+        $newtemplate = self::create($data);
 
         // Copy the data to the new template.
         $this->copy_to_template($newtemplate->get_id());
@@ -436,7 +440,7 @@ class template {
      *
      * @return int the id of the template
      */
-    public function get_tenantid() {
+    public function get_tenant_id() {
         return $this->tenantid;
     }
 
@@ -517,7 +521,11 @@ class template {
         $template->contextid = \context_system::instance()->id;
         $template->timecreated = time();
         $template->timemodified = $template->timecreated;
-        $template->tenantid = $formdata->tenantid;
+        if (isset($formdata->tenantid) && $formdata->tenantid > 0) {
+            $template->tenantid = $formdata->tenantid;
+        } else {
+            $template->tenantid = tenancy::get_default_tenant_id();
+        }
         $template->id = $DB->insert_record('tool_certificate_templates', $template);
 
         \tool_certificate\event\template_created::create_from_template($template)->trigger();

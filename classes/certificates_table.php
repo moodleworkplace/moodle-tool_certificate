@@ -166,12 +166,9 @@ class certificates_table extends \table_sql {
     public function col_revoke($issue) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('remove', get_string('revoke', 'tool_certificate'), 'tool_certificate');
+        $icon = new \pix_icon('t/delete', get_string('revoke', 'tool_certificate'));
         $link = new \moodle_url('/admin/tool/certificate/certificates.php',
-            array('issueid' => $issue->id,
-                  'templateid' => $issue->templateid,
-                  'sesskey' => sesskey(),
-                  'revokecert' => '1'));
+            array('issueid' => $issue->id, 'templateid' => $issue->templateid, 'sesskey' => sesskey(), 'revokecert' => '1'));
 
         return $OUTPUT->action_link($link, '', null, ['class' => 'delete-icon'], $icon);
     }
