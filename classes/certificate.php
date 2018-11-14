@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use tool_tenant\tenancy;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -271,11 +273,17 @@ class certificate {
                   JOIN {tool_certificate_issues} ci
                     ON (ci.templateid = t.id)
                   JOIN {user} u
-                    ON (u.id = ci.userid)';
+                    ON (u.id = ci.userid)
+                 WHERE u.deleted = 0';
 
         if ($templateid > 0) {
-            $sql .= " WHERE t.id = :templateid";
+            $sql .= " AND t.id = :templateid";
             $conditions['templateid'] = $templateid;
+        }
+
+        if (!has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
+            $sql .= " AND t.tentantid = :templateid";
+            $conditions['tenantid'] = tenancy::get_tenant_id();
         }
 
         $sql .= " ORDER BY {$sort}";
@@ -522,6 +530,9 @@ class certificate {
         if ($issues = $DB->get_records_sql($sql, ['code' => $code])) {
             $result->success = true;
             $result->issues = $issues;
+            foreach ($result->issues as $issue) {
+                \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
+            }
         } else {
             // Can't find it, let's say it's not verified.
             $result->success = false;
