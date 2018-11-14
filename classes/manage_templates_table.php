@@ -118,6 +118,12 @@ class manage_templates_table extends \table_sql {
 
             $actions .= $OUTPUT->action_icon($deletelink, new \pix_icon('t/delete', get_string('delete')), null,
                 array('class' => 'action-icon delete-icon'));
+
+            $templateobj = new template($template);
+            $previewlink = $templateobj->preview_url();
+            $actions .= $OUTPUT->action_icon($previewlink, new \pix_icon('t/preview', get_string('preview')), null,
+                array('class' => 'action-icon preview-icon'));
+
         }
 
         $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));

@@ -214,8 +214,7 @@ if ($data = $mform->get_data()) {
 
     // Check if we want to preview this custom certificate.
     if (!empty($data->previewbtn)) {
-        $template->generate_pdf(true);
-        exit();
+        redirect($template->preview_url());
     }
 
     // Redirect to the editing page to show form with recent updates.

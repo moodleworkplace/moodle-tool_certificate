@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
- * Class for the report that displays all the certificates throughout the site.
+ * Class for the report that displays all the certificates for a given templateid.
  *
  * @package    tool_certificate
  * @copyright  2018 Daniel Neis <daniel@moodle.com>
@@ -49,7 +49,7 @@ class certificates_table extends \table_sql {
      * @param string|null $download The file type, null if we are not downloading
      */
     public function __construct($templateid, $download = null) {
-        parent::__construct('tool_certificate_report_table');
+        parent::__construct('tool_certificate_certificates_table');
 
         $columns = array(
             'userfullname',
@@ -152,7 +152,7 @@ class certificates_table extends \table_sql {
         global $OUTPUT;
 
         $icon = new \pix_icon('download', get_string('view'), 'tool_certificate');
-        $link = new \moodle_url('/admin/tool/certificate/view.php', array('code' => $issue->code));
+        $link = template::view_url($issue->code);
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }
