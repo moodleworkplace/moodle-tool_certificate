@@ -282,7 +282,7 @@ class certificate {
         }
 
         if (!has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
-            $sql .= " AND t.tentantid = :templateid";
+            $sql .= " AND t.tenantid = :tenantid";
             $conditions['tenantid'] = tenancy::get_tenant_id();
         }
 

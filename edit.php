@@ -145,7 +145,7 @@ if ($deleting) {
 }
 
 if ($templateid) {
-    $mform = new \tool_certificate\edit_form($pageurl, ['tid' => $templateid, 'tenantid' => $template->get_tenantid()]);
+    $mform = new \tool_certificate\edit_form($pageurl, ['tid' => $templateid, 'tenantid' => $template->get_tenant_id()]);
     // Set the name for the form.
     $mform->set_data(['name' => $template->get_name()]);
 } else {

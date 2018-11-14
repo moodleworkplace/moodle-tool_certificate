@@ -11,7 +11,7 @@ Feature: Being able to view the certificates that have been issued
       | student2 | Student   | 2        | student2@example.com |
     And the following certificate templates exist:
       | name |
-      | Certificate 1|
+      | Certificate 1 |
     And the following certificate issues exist:
       | template | user |
       | Certificate 1 | student1 |
