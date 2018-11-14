@@ -22,89 +22,44 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// This file does not need require_login because capability to verify can be granted to guests, skip codechecker here.
-// @codingStandardsIgnoreLine
 require_once('../../../config.php');
 
-$contextid = optional_param('contextid', context_system::instance()->id, PARAM_INT);
 $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certificate we are verifying.
 
-$context = context::instance_by_id($contextid);
+require_login();
 
-// Set up the page.
-$pageurl = new moodle_url('/admin/tool/certificate/index.php', array('contextid' => $contextid));
+$context = context_system::instance();
+
+require_capability('tool/certificate:verifyallcertificates', $context);
+
+$pageurl = new moodle_url('/admin/tool/certificate/index.php');
 
 if ($code) {
     $pageurl->param('code', $code);
 }
 
-// Ok, a certificate was specified.
-if ($context->contextlevel != CONTEXT_SYSTEM) {
-    $cm = get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $certificate = $DB->get_record('tool_certificate', array('id' => $cm->instance), '*', MUST_EXIST);
+$heading = get_string('verifycertificates', 'tool_certificate');
 
-    // Check if we are allowing anyone to verify, if so, no need to check login, or permissions.
-    if (!$certificate->verifyany) {
-        // Need to be logged in.
-        require_login($course, false, $cm);
-        // Ok, now check the user has the ability to verify certificates.
-        require_capability('tool/certificate:verifycertificate', $context);
-    } else {
-        $PAGE->set_cm($cm, $course);
-    }
+$PAGE->set_url($pageurl);
+$PAGE->set_context($context);
+$PAGE->set_title(format_string($heading));
+$PAGE->set_heading($SITE->fullname);
 
-    $title = $certificate->name;
-    $heading = format_string($title);
-    $checkallofsite = false;
-} else {
-    $title = $SITE->fullname;
-    $heading = $title;
-    $checkallofsite = true;
-}
+$PAGE->navbar->add(get_string('verifycertificates', 'tool_certificate'));
 
-\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
-
-// Additional page setup.
-if ($context->contextlevel == CONTEXT_SYSTEM) {
-    $PAGE->navbar->add(get_string('verifycertificate', 'tool_certificate'));
-}
-
-if ($checkallofsite) {
-    // If the 'verifyallcertificates' is not set and the user does not have the capability 'tool/certificate:verifyallcertificates'
-    // then show them a message letting them know they can not proceed.
-    $verifyallcertificates = get_config('tool_certificate', 'verifyallcertificates');
-    $canverifyallcertificates = has_capability('tool/certificate:verifyallcertificates', $context);
-    if (!$verifyallcertificates && !$canverifyallcertificates) {
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading($heading);
-        echo $OUTPUT->notification(get_string('cannotverifyallcertificates', 'tool_certificate'));
-        echo $OUTPUT->footer();
-        exit();
-    }
-}
-
-// The form we are using to verify these codes.
 $form = new \tool_certificate\verify_certificate_form($pageurl);
+
 if ($code) {
     $form->set_data(['code' => $code]);
-}
-
-if ($form->get_data()) {
-    $result = \tool_certificate\certificate::verify($code);
 }
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 echo $form->display();
-if (isset($result)) {
+if ($form->get_data()) {
+    $result = \tool_certificate\certificate::verify($code);
+    $results = new \tool_certificate\output\verify_certificate_results($result);
     $renderer = $PAGE->get_renderer('tool_certificate');
-    if ($result->success) {
-        foreach ($result->issues as $issue) {
-            \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
-        }
-    }
-    $result = new \tool_certificate\output\verify_certificate_results($result);
-    echo $renderer->render($result);
+    echo $renderer->render($results);
 }
 echo $OUTPUT->footer();

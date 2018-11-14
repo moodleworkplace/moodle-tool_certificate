@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use templatable;
+use tool_certificate\template;
 
 /**
  * Class to prepare a verification result for display.

@@ -55,25 +55,6 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
     if ($hassiteconfig) {
         $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
 
-        $settings = new admin_settingpage('toolcertificatemanagetemplates', new lang_string('settings', 'tool_certificate'));
-
-        $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyallcertificates',
-                       get_string('verifyallcertificates', 'tool_certificate'), '', '0'));
-
-        $settings->add(new admin_setting_configcheckbox('tool_certificate/showposxy', get_string('verifyallcertificates',
-            'tool_certificate'), '', '0'));
-
-        $settings->add(new admin_setting_configcheckbox('tool_certificate/verifyany', get_string('verifyallcertificates',
-            'tool_certificate'), '', '0'));
-
-        $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_modify', get_string('verifyallcertificates',
-            'tool_certificate'), '', '0'));
-
-        $settings->add(new admin_setting_configcheckbox('tool_certificate/protection_copy', get_string('verifyallcertificates',
-            'tool_certificate'), '', '0'));
-
-        $ADMIN->add('tool_certificate', $settings);
-
         $ADMIN->add('tool_certificate', new tool_certificate_admin_page_manage_element_plugins());
 
         // Element plugin settings.

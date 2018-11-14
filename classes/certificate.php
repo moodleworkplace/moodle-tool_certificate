@@ -38,48 +38,10 @@ defined('MOODLE_INTERNAL') || die();
 class certificate {
 
     /**
-     * @var string the print protection variable
-     */
-    const PROTECTION_PRINT = 'print';
-
-    /**
-     * @var string the modify protection variable
-     */
-    const PROTECTION_MODIFY = 'modify';
-
-    /**
-     * @var string the copy protection variable
-     */
-    const PROTECTION_COPY = 'copy';
-
-    /**
      * @var int the number of issues that will be displayed on each page in the report
      *      If you want to display all certificates on a page set this to 0.
      */
     const CUSTOMCERT_PER_PAGE = '50';
-
-    /**
-     * Handles setting the protection field for the certificate
-     *
-     * @param \stdClass $data
-     * @return string the value to insert into the protection field
-     */
-    public static function set_protection($data) {
-        $protection = array();
-
-        if (!empty($data->protection_print)) {
-            $protection[] = self::PROTECTION_PRINT;
-        }
-        if (!empty($data->protection_modify)) {
-            $protection[] = self::PROTECTION_MODIFY;
-        }
-        if (!empty($data->protection_copy)) {
-            $protection[] = self::PROTECTION_COPY;
-        }
-
-        // Return the protection string.
-        return implode(', ', $protection);
-    }
 
     /**
      * Handles uploading an image for the certificate module.
