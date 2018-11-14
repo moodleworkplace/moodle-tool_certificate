@@ -137,12 +137,6 @@ $string['posx'] = 'Position X';
 $string['posx_help'] = 'This is the position in mm from the top left corner you wish the element\'s reference point to locate in the x direction.';
 $string['posy'] = 'Position Y';
 $string['posy_help'] = 'This is the position in mm from the top left corner you wish the element\'s reference point to locate in the y direction.';
-$string['preventcopy'] = 'Prevent copy';
-$string['preventcopy_desc'] = 'Enable protection from print action.';
-$string['preventprint'] = 'Prevent print';
-$string['preventprint_desc'] = 'Enable protection from modify action.';
-$string['preventmodify'] = 'Prevent modify';
-$string['preventmodify_desc'] = 'Enable protection from copy action.';
 $string['print'] = 'Print';
 $string['privacy:metadata:tool_certificate_issues'] = 'The list of issued certificates';
 $string['privacy:metadata:tool_certificate_issues:code'] = 'The code that belongs to the certificate';
@@ -192,10 +186,11 @@ $string['verifyallcertificates'] = 'Allow verification of all certificates';
 $string['verifyallcertificates_desc'] = 'When this setting is enabled any person (including users not logged in) can visit the link \'{$a}\' in order to verify any certificate on the site, rather than having to go to the verification link for each certificate.
 
 Note - this only applies to certificates where \'Allow anyone to verify a certificate\' has been set to \'Yes\' in the certificate settings.';
-$string['verifycertificate'] = 'Verify certificates';
+$string['verifycertificate'] = 'Verify certificate';
 $string['verifycertificatedesc'] = 'This link will take you to a new screen where you will be able to verify certificates on the site';
 $string['verifycertificateanyone'] = 'Allow anyone to verify a certificate';
 $string['verifycertificateanyone_help'] = 'This setting enables anyone with the certificate verification link (including users not logged in) to verify a certificate.';
+$string['verifycertificates'] = 'Verify certificates';
 $string['viewcertificate'] = 'View certificate';
 $string['width'] = 'Width';
 $string['width_help'] = 'This is the width of the certificate PDF in mm. For reference an A4 piece of paper is 210mm wide and a letter is 216mm wide.';
