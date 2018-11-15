@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use tool_tenant\tenancy;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/tablelib.php');
@@ -79,6 +81,7 @@ class manage_templates_table extends \table_sql {
 
         $this->canissue = has_capability('tool/certificate:issue', \context_system::instance());
         $this->canmanage = has_capability('tool/certificate:manage', \context_system::instance());
+        $this->canmanagealltenants = has_capability('tool/certificate:manageforalltenants', \context_system::instance());
     }
 
     /**
@@ -102,7 +105,7 @@ class manage_templates_table extends \table_sql {
 
         $actions = '';
 
-        if ($this->canmanage) {
+        if ($this->canmanagealltenants || ($this->canmanage && $template->tenantid == tenancy::get_tenant_id())) {
 
             $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->id));
             $actions .= $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit')));

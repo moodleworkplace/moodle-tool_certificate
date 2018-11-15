@@ -59,6 +59,7 @@ $string['deletetemplateconfirm'] = 'Are you sure you want to delete this certifi
 $string['description'] = 'Description';
 $string['duplicate'] = 'Duplicate';
 $string['duplicateconfirm'] = 'Duplicate confirmation';
+$string['duplicateselecttenant'] = 'Select the tenant to duplicate template on';
 $string['duplicatetemplateconfirm'] = 'Are you sure you want to duplicate this certificate template?';
 $string['editcertificate'] = 'Edit certificate';
 $string['editelement'] = 'Edit element';
