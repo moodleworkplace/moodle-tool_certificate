@@ -53,16 +53,6 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
                 new moodle_url('/admin/tool/certificate/upload_image.php'), array_merge($managecaps, $imagecaps)));
 
     if ($hassiteconfig) {
-        $ADMIN->add('tools', new admin_category('tool_certificate', get_string('pluginname', 'tool_certificate')));
-
-        $ADMIN->add('tool_certificate', new tool_certificate_admin_page_manage_element_plugins());
-
-        // Element plugin settings.
-        $elementpluginsstr = get_string('elementplugins', 'tool_certificate');
-        $ADMIN->add('tool_certificate', new admin_category('certificateelements', $elementpluginsstr));
-        $plugins = \core_plugin_manager::instance()->get_plugins_of_type('certificateelement');
-        foreach ($plugins as $plugin) {
-            $plugin->load_settings($ADMIN, 'certificateelements', $hassiteconfig);
-        }
+        $ADMIN->add('tools', new tool_certificate_admin_page_manage_element_plugins());
     }
 }

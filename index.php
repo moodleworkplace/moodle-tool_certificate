@@ -26,8 +26,6 @@ require_once('../../../config.php');
 
 $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certificate we are verifying.
 
-require_login();
-
 $context = context_system::instance();
 
 require_capability('tool/certificate:verifyallcertificates', $context);

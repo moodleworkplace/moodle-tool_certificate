@@ -24,6 +24,8 @@
 
 namespace tool_certificate\event;
 
+use tool_certificate\template;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**

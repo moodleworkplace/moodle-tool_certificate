@@ -51,7 +51,6 @@ class tenant_selector extends moodleform {
         }
         $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
 
-        $mform->addElement('hidden', 'sesskey', sesskey());
         $group[] = $mform->addElement('hidden', 'action', 'duplicate');
         $mform->setType('action', PARAM_ALPHANUMEXT);
 

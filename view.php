@@ -30,20 +30,21 @@ if ($preview) {
 
     $templateid = required_param('templateid', PARAM_INT);
     require_login();
-    require_capability('tool/certificate:manage', context_system::instance());
-    $template = $DB->get_record('tool_certificate_templates', ['id' => $templateid]);
-    $template = new \tool_certificate\template($template);
-    $template->generate_pdf(true);
-
-} else if ($issue = $DB->get_record('tool_certificate_issues', ['code' => $issuecode], '*')) {
-    if (isloggedin() && $issue->userid != $USER->id) {
-        // Ok, now check the user has the ability to verify certificates.
-        require_capability('tool/certificate:viewallcertificates', context_system::instance());
+    $template = \tool_certificate\template::find_by_id($templateid);
+    if ($template->can_manage()) {
+        $template->generate_pdf(true);
     }
-
-    $template = $DB->get_record('tool_certificate_templates', ['id' => $issue->templateid]);
-    $template = new \tool_certificate\template($template);
-    $template->generate_pdf(false, $issue);
 } else {
-    printerror('notfound');
+
+    $issue = $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
+    $context = context_system::instance();
+    if (has_capability('tool/certificate:viewallcertificates', $context) ||
+            has_capability('tool/certificate:verifyallcertificates', $context) ||
+            (isloggedin() && $issue->userid == $USER->id)) {
+
+        $template = \tool_certificate\template::find_by_id($issue->templateid);
+        $template->generate_pdf(false, $issue);
+    }
 }
+
+print_error('notfound');
