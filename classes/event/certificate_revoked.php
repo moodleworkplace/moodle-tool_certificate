@@ -54,8 +54,8 @@ class certificate_revoked extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with '$this->userid' has revoked issue of certificate with id '$this->objectid'".
-                "from user with id '$this->relateduserid'.";
+        return "The user with '$this->userid' has revoked certificate issue with id '$this->objectid'".
+                " from user with id '$this->relateduserid'.";
     }
 
     /**

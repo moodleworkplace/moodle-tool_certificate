@@ -25,11 +25,6 @@ Feature: Being able to verify that a certificate is valid or not
     Then I should see "Not verified"
     And I verify the "Certificate 1" certificate for the user "student1"
 
-  Scenario: Attempt to verify a certificate as a non-user
-    When I visit the verification url for the "Certificate 1" certificate
-    # User should get redirected to log in as we do not allow non-users to verify.
-    Then I should see "Log in"
-
   Scenario: Verify a certificate as an admin
     When the following certificate issues exist:
       | template | user |

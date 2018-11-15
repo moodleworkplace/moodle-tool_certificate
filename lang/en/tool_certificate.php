@@ -165,12 +165,8 @@ $string['search:activity'] = 'Certificate tool - activity information';
 $string['selectuserstoissuecertificatefor'] = 'Select users to issue certificate for';
 $string['selecttenant'] = 'Select tentant';
 $string['selectedtenant'] = 'Selected tentant';
-$string['showposxy'] = 'Show position X and Y';
-$string['showposxy_desc'] = 'This will show the X and Y position when editing of an element, allowing the user to accurately specify the location.
-
-This isn\'t required if you plan on solely using the drag and drop interface for this purpose.';
+$string['shared'] = 'Shared between tenants';
 $string['subplugintype_certificateelement_plural'] = 'Element plugins';
-$string['taskemailcertificate'] = 'Handles emailing certificates.';
 $string['templatename'] = 'Template name';
 $string['templatenameexists'] = 'That template name is currently in use, please choose another.';
 $string['topcenter'] = 'Center';
