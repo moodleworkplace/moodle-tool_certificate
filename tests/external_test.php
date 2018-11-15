@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for the webservices.
  *
  * @package    tool_certificate
+ * @group      tool_certificate
  * @category   test
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -54,7 +55,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -92,7 +93,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -123,7 +124,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();

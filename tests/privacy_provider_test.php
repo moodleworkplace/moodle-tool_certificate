@@ -18,6 +18,7 @@
  * Privacy provider tests.
  *
  * @package    tool_certificate
+ * @group      tool_certificate
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -44,10 +45,10 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $course = $this->getDataGenerator()->create_course();
 
         // Add a template to the site.
-        $template1 = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Another template that has no issued certificates.
-        $template2 = \tool_certificate\template::create('No issues template', context_system::instance()->id);
+        $template2 = \tool_certificate\template::create((object)['name' => 'No issues template']);
 
         // Create a user who will be issued a certificate.
         $user = $this->getDataGenerator()->create_user();
@@ -58,9 +59,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         // Check the context supplied is correct.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(1, $contextlist);
-
-        $contextformodule = $contextlist->current();
-        $this->assertEquals($contextformodule->id, \context_system::instance()->id);
     }
 
     /**
@@ -72,7 +70,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $course = $this->getDataGenerator()->create_course();
 
         // Add a template to the site.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -110,8 +108,8 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $course = $this->getDataGenerator()->create_course();
 
         // Add a template to the site.
-        $template1 = \tool_certificate\template::create('Site template', context_system::instance()->id);
-        $template2 = \tool_certificate\template::create('Second template', context_system::instance()->id);
+        $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
+        $template2 = \tool_certificate\template::create((object)['name' => 'Second template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -146,7 +144,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $course = $this->getDataGenerator()->create_course();
 
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();

@@ -31,6 +31,7 @@ global $CFG;
  * Unit tests for the element helper class.
  *
  * @package    tool_certificate
+ * @group      tool_certificate
  * @category   test
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
