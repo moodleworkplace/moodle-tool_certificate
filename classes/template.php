@@ -374,10 +374,14 @@ class template {
      *
      * @return template
      */
-    public function duplicate() {
+    public function duplicate($tenantid = null) {
         $data = new \stdClass();
         $data->name = $this->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
-        $data->tenantid = $this->get_tenant_id();
+        if ($tenantid) {
+            $data->tenantid = $tenantid;
+        } else {
+            $data->tenantid = $this->get_tenant_id();
+        }
         $contextid = $this->get_contextid();
         $newtemplate = self::create($data);
 

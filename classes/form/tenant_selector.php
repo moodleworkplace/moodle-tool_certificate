@@ -30,27 +30,34 @@ use moodleform;
 require_once($CFG->libdir . '/formslib.php');
 
 /**
- * Certificate issues form class.
+ * Select tenant when duplicating a template.
  *
  * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class certificate_issues extends moodleform {
+class tenant_selector extends moodleform {
 
+    /**
+     * Form definition.
+     */
     public function definition() {
-        $mform = $this->_form;
+        $mform =& $this->_form;
 
-        $options = array(
-            'ajax' => 'tool_tenant/form-potential-user-selector',
-            'multiple' => true,
-            'data-capability' => 'tool/certificate:manage'
-        );
-        $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
-        $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
+        $tenants = \tool_tenant\tenancy::get_tenants();
+        $options = [];
+        foreach ($tenants as $tenant) {
+            $options[$tenant->id] = $tenant->name;
+        }
+        $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
 
-        $mform->addElement('date_time_selector', 'expires', '', ['optional' => true]);
-        $mform->addElement('submit', 'submit', get_string('issuecertificates', 'tool_certificate'));
-        $mform->addElement('cancel');
+        $mform->addElement('hidden', 'sesskey', sesskey());
+        $group[] = $mform->addElement('hidden', 'action', 'duplicate');
+        $mform->setType('action', PARAM_ALPHANUMEXT);
+
+        $group = array();
+        $group[] = $mform->createElement('submit', 'submitbtn', get_string('select'));
+        $group[] = $mform->createElement('cancel', 'cancelbtn', get_string('cancel'));
+        $mform->addElement('group', 'actiongroup', '', $group, '', false);
     }
 }

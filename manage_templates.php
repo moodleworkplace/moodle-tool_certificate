@@ -36,11 +36,6 @@ if ($action) {
     $tid = optional_param('tid', 0, PARAM_INT);
 }
 
-if ($tid) {
-    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
-    $template = new \tool_certificate\template($template);
-}
-
 $context = context_system::instance();
 
 admin_externalpage_setup('tool_certificate/managetemplates');
@@ -56,18 +51,15 @@ if (!$canmanage && !$canissue && !$canview) {
 // Set up the page.
 $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
 
-
 if ($tid) {
+
+    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
+    $template = new \tool_certificate\template($template);
+
     if ($action && confirm_sesskey()) {
-        $nourl = new moodle_url('/admin/tool/certificate/manage_templates.php');
-        $yesurl = new moodle_url('/admin/tool/certificate/manage_templates.php',
-            array(
-                'tid' => $tid,
-                'action' => $action,
-                'confirm' => 1,
-                'sesskey' => sesskey()
-            )
-        );
+        $url = '/admin/tool/certificate/manage_templates.php';
+        $nourl = new moodle_url($url);
+        $yesurl = new moodle_url($url, ['tid' => $tid, 'action' => $action, 'confirm' => 1, 'sesskey' => sesskey()]);
 
         // Check if we are deleting a template.
         if ($action == 'delete') {
@@ -87,9 +79,29 @@ if ($tid) {
             $template->delete();
 
             // Redirect back to the manage templates page.
-            redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
+            redirect($pageurl);
         } else if ($action == 'duplicate') {
             if (!$confirm) {
+                if (has_capability('tool/certificate:manageforalltenants', $context)) {
+                    $pageurl->param('tid', $tid);
+                    $tenantform = new \tool_certificate\form\tenant_selector($pageurl->out());
+                    if ($tenantform->is_cancelled()) {
+                        redirect($pageurl);
+                    }
+                    if ($data = $tenantform->get_data()) {
+                        $tenantid = $data->tenantid;
+                        $yesurl->param('tenantid', $tenantid);
+                    } else {
+                        // Show a page to select tenant.
+                        $heading = get_string('duplicateselecttenant', 'tool_certificate');
+                        $PAGE->navbar->add($heading);
+                        echo $OUTPUT->header();
+                        echo $OUTPUT->heading($heading);
+                        $tenantform->display();
+                        echo $OUTPUT->footer();
+                        exit();
+                    }
+                }
                 // Show a confirmation page.
                 $heading = get_string('duplicateconfirm', 'tool_certificate');
                 $PAGE->navbar->add($heading);
@@ -99,13 +111,15 @@ if ($tid) {
                 echo $OUTPUT->confirm($message, $yesurl, $nourl);
                 echo $OUTPUT->footer();
                 exit();
+            } else {
+                $tenantid = optional_param('tenantid', null, PARAM_INT);
             }
 
             // Copy the data to the new template.
-            $template->duplicate();
+            $template->duplicate($tenantid);
 
             // Redirect back to the manage templates page.
-            redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
+            redirect($pageurl);
         }
     }
 }
