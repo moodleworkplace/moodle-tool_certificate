@@ -196,6 +196,9 @@ class template {
             return false;
         }
 
+        // Revoke certificate issues
+        \tool_certificate\certificate::revoke_issues_by_templateid($this->id);
+
         $deletedtemplate = $DB->get_record('tool_certificate_templates', ['id' => $this->id]);
         \tool_certificate\event\template_deleted::create_from_template($deletedtemplate)->trigger();
 

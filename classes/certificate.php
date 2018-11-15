@@ -504,6 +504,15 @@ class certificate {
         $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
         \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
     }
+    
+    public static function revoke_issues_by_templateid($templateid) {
+        global $DB;
+        $issues = $DB->get_records('tool_certificate_issues', ['templateid' => $templateid]);
+        $DB->delete_records('tool_certificate_issues', ['templateid' => $templateid]);
+        foreach ($issues as $issue) {
+            \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+        }
+    }
 
     public static function verify($code) {
         global $DB;
