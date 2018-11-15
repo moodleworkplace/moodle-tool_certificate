@@ -52,8 +52,8 @@ class certificate_verified extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' verified the certificate with id '$this->objectid'".
-                "issued to user with id '$this->relateduserid'.";
+        return "The user with id '$this->userid' verified the certificate issue with id '$this->objectid'".
+                " issued to user with id '$this->relateduserid'.";
     }
 
     /**

@@ -41,7 +41,7 @@ $context = context_system::instance();
 admin_externalpage_setup('tool_certificate/managetemplates');
 
 $canissue = has_capability('tool/certificate:issue', $context);
-$canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltentants'], $context);
+$canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], $context);
 $canview = has_capability('tool/certificate:viewallcertificates', $context);
 
 if (!$canmanage && !$canissue && !$canview) {
