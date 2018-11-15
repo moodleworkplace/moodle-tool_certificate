@@ -514,6 +514,32 @@ class template {
         return new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]);
     }
 
+    public static function find_by_id($id) {
+        global $DB;
+        $template = $DB->get_record('tool_certificate_templates', ['id' => $id]);
+        return new \tool_certificate\template($template);
+    }
+
+    /**
+     * A user can manage all templates in all tenants or just templates on own tenant.
+     *
+     * @return bool
+     */
+    public function can_manage() {
+        $context = \context_system::instance();
+        return has_capability('tool/certificate:manageforalltenants', $context) ||
+               (has_capability('tool/certificate:manage', $context) && $this->tenantid == tenancy::get_tenant_id());
+    }
+
+    /**
+     * A user can issue certificate for templates.
+     *
+     * @return bool
+     */
+    public function can_issue() {
+        return has_capability('tool/certificate:issue', \context_system::instance());
+    }
+
     /**
      * Creates a template.
      *

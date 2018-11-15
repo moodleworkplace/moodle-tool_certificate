@@ -24,8 +24,6 @@
 
 namespace tool_certificate;
 
-use tool_tenant\tenancy;
-
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/tablelib.php');
@@ -45,16 +43,6 @@ class manage_templates_table extends \table_sql {
     protected $context;
 
     /**
-     * @var bool $canissue
-     */
-    protected $canissue;
-
-    /**
-     * @var bool $canmanage
-     */
-    protected $canmanage;
-
-    /**
      * Sets up the table.
      *
      * @param \context $context
@@ -62,15 +50,9 @@ class manage_templates_table extends \table_sql {
     public function __construct($context) {
         parent::__construct('tool_certificate_manage_templates_table');
 
-        $columns = [
-            'name',
-            'actions'
-        ];
+        $columns = ['name', 'actions'];
 
-        $headers = [
-            get_string('name'),
-            ''
-        ];
+        $headers = [get_string('name'), ''];
 
         $this->define_columns($columns);
         $this->define_headers($headers);
@@ -78,10 +60,6 @@ class manage_templates_table extends \table_sql {
         $this->sortable(true);
 
         $this->context = $context;
-
-        $this->canissue = has_capability('tool/certificate:issue', \context_system::instance());
-        $this->canmanage = has_capability('tool/certificate:manage', \context_system::instance());
-        $this->canmanagealltenants = has_capability('tool/certificate:manageforalltenants', \context_system::instance());
     }
 
     /**
@@ -105,7 +83,8 @@ class manage_templates_table extends \table_sql {
 
         $actions = '';
 
-        if ($this->canmanagealltenants || ($this->canmanage && $template->tenantid == tenancy::get_tenant_id())) {
+        $templateobj = new template($template);
+        if ($templateobj->can_manage()) {
 
             $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->id));
             $actions .= $OUTPUT->action_icon($editlink, new \pix_icon('t/edit', get_string('edit')));
@@ -122,7 +101,6 @@ class manage_templates_table extends \table_sql {
             $actions .= $OUTPUT->action_icon($deletelink, new \pix_icon('t/delete', get_string('delete')), null,
                 array('class' => 'action-icon delete-icon'));
 
-            $templateobj = new template($template);
             $previewlink = $templateobj->preview_url();
             $actions .= $OUTPUT->action_icon($previewlink, new \pix_icon('t/preview', get_string('preview')), null,
                 array('class' => 'action-icon preview-icon'));
@@ -134,7 +112,7 @@ class manage_templates_table extends \table_sql {
 
         $actions .= $OUTPUT->action_icon($issueslink, new \pix_icon('t/viewdetails', $issuesstr));
 
-        if ($this->canissue) {
+        if ($templateobj->can_issue()) {
             $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
             $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
             $actions .= $OUTPUT->action_icon($newissuelink, new \pix_icon('t/add', $newissuestr));

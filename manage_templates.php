@@ -41,7 +41,7 @@ $context = context_system::instance();
 admin_externalpage_setup('tool_certificate/managetemplates');
 
 $canissue = has_capability('tool/certificate:issue', $context);
-$canmanage = has_capability('tool/certificate:manage', $context);
+$canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltentants'], $context);
 $canview = has_capability('tool/certificate:viewallcertificates', $context);
 
 if (!$canmanage && !$canissue && !$canview) {
@@ -112,7 +112,11 @@ if ($tid) {
                 echo $OUTPUT->footer();
                 exit();
             } else {
-                $tenantid = optional_param('tenantid', null, PARAM_INT);
+                if (has_capability('tool/certificate:manageforalltenants', $context)) {
+                    $tenantid = optional_param('tenantid', null, PARAM_INT);
+                } else {
+                    $tenantid = null;
+                }
             }
 
             // Copy the data to the new template.
