@@ -51,6 +51,9 @@ class certificates_table extends \table_sql {
     public function __construct($templateid, $download = null) {
         parent::__construct('tool_certificate_certificates_table');
 
+        $this->templateid = $templateid;
+        $this->template = \tool_certificate\template::find_by_id($templateid);
+
         $columns = array(
             'userfullname',
             'timecreated',
@@ -69,15 +72,11 @@ class certificates_table extends \table_sql {
             $this->is_downloading($download, 'certificate-report');
         }
 
-        // TODO call API function to check if user can issue certificates for the given template.
-        $canissue = has_capability('tool/certificate:issue', \context_system::instance());
-        $canmanage = has_capability('tool/certificate:manage', \context_system::instance());
-
         if (!$this->is_downloading()) {
             $columns[] = 'download';
             $headers[] = get_string('file');
 
-            if ($canissue) {
+            if ($this->template->can_issue()) {
                 $columns[] = 'revoke';
                 $headers[] = get_string('revoke', 'tool_certificate');
             }
@@ -91,8 +90,6 @@ class certificates_table extends \table_sql {
         $this->no_sorting('download');
         $this->no_sorting('revoke');
         $this->is_downloadable(true);
-
-        $this->templateid = $templateid;
     }
 
     /**
@@ -199,7 +196,7 @@ class certificates_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = certificate::get_number_of_issues($this->userid);
+        $total = certificate::get_number_of_issues_for_template($this->templateid);
         $this->out($total, false);
         exit;
     }

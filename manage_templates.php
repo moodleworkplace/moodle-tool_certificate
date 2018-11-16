@@ -42,9 +42,8 @@ admin_externalpage_setup('tool_certificate/managetemplates');
 
 $canissue = has_capability('tool/certificate:issue', $context);
 $canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], $context);
-$canview = has_capability('tool/certificate:viewallcertificates', $context);
 
-if (!$canmanage && !$canissue && !$canview) {
+if (!$canmanage && !$canissue) {
     print_error('permissiondenied', 'tool_certificate');
 }
 
@@ -53,9 +52,8 @@ $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
 
 if ($tid) {
 
-    // TODO use API function to retrieve template, validate permission and tenant.
-    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
-    $template = new \tool_certificate\template($template);
+    $template = \tool_certificate\template::find_by_id($tid);
+    $template->can_manage();
 
     if ($action && confirm_sesskey()) {
         $url = '/admin/tool/certificate/manage_templates.php';
@@ -81,6 +79,7 @@ if ($tid) {
 
             // Redirect back to the manage templates page.
             redirect($pageurl);
+
         } else if ($action == 'duplicate') {
             if (!$confirm) {
                 if (has_capability('tool/certificate:manageforalltenants', $context)) {
@@ -134,10 +133,8 @@ $table->define_baseurl($pageurl);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetemplates', 'tool_certificate'));
-if ($canmanage || $canissue) {
-    // TODO you need "manage" capability to create a template. Also can be one of two manage capabilities.
-    // TODO make sure the access check is exactly the same as on edit.php page, preferably use the same API function for it.
-    $url = new moodle_url('/admin/tool/certificate/edit.php');
+if (\tool_certificate\template::can_create()) {
+    $url = \tool_certificate\template::new_template_url();
     echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
 }
 $table->out($perpage, false);

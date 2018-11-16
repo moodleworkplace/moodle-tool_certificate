@@ -80,49 +80,6 @@ function tool_certificate_output_fragment_editelement($args) {
 }
 
 /**
- * This function extends the settings navigation block for the site.
- *
- * It is safe to rely on PAGE here as we will only ever be within the module
- * context when this is called.
- *
- * @param settings_navigation $settings
- * @param navigation_node $certificatenode
- */
-function tool_certificate_extend_settings_navigation(settings_navigation $settings, navigation_node $certificatenode) {
-    // TODO I don't think we need this function any more.
-    global $DB, $PAGE;
-
-    $keys = $certificatenode->get_children_key_list();
-    $beforekey = null;
-    $i = array_search('modedit', $keys);
-    if ($i === false and array_key_exists(0, $keys)) {
-        $beforekey = $keys[0];
-    } else if (array_key_exists($i + 1, $keys)) {
-        $beforekey = $keys[$i + 1];
-    }
-
-    if (has_capability('tool/certificate:manage', $PAGE->cm->context)) {
-        // Get the template id.
-        $templateid = $DB->get_field('tool_certificate', 'templateid', array('id' => $PAGE->cm->instance));
-        $node = navigation_node::create(get_string('editcertificate', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid)),
-                navigation_node::TYPE_SETTING, null, 'tool_certificate_edit',
-                new pix_icon('t/edit', ''));
-        $certificatenode->add_node($node, $beforekey);
-    }
-
-    if (has_capability('tool/certificate:verifycertificate', $PAGE->cm->context)) {
-        $node = navigation_node::create(get_string('verifycertificate', 'tool_certificate'),
-            new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $PAGE->cm->context->id)),
-            navigation_node::TYPE_SETTING, null, 'tool_certificate_verify_certificate',
-            new pix_icon('t/check', ''));
-        $certificatenode->add_node($node, $beforekey);
-    }
-
-    return $certificatenode->trim_if_empty();
-}
-
-/**
  * Add nodes to myprofile page.
  *
  * @param \core_user\output\myprofile\tree $tree Tree object

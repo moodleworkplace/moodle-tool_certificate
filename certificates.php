@@ -41,20 +41,16 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 
-$canissue = has_capability('tool/certificate:issue', context_system::instance());
-$canview = has_capability('tool/certificate:viewallcertificates', context_system::instance());
+admin_externalpage_setup('tool_certificate/managetemplates');
 
-if (!$canissue && !$canview) {
-    print_error('cantvieworissue', 'tool_certificate');
+$template = \tool_certificate\template::find_by_id($templateid);
+
+if (!$template->can_manage() && !$template->can_issue()) {
+    print_error('issueormanagenotallowed', 'tool_certificate');
 }
-
-$template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
-// TODO tenant verification is missing. Add API function to retrive template by id that checks capabilities and tenant.
 
 $pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid,
     'page' => $page, 'perpage' => $perpage));
-
-admin_externalpage_setup('tool_certificate/managetemplates');
 
 $table = new \tool_certificate\certificates_table($templateid, $download);
 $table->define_baseurl($pageurl);
@@ -69,8 +65,10 @@ $heading = get_string('certificates', 'tool_certificate');
 $PAGE->navbar->add($heading);
 
 if ($revokecert && confirm_sesskey()) {
-    // TODO use API function here to check capability, verify tenant.
-    require_capability('tool/certificate:issue', \context_system::instance());
+
+    if ($template->can_revoke()) {
+        print_error('revokenotallowed', 'toolcertificate');
+    }
 
     $nourl = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
     $yesurl = new moodle_url('/admin/tool/certificate/certificates.php',
@@ -93,11 +91,10 @@ if ($revokecert && confirm_sesskey()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
-echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template));
-if ($canissue) {
-    $newissueurl = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
+echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template->get_name()));
+if ($template->can_issue()) {
     $newissuestr = get_string('issuenewcertificates', 'tool_certificate');
-    echo html_writer::link($newissueurl, $newissuestr, ['class' => 'btn btn-primary']);
+    echo html_writer::link($template->new_issue_url(), $newissuestr, ['class' => 'btn btn-primary']);
 }
 $table->out($perpage, false);
 echo $OUTPUT->footer();

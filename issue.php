@@ -1,4 +1,4 @@
-<?php
+s<?php
 // This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -29,26 +29,19 @@ $templateid = required_param('templateid', PARAM_INT);
 
 admin_externalpage_setup('tool_certificate/managetemplates');
 
-$context = context_system::instance();
+$template = \tool_certificate\template::find_by_id($templateid);
 
-require_capability('tool/certificate:issue', $context);
+if (!$template->can_issue()) {
+    print_error('issuenotallowed', 'tool_certificate');
+}
 
-// TODO use API, validate tenant.
-$template = $DB->get_record('tool_certificate_templates', ['id' => $templateid], 'id', MUST_EXIST);
-
-$url = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
-
-$heading = get_string('issuenewcertificates', 'tool_certificate');
-
-$PAGE->navbar->add($heading, $url);
-
-$form = new \tool_certificate\form\certificate_issues($url->out(false));
+$form = new \tool_certificate\form\certificate_issues($template->new_issue_url()->out());
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 } else if (($data = $form->get_data()) && !empty($data->users)) {
     $i = 0;
     foreach ($data->users as $userid) {
-        $result = \tool_certificate\certificate::issue_certificate($template->id, $userid, $data->expires);
+        $result = \tool_certificate\certificate::issue_certificate($template->get_id(), $userid, $data->expires);
         if ($result) {
             $i++;
         }
@@ -62,6 +55,11 @@ if ($form->is_cancelled()) {
     }
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]), $notification);
 }
+
+$url = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);
+$heading = get_string('issuenewcertificates', 'tool_certificate');
+
+$PAGE->navbar->add($heading, $url);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
