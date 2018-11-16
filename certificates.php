@@ -49,6 +49,7 @@ if (!$canissue && !$canview) {
 }
 
 $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
+// TODO tenant verification is missing. Add API function to retrive template by id that checks capabilities and tenant.
 
 $pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid,
     'page' => $page, 'perpage' => $perpage));
@@ -68,6 +69,7 @@ $heading = get_string('certificates', 'tool_certificate');
 $PAGE->navbar->add($heading);
 
 if ($revokecert && confirm_sesskey()) {
+    // TODO use API function here to check capability, verify tenant.
     require_capability('tool/certificate:issue', \context_system::instance());
 
     $nourl = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));

@@ -33,6 +33,7 @@ $values = required_param('values', PARAM_RAW);
 $values = json_decode($values);
 
 // Make sure the template exists.
+// TODO verify access (or fix  $template->require_manage() ).
 $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
 
 // Set the template.

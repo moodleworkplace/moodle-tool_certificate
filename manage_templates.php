@@ -53,6 +53,7 @@ $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
 
 if ($tid) {
 
+    // TODO use API function to retrieve template, validate permission and tenant.
     $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
 
@@ -134,6 +135,8 @@ $table->define_baseurl($pageurl);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('managetemplates', 'tool_certificate'));
 if ($canmanage || $canissue) {
+    // TODO you need "manage" capability to create a template. Also can be one of two manage capabilities.
+    // TODO make sure the access check is exactly the same as on edit.php page, preferably use the same API function for it.
     $url = new moodle_url('/admin/tool/certificate/edit.php');
     echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
 }

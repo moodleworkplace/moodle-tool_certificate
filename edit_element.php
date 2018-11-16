@@ -27,6 +27,7 @@ require_once('../../../config.php');
 $tid = required_param('tid', PARAM_INT);
 $action = required_param('action', PARAM_ALPHA);
 
+// TODO use API function to retrieve template by id, verify tenant.
 $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
 
 // Set the template object.
@@ -53,11 +54,14 @@ if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
 if ($action == 'edit') {
     // The id of the element must be supplied if we are currently editing one.
     $id = required_param('id', PARAM_INT);
+    // TODO we need to make sure that element $id belongs to the template $tid because we verified access to the template $tid only,
+    // not to all templates. Use API function to retrieve element.
     $element = $DB->get_record('tool_certificate_elements', array('id' => $id), '*', MUST_EXIST);
     $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('id' => $id, 'tid' => $tid, 'action' => $action));
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
     $pageid = required_param('pageid', PARAM_INT);
+    // TODO verify that page belongs to the template $tid.
     $element = new stdClass();
     $element->element = required_param('element', PARAM_ALPHA);
     $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('tid' => $tid, 'element' => $element->element,

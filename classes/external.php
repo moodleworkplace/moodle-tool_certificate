@@ -206,6 +206,7 @@ class external extends \external_api {
         // Make sure the user has the required capabilities.
         $context = \context_system::instance();
         self::validate_context($context);
+        // TODO wrong capability check, use API.
         require_capability('tool/certificate:manage', $context);
 
         // Delete the issue.

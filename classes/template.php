@@ -498,6 +498,7 @@ class template {
      * @throws \required_capability_exception if the user does not have the necessary capabilities (ie. Fred)
      */
     public function require_manage() {
+        // TODO either get rid of this function or use it always and modify it to check correct permission and the tenant.
         require_capability('tool/certificate:manage', $this->get_context());
     }
 
@@ -526,6 +527,7 @@ class template {
      * @return bool
      */
     public function can_manage() {
+        // TODO you have can_manage and require_manage - make one of them call another.
         $context = \context_system::instance();
         return has_capability('tool/certificate:manageforalltenants', $context) ||
                (has_capability('tool/certificate:manage', $context) && $this->tenantid == tenancy::get_tenant_id());
@@ -537,6 +539,7 @@ class template {
      * @return bool
      */
     public function can_issue() {
+        // TODO check the tenant.
         return has_capability('tool/certificate:issue', \context_system::instance());
     }
 

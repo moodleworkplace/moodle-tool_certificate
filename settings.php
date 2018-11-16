@@ -42,7 +42,7 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
                 get_string('verifycertificates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/index.php'), array_merge($managecaps, $issuecaps)));
+                new moodle_url('/admin/tool/certificate/index.php'), $anycaps));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
                 get_string('addcertificate', 'tool_certificate'),
@@ -50,7 +50,7 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/images',
                 get_string('certificateimages', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/upload_image.php'), array_merge($managecaps, $imagecaps)));
+                new moodle_url('/admin/tool/certificate/upload_image.php'), $imagecaps));
 
     if ($hassiteconfig) {
         $ADMIN->add('tools', new tool_certificate_admin_page_manage_element_plugins());

@@ -28,6 +28,7 @@ $tid = required_param('tid', PARAM_INT);
 $ltid = required_param('ltid', PARAM_INT); // The template to load.
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
+// TODO do we need this file? If we do, get rid of course module, make sure access to the template is validated.
 $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
 $template = new \tool_certificate\template($template);
 

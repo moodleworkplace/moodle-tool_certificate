@@ -45,6 +45,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
         if ($context->contextlevel == CONTEXT_MODULE) {
             require_login($course, false, $cm);
         } else if ($context->contextlevel == CONTEXT_SYSTEM && !has_capability('tool/certificate:manage', $context)) {
+            // TODO doesn't look like correct capability check.
             return false;
         }
 
@@ -88,6 +89,7 @@ function tool_certificate_output_fragment_editelement($args) {
  * @param navigation_node $certificatenode
  */
 function tool_certificate_extend_settings_navigation(settings_navigation $settings, navigation_node $certificatenode) {
+    // TODO I don't think we need this function any more.
     global $DB, $PAGE;
 
     $keys = $certificatenode->get_children_key_list();
