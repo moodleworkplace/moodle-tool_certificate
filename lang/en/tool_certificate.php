@@ -43,6 +43,7 @@ $string['certificate:manage'] = 'Manage certificates';
 $string['certificate:manageforalltenants'] = 'Manage certificates in all tenants';
 $string['certificate:verify'] = 'Vefiry all certificates for the current tenant';
 $string['certificate:verifyforalltenants'] = 'Verify all certificates on the site for all tenants';
+$string['certificate:viewallcertificates'] = 'View all certificates on the site for all tenants';
 $string['certificateimages'] = 'Certificate images';
 $string['certificates'] = 'Certificates';
 $string['certificatesdescription'] = 'These are all the certificates issued for the "{$a}" template.';
