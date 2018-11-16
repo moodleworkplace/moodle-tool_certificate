@@ -20,6 +20,63 @@ Feature: Being able to manage site templates
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
+  Scenario: Adding a template to another tenant
+    When the following "users" exist:
+      | username | firstname | lastname | email           |
+      | manager  | Manager | 1 | manager@example.com |
+    And the following "role assigns" exist:
+      | user    | role           | contextlevel | reference |
+      | manager | manager        | System       |           |
+    And I set the following system permissions of "Manager" role:
+      | capability | permission |
+      | tool/certificate:manageforalltenants | Allow |
+    And the following tenants exist:
+      | name   |
+      | Tenant 1 |
+      | Tenant 2 |
+    And the following users allocations to tenants exist:
+      | user | tenant |
+      | manager | Tenant 1 |
+      | manager | Tenant 2 |
+    And I log out
+    And I log in as "manager"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I press "Create template"
+    And I set the following fields to these values:
+      | Name | Certificate 1 |
+      | Select tenant | Tenant 2 |
+    And I press "Save changes"
+    And I follow "Manage certificate templates"
+    Then I should see "Certificate 1"
+
+  Scenario: Adding a template without manageforalltenants capability
+    When the following "users" exist:
+      | username | firstname | lastname | email           |
+      | manager  | Manager | 1 | manager@example.com |
+    And the following "role assigns" exist:
+      | user    | role           | contextlevel | reference |
+      | manager | manager        | System       |           |
+    And I set the following system permissions of "Manager" role:
+      | capability | permission |
+      | tool/certificate:manage | Allow |
+    And the following tenants exist:
+      | name   |
+      | Tenant 1 |
+      | Tenant 2 |
+    And the following users allocations to tenants exist:
+      | user | tenant |
+      | manager | Tenant 1 |
+      | manager | Tenant 2 |
+    And I log out
+    And I log in as "manager"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I press "Create template"
+    And I set the following fields to these values:
+      | Name | Certificate 1 |
+    And I press "Save changes"
+    And I follow "Manage certificate templates"
+    Then I should see "Certificate 1"
+
   Scenario: Deleting a site template
     When the following certificate templates exist:
       | name |

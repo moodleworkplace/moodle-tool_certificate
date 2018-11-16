@@ -45,17 +45,7 @@ class load_template_form extends \moodleform {
 
         $mform =& $this->_form;
 
-        // Get the context.
-        $context = $this->_customdata['context'];
-
         $mform->addElement('header', 'loadtemplateheader', get_string('loadtemplate', 'tool_certificate'));
-
-        // Display a link to the manage templates page.
-        if ($context->contextlevel != CONTEXT_SYSTEM && has_capability('tool/certificate:manage', \context_system::instance())) {
-            $link = \html_writer::link(new \moodle_url('/admin/tool/certificate/manage_templates.php'),
-                get_string('managetemplates', 'tool_certificate'));
-            $mform->addElement('static', 'managetemplates', '', $link);
-        }
 
         $templates = $DB->get_records_menu('tool_certificate_templates',
             array('contextid' => \context_system::instance()->id), 'name ASC', 'id, name');

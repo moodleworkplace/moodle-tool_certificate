@@ -16,14 +16,13 @@ Feature: View links on admin tree
       | name |
       | Certificate 1 |
 
-  Scenario: All options available for default to manager
+  Scenario: Options available for default to manager
     When I log in as "manager"
     And I am on site homepage
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
     And I should see "Add certificate template"
-    And I should see "Certificate images"
 
   Scenario: Manager without manage capability should not see option to add certificate template
     When I log in as "admin"

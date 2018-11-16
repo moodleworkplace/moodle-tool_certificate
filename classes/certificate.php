@@ -57,7 +57,7 @@ class certificate {
 
         // Save the file if it exists that is currently in the draft area.
         require_once($CFG->dirroot . '/lib/filelib.php');
-        file_save_draft_area_files($draftitemid, $contextid, 'tool_certificate', $filearea, 0);
+        file_save_draft_area_files($draftitemid, \context_system::instance()->id, 'tool_certificate', $filearea, 0);
     }
 
     /**
@@ -199,49 +199,6 @@ class certificate {
     }
 
     /**
-     * Returns a list of issued certificates.
-     *
-     * @param int $templateid
-     * @param bool $groupmode are we in group mode
-     * @param \stdClass $cm the course module
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @param string $sort
-     * @return array the users
-     */
-    public static function get_issues($templateid, $groupmode, $cm, $limitfrom, $limitnum, $sort = '') {
-        global $DB;
-
-        // Get the conditional SQL.
-        list($conditionssql, $conditionsparams) = self::get_conditional_issues_sql($cm, $groupmode);
-
-        // If it is empty then return an empty array.
-        if (empty($conditionsparams)) {
-            return array();
-        }
-
-        // Add the conditional SQL and the templateid to form all used parameters.
-        $allparams = $conditionsparams + array('templateid' => $templateid);
-
-        // Return the issues.
-        $ufields = \user_picture::fields('u');
-        $sql = "SELECT $ufields, ci.id as issueid, ci.code, ci.timecreated
-                  FROM {user} u
-            INNER JOIN {tool_certificate_issues} ci
-                    ON u.id = ci.userid
-                 WHERE u.deleted = 0
-                   AND ci.templateid = :templateid
-                       $conditionssql";
-        if ($sort) {
-            $sql .= "ORDER BY " . $sort;
-        } else {
-            $sql .= "ORDER BY " . $DB->sql_fullname();
-        }
-
-        return $DB->get_records_sql($sql, $allparams, $limitfrom, $limitnum);
-    }
-
-    /**
      * Returns the total number of issues for a given template.
      *
      * @param int $templateid
@@ -264,128 +221,21 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $conditions = [];
-
-        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, ' .
-                       get_all_user_name_fields(true, 'u') . '
+        $sql = "SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
+                       t.name, " .
+                       get_all_user_name_fields(true, 'u') . "
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
                     ON (ci.templateid = t.id)
                   JOIN {user} u
                     ON (u.id = ci.userid)
-                 WHERE u.deleted = 0';
-
-        if ($templateid > 0) {
-            $sql .= " AND t.id = :templateid";
-            $conditions['templateid'] = $templateid;
-        }
-
-        if (!has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
-            // TODO do we need this check here? Don't we check access to the template before we call this function?
-            $sql .= " AND t.tenantid = :tenantid";
-            $conditions['tenantid'] = tenancy::get_tenant_id();
-        }
-
-        $sql .= " ORDER BY {$sort}";
-        return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
-    }
-
-    /**
-     * Returns the total number of issues for a given certificate.
-     *
-     * @param int $templateid
-     * @param \stdClass $cm the course module
-     * @param bool $groupmode the group mode
-     * @return int the number of issues
-     */
-    public static function get_number_of_issues($templateid, $cm, $groupmode) {
-        global $DB;
-
-        // Get the conditional SQL.
-        list($conditionssql, $conditionsparams) = self::get_conditional_issues_sql($cm, $groupmode);
-
-        // If it is empty then return 0.
-        if (empty($conditionsparams)) {
-            return 0;
-        }
-
-        // Add the conditional SQL and the templateid to form all used parameters.
-        $allparams = $conditionsparams + array('templateid' => $templateid);
-
-        // Return the number of issues.
-        $sql = "SELECT COUNT(u.id) as count
-                  FROM {user} u
-            INNER JOIN {tool_certificate_issues} ci
-                    ON u.id = ci.userid
                  WHERE u.deleted = 0
-                   AND ci.templateid = :templateid
-                       $conditionssql";
-        return $DB->count_records_sql($sql, $allparams);
-    }
+                   AND t.id = :templateid
+              ORDER BY :sort";
 
-    /**
-     * Returns an array of the conditional variables to use in the get_issues SQL query.
-     *
-     * @param \stdClass $cm the course module
-     * @param bool $groupmode are we in group mode ?
-     * @return array the conditional variables
-     */
-    public static function get_conditional_issues_sql($cm, $groupmode) {
-        global $DB, $USER;
-        // TODO do we need this function?
+        $conditions = ['templateid' => $templateid, 'sort' => $sort];
 
-        // Get all users that can manage this certificate to exclude them from the report.
-        $context = \context_module::instance($cm->id);
-        $conditionssql = '';
-        $conditionsparams = array();
-
-        // Get all users that can manage this certificate to exclude them from the report.
-        $certmanagers = array_keys(get_users_by_capability($context, 'tool/certificate:manage', 'u.id'));
-        $certmanagers = array_merge($certmanagers, array_keys(get_admins()));
-        list($sql, $params) = $DB->get_in_or_equal($certmanagers, SQL_PARAMS_NAMED, 'cert');
-        $conditionssql .= "AND NOT u.id $sql \n";
-        $conditionsparams += $params;
-
-        if ($groupmode) {
-            $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
-            $currentgroup = groups_get_activity_group($cm);
-
-            // If we are viewing all participants and the user does not have access to all groups then return nothing.
-            if (!$currentgroup && !$canaccessallgroups) {
-                return array('', array());
-            }
-
-            if ($currentgroup) {
-                if (!$canaccessallgroups) {
-                    // Guest users do not belong to any groups.
-                    if (isguestuser()) {
-                        return array('', array());
-                    }
-
-                    // Check that the user belongs to the group we are viewing.
-                    $usersgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
-                    if ($usersgroups) {
-                        if (!isset($usersgroups[$currentgroup])) {
-                            return array('', array());
-                        }
-                    } else { // They belong to no group, so return an empty array.
-                        return array('', array());
-                    }
-                }
-
-                $groupusers = array_keys(groups_get_members($currentgroup, 'u.*'));
-                if (empty($groupusers)) {
-                    return array('', array());
-                }
-
-                list($sql, $params) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED, 'grp');
-                $conditionssql .= "AND u.id $sql ";
-                $conditionsparams += $params;
-            }
-        }
-
-        return array($conditionssql, $conditionsparams);
+        return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
     }
 
     /**

@@ -26,6 +26,7 @@ require_once('../../../config.php');
 
 $issuecode = required_param('code', PARAM_TEXT);
 $preview = optional_param('preview', false, PARAM_BOOL);
+
 if ($preview) {
 
     $templateid = required_param('templateid', PARAM_INT);
@@ -34,17 +35,12 @@ if ($preview) {
     if ($template->can_manage()) {
         $template->generate_pdf(true);
     }
+
 } else {
 
-    $issue = $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
-    $context = context_system::instance();
-    if (has_capability('tool/certificate:viewallcertificates', $context) ||
-            has_capability('tool/certificate:verifyallcertificates', $context) ||
-            (isloggedin() && $issue->userid == $USER->id)) {
-        // TODO use API function to check access. viewallcertificates needs a tenant check.
-        // verifyallcertificates does not need a tenant check
-
-        $template = \tool_certificate\template::find_by_id($issue->templateid);
+    $issue = \tool_certificate\template::get_issue_from_code($issuecode);
+    $template = \tool_certificate\template::find_by_id($issue->templateid);
+    if ($template->can_view_issue($issue)) {
         $template->generate_pdf(false, $issue);
     }
 }

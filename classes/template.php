@@ -58,6 +58,11 @@ class template {
     protected $contextid;
 
     /**
+     * @var \context $context The context of this template
+     */
+    protected $context;
+
+    /**
      * @var int $timecreated The creation time of this template
      */
     protected $timecreated;
@@ -77,6 +82,7 @@ class template {
         } else {
             $this->timecreated = time();
         }
+        $this->context = \context::instance_by_id($this->contextid);
     }
 
     /**
@@ -475,21 +481,7 @@ class template {
      * @return \context the context
      */
     public function get_context() {
-        return \context::instance_by_id($this->contextid);
-    }
-
-    /**
-     * Returns the context id.
-     *
-     * @return \context_module|null the context module, null if there is none
-     */
-    public function get_cm() {
-        $context = $this->get_context();
-        if ($context->contextlevel === CONTEXT_MODULE) {
-            return get_coursemodule_from_id('tool_certificate', $context->instanceid, 0, false, MUST_EXIST);
-        }
-
-        return null;
+        return $this->context;
     }
 
     /**
@@ -498,49 +490,172 @@ class template {
      * @throws \required_capability_exception if the user does not have the necessary capabilities (ie. Fred)
      */
     public function require_manage() {
-        // TODO either get rid of this function or use it always and modify it to check correct permission and the tenant.
-        require_capability('tool/certificate:manage', $this->get_context());
+        if (!$this->can_manage()) {
+            throw new required_capability_exception($this->get_context(), 'tool/certificate:manage', 'nopermission');
+        }
     }
 
-    public function preview_url() {
+
+    /**
+     * The URL to preview a template
+     *
+     * @return \moodle_url
+     */
+    public function preview_url(): \moodle_url {
         return new \moodle_url('/admin/tool/certificate/view.php',
             ['preview' => 1, 'templateid' => $this->get_id(), 'code' => 'previewing']);
     }
 
-    public static function view_url($code) {
+    /**
+     * The URL to view an issued certificate
+     *
+     * @return \moodle_url
+     */
+    public static function view_url($code): \moodle_url {
         return new \moodle_url('/admin/tool/certificate/view.php', ['code' => $code]);
     }
 
-    public static function verification_url($code) {
+    /**
+     * The URL to issue a new certificate from this template
+     *
+     * @return \moodle_url
+     */
+    public function new_issue_url(): \moodle_url {
+        return new \moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $this->id]);
+    }
+
+    /**
+     * The URL to verify an issued certificate from it's code
+     *
+     * @return \moodle_url
+     */
+    public static function verification_url($code): \moodle_url {
         return new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]);
     }
 
-    public static function find_by_id($id) {
+    /**
+     * The URL to create a new certificate template
+     *
+     * @return \moodle_url
+     */
+    public static function new_template_url(): \moodle_url {
+        return new \moodle_url('/admin/tool/certificate/edit.php');
+    }
+
+    /**
+     * Returns a new template from it's id
+     *
+     * @return \tool_certificate\template
+     */
+    public static function find_by_id($id): template {
         global $DB;
-        $template = $DB->get_record('tool_certificate_templates', ['id' => $id]);
+        $template = $DB->get_record('tool_certificate_templates', ['id' => $id], '*', MUST_EXIST);
         return new \tool_certificate\template($template);
     }
 
     /**
-     * A user can manage all templates in all tenants or just templates on own tenant.
+     * Returns an element if it belongs to this template, false otherwise.
      *
-     * @return bool
+     * @return bool|\stdClass
      */
-    public function can_manage() {
-        // TODO you have can_manage and require_manage - make one of them call another.
-        $context = \context_system::instance();
-        return has_capability('tool/certificate:manageforalltenants', $context) ||
-               (has_capability('tool/certificate:manage', $context) && $this->tenantid == tenancy::get_tenant_id());
+    public function find_element_by_id($id) {
+        global $DB;
+        $element = $DB->get_record('tool_certificate_elements', ['id' => $id], '*', MUST_EXIST);
+        $page = $DB->get_record('tool_certificate_pages', ['id' => $element->pageid], '*', MUST_EXIST);
+        if ($page->templateid != $this->id) {
+            return false;
+        }
+        return $element;
     }
 
     /**
-     * A user can issue certificate for templates.
+     * Returns a new element if pageid belongs to this template, false otherwise.
+     *
+     * @return bool|\stdClass
+     */
+    public function new_element_for_page_id($pageid) {
+        global $DB;
+        $pagetemplate = $DB->get_field('tool_certificate_pages', 'templateid', ['id' => $pageid], MUST_EXIST);
+        if ($pagetemplate != $this->id) {
+            return false;
+        }
+        $element = new \stdClass();
+        $element->element = required_param('element', PARAM_ALPHA);
+        return $element;
+    }
+
+    /**
+     * If a user can manage this template
      *
      * @return bool
      */
-    public function can_issue() {
-        // TODO check the tenant.
-        return has_capability('tool/certificate:issue', \context_system::instance());
+    public function can_manage(): bool {
+        return has_capability('tool/certificate:manageforalltenants', $this->get_context()) ||
+               (has_capability('tool/certificate:manage', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id());
+    }
+
+    /**
+     * If a user can issue certificate from this template.
+     *
+     * @return bool
+     */
+    public function can_issue(): bool {
+        return has_capability('tool/certificate:issue', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id();
+    }
+
+    /**
+     * A user can revoke certificates from this template.
+     *
+     * @return bool
+     */
+    public function can_revoke(): bool {
+        return $this->can_issue();
+    }
+
+    /**
+     * If current user can verify certificates
+     *
+     * @return bool
+     */
+    public static function can_verify_loose(): bool {
+        return has_any_capability(['tool/certificate:verify', 'tool/certificate:verifyforalltenants',
+                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants'], $this->get_context());
+
+    }
+
+    /**
+     * If current user can view an issued certificate
+     *
+     * @return bool
+     */
+    public static function get_issue_from_code($issuecode): bool {
+        global $DB;
+        return $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
+    }
+
+    /**
+     * If current user can view an issued certificate
+     *
+     * @return bool
+     */
+    public function can_view_issue($issue): bool {
+        global $USER;
+        return ($issue->userid == $USER->id) || $this->can_verify();
+    }
+
+    public static function can_create() {
+        return has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
+    }
+
+    /**
+     * If current user can verify issued certificates from this template
+     *
+     * @return bool
+     */
+    public function can_verify() {
+        return $this->can_manage() ||
+               has_capability('tool/certificate:verifyforalltenants', $this->get_context()) ||
+               (has_capability('tool/certificate:verify', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id());
     }
 
     /**

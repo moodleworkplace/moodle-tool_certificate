@@ -23,68 +23,45 @@
  */
 
 require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-$tid = required_param('tid', PARAM_INT);
+$templateid = required_param('tid', PARAM_INT);
 $action = required_param('action', PARAM_ALPHA);
 
-// TODO use API function to retrieve template by id, verify tenant.
-$template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
+admin_externalpage_setup('tool_certificate/managetemplates');
 
-// Set the template object.
-$template = new \tool_certificate\template($template);
+$template = \tool_certificate\template::find_by_id($templateid);
 
-// Perform checks.
-if ($cm = $template->get_cm()) {
-    require_login($cm->course, false, $cm);
-} else {
-    require_login();
-}
-// Make sure the user has the required capabilities.
 $template->require_manage();
-
-if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $certificate->name;
-    $heading = format_string($title);
-} else {
-    $title = $SITE->fullname;
-    $heading = $title;
-}
 
 if ($action == 'edit') {
     // The id of the element must be supplied if we are currently editing one.
     $id = required_param('id', PARAM_INT);
-    // TODO we need to make sure that element $id belongs to the template $tid because we verified access to the template $tid only,
-    // not to all templates. Use API function to retrieve element.
-    $element = $DB->get_record('tool_certificate_elements', array('id' => $id), '*', MUST_EXIST);
-    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('id' => $id, 'tid' => $tid, 'action' => $action));
+    if (!$element = $template->find_element_by_id($id)) {
+        print_error('invalidelementfortemplate', 'tool_certificate');
+    }
+    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('id' => $id, 'tid' => $templateid, 'action' => $action));
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
     $pageid = required_param('pageid', PARAM_INT);
-    // TODO verify that page belongs to the template $tid.
-    $element = new stdClass();
-    $element->element = required_param('element', PARAM_ALPHA);
-    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('tid' => $tid, 'element' => $element->element,
+    if (!$element = $template->new_element_for_page_id($pageid)) {
+        print_error('invalidpagefortemplate', 'tool_certificate');
+    }
+    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('tid' => $templateid, 'element' => $element->element,
         'pageid' => $pageid, 'action' => $action));
 }
 
-// Set up the page.
-\tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
-
-// Additional page setup.
-if ($template->get_context()->contextlevel == CONTEXT_SYSTEM) {
-    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'),
-        new moodle_url('/admin/tool/certificate/manage_templates.php'));
-}
 $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'), new moodle_url('/admin/tool/certificate/edit.php',
-    array('tid' => $tid)));
-$PAGE->navbar->add(get_string('editelement', 'tool_certificate'));
+    array('tid' => $templateid)));
+
+$heading = get_string('editelement', 'tool_certificate');
+$PAGE->navbar->add($heading);
 
 $mform = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
 
 // Check if they cancelled.
 if ($mform->is_cancelled()) {
-    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
     redirect($url);
 }
 
@@ -102,7 +79,7 @@ if ($data = $mform->get_data()) {
         $e->save_form_elements($data);
     }
 
-    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $tid));
+    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
     redirect($url);
 }
 

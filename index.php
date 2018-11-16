@@ -26,10 +26,9 @@ require_once('../../../config.php');
 
 $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certificate we are verifying.
 
-$context = context_system::instance();
-
-// TODO users who can manage or view certificates also can see this page.
-require_capability('tool/certificate:verifyallcertificates', $context);
+if (!\tool_certificate\template::can_verify_loose()) {
+    print_error('verifynotallowed', 'tool_certificate');
+}
 
 $pageurl = new moodle_url('/admin/tool/certificate/index.php');
 

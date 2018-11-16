@@ -64,7 +64,15 @@ $capabilities = array(
         )
     ),
 
-    'tool/certificate:verifyallcertificates' => array(
+    'tool/certificate:verify' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        )
+    ),
+
+    'tool/certificate:verifyforalltenants' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
