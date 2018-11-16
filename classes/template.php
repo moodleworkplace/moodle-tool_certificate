@@ -619,7 +619,7 @@ class template {
      */
     public static function can_verify_loose(): bool {
         return has_any_capability(['tool/certificate:verify', 'tool/certificate:verifyforalltenants',
-                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants'], $this->get_context());
+                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
 
     }
 
