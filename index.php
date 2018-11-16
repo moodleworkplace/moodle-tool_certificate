@@ -41,11 +41,11 @@ if ($code) {
 $heading = get_string('verifycertificates', 'tool_certificate');
 
 $PAGE->set_url($pageurl);
-$PAGE->set_context($context);
+$PAGE->set_context(\context_sytem::instance());
 $PAGE->set_title(format_string($heading));
 $PAGE->set_heading($SITE->fullname);
 
-$PAGE->navbar->add(get_string('verifycertificates', 'tool_certificate'));
+$PAGE->navbar->add($heading);
 
 $form = new \tool_certificate\verify_certificate_form($pageurl);
 

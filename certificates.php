@@ -66,7 +66,7 @@ $PAGE->navbar->add($heading);
 
 if ($revokecert && confirm_sesskey()) {
 
-    if ($template->can_revoke()) {
+    if (!$template->can_revoke()) {
         print_error('revokenotallowed', 'toolcertificate');
     }
 
