@@ -27,7 +27,7 @@ require('../../../config.php');
 require_login();
 
 $context = context_system::instance();
-require_capability('moodle/site:config', $context);
+require_capability('moodle/site:config', $context); // TODO wrong capability check. call admin_externalpage_setup.
 
 $struploadimage = get_string('uploadimage', 'tool_certificate');
 

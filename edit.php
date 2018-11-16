@@ -35,6 +35,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 // Edit an existing template.
 if ($templateid) {
     // Create the template object.
+    // TODO use API function to retrieve template by id, verify tenant.
     $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
     $template = new \tool_certificate\template($template);
     // Set the page url.

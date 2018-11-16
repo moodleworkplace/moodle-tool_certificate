@@ -28,6 +28,7 @@ $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certific
 
 $context = context_system::instance();
 
+// TODO users who can manage or view certificates also can see this page.
 require_capability('tool/certificate:verifyallcertificates', $context);
 
 $pageurl = new moodle_url('/admin/tool/certificate/index.php');
@@ -56,6 +57,7 @@ echo $OUTPUT->heading($heading);
 echo $form->display();
 if ($form->get_data()) {
     $result = \tool_certificate\certificate::verify($code);
+    // TODO additional check if user can see this particular issue.
     $results = new \tool_certificate\output\verify_certificate_results($result);
     $renderer = $PAGE->get_renderer('tool_certificate');
     echo $renderer->render($results);

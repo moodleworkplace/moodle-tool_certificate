@@ -33,6 +33,7 @@ $context = context_system::instance();
 
 require_capability('tool/certificate:issue', $context);
 
+// TODO use API, validate tenant.
 $template = $DB->get_record('tool_certificate_templates', ['id' => $templateid], 'id', MUST_EXIST);
 
 $url = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $templateid]);

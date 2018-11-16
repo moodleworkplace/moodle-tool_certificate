@@ -41,6 +41,8 @@ if ($preview) {
     if (has_capability('tool/certificate:viewallcertificates', $context) ||
             has_capability('tool/certificate:verifyallcertificates', $context) ||
             (isloggedin() && $issue->userid == $USER->id)) {
+        // TODO use API function to check access. viewallcertificates needs a tenant check.
+        // verifyallcertificates does not need a tenant check
 
         $template = \tool_certificate\template::find_by_id($issue->templateid);
         $template->generate_pdf(false, $issue);

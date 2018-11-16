@@ -32,7 +32,7 @@ $template = $DB->get_record('tool_certificate_templates', array('id' => $page->t
 $elements = $DB->get_records('tool_certificate_elements', array('pageid' => $pid), 'sequence');
 
 // Set the template.
-$template = new \tool_certificate\template($template);
+$template = new \tool_certificate\template($template); // TODO tenant validation, etc.
 // Perform checks.
 if ($cm = $template->get_cm()) {
     require_login($cm->course, false, $cm);

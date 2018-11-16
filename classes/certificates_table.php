@@ -69,6 +69,7 @@ class certificates_table extends \table_sql {
             $this->is_downloading($download, 'certificate-report');
         }
 
+        // TODO call API function to check if user can issue certificates for the given template.
         $canissue = has_capability('tool/certificate:issue', \context_system::instance());
         $canmanage = has_capability('tool/certificate:manage', \context_system::instance());
 

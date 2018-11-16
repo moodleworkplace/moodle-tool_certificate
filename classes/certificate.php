@@ -282,6 +282,7 @@ class certificate {
         }
 
         if (!has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
+            // TODO do we need this check here? Don't we check access to the template before we call this function?
             $sql .= " AND t.tenantid = :tenantid";
             $conditions['tenantid'] = tenancy::get_tenant_id();
         }
@@ -332,6 +333,7 @@ class certificate {
      */
     public static function get_conditional_issues_sql($cm, $groupmode) {
         global $DB, $USER;
+        // TODO do we need this function?
 
         // Get all users that can manage this certificate to exclude them from the report.
         $context = \context_module::instance($cm->id);

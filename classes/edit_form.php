@@ -88,6 +88,7 @@ class edit_form extends \moodleform {
                 }
                 $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
             } else {
+                // TODO 1. undefined class tenancy. 2. Do not pass hidden variables, they can be modified. 3. this is not tested with automated tests.
                 $mform->addElement('hidden', 'tenantid', tenancy::get_tenant_id());
             }
 
