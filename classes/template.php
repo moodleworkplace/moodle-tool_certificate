@@ -491,7 +491,7 @@ class template {
      */
     public function require_manage() {
         if (!$this->can_manage()) {
-            throw new required_capability_exception($this->get_context(), 'tool/certificate:manage', 'nopermission');
+            throw new \required_capability_exception($this->get_context(), 'tool/certificate:manage', 'nopermission', 'error');
         }
     }
 

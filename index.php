@@ -41,7 +41,7 @@ if ($code) {
 $heading = get_string('verifycertificates', 'tool_certificate');
 
 $PAGE->set_url($pageurl);
-$PAGE->set_context(\context_sytem::instance());
+$PAGE->set_context(context_system::instance());
 $PAGE->set_title(format_string($heading));
 $PAGE->set_heading($SITE->fullname);
 
