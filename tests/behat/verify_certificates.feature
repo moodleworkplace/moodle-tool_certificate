@@ -42,7 +42,7 @@ Feature: Being able to verify that a certificate is valid or not
     When I log in as "admin"
     And I set the following system permissions of "Guest" role:
       | capability | permission |
-      | tool/certificate:verifyallcertificates | Allow |
+      | tool/certificate:verifyforalltenants | Allow |
     And the following certificate issues exist:
       | template | user |
       | Certificate 1 | student1 |
