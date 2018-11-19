@@ -39,7 +39,6 @@ if ($templateid) {
     $template = \tool_certificate\template::find_by_id($templateid);
     $template->require_manage();
 
-
     $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
     $heading = get_string('editcertificate', 'tool_certificate');
     $PAGE->navbar->add($heading, new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $templateid]));

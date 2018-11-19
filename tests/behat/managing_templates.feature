@@ -59,14 +59,6 @@ Feature: Being able to manage site templates
     And I set the following system permissions of "Manager" role:
       | capability | permission |
       | tool/certificate:manage | Allow |
-    And the following tenants exist:
-      | name   |
-      | Tenant 1 |
-      | Tenant 2 |
-    And the following users allocations to tenants exist:
-      | user | tenant |
-      | manager | Tenant 1 |
-      | manager | Tenant 2 |
     And I log out
     And I log in as "manager"
     And I navigate to "Certificates > Manage certificate templates" in site administration
@@ -144,7 +136,7 @@ Feature: Being able to manage site templates
     And I should not see "Certificate 1 (duplicate)"
     And I click on ".duplicate-icon" "css_element" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
-      |  Select tentant | Tenant 2 |
+      |  Select tenant | Tenant 2 |
     And I press "Select"
     And I press "Continue"
     Then I should see "Certificate 1"
