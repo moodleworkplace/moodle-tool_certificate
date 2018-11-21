@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
 $managecaps = ['tool/certificate:manage', 'tool/certificate:manageforalltenants'];
-$viewcaps = ['tool/certificate:viewallcertificates', 'tool/certificate:verifyallcertificates'];
+$viewcaps = ['tool/certificate:viewallcertificates', 'tool/certificate:verify'];
 $imagecaps = ['tool/certificate:imageforalltenants'];
 $issuecaps = ['tool/certificate:issue'];
 $anycaps = array_merge($managecaps, $viewcaps, $imagecaps, $issuecaps);
