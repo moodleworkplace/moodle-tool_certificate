@@ -602,7 +602,7 @@ class template {
     public function can_issue(): bool {
         return has_capability('tool/certificate:issueforalltenants', $this->get_context()) ||
                (has_capability('tool/certificate:issue', $this->get_context()) &&
-                   ($this->tenantid == 0 || $this->tenantid == tenancy::get_tenant_id()));
+                   (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id())));
     }
 
     /**

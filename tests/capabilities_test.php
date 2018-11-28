@@ -82,16 +82,15 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->role_assign($managerrole->id, $manager1->id);
         $this->getDataGenerator()->role_assign($managerrole->id, $manager2->id);
 
-        $tenantmanager = new \tool_tenant\manager();
-        $tenantmanager->create_tenant_quick();
-        $tenants = $tenantmanager->get_tenants();
-        $tenant = array_pop($tenants);
-        $this->getDataGenerator()->get_plugin_generator('tool_tenant')->allocate_user($manager2->id, $tenant->get('id'));
+        $defaulttenantid = \tool_tenant\tenancy::get_default_tenant_id();
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+        $tenantgenerator->allocate_user($manager2->id, $tenant->id);
 
         $this->setUser($manager1);
 
         $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
-        $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->get('id')]);
+        $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
         $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
 
         // Managers can issue templates by default on same tenant and on shared templates, but not for other tenants
@@ -101,8 +100,8 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
 
         $this->setUser($manager2);
 
-        $this->assertEquals(true, $certificate1->can_issue()); // TODO: should be false. take a closer look at tool_tenant.
-        $this->assertEquals(false, $certificate2->can_issue()); // TODO: should be true. take a closer look at tool_tenant.
+        $this->assertEquals(false, $certificate1->can_issue());
+        $this->assertEquals(true, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
 
         assign_capability('tool/certificate:issueforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
