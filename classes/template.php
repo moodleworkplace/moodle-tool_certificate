@@ -624,11 +624,11 @@ class template {
     }
 
     /**
-     * If current user can view an issued certificate
+     * Get issue record from database base on it's code.
      *
-     * @return bool
+     * @return \stdClass
      */
-    public static function get_issue_from_code($issuecode): bool {
+    public static function get_issue_from_code($issuecode): \stdClass {
         global $DB;
         return $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
     }
@@ -641,6 +641,15 @@ class template {
     public function can_view_issue($issue): bool {
         global $USER;
         return ($issue->userid == $USER->id) || $this->can_verify();
+    }
+
+    public static function can_view_list($userid) {
+        global $USER;
+        if ($userid == $USER->id) {
+            return true;
+        }
+        // TODO viewallcertificates needs a tenant check.
+        return has_capability('tool/certificate:viewallcertificates', context_system::instance());
     }
 
     public static function can_create() {
