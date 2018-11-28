@@ -220,10 +220,4 @@ if ($data = $mform->get_data()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);
 $mform->display();
-if ($templateid) {
-    $loadtemplateurl = new moodle_url('/admin/tool/certificate/load_template.php', ['tid' => $templateid]);
-    $loadtemplateform = new \tool_certificate\load_template_form($loadtemplateurl, [], 'post',
-        '', array('id' => 'loadtemplateform'));
-    $loadtemplateform->display();
-}
 echo $OUTPUT->footer();
