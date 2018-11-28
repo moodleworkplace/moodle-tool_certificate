@@ -67,7 +67,11 @@ class edit_form extends \moodleform {
         // Get the number of pages for this module.
         if (isset($this->_customdata['tid'])) {
 
-            $tenantname = $DB->get_field('tool_tenant', 'name', ['id' => $this->_customdata['tenantid']]);
+            if ($this->_customdata['tenantid'] > 0) {
+                $tenantname = $DB->get_field('tool_tenant', 'name', ['id' => $this->_customdata['tenantid']]);
+            } else {
+                $tenantname = get_string('shared', 'tool_certificate');
+            }
             $mform->addElement('static', 'tenantid', get_string('selectedtenant', 'tool_certificate'), $tenantname);
 
             $this->tid = $this->_customdata['tid'];

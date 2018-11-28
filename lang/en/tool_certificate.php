@@ -173,6 +173,7 @@ $string['shared'] = 'Shared between tenants';
 $string['subplugintype_certificateelement_plural'] = 'Element plugins';
 $string['templatename'] = 'Template name';
 $string['templatenameexists'] = 'That template name is currently in use, please choose another.';
+$string['tenant'] = 'Tenant';
 $string['topcenter'] = 'Center';
 $string['topleft'] = 'Top left';
 $string['topright'] = 'Top right';

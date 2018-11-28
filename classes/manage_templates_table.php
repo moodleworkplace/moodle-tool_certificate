@@ -54,6 +54,11 @@ class manage_templates_table extends \table_sql {
 
         $headers = [get_string('name'), ''];
 
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+            $columns[] = 'tenant';
+            $headers[] = get_string('tenant', 'tool_certificate');
+        }
+
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->collapsible(false);
@@ -70,6 +75,15 @@ class manage_templates_table extends \table_sql {
      */
     public function col_name($template) {
         return $template->name;
+    }
+
+    public function col_tenant($template) {
+        if ($template->tenantid) {
+            $tenant = new \tool_tenant\tenant();
+            return $tenant->get('name');
+        } else {
+            return get_string('shared', 'tool_certificate');
+        }
     }
 
     /**

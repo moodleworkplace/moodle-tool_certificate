@@ -45,7 +45,7 @@ class tenant_selector extends moodleform {
         $mform =& $this->_form;
 
         $tenants = \tool_tenant\tenancy::get_tenants();
-        $options = [];
+        $options = [0 => get_string('shared', 'tool_certificate')];
         foreach ($tenants as $tenant) {
             $options[$tenant->id] = $tenant->name;
         }
