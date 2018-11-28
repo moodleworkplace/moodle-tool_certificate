@@ -37,9 +37,7 @@ require_login();
 // Check that we have a valid user.
 if ($userid > 0) {
     $user = \core_user::get_user($userid, '*', MUST_EXIST);
-    // If we are viewing certificates that are not for the currently logged in user then do a capability check.
-    // TODO use an API function here, viewallcertificates needs a tenant check.
-    if (($userid != $USER->id) && !has_capability('tool/certificate:verifyforalltenants', context_system::instance())) {
+    if (! \tool_certificate\template::can_view_list($userid)) {
         print_error('You are not allowed to view these certificates');
     }
 }
