@@ -38,6 +38,7 @@ $string['coursetimereq_help'] = 'Enter here the minimum amount of time, in minut
 the certificate.';
 $string['createtemplate'] = 'Create template';
 $string['certificate:issue'] = 'Issue certificate for users';
+$string['certificate:issueforalltenants'] = 'Issue certificate for users in all tenants';
 $string['certificate:imageforalltenants'] = 'Manage certificate images';
 $string['certificate:manage'] = 'Manage certificates';
 $string['certificate:manageforalltenants'] = 'Manage certificates in all tenants';
