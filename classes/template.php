@@ -600,7 +600,9 @@ class template {
      * @return bool
      */
     public function can_issue(): bool {
-        return has_capability('tool/certificate:issue', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id();
+        return has_capability('tool/certificate:issueforalltenants', $this->get_context()) ||
+               (has_capability('tool/certificate:issue', $this->get_context()) &&
+                   ($this->tenantid == 0 || $this->tenantid == tenancy::get_tenant_id()));
     }
 
     /**
@@ -656,6 +658,11 @@ class template {
         return has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
     }
 
+    public static function can_issue_or_manage_all_tenants() {
+        return has_any_capability(['tool/certificate:issueforalltenants', 'tool/certificate:manageforalltenants'],
+            \context_system::instance());
+    }
+
     /**
      * If current user can verify issued certificates from this template
      *
@@ -681,7 +688,7 @@ class template {
         $template->contextid = \context_system::instance()->id;
         $template->timecreated = time();
         $template->timemodified = $template->timecreated;
-        if (isset($formdata->tenantid) && $formdata->tenantid > 0) {
+        if (isset($formdata->tenantid)) {
             $template->tenantid = $formdata->tenantid;
         } else {
             $template->tenantid = tenancy::get_default_tenant_id();

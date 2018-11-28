@@ -56,6 +56,12 @@ $capabilities = array(
         )
     ),
 
+    'tool/certificate:issueforalltenants' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+    ),
+
     'tool/certificate:viewallcertificates' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
