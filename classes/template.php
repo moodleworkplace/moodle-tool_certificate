@@ -585,7 +585,7 @@ class template {
     }
 
     /**
-     * If a user can manage this template
+     * If a user can manage this template.
      *
      * @return bool
      */
