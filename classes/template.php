@@ -597,12 +597,19 @@ class template {
     /**
      * If a user can issue certificate from this template.
      *
+     * @param int $issuetouserid When issuing to a specific user, validate user's tenant.
      * @return bool
      */
-    public function can_issue(): bool {
-        return has_capability('tool/certificate:issueforalltenants', $this->get_context()) ||
-               (has_capability('tool/certificate:issue', $this->get_context()) &&
+    public function can_issue(int $issuetouserid = 0): bool {
+        if (has_capability('tool/certificate:issueforalltenants', $this->get_context())) {
+            return true;
+        }
+        $generalcap = (has_capability('tool/certificate:issue', $this->get_context()) &&
                    (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id())));
+        if ($issuetouserid == 0) {
+            return $generalcap;
+        }
+        return $generalcap && ($this->tenantid == tenancy::get_tenat_id_int($issuetouserid));
     }
 
     /**

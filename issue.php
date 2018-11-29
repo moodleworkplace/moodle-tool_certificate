@@ -41,9 +41,11 @@ if ($form->is_cancelled()) {
 } else if (($data = $form->get_data()) && !empty($data->users)) {
     $i = 0;
     foreach ($data->users as $userid) {
-        $result = \tool_certificate\certificate::issue_certificate($template->get_id(), $userid, $data->expires);
-        if ($result) {
-            $i++;
+        if ($template->can_issue($userid)) {
+            $result = \tool_certificate\certificate::issue_certificate($template->get_id(), $userid, $data->expires);
+            if ($result) {
+                $i++;
+            }
         }
     }
     if ($i == 0) {
