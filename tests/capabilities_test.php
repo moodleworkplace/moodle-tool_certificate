@@ -71,21 +71,17 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the can_manage
+     * Test the can_issue with use allocated to default tenant
      */
-    public function test_can_issue() {
+    public function test_can_issue_default_tenant() {
         global $DB;
 
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
         $manager1 = $this->getDataGenerator()->create_user();
-        $manager2 = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->role_assign($managerrole->id, $manager1->id);
-        $this->getDataGenerator()->role_assign($managerrole->id, $manager2->id);
 
-        $defaulttenantid = \tool_tenant\tenancy::get_default_tenant_id();
         $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
         $tenant = $tenantgenerator->create_tenant();
-        $tenantgenerator->allocate_user($manager2->id, $tenant->id);
 
         $this->setUser($manager1);
 
@@ -98,7 +94,33 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $this->assertEquals(false, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
 
-        $this->setUser($manager2);
+        assign_capability('tool/certificate:issueforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
+
+        // Now can issue in all tenants.
+        $this->assertEquals(true, $certificate1->can_issue());
+        $this->assertEquals(true, $certificate2->can_issue());
+        $this->assertEquals(true, $certificate3->can_issue());
+    }
+
+    /**
+     * Test the can_issue with user allocated to non-default tenant
+     */
+    public function test_can_issue_other_tenant() {
+        global $DB;
+
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager1->id);
+
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+        $tenantgenerator->allocate_user($manager1->id, $tenant->id);
+
+        $this->setUser($manager1);
+
+        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
+        $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
 
         $this->assertEquals(false, $certificate1->can_issue());
         $this->assertEquals(true, $certificate2->can_issue());
@@ -107,12 +129,6 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         assign_capability('tool/certificate:issueforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
 
         // Now can issue in all tenants.
-        $this->assertEquals(true, $certificate1->can_issue());
-        $this->assertEquals(true, $certificate2->can_issue());
-        $this->assertEquals(true, $certificate3->can_issue());
-
-        $this->setUser($manager1);
-
         $this->assertEquals(true, $certificate1->can_issue());
         $this->assertEquals(true, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
