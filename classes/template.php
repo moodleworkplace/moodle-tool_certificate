@@ -495,7 +495,6 @@ class template {
         }
     }
 
-
     /**
      * The URL to preview a template
      *

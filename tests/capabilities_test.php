@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File contains the unit tests for the webservices.
+ * File contains the unit tests for the capabilities tests of certicicates and templates.
  *
  * @package    tool_certificate
  * @category   test
- * @copyright  2018 Mark Nelson <markn@moodle.com>
+ * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

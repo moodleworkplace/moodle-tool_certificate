@@ -33,32 +33,15 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2017 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_generator extends testing_module_generator {
+class tool_certificate_generator extends component_generator_base {
 
     /**
-     * Creates an instance of the custom certificate.
+     * Creates new certificate template
      *
-     * @param array|stdClass|null $record
-     * @param array|null $options
+     * @param array|stdClass $record
      * @return stdClass
      */
-    public function create_instance($record = null, array $options = null) {
-        $record = (object)(array)$record;
-
-        $defaultsettings = array(
-            'requiredtime' => 0,
-            'emailstudents' => 0,
-            'emailteachers' => 0,
-            'emailothers' => '',
-            'protection' => ''
-        );
-
-        foreach ($defaultsettings as $name => $value) {
-            if (!isset($record->{$name})) {
-                $record->{$name} = $value;
-            }
-        }
-
-        return parent::create_instance($record, (array)$options);
+    public function create_template($record = null): \tool_certificate\template {
+        return \tool_certificate\template::create($record);
     }
 }
