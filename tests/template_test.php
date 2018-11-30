@@ -63,8 +63,13 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
 
         // Create new certificate.
-        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $cert1name = 'Certificate 1';
+        $certificate1 = \tool_certificate\template::create((object)['name' => $cert1name]);
         $this->assertEquals(1, $DB->count_records('tool_certificate_templates'));
+
+        $this->assertEquals(\tool_tenant\tenancy::get_default_tenant_id(), $certificate1->get_tenant_id());
+        $this->assertEquals($cert1name, $certificate1->get_name());
+        $this->assertEquals(\context_system::instance(), $certificate1->get_context());
 
         $events = $sink->get_events();
         $this->assertCount(2, $events); // There will be a tenant_created event.
@@ -79,12 +84,20 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_description());
 
         // Create new certificate.
-        $certificate2name = 'Certificate 2';
-        $certificate2 = $this->get_generator()->create_template((object)['name' => $certificate2name]);
+        $cert2name = 'Certificate 2';
+        $certificate2 = \tool_certificate\template::create((object)['name' => $cert2name]);
         $this->assertEquals(2, $DB->count_records('tool_certificate_templates'));
 
-        $this->assertEquals($certificate2name, $certificate2->get_name());
-        $this->assertEquals($certificate2name, $DB->get_field('tool_certificate_templates', 'name', ['id' => $certificate2->get_id()]));
+        $this->assertEquals($cert2name, $certificate2->get_name());
+        $this->assertEquals($cert2name, $DB->get_field('tool_certificate_templates', 'name', ['id' => $certificate2->get_id()]));
+
+        // Create certificate in another tenant.
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+
+        $certificate3 = \tool_certificate\template::create((object)['name' => $cert2name, 'tenantid' => $tenant->id]);
+        $this->assertEquals(3, $DB->count_records('tool_certificate_templates'));
+        $this->assertEquals($tenant->id, $DB->get_field('tool_certificate_templates', 'tenantid', ['id' => $certificate3->get_id()]));
     }
 
     /**

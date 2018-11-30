@@ -71,7 +71,7 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
     }
 
     /**
-     * Test the can_issue with use allocated to default tenant
+     * Test the can_issue with user allocated to default tenant
      */
     public function test_can_issue_default_tenant() {
         global $DB;
@@ -94,12 +94,20 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $this->assertEquals(false, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
 
+        $this->assertEquals(true, $certificate1->can_revoke());
+        $this->assertEquals(false, $certificate2->can_revoke());
+        $this->assertEquals(true, $certificate3->can_revoke());
+
         assign_capability('tool/certificate:issueforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
 
         // Now can issue in all tenants.
         $this->assertEquals(true, $certificate1->can_issue());
         $this->assertEquals(true, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
+
+        $this->assertEquals(true, $certificate1->can_revoke());
+        $this->assertEquals(true, $certificate2->can_revoke());
+        $this->assertEquals(true, $certificate3->can_revoke());
     }
 
     /**
@@ -126,11 +134,83 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $this->assertEquals(true, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
 
+        $this->assertEquals(false, $certificate1->can_revoke());
+        $this->assertEquals(true, $certificate2->can_revoke());
+        $this->assertEquals(true, $certificate3->can_revoke());
+
         assign_capability('tool/certificate:issueforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
 
         // Now can issue in all tenants.
         $this->assertEquals(true, $certificate1->can_issue());
         $this->assertEquals(true, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
+
+        $this->assertEquals(true, $certificate1->can_revoke());
+        $this->assertEquals(true, $certificate2->can_revoke());
+        $this->assertEquals(true, $certificate3->can_revoke());
+    }
+
+    /**
+     * Test the can_verify with user allocated to default tenant
+     */
+    public function test_can_verify_default_tenant() {
+        global $DB;
+
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager1->id);
+
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+
+        $this->setUser($manager1);
+
+        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
+        $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
+
+        // Managers can issue templates by default on same tenant and on shared templates, but not for other tenants.
+        $this->assertEquals(true, $certificate1->can_verify());
+        $this->assertEquals(false, $certificate2->can_verify());
+        $this->assertEquals(true, $certificate3->can_verify());
+
+        assign_capability('tool/certificate:verifyforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
+
+        // Now can issue in all tenants.
+        $this->assertEquals(true, $certificate1->can_verify());
+        $this->assertEquals(true, $certificate2->can_verify());
+        $this->assertEquals(true, $certificate3->can_verify());
+    }
+
+    /**
+     * Test the can_verify with user allocated to non-default tenant
+     */
+    public function test_can_verify_other_tenant() {
+        global $DB;
+
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager1 = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager1->id);
+
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+        $tenantgenerator->allocate_user($manager1->id, $tenant->id);
+
+        $this->setUser($manager1);
+
+        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
+        $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
+
+        $this->assertEquals(false, $certificate1->can_verify());
+        $this->assertEquals(true, $certificate2->can_verify());
+        $this->assertEquals(true, $certificate3->can_verify());
+
+        assign_capability('tool/certificate:verifyforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
+
+        // Now can issue in all tenants.
+        $this->assertEquals(true, $certificate1->can_verify());
+        $this->assertEquals(true, $certificate2->can_verify());
+        $this->assertEquals(true, $certificate3->can_verify());
     }
 }
