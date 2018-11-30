@@ -73,7 +73,7 @@ class verify_certificate_result implements templatable, renderable {
     /**
      * Constructor.
      *
-     * @param \stdClass $result
+     * @param \stdClass $issue
      */
     public function __construct($issue) {
         $this->viewurl = template::view_url($issue->code);

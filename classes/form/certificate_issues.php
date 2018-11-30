@@ -38,6 +38,9 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class certificate_issues extends moodleform {
 
+    /**
+     * Definition of the form with user selector and expiration time to issue certificates.
+     */
     public function definition() {
         $mform = $this->_form;
 

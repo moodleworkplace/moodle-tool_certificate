@@ -387,6 +387,10 @@ class element_helper {
         return $options;
     }
 
+    /**
+     * Get the list of element plugins enabled on site level.
+     * @return array  The list of enabled plugins
+     */
     public static function get_enabled_plugins() {
         global $DB;
 

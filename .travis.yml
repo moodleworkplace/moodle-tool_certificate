@@ -30,7 +30,7 @@ before_install:
   - nvm install 8.9
   - nvm use 8.9
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist --repository='{"type":"git","url":"https://github.com/moodlesp/moodle-plugin-ci","reference":"master"}' blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
@@ -44,9 +44,10 @@ script:
   # - moodle-plugin-ci phpcpd # subplugins often have similar code and cause "duplicated code" errors
   # - moodle-plugin-ci phpmd # too much noise from this check, maybe, some day...
   - moodle-plugin-ci codechecker
+  - moodle-plugin-ci phpdoc
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt -t stylelint:css -t js
-  - moodle-plugin-ci phpunit
+  - moodle-plugin-ci phpunit --coverage-text
   - moodle-plugin-ci behat

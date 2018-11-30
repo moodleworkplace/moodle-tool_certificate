@@ -95,7 +95,7 @@ class certificates_table extends \table_sql {
     /**
      * Generate the name column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_userfullname($issue) {
@@ -105,7 +105,7 @@ class certificates_table extends \table_sql {
     /**
      * Generate the certificate time created column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_timecreated($issue) {
@@ -143,7 +143,7 @@ class certificates_table extends \table_sql {
     /**
      * Generate the download column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_download($issue) {
@@ -158,7 +158,7 @@ class certificates_table extends \table_sql {
     /**
      * Generate the revoke column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_revoke($issue) {

@@ -191,7 +191,6 @@ class external extends \external_api {
     /**
      * Handles deleting a certificate issue.
      *
-     * @param int $certificateid The certificate id.
      * @param int $issueid The issue id.
      * @return bool
      */

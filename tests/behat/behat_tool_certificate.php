@@ -83,7 +83,7 @@ class behat_tool_certificate extends behat_base {
      * Verifies the certificate code for a user.
      *
      * @Given /^I verify the "(?P<certificate_name>(?:[^"]|\\")*)" certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
-     * @param string $certificatename
+     * @param string $templatename
      * @param string $username
      */
     public function i_verify_the_certificate_for_user($templatename, $username) {
@@ -104,7 +104,7 @@ class behat_tool_certificate extends behat_base {
      * Verifies the certificate code for a user.
      *
      * @Given /^I can not verify the "(?P<certificate_name>(?:[^"]|\\")*)" certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
-     * @param string $certificatename
+     * @param string $templatename
      * @param string $username
      */
     public function i_can_not_verify_the_certificate_for_user($templatename, $username) {
@@ -128,7 +128,7 @@ class behat_tool_certificate extends behat_base {
      * the page like a conventional user.
      *
      * @Given /^I visit the verification url for the "(?P<certificate_name>(?:[^"]|\\")*)" certificate$/
-     * @param string $certificatename
+     * @param string $templatename
      */
     public function i_visit_the_verification_url_for_certificate($templatename) {
         global $DB;

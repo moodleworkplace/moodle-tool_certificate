@@ -35,8 +35,19 @@ defined('MOODLE_INTERNAL') || die();
  */
 class element extends \tool_certificate\element {
 
+    /**
+     * @var int Option to display only code
+     */
     const DISPLAY_CODE = 1;
+
+    /**
+     * @var int Option to display code and a link
+     */
     const DISPLAY_CODELINK = 2;
+
+    /**
+     * @var int Option to display verification URL
+     */
     const DISPLAY_URL = 3;
 
     /**
@@ -81,6 +92,7 @@ class element extends \tool_certificate\element {
      * @param \pdf $pdf the pdf object
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
+     * @param \stdClass $issue the issue we are rendering
      */
     public function render($pdf, $preview, $user, $issue) {
         global $DB;

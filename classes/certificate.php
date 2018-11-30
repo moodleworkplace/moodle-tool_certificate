@@ -214,6 +214,15 @@ class certificate {
         return $DB->count_records('tool_certificate_issues', $conditions);
     }
 
+    /**
+     * Get the certificate issues for a given templateid, paginated.
+     *
+     * @param int $templateid
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @param string $sort
+     * @return array
+     */
     public static function get_issues_for_template($templateid, $limitfrom, $limitnum, $sort = '') {
         global $DB;
 
@@ -291,6 +300,9 @@ class certificate {
      *
      * @param int $templateid The ID of the template
      * @param int $userid The ID of the user to issue the certificate to
+     * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
+     * @param array $data Additional data that will json_encode'd and stored with the issue.
+     * @param string $component The component the certificate was issued by.
      * @return int The ID of the issue
      */
     public static function issue_certificate($templateid, $userid, $expires = null, $data = [], $component = 'tool_certificate') {
@@ -357,6 +369,11 @@ class certificate {
         \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
     }
 
+    /**
+     * Deletes issues of a templateid. Used when deleting a template.
+     *
+     * @param int $templateid
+     */
     public static function revoke_issues_by_templateid($templateid) {
         global $DB;
         $issues = $DB->get_records('tool_certificate_issues', ['templateid' => $templateid]);
@@ -366,6 +383,12 @@ class certificate {
         }
     }
 
+    /**
+     * Verify if a certificate exists given a code
+     *
+     * @param string $code The code to verify
+     * @return \stdClass An structure with success bool attribute and the issue, if found
+     */
     public static function verify($code) {
         global $DB;
 
