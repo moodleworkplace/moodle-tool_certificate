@@ -28,20 +28,26 @@ require_once($CFG->libdir.'/adminlib.php');
 // The page of the certificate we are editing.
 $pid = required_param('pid', PARAM_INT);
 
-admin_externalpage_setup('tool_certificate/managetemplates');
+$PAGE->set_context(null);
 
-$page = $DB->get_record('tool_certificate_pages', array('id' => $pid), '*', MUST_EXIST);
+require_login();
+
+$PAGE->set_pagelayout('admin');
+$PAGE->set_url(new moodle_url('/admin/tool/certificate/rearrange.php', ['pid' => $pid]));
+
+$page = $DB->get_record('tool_certificate_pages', ['id' => $pid], '*', MUST_EXIST);
 
 $template = \tool_certificate\template::find_by_id($page->templateid);
 
 $template->require_manage();
 
-$elements = $DB->get_records('tool_certificate_elements', array('pageid' => $pid), 'sequence');
+$elements = $DB->get_records('tool_certificate_elements', ['pageid' => $pid], 'sequence');
 
-$str = get_string('editcertificate', 'tool_certificate');
-$link = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
+$editstr = get_string('editcertificate', 'tool_certificate');
+$managestr = get_string('managetemplates', 'tool_certificate');
 
-$PAGE->navbar->add($str, new \action_link($link, $str));
+$PAGE->navbar->add($managestr, new \action_link(\tool_certificate\template::manage_url(), $managestr));
+$PAGE->navbar->add($editstr, new \action_link($template->edit_url(), $editstr));
 
 $PAGE->navbar->add(get_string('rearrangeelements', 'tool_certificate'));
 

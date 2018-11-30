@@ -77,12 +77,16 @@ class manage_templates_table extends \table_sql {
         return $template->name;
     }
 
+    /**
+     * Generate the column with name of tenant or indicating the template is shared.
+     * @param stdclass $template The template record
+     * @return string
+     */
     public function col_tenant($template) {
-        if ($template->tenantid) {
-            $tenant = new \tool_tenant\tenant();
-            return $tenant->get('name');
-        } else {
+        if ($template->tenantid == 0) {
             return get_string('shared', 'tool_certificate');
+        } else {
+            return format_string($template->tenantname);
         }
     }
 
@@ -148,8 +152,13 @@ class manage_templates_table extends \table_sql {
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = $DB->get_records('tool_certificate_templates', array('contextid' => $this->context->id),
-            $this->get_sql_sort(), '*', $this->get_page_start(), $this->get_page_size());
+        $sql = 'SELECT t.*, te.name as tenantname
+                  FROM {tool_certificate_templates} t
+             LEFT JOIN {tool_tenant} te
+                    ON (te.id = t.tenantid)
+                 WHERE contextid = :contextid';
+        $this->rawdata = $DB->get_records_sql($sql, ['contextid' => $this->context->id],
+            $this->get_page_start(), $this->get_page_size());
 
         // Set initial bars.
         if ($useinitialsbar) {

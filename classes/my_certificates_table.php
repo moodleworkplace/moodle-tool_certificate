@@ -129,7 +129,7 @@ class my_certificates_table extends \table_sql {
     /**
      * Generate the code column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_code($issue) {
@@ -140,7 +140,7 @@ class my_certificates_table extends \table_sql {
     /**
      * Generate the download column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_download($issue) {

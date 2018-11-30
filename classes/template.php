@@ -283,9 +283,8 @@ class template {
     /**
      * Generate the PDF for the template.
      *
-     * @param bool $preview true if it is a preview, false otherwise
-     * @param int $issue the issued certificate we want to view
-     * @param bool $return Do we want to return the contents of the PDF?
+     * @param bool $preview True if it is a preview, false otherwise
+     * @param int $issue The issued certificate we want to view
      */
     public function generate_pdf($preview = false, $issue = null) {
         global $CFG, $DB, $USER;
@@ -378,6 +377,7 @@ class template {
     /**
      * Duplicates the template into a new one
      *
+     * @param int $tenantid
      * @return template
      */
     public function duplicate($tenantid = null) {
@@ -509,6 +509,7 @@ class template {
     /**
      * The URL to view an issued certificate
      *
+     * @param string $code
      * @return \moodle_url
      */
     public static function view_url($code): \moodle_url {
@@ -525,12 +526,31 @@ class template {
     }
 
     /**
+     * The URL to edit certificate template
+     *
+     * @return \moodle_url
+     */
+    public function edit_url(): \moodle_url {
+        return new \moodle_url('/admin/tool/certificate/edit.php', ['tid' => $this->id]);
+    }
+
+    /**
      * The URL to verify an issued certificate from it's code
      *
+     * @param string $code
      * @return \moodle_url
      */
     public static function verification_url($code): \moodle_url {
         return new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]);
+    }
+
+    /**
+     * The URL to manage templates
+     *
+     * @return \moodle_url
+     */
+    public static function manage_url(): \moodle_url {
+        return new \moodle_url('/admin/tool/certificate/manage_templates.php');
     }
 
     /**
@@ -545,6 +565,7 @@ class template {
     /**
      * Returns a new template from it's id
      *
+     * @param int $id
      * @return \tool_certificate\template
      */
     public static function find_by_id($id): template {
@@ -556,6 +577,7 @@ class template {
     /**
      * Returns an element if it belongs to this template, false otherwise.
      *
+     * @param int $id
      * @return bool|\stdClass
      */
     public function find_element_by_id($id) {
@@ -571,6 +593,7 @@ class template {
     /**
      * Returns a new element if pageid belongs to this template, false otherwise.
      *
+     * @param int $pageid
      * @return bool|\stdClass
      */
     public function new_element_for_page_id($pageid) {
@@ -609,7 +632,7 @@ class template {
         if ($issuetouserid == 0) {
             return $generalcap;
         }
-        return $generalcap && ($this->tenantid == tenancy::get_tenat_id_int($issuetouserid));
+        return $generalcap && ($this->tenantid == tenancy::get_tenant_id($issuetouserid));
     }
 
     /**
@@ -635,6 +658,7 @@ class template {
     /**
      * Get issue record from database base on it's code.
      *
+     * @param string $issuecode
      * @return \stdClass
      */
     public static function get_issue_from_code($issuecode): \stdClass {
@@ -645,6 +669,7 @@ class template {
     /**
      * If current user can view an issued certificate
      *
+     * @param \stdClass $issue
      * @return bool
      */
     public function can_view_issue($issue): bool {
@@ -652,6 +677,10 @@ class template {
         return ($issue->userid == $USER->id) || $this->can_verify();
     }
 
+    /**
+     * If current user can view list of certificates
+     * @param int $userid The id of user which certificates were issued for.
+     */
     public static function can_view_list($userid) {
         global $USER;
         if ($userid == $USER->id) {
@@ -661,10 +690,16 @@ class template {
         return has_capability('tool/certificate:viewallcertificates', context_system::instance());
     }
 
+    /**
+     * If current user can create a certificate template
+     */
     public static function can_create() {
         return has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
     }
 
+    /**
+     * If current user can issue or manage certificate templates in all tenants.
+     */
     public static function can_issue_or_manage_all_tenants() {
         return has_any_capability(['tool/certificate:issueforalltenants', 'tool/certificate:manageforalltenants'],
             \context_system::instance());
@@ -707,6 +742,12 @@ class template {
         return new \tool_certificate\template($template);
     }
 
+    /**
+     * Finds a certificate template by given name. Used on behat generator.
+     *
+     * @param string $name Name of the template
+     * @return \tool_certificate\template
+     */
     public static function find_by_name($name) {
         global $DB;
         if ($template = $DB->get_record('tool_certificate_templates', ['name' => $name])) {
