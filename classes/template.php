@@ -388,7 +388,6 @@ class template {
         } else {
             $data->tenantid = $this->get_tenant_id();
         }
-        $contextid = $this->get_contextid();
         $newtemplate = self::create($data);
 
         // Copy the data to the new template.
@@ -464,15 +463,6 @@ class template {
      */
     public function get_name() {
         return $this->name;
-    }
-
-    /**
-     * Returns the context id.
-     *
-     * @return int the context id
-     */
-    public function get_contextid() {
-        return $this->contextid;
     }
 
     /**
@@ -710,9 +700,11 @@ class template {
      * @return bool
      */
     public function can_verify() {
-        return $this->can_manage() ||
-               has_capability('tool/certificate:verifyforalltenants', $this->get_context()) ||
-               (has_capability('tool/certificate:verify', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id());
+        if (has_any_capability(['tool/certificate:verifyforalltenants', 'tool/certificate:manageforalltenants'], $this->get_context())) {
+            return true;
+        }
+        return has_any_capability(['tool/certificate:verify', 'tool/certificate:manage'] , \context_system::instance()) &&
+                   (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
     }
 
     /**
