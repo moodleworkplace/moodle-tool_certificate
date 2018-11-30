@@ -42,7 +42,7 @@ if ($form->is_cancelled()) {
     $i = 0;
     foreach ($data->users as $userid) {
         if ($template->can_issue($userid)) {
-            $result = \tool_certificate\certificate::issue_certificate($template->get_id(), $userid, $data->expires);
+            $result = $template->issue_certificate($userid, $data->expires);
             if ($result) {
                 $i++;
             }

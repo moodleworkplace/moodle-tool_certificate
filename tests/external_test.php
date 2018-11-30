@@ -66,8 +66,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
+        $i1 = $template->issue_certificate($student1->id);
+        $i2 = $template->issue_certificate($student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
@@ -104,8 +104,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
+        $i1 = $template->issue_certificate($student1->id);
+        $i2 = $template->issue_certificate($student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
@@ -137,8 +137,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
+        $i1 = $template->issue_certificate($student1->id);
+        $i2 = $template->issue_certificate($student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 

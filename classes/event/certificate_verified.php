@@ -24,6 +24,8 @@
 
 namespace tool_certificate\event;
 
+use tool_certificate\template;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -71,7 +73,7 @@ class certificate_verified extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $this->objectid));
+        return template::verification_url($this->other['code']);
     }
 
     /**
@@ -84,7 +86,10 @@ class certificate_verified extends \core\event\base {
         $data = array(
             'context' => \context_system::instance(),
             'objectid' => $issue->id,
-            'relateduserid' => $issue->userid
+            'relateduserid' => $issue->userid,
+            'other' => [
+                'code' => $issue->code
+            ]
         );
         $event = self::create($data);
         $event->add_record_snapshot('tool_certificate_issues', $issue);

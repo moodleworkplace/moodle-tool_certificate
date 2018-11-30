@@ -178,7 +178,7 @@ class certificates_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = certificate::get_number_of_issues_for_template($this->templateid);
+        $total = certificate::count_issues_for_template($this->templateid);
 
         $this->pagesize($pagesize, $total);
 
@@ -196,7 +196,7 @@ class certificates_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = certificate::get_number_of_issues_for_template($this->templateid);
+        $total = certificate::count_issues_for_template($this->templateid);
         $this->out($total, false);
         exit;
     }

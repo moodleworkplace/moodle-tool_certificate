@@ -159,11 +159,11 @@ class my_certificates_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = certificate::get_number_of_certificates_for_user($this->userid);
+        $total = certificate::count_issues_for_user($this->userid);
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = certificate::get_certificates_for_user($this->userid, $this->get_page_start(),
+        $this->rawdata = certificate::get_issues_for_user($this->userid, $this->get_page_start(),
             $this->get_page_size(), $this->get_sql_sort());
 
         // Set initial bars.
@@ -177,7 +177,7 @@ class my_certificates_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = certificate::get_number_of_certificates_for_user($this->userid);
+        $total = certificate::count_issues_for_user($this->userid);
         $this->out($total, false);
         exit;
     }

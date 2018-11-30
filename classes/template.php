@@ -203,7 +203,7 @@ class template {
         }
 
         // Revoke certificate issues.
-        \tool_certificate\certificate::revoke_issues_by_templateid($this->id);
+        $this->revoke_issues($this->id);
 
         $deletedtemplate = $DB->get_record('tool_certificate_templates', ['id' => $this->id]);
         \tool_certificate\event\template_deleted::create_from_template($deletedtemplate)->trigger();
@@ -753,5 +753,63 @@ class template {
             return new \tool_certificate\template($template);
         }
         return false;
+    }
+
+
+    /**
+     * Issues a certificate to a user.
+     *
+     * @param int $templateid The ID of the template
+     * @param int $userid The ID of the user to issue the certificate to
+     * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
+     * @param array $data Additional data that will json_encode'd and stored with the issue.
+     * @param string $component The component the certificate was issued by.
+     * @return int The ID of the issue
+     */
+    public function issue_certificate($userid, $expires = null, $data = [], $component = 'tool_certificate') {
+        global $DB;
+
+        $issue = new \stdClass();
+        $issue->userid = $userid;
+        $issue->templateid = $this->get_id();
+        $issue->code = \tool_certificate\certificate::generate_code();
+        $issue->emailed = 0;
+        $issue->timecreated = time();
+        $issue->expires = $expires;
+        $issue->data = json_encode($data);
+        $issue->component = $component;
+
+        // Insert the record into the database.
+        if ($issue->id = $DB->insert_record('tool_certificate_issues', $issue)) {
+            \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
+        }
+
+        return $issue->id;
+    }
+
+    /**
+     * Deletes an issue of a certificate for a user.
+     *
+     * @param int $issueid
+     */
+    public function revoke_issue($issueid) {
+        global $DB;
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid, 'templateid' => $this->get_id()]);
+        $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
+        \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+    }
+
+    /**
+     * Deletes issues of a templateid. Used when deleting a template.
+     *
+     * @param int $templateid
+     */
+    protected function revoke_issues() {
+        global $DB;
+        $issues = $DB->get_records('tool_certificate_issues', ['templateid' => $this->get_id()]);
+        $DB->delete_records('tool_certificate_issues', ['templateid' => $this->get_id()]);
+        foreach ($issues as $issue) {
+            \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+        }
     }
 }

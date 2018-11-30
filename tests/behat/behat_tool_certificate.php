@@ -191,7 +191,7 @@ class behat_tool_certificate extends behat_base {
             }
             if ($template = \tool_certificate\template::find_by_name($elementdata['template'], $contextid)) {
                 if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
-                    \tool_certificate\certificate::issue_certificate($template->get_id(), $userid);
+                    $template->issue_certificate($userid);
                 }
             }
         }
