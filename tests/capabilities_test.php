@@ -89,7 +89,7 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
         $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
 
-        // Managers can issue templates by default on same tenant and on shared templates, but not for other tenants
+        // Managers can issue templates by default on same tenant and on shared templates, but not for other tenants.
         $this->assertEquals(true, $certificate1->can_issue());
         $this->assertEquals(false, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());

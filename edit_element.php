@@ -40,15 +40,15 @@ if ($action == 'edit') {
     if (!$element = $template->find_element_by_id($id)) {
         print_error('invalidelementfortemplate', 'tool_certificate');
     }
-    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('id' => $id, 'tid' => $templateid, 'action' => $action));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', ['id' => $id, 'tid' => $templateid, 'action' => $action]);
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
     $pageid = required_param('pageid', PARAM_INT);
     if (!$element = $template->new_element_for_page_id($pageid)) {
         print_error('invalidpagefortemplate', 'tool_certificate');
     }
-    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', array('tid' => $templateid, 'element' => $element->element,
-        'pageid' => $pageid, 'action' => $action));
+    $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', ['tid' => $templateid, 'element' => $element->element,
+        'pageid' => $pageid, 'action' => $action]);
 }
 
 $PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'), new moodle_url('/admin/tool/certificate/edit.php',
