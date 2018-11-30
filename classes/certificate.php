@@ -128,7 +128,7 @@ class certificate {
      * @param int $templateid
      * @return int the number of issues
      */
-    public static function get_number_of_issues_for_template($templateid) {
+    public static function count_issues_for_template($templateid) {
         global $DB;
         if ($templateid > 0) {
             $conditions = ['templateid' => $templateid];
@@ -177,7 +177,7 @@ class certificate {
      * @param int $userid
      * @return int
      */
-    public static function get_number_of_certificates_for_user(int $userid = 0): int {
+    public static function count_issues_for_user(int $userid = 0): int {
         global $DB;
 
         $sql = "SELECT COUNT(*)
@@ -194,7 +194,7 @@ class certificate {
     }
 
     /**
-     * Gets the certificates for the user.
+     * Get the certificates issues for the given userid.
      *
      * @param int $userid
      * @param int $limitfrom
@@ -202,14 +202,14 @@ class certificate {
      * @param string $sort
      * @return array
      */
-    public static function get_certificates_for_user($userid, $limitfrom, $limitnum, $sort = '') {
+    public static function get_issues_for_user($userid, $limitfrom, $limitnum, $sort = '') {
         global $DB;
 
         if (empty($sort)) {
             $sort = 'ci.timecreated DESC';
         }
 
-        $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated,
+        $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated, ci.userid,
                        t.id as templateid, t.contextid, t.name
                   FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
@@ -217,37 +217,6 @@ class certificate {
                  WHERE ci.userid = :userid
               ORDER BY $sort";
             return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);
-    }
-
-    /**
-     * Issues a certificate to a user.
-     *
-     * @param int $templateid The ID of the template
-     * @param int $userid The ID of the user to issue the certificate to
-     * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
-     * @param array $data Additional data that will json_encode'd and stored with the issue.
-     * @param string $component The component the certificate was issued by.
-     * @return int The ID of the issue
-     */
-    public static function issue_certificate($templateid, $userid, $expires = null, $data = [], $component = 'tool_certificate') {
-        global $DB;
-
-        $issue = new \stdClass();
-        $issue->userid = $userid;
-        $issue->templateid = $templateid;
-        $issue->code = self::generate_code();
-        $issue->emailed = 0;
-        $issue->timecreated = time();
-        $issue->expires = $expires;
-        $issue->data = json_encode($data);
-        $issue->component = $component;
-
-        // Insert the record into the database.
-        if ($issue->id = $DB->insert_record('tool_certificate_issues', $issue)) {
-            \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
-        }
-
-        return $issue->id;
     }
 
     /**
@@ -269,42 +238,6 @@ class certificate {
         }
 
         return $code;
-    }
-
-    /**
-     * Returns the \context_module of a given certificate
-     *
-     * @param int $templateid
-     * @return \context_module
-     */
-    public static function get_context($templateid) {
-        return \context_system::instance();
-    }
-
-    /**
-     * Deletes an issue of a certificate for a user.
-     *
-     * @param int $issueid
-     */
-    public static function revoke_issue($issueid) {
-        global $DB;
-        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid]);
-        $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
-        \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
-    }
-
-    /**
-     * Deletes issues of a templateid. Used when deleting a template.
-     *
-     * @param int $templateid
-     */
-    public static function revoke_issues_by_templateid($templateid) {
-        global $DB;
-        $issues = $DB->get_records('tool_certificate_issues', ['templateid' => $templateid]);
-        $DB->delete_records('tool_certificate_issues', ['templateid' => $templateid]);
-        foreach ($issues as $issue) {
-            \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
-        }
     }
 
     /**

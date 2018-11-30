@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_cerficate_testcase extends advanced_testcase {
+class tool_certificate_template_testcase extends advanced_testcase {
 
     /**
      * Test set up.
@@ -59,9 +59,24 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         // There are no certificate templates in the beginning.
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
 
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
         // Create new certificate.
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $this->assertEquals(1, $DB->count_records('tool_certificate_templates'));
+
+        $events = $sink->get_events();
+        $this->assertCount(2, $events); // There will be a tenant_created event.
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_certificate\event\template_created', $event);
+        $this->assertEquals(\context_system::instance(), $event->get_context());
+        $this->assertEquals($certificate1->edit_url(), $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertNotEmpty($event->get_description());
 
         // Create new certificate.
         $certificate2name = 'Certificate 2';
@@ -80,7 +95,24 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $certname1 = 'Certificate 1';
         $certname2 = 'Certificate Updated';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname1]);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
         $certificate1->save((object)['name' => $certname2]);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_certificate\event\template_updated', $event);
+        $this->assertEquals(\context_system::instance(), $event->get_context());
+        $this->assertEquals($certificate1->edit_url(), $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertNotEmpty($event->get_description());
+
         $this->assertEquals($certname2, \tool_certificate\template::find_by_name($certname2)->get_name());
         $this->assertFalse(\tool_certificate\template::find_by_name($certname1));
     }
@@ -121,7 +153,24 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
         $certificate1->delete();
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_certificate\event\template_deleted', $event);
+        $this->assertEquals(\context_system::instance(), $event->get_context());
+        $this->assertEquals($certificate1->edit_url(), $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertNotEmpty($event->get_description());
+
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
     }
 
@@ -150,5 +199,94 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $certificate1->save_page($pagedata);
         $this->assertTrue($DB->record_exists('tool_certificate_pages', ['templateid' => $certificate1->get_id(),
             'width' => 333, 'height' => 444]));
+    }
+
+    /**
+     * Test issue certificate to user.
+     */
+    public function test_issue_certificate() {
+        global $DB;
+
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $issueid1 = $certificate1->issue_certificate($user1->id);
+
+        $code1 = $DB->get_field('tool_certificate_issues', 'code', ['id' => $issueid1]);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_certificate\event\certificate_issued', $event);
+        $this->assertEquals(\context_system::instance(), $event->get_context());
+        $this->assertEquals(\tool_certificate\template::view_url($code1), $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertNotEmpty($event->get_description());
+
+        $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
+
+        $certificate1->issue_certificate($user2->id);
+
+        $this->assertEquals(2, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
+
+        $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
+            'userid' => $user1->id]));
+        $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
+            'userid' => $user2->id]));
+
+        $certificate1->issue_certificate($user1->id);
+        $this->assertEquals(2, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
+            'userid' => $user1->id]));
+
+        $certificate1->issue_certificate($user2->id);
+        $certificate1->issue_certificate($user2->id);
+
+        $this->assertEquals(3, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
+            'userid' => $user2->id]));
+    }
+
+    /**
+     * Test get issues for user.
+     */
+    public function test_revoke_issue() {
+        global $DB;
+
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $issueid1 = $certificate1->issue_certificate($user1->id);
+        $issueid2 = $certificate1->issue_certificate($user2->id);
+        $code1 = $DB->get_field('tool_certificate_issues', 'code', ['id' => $issueid1]);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+
+        $certificate1->revoke_issue($issueid1);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = array_pop($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\tool_certificate\event\certificate_revoked', $event);
+        $this->assertEquals(\context_system::instance(), $event->get_context());
+        $moodlepage = new \moodle_url('/admin/tool/certificate/view.php', ['code' => $code1]);
+        $this->assertEquals(\tool_certificate\template::view_url($code1), $event->get_url());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertNotEmpty($event->get_description());
+
+        $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
+
+        $certificate1->revoke_issue($issueid2);
+
+        $this->assertEquals(0, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
     }
 }

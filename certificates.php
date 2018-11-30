@@ -84,7 +84,7 @@ if ($revokecert && confirm_sesskey()) {
         exit();
     }
 
-    \tool_certificate\certificate::revoke_issue($issueid);
+    $template->revoke_issue($issueid);
 
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 }
