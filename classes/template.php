@@ -759,7 +759,6 @@ class template {
     /**
      * Issues a certificate to a user.
      *
-     * @param int $templateid The ID of the template
      * @param int $userid The ID of the user to issue the certificate to
      * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
      * @param array $data Additional data that will json_encode'd and stored with the issue.
@@ -801,8 +800,6 @@ class template {
 
     /**
      * Deletes issues of a templateid. Used when deleting a template.
-     *
-     * @param int $templateid
      */
     protected function revoke_issues() {
         global $DB;

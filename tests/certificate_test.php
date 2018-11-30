@@ -137,7 +137,18 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
 
         $code1 = $DB->get_field('tool_certificate_issues', 'code', ['id' => $issueid1]);
 
-        // Trigger and capture the event.
+        // First, an invalid code must not trigger event.
+        $sink = $this->redirectEvents();
+
+        $result = \tool_certificate\certificate::verify('invalidCode1');
+
+        $events = $sink->get_events();
+        $this->assertCount(0, $events);
+
+        $this->assertFalse($result->success);
+        $this->assertTrue(empty($result->issues));
+
+        // A valida code will trigger the event.
         $sink = $this->redirectEvents();
 
         $result = \tool_certificate\certificate::verify($code1);
@@ -156,14 +167,29 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
 
         $this->assertTrue($result->success);
         $this->assertTrue(isset($result->issues[$issueid1]));
+
     }
 
     /**
-     * Test generate code .
+     * Test generate code.
      */
     public function test_generate_code() {
         $code1 = \tool_certificate\certificate::generate_code();
         $code2 = \tool_certificate\certificate::generate_code();
         $this->assertFalse($code1 == $code2);
+    }
+
+    /**
+     * Test get fonts.
+     */
+    public function test_get_fonts() {
+        $this->assertTrue(!empty(\tool_certificate\certificate::get_fonts()));
+    }
+
+    /**
+     * Test get font sizes.
+     */
+    public function test_get_font_sizes() {
+        $this->assertEquals(200, count(\tool_certificate\certificate::get_font_sizes()));
     }
 }
