@@ -72,7 +72,7 @@ $style = 'height: ' . $page->height . 'mm; line-height: normal; width: ' . $page
 $marginstyle = 'height: ' . $page->height . 'mm; width:1px; float:left; position:relative;';
 $html .= html_writer::start_tag('div', array(
     'data-templateid' => $template->get_id(),
-    'data-contextid' => $template->get_contextid(),
+    'data-contextid' => $template->get_context()->id,
     'id' => 'pdf',
     'style' => $style)
 );
