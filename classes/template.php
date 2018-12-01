@@ -710,7 +710,7 @@ class template {
     /**
      * Creates a template.
      *
-     * @param stdClass $formdata Associative array with data to create template.
+     * @param \stdClass $formdata Associative array with data to create template.
      * @return \tool_certificate\template the template object
      */
     public static function create($formdata) {
