@@ -150,6 +150,29 @@ class behat_tool_certificate extends behat_base {
     }
 
     /**
+     * Looks up tenant id
+     *
+     * @param array $elementdata
+     */
+    protected function lookup_tenant(array &$elementdata) {
+        global $DB;
+        if (array_key_exists('tenant', $elementdata)) {
+            if (empty($elementdata['tenant'])) {
+                // Shared for all tenants.
+                $elementdata['tenantid'] = 0;
+            } else {
+                // Lookup tenant id by tenant name.
+                $elementdata['tenantid'] = $DB->get_field('tool_tenant', 'id',
+                    ['name' => $elementdata['tenant']], MUST_EXIST);
+            }
+            unset($elementdata['tenant']);
+        } else {
+            // Otherwise assume default tenant.
+            $elementdata['tenantid'] = \tool_tenant\tenancy::get_default_tenant_id();
+        }
+    }
+
+    /**
      * Generates a template with a given name
      *
      * @Given /^the following certificate templates exist:$/
@@ -162,6 +185,7 @@ class behat_tool_certificate extends behat_base {
      */
     public function the_following_certificate_templates_exist(TableNode $data) {
         foreach ($data->getHash() as $elementdata) {
+            $this->lookup_tenant($elementdata);
             $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
@@ -184,12 +208,11 @@ class behat_tool_certificate extends behat_base {
      */
     public function the_following_certificate_issues_exist(TableNode $data) {
         global $DB;
-        $contextid = \context_system::instance()->id;
         foreach ($data->getHash() as $elementdata) {
             if (!isset($elementdata['template']) || !isset($elementdata['user'])) {
                 continue;
             }
-            if ($template = \tool_certificate\template::find_by_name($elementdata['template'], $contextid)) {
+            if ($template = \tool_certificate\template::find_by_name($elementdata['template'])) {
                 if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
                     $template->issue_certificate($userid);
                 }
