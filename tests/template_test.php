@@ -97,7 +97,8 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         $certificate3 = \tool_certificate\template::create((object)['name' => $cert2name, 'tenantid' => $tenant->id]);
         $this->assertEquals(3, $DB->count_records('tool_certificate_templates'));
-        $this->assertEquals($tenant->id, $DB->get_field('tool_certificate_templates', 'tenantid', ['id' => $certificate3->get_id()]));
+        $tenantid = $DB->get_field('tool_certificate_templates', 'tenantid', ['id' => $certificate3->get_id()]);
+        $this->assertEquals($tenant->id, $tenantid);
     }
 
     /**

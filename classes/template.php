@@ -655,8 +655,10 @@ class template {
      * @return bool
      */
     public static function can_verify_loose(): bool {
-        return has_any_capability(['tool/certificate:verify', 'tool/certificate:verifyforalltenants',
-                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
+        return has_any_capability(['tool/certificate:issue', 'tool/certificate:issueforalltenants',
+                                   'tool/certificate:verify', 'tool/certificate:verifyforalltenants',
+                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants',
+                                   'tool/certificate:viewallcertificates'], \context_system::instance());
 
     }
 
