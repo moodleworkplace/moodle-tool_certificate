@@ -50,7 +50,10 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
         return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
     }
 
-    public function test_render_html_content() {
+    /**
+     * Test tender_html
+     */
+    public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE, 'dateformat' => 0]);

@@ -201,6 +201,22 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
+     * Test delete page from template.
+     */
+    public function test_delete_page() {
+        global $DB;
+        $certname = 'Certificate 1';
+        $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
+        $pageid1 = $certificate1->add_page();
+        $pageid2 = $certificate1->add_page();
+        $this->assertEquals(2, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
+        $certificate1->delete_page($pageid1);
+        $this->assertEquals(1, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
+        $certificate1->delete_page($pageid2);
+        $this->assertEquals(0, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
+    }
+
+    /**
      * Test save page.
      */
     public function test_save_page() {
