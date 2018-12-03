@@ -263,7 +263,8 @@ class certificate {
 
         $conditions = ['code' => $code];
 
-        if (\tool_certificate\template::can_issue_or_manage_all_tenants() || \tool_certificate\template::can_verify_for_all_tenants()) {
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants() ||
+                \tool_certificate\template::can_verify_for_all_tenants()) {
             $tenantjoin = '';
             $tenantwhere = ' u.deleted = 0';
         } else {
