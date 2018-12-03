@@ -15,33 +15,47 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * File contains the unit tests for the element helper class.
+ * File contains the unit tests for the capabilities tests of certicicates and templates.
  *
  * @package    tool_certificate
  * @category   test
- * @copyright  2017 Mark Nelson <markn@moodle.com>
+ * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-
 /**
- * Unit tests for the element helper class.
+ * Unit tests for functions that deals with capabilities.
  *
  * @package    tool_certificate
  * @group      tool_certificate
- * @category   test
- * @copyright  2017 Mark Nelson <markn@moodle.com>
+ * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_element_helper_testcase extends advanced_testcase {
-
+class tool_certificate_element_factory_test_testcase extends advanced_testcase {
     /**
      * Test set up.
      */
     public function setUp() {
         $this->resetAfterTest();
+    }
+
+    /**
+     * Get tenant generator
+     * @return tool_tenant_generator
+     */
+    protected function get_generator() : tool_certificate_generator {
+        return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
+    }
+
+    /**
+     * Test render_html
+     */
+    public function test_get_element_instance_with_invalid_element() {
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $certificate1->add_page();
+        $element = $certificate1->new_element_for_page_id($pageid, 'invalidelement');
+        $this->assertFalse(\tool_certificate\element_factory::get_element_instance($element));
     }
 }

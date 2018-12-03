@@ -17,7 +17,7 @@
 /**
  * Unit tests for code element.
  *
- * @package    tool_certificate
+ * @package    certificateelement_code
  * @category   test
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Unit tests for code element.
  *
- * @package    tool_certificate
+ * @package    certificateelement_code
  * @group      tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -50,6 +50,9 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
         return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
     }
 
+    /**
+     * Test render_html
+     */
     public function test_render_html_content() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();

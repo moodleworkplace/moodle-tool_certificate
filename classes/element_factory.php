@@ -46,6 +46,11 @@ class element_factory {
         // Get the class name.
         $classname = '\\certificateelement_' . $element->element . '\\element';
 
+        // Ensure the necessary class exists.
+        if (!class_exists($classname)) {
+            return false;
+        }
+
         $data = new \stdClass();
         $data->id = isset($element->id) ? $element->id : null;
         $data->pageid = isset($element->pageid) ? $element->pageid : null;
@@ -60,11 +65,6 @@ class element_factory {
         $data->width = isset($element->width) ? $element->width : null;
         $data->refpoint = isset($element->refpoint) ? $element->refpoint : null;
 
-        // Ensure the necessary class exists.
-        if (class_exists($classname)) {
-            return new $classname($data);
-        }
-
-        return false;
+        return new $classname($data);
     }
 }
