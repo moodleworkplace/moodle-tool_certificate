@@ -42,10 +42,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // We are positioning the elements.
     if ($filearea === 'image') {
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            require_login($course, false, $cm);
-        } else if ($context->contextlevel == CONTEXT_SYSTEM && !has_capability('tool/certificate:manage', $context)) {
-            // TODO doesn't look like correct capability check.
+        if (!\tool_certificate::can_verify_loose()) {
             return false;
         }
 
