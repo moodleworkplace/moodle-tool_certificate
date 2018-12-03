@@ -99,7 +99,7 @@ Feature: Being able to view the certificates that have been issued
     And I log in as "manager1"
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
-    And I should not see "Verify certificates"
+    And I should see "Verify certificates"
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
@@ -239,14 +239,13 @@ Feature: Being able to view the certificates that have been issued
       | user     | role                 | contextlevel | reference |
       | manager1 | certificateissuerall | System       |           |
     And I log in as "manager1"
-    # TODO uncomment the rest of the test
-    #And I visit the verification url for the site
-    #And I verify the "Certificate 1" certificate for the user "user11"
-    #And I verify the "Certificate 1" certificate for the user "user12"
-    #And I verify the "Certificate 2" certificate for the user "user21"
-    #And I verify the "Certificate 0" certificate for the user "user22"
-    #And I verify the "Certificate 0" certificate for the user "user12"
-    #And I log out
+    And I visit the verification url for the site
+    And I verify the "Certificate 1" certificate for the user "user11"
+    And I verify the "Certificate 1" certificate for the user "user12"
+    And I verify the "Certificate 2" certificate for the user "user21"
+    And I verify the "Certificate 0" certificate for the user "user22"
+    And I verify the "Certificate 0" certificate for the user "user12"
+    And I log out
 
   Scenario: View certificates in all tenants as a certificate manager
     And the following "role assigns" exist:
@@ -296,17 +295,17 @@ Feature: Being able to view the certificates that have been issued
     And I visit the verification url for the site
     And I verify the "Certificate 1" certificate for the user "user11"
     And I verify the "Certificate 1" certificate for the user "user12"
-    # TODO uncomment: And I can not verify the "Certificate 2" certificate for the user "user21"
-    # TODO uncomment: And I can not verify the "Certificate 0" certificate for the user "user22"
+    And I can not verify the "Certificate 2" certificate for the user "user21"
+    And I can not verify the "Certificate 0" certificate for the user "user22"
     And I verify the "Certificate 0" certificate for the user "user12"
     And I log out
     And I log in as "manager2"
     And I visit the verification url for the site
-    # TODO uncomment: And I can not verify the "Certificate 1" certificate for the user "user11"
-    # TODO uncomment: And I can not verify the "Certificate 1" certificate for the user "user12"
+    And I can not verify the "Certificate 1" certificate for the user "user11"
+    And I can not verify the "Certificate 1" certificate for the user "user12"
     And I verify the "Certificate 2" certificate for the user "user21"
     And I verify the "Certificate 0" certificate for the user "user22"
-    # TODO uncomment: And I can not verify the "Certificate 0" certificate for the user "user12"
+    And I can not verify the "Certificate 0" certificate for the user "user12"
     And I log out
 
   Scenario: Verify any certificate for any tenant as a guest using the site-wide URL
@@ -315,6 +314,7 @@ Feature: Being able to view the certificates that have been issued
       | capability | permission |
       | tool/certificate:verifyforalltenants | Allow |
     And I log out
+    And I log in as "guest"
     And I visit the verification url for the site
     And I verify the "Certificate 1" certificate for the user "user11"
     And I verify the "Certificate 1" certificate for the user "user12"

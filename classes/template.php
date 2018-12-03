@@ -728,12 +728,23 @@ class template {
      * @return bool
      */
     public function can_verify() {
-        if (has_any_capability(['tool/certificate:verifyforalltenants',
-                                'tool/certificate:manageforalltenants'], $this->get_context())) {
+        if (self::can_verify_for_all_tenants()) {
             return true;
         }
         return has_any_capability(['tool/certificate:verify', 'tool/certificate:manage'] , \context_system::instance()) &&
                    (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
+    }
+
+    /**
+     * If current user can verify issued certificates on all tenants
+     *
+     * @return bool
+     */
+    public static function can_verify_for_all_tenants() {
+        if (has_any_capability(['tool/certificate:verifyforalltenants',
+                                'tool/certificate:manageforalltenants'], \context_system::instance())) {
+            return true;
+        }
     }
 
     /**
