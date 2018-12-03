@@ -44,7 +44,8 @@ if ($action == 'edit') {
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
     $pageid = required_param('pageid', PARAM_INT);
-    if (!$element = $template->new_element_for_page_id($pageid)) {
+    $element = required_param('element', PARAM_ALPHA);
+    if (!$element = $template->new_element_for_page_id($pageid, $element)) {
         print_error('invalidpagefortemplate', 'tool_certificate');
     }
     $pageurl = new moodle_url('/admin/tool/certificate/edit_element.php', ['tid' => $templateid, 'element' => $element->element,

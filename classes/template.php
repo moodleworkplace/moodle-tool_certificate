@@ -587,16 +587,17 @@ class template {
      * Returns a new element if pageid belongs to this template, false otherwise.
      *
      * @param int $pageid
+     * @param string $elementtype
      * @return bool|\stdClass
      */
-    public function new_element_for_page_id($pageid) {
+    public function new_element_for_page_id($pageid, $elementtype) {
         global $DB;
         $pagetemplate = $DB->get_field('tool_certificate_pages', 'templateid', ['id' => $pageid], MUST_EXIST);
         if ($pagetemplate != $this->id) {
             return false;
         }
         $element = new \stdClass();
-        $element->element = required_param('element', PARAM_ALPHA);
+        $element->element = $elementtype;
         return $element;
     }
 
