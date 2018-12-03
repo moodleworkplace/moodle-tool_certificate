@@ -126,7 +126,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
     }
 
     /**
-     * Test get issues for user.
+     * Test verify
      */
     public function test_verify() {
         global $DB;
@@ -167,7 +167,6 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
 
         $this->assertTrue($result->success);
         $this->assertTrue(isset($result->issues[$issueid1]));
-
     }
 
     /**
