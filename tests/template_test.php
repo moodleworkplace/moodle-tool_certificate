@@ -51,7 +51,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test certificate template creation.
+     * Test create
      */
     public function test_create() {
         global $DB;
@@ -102,7 +102,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test change a template name.
+     * Test save
      */
     public function test_save() {
         // Create new certificate.
@@ -132,7 +132,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Find a certificate template given it's name.
+     * Test find_by_name
      */
     public function test_find_by_name() {
         $certname = 'Certificate 1';
@@ -141,7 +141,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Find a certificate template given it's id.
+     * Test find_by_id
      */
     public function test_find_by_id() {
         $certname = 'Certificate 1';
@@ -150,7 +150,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test duplicate a template.
+     * Test duplicate
      */
     public function test_duplicate() {
         $certname = 'Certificate 1';
@@ -162,10 +162,12 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test delete an empty template.
+     * Test delete
      */
-    public function test_delete_empty_template() {
+    public function test_delete() {
         global $DB;
+
+        // Fist certificate without pages
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
 
@@ -187,10 +189,33 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_description());
 
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
+
+        // Second certificate with pages
+        $certname = 'Certificate 2';
+        $certificate2 = $this->get_generator()->create_template((object)['name' => $certname]);
+        $certificate2->add_page();
+        $certificate2->add_page();
+
+        $certificate2->delete();
+
+        $this->assertEquals(0, $DB->count_records('tool_certificate_pages'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
+
+        // Third certificate with issues
+        $certname = 'Certificate 3';
+        $certificate3 = $this->get_generator()->create_template((object)['name' => $certname]);
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $issueid1 = $certificate3->issue_certificate($user1->id);
+
+        $certificate3->delete();
+
+        $this->assertEquals(0, $DB->count_records('tool_certificate_issues'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
     }
 
     /**
-     * Test add page to template.
+     * Test add_page to template.
      */
     public function test_add_page() {
         global $DB;
@@ -201,7 +226,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test delete page from template.
+     * Test delete_page
      */
     public function test_delete_page() {
         global $DB;
@@ -217,7 +242,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test save page.
+     * Test save_page
      */
     public function test_save_page() {
         global $DB;
@@ -233,7 +258,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test issue certificate to user.
+     * Test issue_certificate
      */
     public function test_issue_certificate() {
         global $DB;
@@ -284,7 +309,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test get issues for user.
+     * Test revoke_issue
      */
     public function test_revoke_issue() {
         global $DB;
