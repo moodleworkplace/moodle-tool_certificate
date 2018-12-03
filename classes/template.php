@@ -386,7 +386,11 @@ class template {
         if ($tenantid) {
             $data->tenantid = $tenantid;
         } else {
-            $data->tenantid = $this->get_tenant_id();
+            if (self::can_issue_or_manage_all_tenants()) {
+                $data->tenantid = $this->get_tenant_id();
+            } else {
+                $data->tenantid = tenancy::get_tenant_id();
+            }
         }
         $newtemplate = self::create($data);
 
@@ -604,6 +608,17 @@ class template {
     public function can_manage(): bool {
         return has_capability('tool/certificate:manageforalltenants', $this->get_context()) ||
                (has_capability('tool/certificate:manage', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id());
+    }
+
+    /**
+     * If a user can duplicate this template.
+     *
+     * @return bool
+     */
+    public function can_duplicate(): bool {
+        return has_capability('tool/certificate:manageforalltenants', $this->get_context()) ||
+               (has_capability('tool/certificate:manage', $this->get_context()) &&
+                 ($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
     }
 
     /**

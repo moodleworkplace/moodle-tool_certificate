@@ -128,7 +128,7 @@ if ($tid) {
     }
 }
 
-$table = new \tool_certificate\manage_templates_table($context);
+$table = new \tool_certificate\manage_templates_table();
 $table->define_baseurl($pageurl);
 
 echo $OUTPUT->header();
