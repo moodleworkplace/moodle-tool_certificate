@@ -91,7 +91,7 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
     public function test_can_view_admin_tree() {
         global $DB;
 
-        $guest = $DB->get_record('user', array('username'=>'guest'));
+        $guest = $DB->get_record('user', array('username' => 'guest'));
         $this->setUser($guest);
 
         $this->assertFalse(\tool_certificate\template::can_view_admin_tree());
