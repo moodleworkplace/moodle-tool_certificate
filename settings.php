@@ -27,10 +27,11 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
 $managecaps = ['tool/certificate:manage', 'tool/certificate:manageforalltenants'];
-$viewcaps = ['tool/certificate:viewallcertificates', 'tool/certificate:verify'];
+$verifycaps = ['tool/certificate:verify'];
+$viewcaps = ['tool/certificate:viewallcertificates'];
 $imagecaps = ['tool/certificate:imageforalltenants'];
 $issuecaps = ['tool/certificate:issue'];
-$anycaps = array_merge($managecaps, $viewcaps, $imagecaps, $issuecaps);
+$anycaps = array_merge($managecaps, $verifycaps, $viewcaps, $imagecaps, $issuecaps);
 
 if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) {
 
@@ -42,7 +43,7 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
                 get_string('verifycertificates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/index.php'), $anycaps));
+                new moodle_url('/admin/tool/certificate/index.php'), $verifycaps));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
                 get_string('addcertificate', 'tool_certificate'),
