@@ -26,21 +26,6 @@ namespace certificateelement_date;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Date - Course grade date
- */
-define('CUSTOMCERT_DATE_COURSE_GRADE', '0');
-
-/**
- * Date - Issue
- */
-define('CUSTOMCERT_DATE_ISSUE', '-1');
-
-/**
- * Date - Expiry
- */
-define('CUSTOMCERT_DATE_EXPIRY', '-2');
-
 require_once($CFG->dirroot . '/lib/grade/constants.php');
 
 /**
@@ -53,6 +38,16 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
 class element extends \tool_certificate\element {
 
     /**
+     * @var int Show creation date
+     */
+    const CUSTOMCERT_DATE_ISSUE = -1;
+
+    /**
+     * @var int Show expiry date.
+     */
+    const CUSTOMCERT_DATE_EXPIRY = -2;
+
+    /**
      * This function renders the form elements when adding a certificate element.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
@@ -61,8 +56,8 @@ class element extends \tool_certificate\element {
 
         // Get the possible date options.
         $dateoptions = [];
-        $dateoptions[CUSTOMCERT_DATE_ISSUE] = get_string('issueddate', 'certificateelement_date');
-        $dateoptions[CUSTOMCERT_DATE_EXPIRY] = get_string('expirydate', 'certificateelement_date');
+        $dateoptions[self::CUSTOMCERT_DATE_ISSUE] = get_string('issueddate', 'certificateelement_date');
+        $dateoptions[self::CUSTOMCERT_DATE_EXPIRY] = get_string('expirydate', 'certificateelement_date');
 
         $mform->addElement('select', 'dateitem', get_string('dateitem', 'certificateelement_date'), $dateoptions);
         $mform->addHelpButton('dateitem', 'dateitem', 'certificateelement_date');
@@ -116,9 +111,9 @@ class element extends \tool_certificate\element {
         if ($preview) {
             $date = time();
         } else {
-            if ($dateitem == CUSTOMCERT_DATE_ISSUE) {
+            if ($dateitem == self::CUSTOMCERT_DATE_ISSUE) {
                 $date = $issue->timecreated;
-            } else if ($dateitem == CUSTOMCERT_DATE_EXPIRY) {
+            } else if ($dateitem == self::CUSTOMCERT_DATE_EXPIRY) {
                 $date = $issue->expires;
             } else {
                 $date = '';
