@@ -332,9 +332,9 @@ Feature: Being able to view the certificates that have been issued
     And I log out
     When I log in as "manager1"
     And I follow "Site administration"
-    # TODO uncomment: Then "Certificates" "text" should not exist in the "region-main" "region"
-    # TODO uncomment: And I should not see "Manage certificate templates"
-    # TODO uncomment: And I should not see "Verify certificates"
+    Then "Certificates" "text" should not exist in the "region-main" "region"
+    And I should not see "Manage certificate templates"
+    And I should not see "Verify certificates"
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
     And I log out

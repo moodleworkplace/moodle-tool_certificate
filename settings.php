@@ -33,7 +33,7 @@ $imagecaps = ['tool/certificate:imageforalltenants'];
 $issuecaps = ['tool/certificate:issue'];
 $anycaps = array_merge($managecaps, $verifycaps, $viewcaps, $imagecaps, $issuecaps);
 
-if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) {
+if ($hassiteconfig || \tool_certificate\template::can_see_admin_tree()) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')));
 
@@ -41,11 +41,9 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
                 get_string('managetemplates', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/manage_templates.php'), $anycaps));
 
-    if (\tool_certificate\template::can_verify_loose()) {
-        $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
-                    get_string('verifycertificates', 'tool_certificate'),
-                    new moodle_url('/admin/tool/certificate/index.php'), $anycaps));
-    }
+    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
+                get_string('verifycertificates', 'tool_certificate'),
+                new moodle_url('/admin/tool/certificate/index.php'), $anycaps));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
                 get_string('addcertificate', 'tool_certificate'),
