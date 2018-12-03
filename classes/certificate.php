@@ -261,6 +261,17 @@ class certificate {
         $result = new \stdClass();
         $result->issues = array();
 
+
+        $conditions = ['code' => $code];
+
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+            $tenantjoin = '';
+            $tenantwhere = ' u.deleted = 0';
+        } else {
+            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
+            $conditions = array_merge($conditions, $tenantparams);
+        }
+
         $userfields = get_all_user_name_fields(true, 'u');
 
         $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
@@ -273,11 +284,12 @@ class certificate {
                     ON t.id = ci.templateid
                   JOIN {user} u
                     ON ci.userid = u.id
+                       {$tenantjoin}
                  WHERE ci.code = :code
-                   AND u.deleted = 0";
+                   AND {$tenantwhere}";
 
         // It is possible (though unlikely) that there is the same code for issued certificates.
-        if ($issues = $DB->get_records_sql($sql, ['code' => $code])) {
+        if ($issues = $DB->get_records_sql($sql, $conditions)) {
             $result->success = true;
             $result->issues = $issues;
             foreach ($result->issues as $issue) {

@@ -41,9 +41,11 @@ if ($hassiteconfig || has_any_capability($anycaps, context_system::instance())) 
                 get_string('managetemplates', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/manage_templates.php'), $anycaps));
 
-    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
-                get_string('verifycertificates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/index.php'), $verifycaps));
+    if (\tool_certificate\template::can_verify_loose()) {
+        $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
+                    get_string('verifycertificates', 'tool_certificate'),
+                    new moodle_url('/admin/tool/certificate/index.php'), $anycaps));
+    }
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
                 get_string('addcertificate', 'tool_certificate'),
