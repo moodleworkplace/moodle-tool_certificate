@@ -86,12 +86,12 @@ Feature: Being able to manually issue a certificate to a user
     And I am on site homepage
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
-    # TODO uncomment: And I should not see "Verify certificates"
+    And I should not see "Verify certificates"
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # The templates from other tenants should not be visible.
-    # TODO uncomment: And I should not see "Certificate 2"
+    And I should not see "Certificate 2"
     # Issue a certificate for a template that belongs to the same tenant (user from my tenants that don't have certificate yet).
     And I click on "Issue new certificate from this template" "link" in the "Certificate 1" "table_row"
     And I open the autocomplete suggestions list
