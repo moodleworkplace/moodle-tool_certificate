@@ -33,7 +33,7 @@ $imagecaps = ['tool/certificate:imageforalltenants'];
 $issuecaps = ['tool/certificate:issue'];
 $anycaps = array_merge($managecaps, $verifycaps, $viewcaps, $imagecaps, $issuecaps);
 
-if ($hassiteconfig || \tool_certificate\template::can_see_admin_tree()) {
+if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')));
 

@@ -66,8 +66,43 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         assign_capability('tool/certificate:manageforalltenants', CAP_ALLOW, $managerrole->id, \context_system::instance()->id);
 
         // Now manager can manage templates in all tenants.
-        $this->assertEquals(true, $certificate1->can_manage());
-        $this->assertEquals(true, $certificate2->can_manage());
+        $this->assertTrue($certificate1->can_manage());
+        $this->assertTrue($certificate2->can_manage());
+    }
+
+    /**
+     * Test can_verify_loose . For default, manager are able to verify certificates.
+     */
+    public function test_can_verify_loose() {
+        global $DB;
+
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
+
+        $this->setUser($manager);
+
+        $this->assertTrue(\tool_certificate\template::can_verify_loose());
+    }
+
+    /**
+     * Test can_view_admin_tree. For default, manager are able to view the admin tree, but guests are not.
+     */
+    public function test_can_view_admin_tree() {
+        global $DB;
+
+        $guest = $DB->get_record('user', array('username'=>'guest'));
+        $this->setUser($guest);
+
+        $this->assertFalse(\tool_certificate\template::can_view_admin_tree());
+
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
+
+        $this->setUser($manager);
+
+        $this->assertTrue(\tool_certificate\template::can_view_admin_tree());
     }
 
     /**

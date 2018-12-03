@@ -325,7 +325,7 @@ abstract class element {
             $element->pageid = $data->pageid;
             $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
             $element->timecreated = time();
-            return $DB->insert_record('tool_certificate_elements', $element, false);
+            return $DB->insert_record('tool_certificate_elements', $element);
         }
     }
 
