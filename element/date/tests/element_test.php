@@ -57,5 +57,10 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
         $formdata = (object)['name' => 'Date element', 'data' => $data,  'element' => 'date', 'pageid' => $pageid];
         $e = \tool_certificate\element_factory::get_element_instance($formdata);
         $this->assertFalse(empty($e->render_html()));
+
+        $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_EXPIRY, 'dateformat' => 0]);
+        $formdata->data = $data;
+        $e = \tool_certificate\element_factory::get_element_instance($formdata);
+        $this->assertFalse(empty($e->render_html()));
     }
 }
