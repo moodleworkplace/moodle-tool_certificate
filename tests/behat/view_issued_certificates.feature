@@ -162,13 +162,13 @@ Feature: Being able to view the certificates that have been issued
       | user     | role              | contextlevel | reference |
       | manager1 | certificateviewer | System       |           |
     And I log in as "manager1"
-    # TODO uncomment the rest of the test:
-    #And I verify the "Certificate 1" certificate for the user "user11"
-    #And I verify the "Certificate 1" certificate for the user "user12"
-    #And I can not verify the "Certificate 2" certificate for the user "user21"
-    #And I can not verify the "Certificate 0" certificate for the user "user22"
-    #And I verify the "Certificate 0" certificate for the user "user12"
-    #And I log out
+    And I visit the verification url for the site
+    And I verify the "Certificate 1" certificate for the user "user11"
+    And I verify the "Certificate 1" certificate for the user "user12"
+    And I can not verify the "Certificate 2" certificate for the user "user21"
+    And I can not verify the "Certificate 0" certificate for the user "user22"
+    And I verify the "Certificate 0" certificate for the user "user12"
+    And I log out
 
   Scenario: View certificates as a person who can manage certificates for one tenant but can not issue
     And the following "role assigns" exist:
