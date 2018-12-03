@@ -663,6 +663,16 @@ class template {
     }
 
     /**
+     * If current user can see the section on admin tree
+     *
+     * @return bool
+     */
+    public static function can_see_admin_tree(): bool {
+        return has_any_capability(['tool/certificate:issue', 'tool/certificate:issueforalltenants',
+                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
+    }
+
+    /**
      * Get issue record from database base on it's code.
      *
      * @param string $issuecode
