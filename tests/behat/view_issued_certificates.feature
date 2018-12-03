@@ -62,8 +62,6 @@ Feature: Being able to view the certificates that have been issued
       | capability                          | permission |
       | tool/certificate:issueforalltenants | Allow      |
       | moodle/site:configview              | Allow      |
-      | tool/certificate:issue | Allow      |
-    # TODO: remove capability "tool/certificate:issue" from role "Certificate issuer for all".
     And I set the following system permissions of "Certificate viewer" role:
       | capability                           | permission |
       | tool/certificate:viewallcertificates | Allow      |
