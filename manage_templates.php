@@ -43,7 +43,7 @@ admin_externalpage_setup('tool_certificate/managetemplates');
 $canissue = has_capability('tool/certificate:issue', $context);
 $canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], $context);
 
-if (!$canmanage && !$canissue) {
+if (!\tool_certificate\template::can_verify_loose()) {
     print_error('permissiondenied', 'tool_certificate');
 }
 
