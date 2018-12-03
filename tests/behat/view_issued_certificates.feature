@@ -203,8 +203,8 @@ Feature: Being able to view the certificates that have been issued
     And I visit the verification url for the site
     And I verify the "Certificate 1" certificate for the user "user11"
     And I verify the "Certificate 1" certificate for the user "user12"
-    # TODO uncomment: And I can not verify the "Certificate 2" certificate for the user "user21"
-    # TODO uncomment: And I can not verify the "Certificate 0" certificate for the user "user22"
+    And I can not verify the "Certificate 2" certificate for the user "user21"
+    And I can not verify the "Certificate 0" certificate for the user "user22"
     And I verify the "Certificate 0" certificate for the user "user12"
     And I log out
 

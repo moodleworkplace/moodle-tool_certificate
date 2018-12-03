@@ -261,7 +261,6 @@ class certificate {
         $result = new \stdClass();
         $result->issues = array();
 
-
         $conditions = ['code' => $code];
 
         if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
