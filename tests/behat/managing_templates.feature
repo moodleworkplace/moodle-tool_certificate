@@ -128,17 +128,17 @@ Feature: Being able to manage site templates
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And "Edit" "link" should exist in the "Certificate 1" "table_row"
-    # TODO uncomment: And I should not see "Certificate 2"
+    And I should not see "Certificate 2"
     And "Edit" "link" should not exist in the "Certificate 0" "table_row"
-    # TODO uncomment: And I click on "Duplicate" "link" in the "Certificate 0" "table_row"
-    # TODO uncomment: And I press "Continue"
-    # TODO uncomment: Then I should see "Certificate 0"
-    # TODO uncomment: And I should see "Certificate 0 (duplicate)"
+    And I click on "Duplicate" "link" in the "Certificate 0" "table_row"
+    And I press "Continue"
+    Then I should see "Certificate 0"
+    And I should see "Certificate 0 (duplicate)"
     And I log out
-    # Now make sure the duplicate was created for Tenant 2.
+    # Now make sure the duplicate was created for Tenant 1.
     And I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    # TODO uncomment: And "Tenant 2" "text" should exist in the "Certificate 0 (duplicate)" "table_row"
+    And "Tenant 1" "text" should exist in the "Certificate 0 (duplicate)" "table_row"
     And I log out
 
   Scenario: Duplicating a site template to another tenant
