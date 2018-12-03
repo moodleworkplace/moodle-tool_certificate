@@ -45,7 +45,7 @@ admin_externalpage_setup('tool_certificate/managetemplates');
 
 $template = \tool_certificate\template::find_by_id($templateid);
 
-if (!$template->can_manage() && !$template->can_issue()) {
+if (!\tool_certificate\template::can_verify_loose()) {
     print_error('issueormanagenotallowed', 'tool_certificate');
 }
 

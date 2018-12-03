@@ -183,20 +183,19 @@ Feature: Being able to view the certificates that have been issued
     And I should see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    # TODO uncomment: And I should not see "Certificate 2"
+    And I should not see "Certificate 2"
     And "Issue new certificate from this template" "link" should not exist in the "Certificate 1" "table_row"
     And "Issue new certificate from this template" "link" should not exist in the "Certificate 0" "table_row"
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    #And "Issue new certificate" "link" should not exist
+    And "Issue new certificate" "link" should not exist
     And I should see "User 11"
     And I should see "User 12"
     And I follow "Manage certificate templates"
-    # TODO uncomment the rest of the test:
-    #And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    #And I should not see "User 2"
-    #And I should not see "User 11"
-    #And I should see "User 12"
-    #And I log out
+    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
+    And I should not see "User 2"
+    And I should not see "User 11"
+    And I should see "User 12"
+    And I log out
 
   Scenario: Verify certificates as a person who can manage certificates for one tenant but can not issue
     And the following "role assigns" exist:
