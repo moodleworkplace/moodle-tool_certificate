@@ -154,6 +154,16 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
+        $conditions = ['templateid' => $templateid, 'sort' => $sort];
+
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+            $tenantjoin = '';
+            $tenantwhere = ' u.deleted = 0';
+        } else {
+            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
+            $conditions = array_merge($conditions, $tenantparams);
+        }
+
         $sql = "SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
                        t.name, " .
                        get_all_user_name_fields(true, 'u') . "
@@ -162,11 +172,10 @@ class certificate {
                     ON (ci.templateid = t.id)
                   JOIN {user} u
                     ON (u.id = ci.userid)
-                 WHERE u.deleted = 0
-                   AND t.id = :templateid
+                       {$tenantjoin}
+                 WHERE t.id = :templateid
+                   AND {$tenantwhere}
               ORDER BY :sort";
-
-        $conditions = ['templateid' => $templateid, 'sort' => $sort];
 
         return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
     }

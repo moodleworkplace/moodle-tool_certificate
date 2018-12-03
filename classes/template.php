@@ -716,7 +716,8 @@ class template {
      * @return bool
      */
     public function can_verify() {
-        if (has_any_capability(['tool/certificate:verifyforalltenants', 'tool/certificate:manageforalltenants'], $this->get_context())) {
+        if (has_any_capability(['tool/certificate:verifyforalltenants',
+                                'tool/certificate:manageforalltenants'], $this->get_context())) {
             return true;
         }
         return has_any_capability(['tool/certificate:verify', 'tool/certificate:manage'] , \context_system::instance()) &&
