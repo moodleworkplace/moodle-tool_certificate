@@ -80,12 +80,8 @@ class external extends \external_api {
         // Set the template.
         $template = new \tool_certificate\template($template);
 
-        // Perform checks.
-        if ($cm = $template->get_cm()) {
-            self::validate_context(\context_module::instance($cm->id));
-        } else {
-            self::validate_context(\context_system::instance());
-        }
+        self::validate_context(\context_system::instance());
+
         // Make sure the user has the required capabilities.
         $template->require_manage();
 
@@ -151,12 +147,7 @@ class external extends \external_api {
         // Set the template.
         $template = new \tool_certificate\template($template);
 
-        // Perform checks.
-        if ($cm = $template->get_cm()) {
-            self::validate_context(\context_module::instance($cm->id));
-        } else {
-            self::validate_context(\context_system::instance());
-        }
+        self::validate_context(\context_system::instance());
 
         // Get an instance of the element class.
         if ($e = \tool_certificate\element_factory::get_element_instance($element)) {

@@ -50,7 +50,10 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
         return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
     }
 
-    public function test_render_html_content() {
+    /**
+     * Test render_html
+     */
+    public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $element = $certificate1->new_element_for_page_id($pageid, 'text');
