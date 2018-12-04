@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot.'/user/profile/lib.php');
+
 /**
  * Unit tests for userfield element.
  *
