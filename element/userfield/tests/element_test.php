@@ -25,8 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/user/profile/lib.php');
-
 /**
  * Unit tests for userfield element.
  *
@@ -56,7 +54,9 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
      * Test render_html
      */
     public function test_render_html() {
-        global $USER, $DB;
+        global $USER, $DB, $CFG;
+
+        require_once($CFG->dirroot.'/user/profile/lib.php');
 
         $this->setAdminUser();
 
