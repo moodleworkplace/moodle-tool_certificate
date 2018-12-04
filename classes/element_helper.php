@@ -26,10 +26,6 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/grade/constants.php');
-require_once($CFG->dirroot . '/grade/lib.php');
-require_once($CFG->dirroot . '/grade/querylib.php');
-
 /**
  * Class helper.
  *
