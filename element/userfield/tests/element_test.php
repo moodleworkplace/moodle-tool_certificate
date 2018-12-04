@@ -50,16 +50,33 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
         return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
     }
 
-    public function test_render_html_content() {
+    /**
+     * Test render_html
+     */
+    public function test_render_html() {
+        global $USER, $DB;
+
         $this->setAdminUser();
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $element = $certificate1->new_element_for_page_id($pageid, 'userfield');
 
-        $formdata = (object)['name' => 'Userfield element', 'data' => 'email',  'element' => 'userfield', 'pageid' => $pageid];
+        $formdata = (object)['name' => 'User email element', 'data' => 'email',  'element' => 'userfield', 'pageid' => $pageid];
         $e = \tool_certificate\element_factory::get_element_instance($formdata);
 
         $this->assertTrue(strpos($e->render_html(), '@') !== false);
+
+        // Add a custom field of textarea type.
+        $id1 = $DB->insert_record('user_info_field', array(
+                'shortname' => 'frogdesc', 'name' => 'Description of frog', 'categoryid' => 1,
+                'datatype' => 'textarea'));
+
+        $formdata = (object)['name' => 'User custom field element', 'data' => $id1,  'element' => 'userfield', 'pageid' => $pageid];
+        $e = \tool_certificate\element_factory::get_element_instance($formdata);
+
+        profile_save_data((object)['id' => $USER->id, 'profile_field_frogdesc' => 'Gryffindor']);
+
+        $this->assertTrue(strpos($e->render_html(), 'Gryffindor') !== false);
     }
 }

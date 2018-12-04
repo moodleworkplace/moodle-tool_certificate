@@ -51,7 +51,7 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
     }
 
     /**
-     * Test tender_html
+     * Test render_html
      */
     public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
@@ -65,5 +65,12 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
         $formdata->data = $data;
         $e = \tool_certificate\element_factory::get_element_instance($formdata);
         $this->assertFalse(empty($e->render_html()));
+    }
+
+    /**
+     * Test get_date_formats
+     */
+    public function test_get_date_formats() {
+        $this->assertFalse(empty(\certificateelement_date\element::get_date_formats()));
     }
 }
