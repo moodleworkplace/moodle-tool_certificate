@@ -167,7 +167,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     public function test_delete() {
         global $DB;
 
-        // Fist certificate without pages
+        // Fist certificate without pages.
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
 
@@ -190,7 +190,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
 
-        // Second certificate with pages
+        // Second certificate with pages.
         $certname = 'Certificate 2';
         $certificate2 = $this->get_generator()->create_template((object)['name' => $certname]);
         $certificate2->add_page();
@@ -201,7 +201,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('tool_certificate_pages'));
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
 
-        // Third certificate with issues
+        // Third certificate with issues.
         $certname = 'Certificate 3';
         $certificate3 = $this->get_generator()->create_template((object)['name' => $certname]);
         $user1 = $this->getDataGenerator()->create_user();
@@ -215,7 +215,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     }
 
     /**
-     * Test add_page to template.
+     * Test add_page
      */
     public function test_add_page() {
         global $DB;
