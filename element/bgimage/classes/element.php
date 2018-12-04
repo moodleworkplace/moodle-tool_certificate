@@ -128,4 +128,3 @@ class element extends \certificateelement_image\element {
         }
     }
 }
-
