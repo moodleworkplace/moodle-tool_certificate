@@ -47,7 +47,11 @@ class certificate_issues extends moodleform {
         $options = array(
             'ajax' => 'tool_tenant/form-potential-user-selector',
             'multiple' => true,
+            'data-excludeduserids' => json_encode($this->_customdata['excludeduserids']),
         );
+        if ($this->_customdata['tenantid'] > 0) {
+            $options['data-tenantid'] = $this->_customdata['tenantid'];
+        }
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
 
