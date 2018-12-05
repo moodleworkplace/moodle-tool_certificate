@@ -47,7 +47,6 @@ class certificate_issues extends moodleform {
         $options = array(
             'ajax' => 'tool_tenant/form-potential-user-selector',
             'multiple' => true,
-            'data-capability' => 'tool/certificate:manage'
         );
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);

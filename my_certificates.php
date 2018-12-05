@@ -37,7 +37,7 @@ require_login();
 // Check that we have a valid user.
 if ($userid > 0) {
     $user = \core_user::get_user($userid, '*', MUST_EXIST);
-    if (! \tool_certificate\template::can_view_list($userid)) {
+    if (!\tool_certificate\template::can_view_list($userid)) {
         print_error('You are not allowed to view these certificates');
     }
 }

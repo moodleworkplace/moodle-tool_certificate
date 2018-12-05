@@ -669,7 +669,8 @@ class template {
      */
     public static function can_view_admin_tree(): bool {
         return has_any_capability(['tool/certificate:issue', 'tool/certificate:issueforalltenants',
-                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants'], \context_system::instance());
+                                   'tool/certificate:manage', 'tool/certificate:manageforalltenants',
+                                   'tool/certificate:viewallcertificates'], \context_system::instance());
     }
 
     /**
@@ -703,8 +704,13 @@ class template {
         if ($userid == $USER->id) {
             return true;
         }
-        // TODO viewallcertificates needs a tenant check.
-        return has_capability('tool/certificate:viewallcertificates', context_system::instance());
+        if (has_capability('tool/certificate:issueforalltenants')) {
+            return true;
+        }
+        return (has_any_capability(['tool/certificate:viewallcertificates',
+                                   'tool/certificate:issue'],
+                                   context_system::instance()) &&
+                (tenancy::get_tenant_id() == tenancy::get_tenant_id($userid)));
     }
 
     /**

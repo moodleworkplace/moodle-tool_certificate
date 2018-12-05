@@ -30,7 +30,7 @@ $managecaps = ['tool/certificate:manage', 'tool/certificate:manageforalltenants'
 $verifycaps = ['tool/certificate:verify'];
 $viewcaps = ['tool/certificate:viewallcertificates'];
 $imagecaps = ['tool/certificate:imageforalltenants'];
-$issuecaps = ['tool/certificate:issue'];
+$issuecaps = ['tool/certificate:issue', 'tool/certificate:issueforalltenants'];
 $anycaps = array_merge($managecaps, $verifycaps, $viewcaps, $imagecaps, $issuecaps);
 
 if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
