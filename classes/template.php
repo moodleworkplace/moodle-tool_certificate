@@ -443,6 +443,23 @@ class template {
     }
 
     /**
+     * Returns array of user ids that already have issue for this template
+     */
+    public function get_issued_user_ids() {
+        global $DB;
+        $sql = "SELECT userid
+                  FROM {tool_certificate_issues} ci
+                 WHERE ci.templateid = :templateid";
+        $params = ['templateid' => $this->id];
+        $records = $DB->get_records_sql($sql, $params);
+        $userids = [];
+        foreach ($records as $r) {
+            $userids[] = $r->userid;
+        }
+        return  $userids;
+    }
+
+    /**
      * Returns the id of the template.
      *
      * @return int the id of the template
@@ -637,7 +654,7 @@ class template {
         if ($issuetouserid == 0) {
             return $generalcap;
         }
-        return $generalcap && ($this->tenantid == tenancy::get_tenant_id($issuetouserid));
+        return $generalcap && (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id($issuetouserid)));
     }
 
     /**

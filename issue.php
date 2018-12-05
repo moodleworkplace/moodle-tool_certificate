@@ -35,7 +35,8 @@ if (!$template->can_issue()) {
     print_error('issuenotallowed', 'tool_certificate');
 }
 
-$form = new \tool_certificate\form\certificate_issues($template->new_issue_url()->out());
+$customdata = ['excludeduserids' => $template->get_issued_user_ids(), 'tenantid' => $template->get_tenant_id()];
+$form = new \tool_certificate\form\certificate_issues($template->new_issue_url()->out(), $customdata);
 if ($form->is_cancelled()) {
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 } else if (($data = $form->get_data()) && !empty($data->users)) {
