@@ -86,7 +86,7 @@ Feature: Being able to manually issue a certificate to a user
     And I am on site homepage
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
-    And I should not see "Verify certificates"
+    And I should see "Verify certificates"
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
@@ -133,7 +133,7 @@ Feature: Being able to manually issue a certificate to a user
     And I am on site homepage
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
-    And I should not see "Verify certificates"
+    And I should see "Verify certificates"
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
