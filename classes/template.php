@@ -443,14 +443,15 @@ class template {
     }
 
     /**
-     * Returns array of user ids that already have issue for this template
+     * Returns array of user ids that already have issue for this template with no expiry date or expiry in future
      */
     public function get_issued_user_ids() {
         global $DB;
         $sql = "SELECT userid
                   FROM {tool_certificate_issues} ci
-                 WHERE ci.templateid = :templateid";
-        $params = ['templateid' => $this->id];
+                 WHERE ci.templateid = :templateid
+                   AND (ci.expiry IS NULL or ci.expiry > :now)";
+        $params = ['templateid' => $this->id, 'now' => time()];
         $records = $DB->get_records_sql($sql, $params);
         $userids = [];
         foreach ($records as $r) {
