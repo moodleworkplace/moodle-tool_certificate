@@ -44,7 +44,7 @@ if ($action == 'edit') {
 } else { // Must be adding an element.
     // We need to supply what element we want added to what page.
     $pageid = required_param('pageid', PARAM_INT);
-    $element = required_param('element', PARAM_ALPHA);
+    $element = required_param('element', PARAM_COMPONENT);
     if (!$element = $template->new_element_for_page_id($pageid, $element)) {
         print_error('invalidpagefortemplate', 'tool_certificate');
     }
