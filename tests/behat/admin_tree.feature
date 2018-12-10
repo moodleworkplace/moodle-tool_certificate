@@ -62,7 +62,6 @@ Feature: View links on admin tree
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Issue new certificate from this template" "link"
     And I set the field "Select users to issue certificate for" to "User One"
-    And I wait until the page is ready
     And I press "Issue new certificates"
     Then I should see "One issue was created"
 

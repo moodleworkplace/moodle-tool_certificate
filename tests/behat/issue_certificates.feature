@@ -59,7 +59,6 @@ Feature: Being able to manually issue a certificate to a user
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
     And I set the field "Select users to issue certificate for" to "Student"
-    And I wait until the page is ready
     And I press "Issue new certificates"
     Then I should see "One issue was created"
 
@@ -69,7 +68,6 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I click on "Issue new certificates" "link"
     And I set the field "Select users to issue certificate for" to "Student"
-    And I wait until the page is ready
     And I press "Issue new certificates"
     Then I should see "One issue was created"
 
