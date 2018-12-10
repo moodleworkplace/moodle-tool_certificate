@@ -154,7 +154,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
                  ON u.id = ci.userid AND ci.templateid = :templateid';
 
         $where .= ' AND ci.id IS NULL
-                     OR ci.expires < :now';
+                     OR (ci.expires > 0 AND ci.expires < :now)';
 
         $params['templateid'] = $itemid;
         $params['now'] = time();
