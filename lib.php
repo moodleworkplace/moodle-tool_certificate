@@ -139,3 +139,25 @@ function tool_certificate_get_fontawesome_icon_map() {
         'tool_certificate:download' => 'fa-download'
     ];
 }
+
+/**
+ * Callback to filter form-potential-users-selector
+ * @param string $area
+ * @param int $itemid
+ * @return array
+ */
+function tool_certificate_potential_users_selector($area, $itemid) {
+    list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u');
+
+    if ($itemid) {
+        $join .= ' LEFT JOIN {tool_certificate_issues} ci
+                 ON u.id = ci.userid AND ci.templateid = :templateid';
+
+        $where .= ' AND ci.id IS NULL
+                     OR ci.expires < :now';
+
+        $params['templateid'] = $itemid;
+        $params['now'] = time();
+    }
+    return [$join, $where, $params];
+}
