@@ -197,7 +197,6 @@ class certificate {
         global $DB;
 
         $result = new \stdClass();
-        $result->issues = array();
 
         $conditions = ['code' => $code];
 
@@ -226,16 +225,14 @@ class certificate {
                  WHERE ci.code = :code
                    AND {$tenantwhere}";
 
-        // It is possible (though unlikely) that there is the same code for issued certificates.
-        if ($issues = $DB->get_records_sql($sql, $conditions)) {
-            $result->success = true;
-            $result->issues = $issues;
-            foreach ($result->issues as $issue) {
+        $result->success = false;
+        if ($issue = $DB->get_record_sql($sql, $conditions)) {
+            $template = \tool_certificate\template::find_by_id($issue->templateid);
+            if ($template->can_verify()) {
+                $result->success = true;
+                $result->issue = $issue;
                 \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
             }
-        } else {
-            // Can't find it, let's say it's not verified.
-            $result->success = false;
         }
         return $result;
     }

@@ -58,7 +58,6 @@ echo $OUTPUT->heading($heading);
 echo $form->display();
 if ($form->get_data()) {
     $result = \tool_certificate\certificate::verify($code);
-    // TODO additional check if user can see this particular issue.
     $results = new \tool_certificate\output\verify_certificate_results($result);
     $renderer = $PAGE->get_renderer('tool_certificate');
     echo $renderer->render($results);
