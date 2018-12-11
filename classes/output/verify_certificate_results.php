@@ -61,11 +61,11 @@ class verify_certificate_results implements templatable, renderable {
     public function __construct($result) {
         $this->success = $result->success;
         if ($this->success) {
+            $this->issue = $result->issue;
             $this->message = get_string('verified', 'tool_certificate');
         } else {
             $this->message = get_string('notverified', 'tool_certificate');
         }
-        $this->issues = $result->issues;
     }
 
     /**
@@ -78,12 +78,10 @@ class verify_certificate_results implements templatable, renderable {
         $result = new \stdClass();
         $result->success = $this->success;
         $result->message = $this->message;
-        $result->issues = array();
-        foreach ($this->issues as $issue) {
-            $resultissue = new verify_certificate_result($issue);
-            $result->issues[] = $resultissue->export_for_template($output);
+        if (isset($this->issue)) {
+            $resultissue = new verify_certificate_result($this->issue);
+            $result->issue = $resultissue->export_for_template($output);
         }
-
         return $result;
     }
 }
