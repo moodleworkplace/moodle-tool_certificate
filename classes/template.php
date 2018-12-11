@@ -707,8 +707,7 @@ class template {
         if (has_capability('tool/certificate:issueforalltenants')) {
             return true;
         }
-        return (has_any_capability(['tool/certificate:viewallcertificates',
-                                   'tool/certificate:issue'],
+        return (has_any_capability(['tool/certificate:viewallcertificates', 'tool/certificate:issue'],
                                    context_system::instance()) &&
                 (tenancy::get_tenant_id() == tenancy::get_tenant_id($userid)));
     }
@@ -737,7 +736,8 @@ class template {
         if (self::can_verify_for_all_tenants()) {
             return true;
         }
-        return has_any_capability(['tool/certificate:verify', 'tool/certificate:manage'] , \context_system::instance()) &&
+        return has_any_capability(['tool/certificate:verify', 'tool/certificate:issue',
+                                   'tool/certificate:manage'] , \context_system::instance()) &&
                    (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
     }
 
@@ -747,7 +747,7 @@ class template {
      * @return bool
      */
     public static function can_verify_for_all_tenants() {
-        if (has_any_capability(['tool/certificate:verifyforalltenants',
+        if (has_any_capability(['tool/certificate:verifyforalltenants', 'tool/certificate:issueforalltenants',
                                 'tool/certificate:manageforalltenants'], \context_system::instance())) {
             return true;
         }
