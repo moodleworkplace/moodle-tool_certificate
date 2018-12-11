@@ -36,6 +36,7 @@ before_install:
 install:
   - moodle-plugin-ci add-plugin moodlesp/moodle-theme_workplace
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
+  - moodle-plugin-ci add-plugin moodlesp/moodle-tool_wp
   - moodle-plugin-ci install
   - moodle-plugin-ci add-config '$CFG->theme = "workplace";'
 
