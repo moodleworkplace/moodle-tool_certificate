@@ -34,7 +34,7 @@ $values = json_decode($values);
 
 require_login();
 
-$template = new \tool_certificate\find_by_id($templateid);
+$template = \tool_certificate\template::find_by_id($templateid);
 
 // Make sure the user has the required capabilities.
 $template->require_manage();
