@@ -147,14 +147,29 @@ function tool_certificate_get_fontawesome_icon_map() {
  * @return array
  */
 function tool_certificate_potential_users_selector($area, $itemid) {
-    list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u');
 
+    $where = '';
+    $join = '';
+    $params = [];
     if ($itemid) {
+        $template = \tool_certificate\template::find_by_id($itemid);
+
+        if ($template->get_tenant_id() == 0) {
+            if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+                $where .= ' ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now)';
+            } else {
+                list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u');
+                $where .= ' AND ci.id IS NULL
+                             OR (ci.expires > 0 AND ci.expires < :now)';
+            }
+        } else {
+            list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u', $template->get_tenant_id());
+            $where .= ' AND ci.id IS NULL
+                         OR (ci.expires > 0 AND ci.expires < :now)';
+        }
+
         $join .= ' LEFT JOIN {tool_certificate_issues} ci
                  ON u.id = ci.userid AND ci.templateid = :templateid';
-
-        $where .= ' AND ci.id IS NULL
-                     OR (ci.expires > 0 AND ci.expires < :now)';
 
         $params['templateid'] = $itemid;
         $params['now'] = time();
