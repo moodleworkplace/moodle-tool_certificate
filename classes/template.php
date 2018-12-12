@@ -736,7 +736,7 @@ class template {
         if (self::can_verify_for_all_tenants()) {
             return true;
         }
-        return has_any_capability(['tool/certificate:verify', 'tool/certificate:issue',
+        return has_any_capability(['tool/certificate:verify', 'tool/certificate:issue', 'tool/certificate:viewallcertificates',
                                    'tool/certificate:manage'] , \context_system::instance()) &&
                    (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
     }

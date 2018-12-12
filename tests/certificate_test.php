@@ -131,6 +131,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
     public function test_verify() {
         global $DB;
 
+        $this->setAdminUser();
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $user1 = $this->getDataGenerator()->create_user();
         $issueid1 = $certificate1->issue_certificate($user1->id);
@@ -148,7 +149,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertFalse($result->success);
         $this->assertTrue(empty($result->issues));
 
-        // A valida code will trigger the event.
+        // A valid code will trigger the event.
         $sink = $this->redirectEvents();
 
         $result = \tool_certificate\certificate::verify($code1);
@@ -166,7 +167,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_description());
 
         $this->assertTrue($result->success);
-        $this->assertTrue(isset($result->issues[$issueid1]));
+        $this->assertEquals($result->issue->id, $issueid1);
     }
 
     /**
