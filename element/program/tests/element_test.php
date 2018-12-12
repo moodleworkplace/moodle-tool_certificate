@@ -17,7 +17,7 @@
 /**
  * Unit tests for code element.
  *
- * @package    certificateelement_code
+ * @package    certificateelement_program
  * @category   test
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Unit tests for code element.
  *
- * @package    certificateelement_code
+ * @package    certificateelement_program
  * @group      tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
