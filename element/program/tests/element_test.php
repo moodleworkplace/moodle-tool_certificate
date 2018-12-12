@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_code_element_test_testcase extends advanced_testcase {
+class tool_certificate_program_element_test_testcase extends advanced_testcase {
 
     /**
      * Test set up.
