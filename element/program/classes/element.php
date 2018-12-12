@@ -117,7 +117,8 @@ class element extends \tool_certificate\element {
      */
     public function format_issue_data($issuedata) {
         $data = json_decode($issuedata, true);
-        switch ($this->data->display) {
+        $thisdata = json_decode($this->get_data(), true);
+        switch ($thisdata['display']) {
             case 'certificationname':
                 $display = format_string($data['certificationname']);
                 break;
@@ -125,7 +126,7 @@ class element extends \tool_certificate\element {
                 $display = format_string($data['programname']);
                 break;
             case 'completiondate':
-                $display = userdate($data['completiondate'], get_string('strftimedatefullshort', 'langconfig'), 99, false);
+                $display = userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false);
                 break;
             case 'completedcourses':
                 $display = \html_writer::start_tag('ul');
@@ -145,10 +146,10 @@ class element extends \tool_certificate\element {
         $data = json_decode($this->data, true);
         switch ($data['display']) {
             case 'certificationname':
-                $display = format_string(get_string('previewcertificationname', 'certificateelement_program'));
+                $display = get_string('previewcertificationname', 'certificateelement_program');
                 break;
             case 'programname':
-                $display = format_string(get_string('previewprogramname', 'certificateelement_program'));
+                $display = get_string('previewprogramname', 'certificateelement_program');
                 break;
             case 'completiondate':
                 $display = userdate(time(), get_string('strftimedatefullshort', 'langconfig'), 99, false);
