@@ -92,7 +92,7 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $conditions = ['templateid' => $templateid, 'sort' => $sort];
+        $conditions = ['templateid' => $templateid];
 
         if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
             $tenantjoin = '';
@@ -113,7 +113,7 @@ class certificate {
                        {$tenantjoin}
                  WHERE t.id = :templateid
                    AND {$tenantwhere}
-              ORDER BY :sort";
+              ORDER BY {$sort}";
 
         return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
     }
@@ -162,7 +162,7 @@ class certificate {
             INNER JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
                  WHERE ci.userid = :userid
-              ORDER BY $sort";
+              ORDER BY {$sort}";
             return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);
     }
 
