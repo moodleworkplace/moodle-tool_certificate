@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use tool_tenant\tenancy;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -38,48 +40,10 @@ defined('MOODLE_INTERNAL') || die();
 class certificate {
 
     /**
-     * @var string the print protection variable
-     */
-    const PROTECTION_PRINT = 'print';
-
-    /**
-     * @var string the modify protection variable
-     */
-    const PROTECTION_MODIFY = 'modify';
-
-    /**
-     * @var string the copy protection variable
-     */
-    const PROTECTION_COPY = 'copy';
-
-    /**
      * @var int the number of issues that will be displayed on each page in the report
      *      If you want to display all certificates on a page set this to 0.
      */
     const CUSTOMCERT_PER_PAGE = '50';
-
-    /**
-     * Handles setting the protection field for the certificate
-     *
-     * @param \stdClass $data
-     * @return string the value to insert into the protection field
-     */
-    public static function set_protection($data) {
-        $protection = array();
-
-        if (!empty($data->protection_print)) {
-            $protection[] = self::PROTECTION_PRINT;
-        }
-        if (!empty($data->protection_modify)) {
-            $protection[] = self::PROTECTION_MODIFY;
-        }
-        if (!empty($data->protection_copy)) {
-            $protection[] = self::PROTECTION_COPY;
-        }
-
-        // Return the protection string.
-        return implode(', ', $protection);
-    }
 
     /**
      * Handles uploading an image for the certificate module.
@@ -93,188 +57,7 @@ class certificate {
 
         // Save the file if it exists that is currently in the draft area.
         require_once($CFG->dirroot . '/lib/filelib.php');
-        file_save_draft_area_files($draftitemid, $contextid, 'tool_certificate', $filearea, 0);
-    }
-
-    /**
-     * Return the list of possible fonts to use.
-     */
-    public static function get_fonts() {
-        global $CFG;
-
-        require_once($CFG->libdir . '/pdflib.php');
-
-        $arrfonts = [];
-        $pdf = new \pdf();
-        $fontfamilies = $pdf->get_font_families();
-        foreach ($fontfamilies as $fontfamily => $fontstyles) {
-            foreach ($fontstyles as $fontstyle) {
-                $fontstyle = strtolower($fontstyle);
-                if ($fontstyle == 'r') {
-                    $filenamewoextension = $fontfamily;
-                } else {
-                    $filenamewoextension = $fontfamily . $fontstyle;
-                }
-                $fullpath = \TCPDF_FONTS::_getfontpath() . $filenamewoextension;
-                // Set the name of the font to null, the include next should then set this
-                // value, if it is not set then the file does not include the necessary data.
-                $name = null;
-                // Some files include a display name, the include next should then set this
-                // value if it is present, if not then $name is used to create the display name.
-                $displayname = null;
-                // Some of the TCPDF files include files that are not present, so we have to
-                // suppress warnings, this is the TCPDF libraries fault, grrr.
-                @include($fullpath . '.php');
-                // If no $name variable in file, skip it.
-                if (is_null($name)) {
-                    continue;
-                }
-                // Check if there is no display name to use.
-                if (is_null($displayname)) {
-                    // Format the font name, so "FontName-Style" becomes "Font Name - Style".
-                    $displayname = preg_replace("/([a-z])([A-Z])/", "$1 $2", $name);
-                    $displayname = preg_replace("/([a-zA-Z])-([a-zA-Z])/", "$1 - $2", $displayname);
-                }
-
-                $arrfonts[$filenamewoextension] = $displayname;
-            }
-        }
-        ksort($arrfonts);
-
-        return $arrfonts;
-    }
-
-    /**
-     * Return the list of possible font sizes to use.
-     */
-    public static function get_font_sizes() {
-        // Array to store the sizes.
-        $sizes = array();
-
-        for ($i = 1; $i <= 200; $i++) {
-            $sizes[$i] = $i;
-        }
-
-        return $sizes;
-    }
-
-    /**
-     * Get the time the user has spent in the course.
-     *
-     * @param int $courseid
-     * @param int $userid
-     * @return int the total time spent in seconds
-     */
-    public static function get_course_time($courseid, $userid = 0) {
-        global $CFG, $DB, $USER;
-
-        if (empty($userid)) {
-            $userid = $USER->id;
-        }
-
-        $logmanager = get_log_manager();
-        $readers = $logmanager->get_readers();
-        $enabledreaders = get_config('tool_log', 'enabled_stores');
-        if (empty($enabledreaders)) {
-            return 0;
-        }
-        $enabledreaders = explode(',', $enabledreaders);
-
-        // Go through all the readers until we find one that we can use.
-        foreach ($enabledreaders as $enabledreader) {
-            $reader = $readers[$enabledreader];
-            if ($reader instanceof \logstore_legacy\log\store) {
-                $logtable = 'log';
-                $coursefield = 'course';
-                $timefield = 'time';
-                break;
-            } else if ($reader instanceof \core\log\sql_internal_table_reader) {
-                $logtable = $reader->get_internal_log_table_name();
-                $coursefield = 'courseid';
-                $timefield = 'timecreated';
-                break;
-            }
-        }
-
-        // If we didn't find a reader then return 0.
-        if (!isset($logtable)) {
-            return 0;
-        }
-
-        $sql = "SELECT id, $timefield
-                  FROM {{$logtable}}
-                 WHERE userid = :userid
-                   AND $coursefield = :courseid
-              ORDER BY $timefield ASC";
-        $params = array('userid' => $userid, 'courseid' => $courseid);
-        $totaltime = 0;
-        if ($logs = $DB->get_recordset_sql($sql, $params)) {
-            foreach ($logs as $log) {
-                if (!isset($login)) {
-                    // For the first time $login is not set so the first log is also the first login.
-                    $login = $log->$timefield;
-                    $lasthit = $log->$timefield;
-                    $totaltime = 0;
-                }
-                $delay = $log->$timefield - $lasthit;
-                if ($delay > ($CFG->sessiontimeout * 60)) {
-                    // The difference between the last log and the current log is more than
-                    // the timeout Register session value so that we have found a session!
-                    $login = $log->$timefield;
-                } else {
-                    $totaltime += $delay;
-                }
-                // Now the actual log became the previous log for the next cycle.
-                $lasthit = $log->$timefield;
-            }
-
-            return $totaltime;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Returns a list of issued certificates.
-     *
-     * @param int $templateid
-     * @param bool $groupmode are we in group mode
-     * @param \stdClass $cm the course module
-     * @param int $limitfrom
-     * @param int $limitnum
-     * @param string $sort
-     * @return array the users
-     */
-    public static function get_issues($templateid, $groupmode, $cm, $limitfrom, $limitnum, $sort = '') {
-        global $DB;
-
-        // Get the conditional SQL.
-        list($conditionssql, $conditionsparams) = self::get_conditional_issues_sql($cm, $groupmode);
-
-        // If it is empty then return an empty array.
-        if (empty($conditionsparams)) {
-            return array();
-        }
-
-        // Add the conditional SQL and the templateid to form all used parameters.
-        $allparams = $conditionsparams + array('templateid' => $templateid);
-
-        // Return the issues.
-        $ufields = \user_picture::fields('u');
-        $sql = "SELECT $ufields, ci.id as issueid, ci.code, ci.timecreated
-                  FROM {user} u
-            INNER JOIN {tool_certificate_issues} ci
-                    ON u.id = ci.userid
-                 WHERE u.deleted = 0
-                   AND ci.templateid = :templateid
-                       $conditionssql";
-        if ($sort) {
-            $sql .= "ORDER BY " . $sort;
-        } else {
-            $sql .= "ORDER BY " . $DB->sql_fullname();
-        }
-
-        return $DB->get_records_sql($sql, $allparams, $limitfrom, $limitnum);
+        file_save_draft_area_files($draftitemid, \context_system::instance()->id, 'tool_certificate', $filearea, 0);
     }
 
     /**
@@ -283,7 +66,7 @@ class certificate {
      * @param int $templateid
      * @return int the number of issues
      */
-    public static function get_number_of_issues_for_template($templateid) {
+    public static function count_issues_for_template($templateid) {
         global $DB;
         if ($templateid > 0) {
             $conditions = ['templateid' => $templateid];
@@ -293,6 +76,15 @@ class certificate {
         return $DB->count_records('tool_certificate_issues', $conditions);
     }
 
+    /**
+     * Get the certificate issues for a given templateid, paginated.
+     *
+     * @param int $templateid
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @param string $sort
+     * @return array
+     */
     public static function get_issues_for_template($templateid, $limitfrom, $limitnum, $sort = '') {
         global $DB;
 
@@ -300,120 +92,30 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $conditions = [];
+        $conditions = ['templateid' => $templateid, 'sort' => $sort];
 
-        $sql = 'SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid,
-                       t.name, ' .
-                       get_all_user_name_fields(true, 'u') . '
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+            $tenantjoin = '';
+            $tenantwhere = ' u.deleted = 0';
+        } else {
+            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
+            $conditions = array_merge($conditions, $tenantparams);
+        }
+
+        $sql = "SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
+                       t.name, " .
+                       get_all_user_name_fields(true, 'u') . "
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
                     ON (ci.templateid = t.id)
                   JOIN {user} u
-                    ON (u.id = ci.userid)';
+                    ON (u.id = ci.userid)
+                       {$tenantjoin}
+                 WHERE t.id = :templateid
+                   AND {$tenantwhere}
+              ORDER BY :sort";
 
-        if ($templateid > 0) {
-            $sql .= " WHERE t.id = :templateid";
-            $conditions['templateid'] = $templateid;
-        }
-
-        $sql .= " ORDER BY {$sort}";
         return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
-    }
-
-    /**
-     * Returns the total number of issues for a given certificate.
-     *
-     * @param int $templateid
-     * @param \stdClass $cm the course module
-     * @param bool $groupmode the group mode
-     * @return int the number of issues
-     */
-    public static function get_number_of_issues($templateid, $cm, $groupmode) {
-        global $DB;
-
-        // Get the conditional SQL.
-        list($conditionssql, $conditionsparams) = self::get_conditional_issues_sql($cm, $groupmode);
-
-        // If it is empty then return 0.
-        if (empty($conditionsparams)) {
-            return 0;
-        }
-
-        // Add the conditional SQL and the templateid to form all used parameters.
-        $allparams = $conditionsparams + array('templateid' => $templateid);
-
-        // Return the number of issues.
-        $sql = "SELECT COUNT(u.id) as count
-                  FROM {user} u
-            INNER JOIN {tool_certificate_issues} ci
-                    ON u.id = ci.userid
-                 WHERE u.deleted = 0
-                   AND ci.templateid = :templateid
-                       $conditionssql";
-        return $DB->count_records_sql($sql, $allparams);
-    }
-
-    /**
-     * Returns an array of the conditional variables to use in the get_issues SQL query.
-     *
-     * @param \stdClass $cm the course module
-     * @param bool $groupmode are we in group mode ?
-     * @return array the conditional variables
-     */
-    public static function get_conditional_issues_sql($cm, $groupmode) {
-        global $DB, $USER;
-
-        // Get all users that can manage this certificate to exclude them from the report.
-        $context = \context_module::instance($cm->id);
-        $conditionssql = '';
-        $conditionsparams = array();
-
-        // Get all users that can manage this certificate to exclude them from the report.
-        $certmanagers = array_keys(get_users_by_capability($context, 'tool/certificate:manage', 'u.id'));
-        $certmanagers = array_merge($certmanagers, array_keys(get_admins()));
-        list($sql, $params) = $DB->get_in_or_equal($certmanagers, SQL_PARAMS_NAMED, 'cert');
-        $conditionssql .= "AND NOT u.id $sql \n";
-        $conditionsparams += $params;
-
-        if ($groupmode) {
-            $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
-            $currentgroup = groups_get_activity_group($cm);
-
-            // If we are viewing all participants and the user does not have access to all groups then return nothing.
-            if (!$currentgroup && !$canaccessallgroups) {
-                return array('', array());
-            }
-
-            if ($currentgroup) {
-                if (!$canaccessallgroups) {
-                    // Guest users do not belong to any groups.
-                    if (isguestuser()) {
-                        return array('', array());
-                    }
-
-                    // Check that the user belongs to the group we are viewing.
-                    $usersgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
-                    if ($usersgroups) {
-                        if (!isset($usersgroups[$currentgroup])) {
-                            return array('', array());
-                        }
-                    } else { // They belong to no group, so return an empty array.
-                        return array('', array());
-                    }
-                }
-
-                $groupusers = array_keys(groups_get_members($currentgroup, 'u.*'));
-                if (empty($groupusers)) {
-                    return array('', array());
-                }
-
-                list($sql, $params) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED, 'grp');
-                $conditionssql .= "AND u.id $sql ";
-                $conditionsparams += $params;
-            }
-        }
-
-        return array($conditionssql, $conditionsparams);
     }
 
     /**
@@ -422,7 +124,7 @@ class certificate {
      * @param int $userid
      * @return int
      */
-    public static function get_number_of_certificates_for_user(int $userid = 0): int {
+    public static function count_issues_for_user(int $userid = 0): int {
         global $DB;
 
         $sql = "SELECT COUNT(*)
@@ -439,7 +141,7 @@ class certificate {
     }
 
     /**
-     * Gets the certificates for the user.
+     * Get the certificates issues for the given userid.
      *
      * @param int $userid
      * @param int $limitfrom
@@ -447,45 +149,21 @@ class certificate {
      * @param string $sort
      * @return array
      */
-    public static function get_certificates_for_user($userid, $limitfrom, $limitnum, $sort = '') {
+    public static function get_issues_for_user($userid, $limitfrom, $limitnum, $sort = '') {
         global $DB;
 
         if (empty($sort)) {
             $sort = 'ci.timecreated DESC';
         }
 
-        $sql = "SELECT ci.id, t.id as templateid, t.name, ci.code, ci.timecreated
+        $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated, ci.userid,
+                       t.id as templateid, t.contextid, t.name
                   FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
                  WHERE ci.userid = :userid
               ORDER BY $sort";
             return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);
-    }
-
-    /**
-     * Issues a certificate to a user.
-     *
-     * @param int $templateid The ID of the template
-     * @param int $userid The ID of the user to issue the certificate to
-     * @return int The ID of the issue
-     */
-    public static function issue_certificate($templateid, $userid) {
-        global $DB;
-
-        $issue = new \stdClass();
-        $issue->userid = $userid;
-        $issue->templateid = $templateid;
-        $issue->code = self::generate_code();
-        $issue->emailed = 0;
-        $issue->timecreated = time();
-
-        // Insert the record into the database.
-        if ($issue->id = $DB->insert_record('tool_certificate_issues', $issue)) {
-            \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
-        }
-
-        return $issue->id;
     }
 
     /**
@@ -510,24 +188,52 @@ class certificate {
     }
 
     /**
-     * Returns the \context_module of a given certificate
+     * Verify if a certificate exists given a code
      *
-     * @param int $templateid
-     * @return \context_module
+     * @param string $code The code to verify
+     * @return \stdClass An structure with success bool attribute and the issue, if found
      */
-    public static function get_context($templateid) {
-        return \context_system::instance();
-    }
-
-    /**
-     * Deletes an issue of a certificate for a user.
-     *
-     * @param int $issueid
-     */
-    public static function revoke_issue($issueid) {
+    public static function verify($code) {
         global $DB;
-        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid]);
-        $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
-        \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+
+        $result = new \stdClass();
+
+        $conditions = ['code' => $code];
+
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants() ||
+                \tool_certificate\template::can_verify_for_all_tenants()) {
+            $tenantjoin = '';
+            $tenantwhere = ' u.deleted = 0';
+        } else {
+            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
+            $conditions = array_merge($conditions, $tenantparams);
+        }
+
+        $userfields = get_all_user_name_fields(true, 'u');
+
+        $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
+                       ci.expires, ci.data, ci.component,
+                       u.id as userid, {$userfields},
+                       t.name as certificatename,
+                       t.contextid
+                  FROM {tool_certificate_templates} t
+                  JOIN {tool_certificate_issues} ci
+                    ON t.id = ci.templateid
+                  JOIN {user} u
+                    ON ci.userid = u.id
+                       {$tenantjoin}
+                 WHERE ci.code = :code
+                   AND {$tenantwhere}";
+
+        $result->success = false;
+        if ($issue = $DB->get_record_sql($sql, $conditions)) {
+            $template = \tool_certificate\template::find_by_id($issue->templateid);
+            if ($template->can_verify()) {
+                $result->success = true;
+                $result->issue = $issue;
+                \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
+            }
+        }
+        return $result;
     }
 }

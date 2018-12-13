@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * Unit tests for the webservices.
  *
  * @package    tool_certificate
+ * @group      tool_certificate
  * @category   test
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -54,7 +55,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -65,8 +66,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
+        $i1 = $template->issue_certificate($student1->id);
+        $i2 = $template->issue_certificate($student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
@@ -92,7 +93,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -103,8 +104,8 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
+        $i1 = $template->issue_certificate($student1->id);
+        $i2 = $template->issue_certificate($student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
@@ -123,7 +124,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create('Site template', context_system::instance()->id);
+        $template = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -136,13 +137,56 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($student2->id, $course->id);
 
         // Issue them both certificates.
-        $i1 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student1->id);
-        $i2 = \tool_certificate\certificate::issue_certificate($template->get_id(), $student2->id);
+        $i1 = $template->issue_certificate($student1->id);
+        $i2 = $template->issue_certificate($student2->id);
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
         // Try and delete without the required capability.
         $this->expectException('required_capability_exception');
         \tool_certificate\external::delete_issue($i2);
+    }
+
+    /**
+     * Test the get_element_html web service.
+     */
+    public function test_get_element_html() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        // Create a certificate template.
+        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $pageid = $certificate1->add_page();
+        $element = $certificate1->new_element_for_page_id($pageid, 'code');
+        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $eid = $e->save_form_elements((object)['name' => 'Test', 'pageid' => $pageid,
+                                        'element' => 'code', 'display' => \certificateelement_code\element::DISPLAY_CODE]);
+        $this->assertFalse(empty(\tool_certificate\external::get_element_html($certificate1->get_id(), $eid)));
+        $this->assertEquals('Test', $DB->get_field('tool_certificate_elements', 'name', ['id' => $eid]));
+    }
+
+    /**
+     * Test the save_element web service.
+     */
+    public function test_save_element() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        // Create a certificate template.
+        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $pageid = $certificate1->add_page();
+        $element = $certificate1->new_element_for_page_id($pageid, 'code');
+        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $values = (object)['name' => 'Test', 'pageid' => $pageid,
+                           'element' => 'code', 'display' => \certificateelement_code\element::DISPLAY_CODE];
+        $eid = $e->save_form_elements($values);
+
+        $newvalues = [['name' => 'fontsize', 'value' => 42],
+                      ['name' => 'display', 'value' => \certificateelement_code\element::DISPLAY_CODE]];
+        \tool_certificate\external::save_element($certificate1->get_id(), $eid, $newvalues);
+
+        $this->assertEquals(42, $DB->get_field('tool_certificate_elements', 'fontsize', ['id' => $eid]));
     }
 }

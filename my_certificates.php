@@ -24,12 +24,8 @@
 
 require_once('../../../config.php');
 
-$userid = optional_param('userid', 0, PARAM_INT);
+$userid = optional_param('userid', $USER->id, PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
-$downloadcert = optional_param('downloadcert', '', PARAM_BOOL);
-if ($downloadcert) {
-    $templateid = required_param('tid', PARAM_INT);
-}
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 $pageurl = $url = new moodle_url('/admin/tool/certificate/my_certificates.php', array('userid' => $userid,
@@ -41,21 +37,9 @@ require_login();
 // Check that we have a valid user.
 if ($userid > 0) {
     $user = \core_user::get_user($userid, '*', MUST_EXIST);
-    // If we are viewing certificates that are not for the currently logged in user then do a capability check.
-    if (($userid != $USER->id) && !has_capability('tool/certificate:viewallcertificates', context_system::instance())) {
+    if (!\tool_certificate\template::can_view_list($userid)) {
         print_error('You are not allowed to view these certificates');
     }
-} else {
-    require_capability('tool/certificate:viewallcertificates', context_system::instance());
-}
-
-
-// Check if we requested to download a certificate.
-if ($downloadcert) {
-    $template = $DB->get_record('tool_certificate_templates', array('id' => $templateid), '*', MUST_EXIST);
-    $template = new \tool_certificate\template($template);
-    $template->generate_pdf(false, $userid);
-    exit();
 }
 
 $table = new \tool_certificate\my_certificates_table($userid, $download);

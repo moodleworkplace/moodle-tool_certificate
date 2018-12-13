@@ -9,15 +9,14 @@ cache:
     - $HOME/.npm
 
 php:
- - 7.1
+ - 7.2
 
 addons:
- firefox: 47.0.1
- postgresql: 9.4
+ postgresql: 9.6
  apt:
    packages:
-   - oracle-java8-installer
-   - oracle-java8-set-default
+   - openjdk-8-jre-headless
+   - chromium-chromedriver
 
 env:
  global:
@@ -31,12 +30,13 @@ before_install:
   - nvm install 8.9
   - nvm use 8.9
   - cd ../..
-  - composer create-project -n --no-dev --prefer-dist moodlerooms/moodle-plugin-ci ci ^2
+  - composer create-project -n --no-dev --prefer-dist --repository='{"type":"git","url":"https://github.com/moodlesp/moodle-plugin-ci","reference":"master"}' blackboard-open-source/moodle-plugin-ci ci ^2
   - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
   - moodle-plugin-ci add-plugin moodlesp/moodle-theme_workplace
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
+  - moodle-plugin-ci add-plugin moodlesp/moodle-tool_wp
   - moodle-plugin-ci install
   - moodle-plugin-ci add-config '$CFG->theme = "workplace";'
 
@@ -45,9 +45,10 @@ script:
   # - moodle-plugin-ci phpcpd # subplugins often have similar code and cause "duplicated code" errors
   # - moodle-plugin-ci phpmd # too much noise from this check, maybe, some day...
   - moodle-plugin-ci codechecker
+  - moodle-plugin-ci phpdoc
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt -t stylelint:css -t js
-  - moodle-plugin-ci phpunit
-  - moodle-plugin-ci behat
+  - moodle-plugin-ci phpunit --coverage-text
+  - moodle-plugin-ci behat --profile=chrome

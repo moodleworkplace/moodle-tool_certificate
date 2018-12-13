@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Issue certificate form.
+ * Issue new certificate for users.
  *
- * @package    tool_lp
- * @copyright  2015 Frédéric Massart - FMCorz.net
+ * @package    tool_certificate
+ * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -38,16 +38,23 @@ require_once($CFG->libdir . '/formslib.php');
  */
 class certificate_issues extends moodleform {
 
+    /**
+     * Definition of the form with user selector and expiration time to issue certificates.
+     */
     public function definition() {
         $mform = $this->_form;
 
         $options = array(
-            'ajax' => 'tool_tenant/form-potential-user-selector',
+            'ajax' => 'tool_wp/form-potential-user-selector',
             'multiple' => true,
-            'data-capability' => 'tool/certificate:manage'
+            'data-component' => 'tool_certificate',
+            'data-area' => 'issue',
+            'data-itemid' => $this->_customdata['templateid']
         );
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
+
+        $mform->addElement('date_time_selector', 'expires', '', ['optional' => true]);
         $mform->addElement('submit', 'submit', get_string('issuecertificates', 'tool_certificate'));
         $mform->addElement('cancel');
     }

@@ -80,12 +80,8 @@ class external extends \external_api {
         // Set the template.
         $template = new \tool_certificate\template($template);
 
-        // Perform checks.
-        if ($cm = $template->get_cm()) {
-            self::validate_context(\context_module::instance($cm->id));
-        } else {
-            self::validate_context(\context_system::instance());
-        }
+        self::validate_context(\context_system::instance());
+
         // Make sure the user has the required capabilities.
         $template->require_manage();
 
@@ -151,12 +147,7 @@ class external extends \external_api {
         // Set the template.
         $template = new \tool_certificate\template($template);
 
-        // Perform checks.
-        if ($cm = $template->get_cm()) {
-            self::validate_context(\context_module::instance($cm->id));
-        } else {
-            self::validate_context(\context_system::instance());
-        }
+        self::validate_context(\context_system::instance());
 
         // Get an instance of the element class.
         if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
@@ -191,7 +182,6 @@ class external extends \external_api {
     /**
      * Handles deleting a certificate issue.
      *
-     * @param int $certificateid The certificate id.
      * @param int $issueid The issue id.
      * @return bool
      */
@@ -206,7 +196,10 @@ class external extends \external_api {
         // Make sure the user has the required capabilities.
         $context = \context_system::instance();
         self::validate_context($context);
-        require_capability('tool/certificate:manage', $context);
+        $template = \tool_certificate\template::find_by_id($issue->templateid);
+        if (!$template->can_issue()) {
+            throw new \required_capability_exception($template->get_context(), 'tool/certificate:issue', 'nopermissions', 'error');
+        }
 
         // Delete the issue.
         return $DB->delete_records('tool_certificate_issues', ['id' => $issue->id]);

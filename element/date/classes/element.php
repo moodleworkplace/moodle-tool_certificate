@@ -26,31 +26,6 @@ namespace certificateelement_date;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Date - Course grade date
- */
-define('CUSTOMCERT_DATE_COURSE_GRADE', '0');
-
-/**
- * Date - Issue
- */
-define('CUSTOMCERT_DATE_ISSUE', '-1');
-
-/**
- * Date - Completion
- */
-define('CUSTOMCERT_DATE_COMPLETION', '-2');
-
-/**
- * Date - Course start
- */
-define('CUSTOMCERT_DATE_COURSE_START', '-3');
-
-/**
- * Date - Course end
- */
-define('CUSTOMCERT_DATE_COURSE_END', '-4');
-
 require_once($CFG->dirroot . '/lib/grade/constants.php');
 
 /**
@@ -63,17 +38,26 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
 class element extends \tool_certificate\element {
 
     /**
+     * @var int Show creation date
+     */
+    const CUSTOMCERT_DATE_ISSUE = -1;
+
+    /**
+     * @var int Show expiry date.
+     */
+    const CUSTOMCERT_DATE_EXPIRY = -2;
+
+    /**
      * This function renders the form elements when adding a certificate element.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        global $COURSE;
 
         // Get the possible date options.
-        $dateoptions = array();
-        $dateoptions[CUSTOMCERT_DATE_ISSUE] = get_string('issueddate', 'certificateelement_date');
-        $dateoptions = $dateoptions + \tool_certificate\element_helper::get_grade_items($COURSE);
+        $dateoptions = [];
+        $dateoptions[self::CUSTOMCERT_DATE_ISSUE] = get_string('issueddate', 'certificateelement_date');
+        $dateoptions[self::CUSTOMCERT_DATE_EXPIRY] = get_string('expirydate', 'certificateelement_date');
 
         $mform->addElement('select', 'dateitem', get_string('dateitem', 'certificateelement_date'), $dateoptions);
         $mform->addHelpButton('dateitem', 'dateitem', 'certificateelement_date');
@@ -108,8 +92,9 @@ class element extends \tool_certificate\element {
      * @param \pdf $pdf the pdf object
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
+     * @param \stdClass $issue the issue we are rendering
      */
-    public function render($pdf, $preview, $user) {
+    public function render($pdf, $preview, $user, $issue) {
         global $DB;
 
         // If there is no element data, we have nothing to display.
@@ -126,16 +111,10 @@ class element extends \tool_certificate\element {
         if ($preview) {
             $date = time();
         } else {
-            // Get the page.
-            $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
-            // Get the certificate this page belongs to.
-            $certificate = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
-            // Now we can get the issue for this user.
-            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $certificate->id),
-                '*', MUST_EXIST);
-
-            if ($dateitem == CUSTOMCERT_DATE_ISSUE) {
+            if ($dateitem == self::CUSTOMCERT_DATE_ISSUE) {
                 $date = $issue->timecreated;
+            } else if ($dateitem == self::CUSTOMCERT_DATE_EXPIRY) {
+                $date = $issue->expires;
             } else {
                 $date = '';
             }

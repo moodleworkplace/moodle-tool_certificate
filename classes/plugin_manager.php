@@ -37,6 +37,9 @@ require_once($CFG->dirroot.'/lib/adminlib.php');
  */
 class plugin_manager {
 
+    /**
+     * Constructor
+     */
     public function __construct() {
         $this->pageurl = new \moodle_url('/admin/tool/certificate/adminmanageplugins.php');
     }

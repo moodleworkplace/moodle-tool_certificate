@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-$plugin->version   = 2018051708; // The current module version (Date: YYYYMMDDXX).
+$plugin->version   = 2018051713; // The current module version (Date: YYYYMMDDXX).
 $plugin->requires  = 2018051700; // Requires this Moodle version (3.5).
 $plugin->cron      = 0; // Period for cron to check this module (secs).
 $plugin->component = 'tool_certificate';
@@ -34,4 +34,5 @@ $plugin->release   = "3.5.4"; // User-friendly version number.
 
 $plugin->dependencies   = array(
     'tool_tenant' => '2018110600',
+    'tool_wp' => '2018112601',
 );

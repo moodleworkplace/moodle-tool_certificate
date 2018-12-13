@@ -24,6 +24,8 @@
 
 namespace tool_certificate\event;
 
+use tool_certificate\template;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -52,8 +54,8 @@ class certificate_revoked extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with '$this->userid' has revoked issue of certificate with id '$this->objectid'".
-                "from user with id '$this->relateduserid'.";
+        return "The user with '$this->userid' has revoked certificate issue with id '$this->objectid'".
+                " from user with id '$this->relateduserid'.";
     }
 
     /**
@@ -71,8 +73,7 @@ class certificate_revoked extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/certificate/view.php',
-            array('id' => $this->contextinstanceid, 'deleteissue' => $this->objectid));
+        return template::view_url($this->other['code']);
     }
 
     /**
@@ -82,11 +83,14 @@ class certificate_revoked extends \core\event\base {
      * @return certificate_revoked
      */
     public static function create_from_issue(\stdClass $issue) {
-        $data = array(
+        $data = [
             'context' => \context_system::instance(),
             'objectid' => $issue->id,
-            'relateduserid' => $issue->userid
-        );
+            'relateduserid' => $issue->userid,
+            'other' => [
+                'code' => $issue->code
+            ]
+        ];
         $event = self::create($data);
         $event->add_record_snapshot('tool_certificate_issues', $issue);
         return $event;
