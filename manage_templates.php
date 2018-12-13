@@ -36,49 +36,36 @@ if ($action) {
     $tid = optional_param('tid', 0, PARAM_INT);
 }
 
-if ($tid) {
-    $template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
-    $template = new \tool_certificate\template($template);
-}
-
 $context = context_system::instance();
-
-require_login();
-
-$canissue = has_capability('tool/certificate:issue', $context);
-$canmanage = has_capability('tool/certificate:manage', $context);
-$canview = has_capability('tool/certificate:viewallcertificates', $context);
-
-if (!$canmanage && !$canissue && !$canview) {
-    print_error('permissiondenied', 'tool_certificate');
-}
-
-$title = $SITE->fullname;
-$heading = $title;
-
-// Set up the page.
-$pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
-\tool_certificate\page_helper::page_setup($pageurl, $context, $title);
 
 admin_externalpage_setup('tool_certificate/managetemplates');
 
+$canissue = has_capability('tool/certificate:issue', $context);
+$canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], $context);
+
+if (!\tool_certificate\template::can_verify_loose()) {
+    print_error('permissiondenied', 'tool_certificate');
+}
+
+// Set up the page.
+$pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
+
 if ($tid) {
+
+    $template = \tool_certificate\template::find_by_id($tid);
+    $template->can_manage();
+
     if ($action && confirm_sesskey()) {
-        $nourl = new moodle_url('/admin/tool/certificate/manage_templates.php');
-        $yesurl = new moodle_url('/admin/tool/certificate/manage_templates.php',
-            array(
-                'tid' => $tid,
-                'action' => $action,
-                'confirm' => 1,
-                'sesskey' => sesskey()
-            )
-        );
+        $url = '/admin/tool/certificate/manage_templates.php';
+        $nourl = new moodle_url($url);
+        $yesurl = new moodle_url($url, ['tid' => $tid, 'action' => $action, 'confirm' => 1, 'sesskey' => sesskey()]);
 
         // Check if we are deleting a template.
         if ($action == 'delete') {
             if (!$confirm) {
                 // Show a confirmation page.
-                $PAGE->navbar->add(get_string('deleteconfirm', 'tool_certificate'));
+                $heading = get_string('deleteconfirm', 'tool_certificate');
+                $PAGE->navbar->add($heading);
                 $message = get_string('deletetemplateconfirm', 'tool_certificate');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading($heading);
@@ -91,35 +78,63 @@ if ($tid) {
             $template->delete();
 
             // Redirect back to the manage templates page.
-            redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
+            redirect($pageurl);
+
         } else if ($action == 'duplicate') {
             if (!$confirm) {
+                if (has_capability('tool/certificate:manageforalltenants', $context)) {
+                    $pageurl->param('tid', $tid);
+                    $tenantform = new \tool_certificate\form\tenant_selector($pageurl->out());
+                    if ($tenantform->is_cancelled()) {
+                        redirect($pageurl);
+                    }
+                    if ($data = $tenantform->get_data()) {
+                        $tenantid = $data->tenantid;
+                        $yesurl->param('tenantid', $tenantid);
+                    } else {
+                        // Show a page to select tenant.
+                        $heading = get_string('duplicateselecttenant', 'tool_certificate');
+                        $PAGE->navbar->add($heading);
+                        echo $OUTPUT->header();
+                        echo $OUTPUT->heading($heading);
+                        $tenantform->display();
+                        echo $OUTPUT->footer();
+                        exit();
+                    }
+                }
                 // Show a confirmation page.
-                $PAGE->navbar->add(get_string('duplicateconfirm', 'tool_certificate'));
+                $heading = get_string('duplicateconfirm', 'tool_certificate');
+                $PAGE->navbar->add($heading);
                 $message = get_string('duplicatetemplateconfirm', 'tool_certificate');
                 echo $OUTPUT->header();
                 echo $OUTPUT->heading($heading);
                 echo $OUTPUT->confirm($message, $yesurl, $nourl);
                 echo $OUTPUT->footer();
                 exit();
+            } else {
+                if (has_capability('tool/certificate:manageforalltenants', $context)) {
+                    $tenantid = optional_param('tenantid', null, PARAM_INT);
+                } else {
+                    $tenantid = null;
+                }
             }
 
             // Copy the data to the new template.
-            $template->duplicate();
+            $template->duplicate($tenantid);
 
             // Redirect back to the manage templates page.
-            redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
+            redirect($pageurl);
         }
     }
 }
 
-$table = new \tool_certificate\manage_templates_table($context);
+$table = new \tool_certificate\manage_templates_table();
 $table->define_baseurl($pageurl);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
-if ($canmanage || $canissue) {
-    $url = new moodle_url('/admin/tool/certificate/edit.php');
+echo $OUTPUT->heading(get_string('managetemplates', 'tool_certificate'));
+if (\tool_certificate\template::can_create()) {
+    $url = \tool_certificate\template::new_template_url();
     echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
 }
 $table->out($perpage, false);

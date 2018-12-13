@@ -39,18 +39,12 @@ $capabilities = array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
     ),
 
     'tool/certificate:imageforalltenants' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW
-        )
     ),
 
     'tool/certificate:issue' => array(
@@ -62,6 +56,12 @@ $capabilities = array(
         )
     ),
 
+    'tool/certificate:issueforalltenants' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+    ),
+
     'tool/certificate:viewallcertificates' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -70,11 +70,16 @@ $capabilities = array(
         )
     ),
 
-    'tool/certificate:verifyallcertificates' => array(
+    'tool/certificate:verify' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         )
+    ),
+
+    'tool/certificate:verifyforalltenants' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
     ),
 );

@@ -83,7 +83,7 @@ class behat_tool_certificate extends behat_base {
      * Verifies the certificate code for a user.
      *
      * @Given /^I verify the "(?P<certificate_name>(?:[^"]|\\")*)" certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
-     * @param string $certificatename
+     * @param string $templatename
      * @param string $username
      */
     public function i_verify_the_certificate_for_user($templatename, $username) {
@@ -104,7 +104,7 @@ class behat_tool_certificate extends behat_base {
      * Verifies the certificate code for a user.
      *
      * @Given /^I can not verify the "(?P<certificate_name>(?:[^"]|\\")*)" certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
-     * @param string $certificatename
+     * @param string $templatename
      * @param string $username
      */
     public function i_can_not_verify_the_certificate_for_user($templatename, $username) {
@@ -128,14 +128,14 @@ class behat_tool_certificate extends behat_base {
      * the page like a conventional user.
      *
      * @Given /^I visit the verification url for the "(?P<certificate_name>(?:[^"]|\\")*)" certificate$/
-     * @param string $certificatename
+     * @param string $templatename
      */
     public function i_visit_the_verification_url_for_certificate($templatename) {
         global $DB;
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
 
-        $url = new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $template->contextid));
+        $url = new moodle_url('/admin/tool/certificate/index.php');
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
 
@@ -145,8 +145,31 @@ class behat_tool_certificate extends behat_base {
      * @Given /^I visit the verification url for the site$/
      */
     public function i_visit_the_verification_url_for_the_site() {
-        $url = new moodle_url('/admin/tool/certificate/verify_certificate.php');
+        $url = new moodle_url('/admin/tool/certificate/index.php');
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
+    }
+
+    /**
+     * Looks up tenant id
+     *
+     * @param array $elementdata
+     */
+    protected function lookup_tenant(array &$elementdata) {
+        global $DB;
+        if (array_key_exists('tenant', $elementdata)) {
+            if (empty($elementdata['tenant'])) {
+                // Shared for all tenants.
+                $elementdata['tenantid'] = 0;
+            } else {
+                // Lookup tenant id by tenant name.
+                $elementdata['tenantid'] = $DB->get_field('tool_tenant', 'id',
+                    ['name' => $elementdata['tenant']], MUST_EXIST);
+            }
+            unset($elementdata['tenant']);
+        } else {
+            // Otherwise assume default tenant.
+            $elementdata['tenantid'] = \tool_tenant\tenancy::get_default_tenant_id();
+        }
     }
 
     /**
@@ -161,9 +184,9 @@ class behat_tool_certificate extends behat_base {
      * @param TableNode $data
      */
     public function the_following_certificate_templates_exist(TableNode $data) {
-        $contextid = \context_system::instance()->id;
         foreach ($data->getHash() as $elementdata) {
-            $template = \tool_certificate\template::create($elementdata['name'], $contextid);
+            $this->lookup_tenant($elementdata);
+            $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
                     $template->add_page();
@@ -185,14 +208,13 @@ class behat_tool_certificate extends behat_base {
      */
     public function the_following_certificate_issues_exist(TableNode $data) {
         global $DB;
-        $contextid = \context_system::instance()->id;
         foreach ($data->getHash() as $elementdata) {
             if (!isset($elementdata['template']) || !isset($elementdata['user'])) {
                 continue;
             }
-            if ($template = \tool_certificate\template::find_by_name($elementdata['template'], $contextid)) {
+            if ($template = \tool_certificate\template::find_by_name($elementdata['template'])) {
                 if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
-                    \tool_certificate\certificate::issue_certificate($template->get_id(), $userid);
+                    $template->issue_certificate($userid);
                 }
             }
         }

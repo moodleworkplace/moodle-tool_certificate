@@ -66,6 +66,14 @@ class edit_form extends \moodleform {
 
         // Get the number of pages for this module.
         if (isset($this->_customdata['tid'])) {
+
+            if ($this->_customdata['tenantid'] > 0) {
+                $tenantname = $DB->get_field('tool_tenant', 'name', ['id' => $this->_customdata['tenantid']]);
+            } else {
+                $tenantname = get_string('shared', 'tool_certificate');
+            }
+            $mform->addElement('static', 'tenantid', get_string('selectedtenant', 'tool_certificate'), $tenantname);
+
             $this->tid = $this->_customdata['tid'];
             if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid), 'sequence')) {
                 $this->numpages = count($pages);
@@ -73,7 +81,18 @@ class edit_form extends \moodleform {
                     $this->add_certificate_page_elements($p);
                 }
             }
+
         } else { // Add a new template.
+
+            if (has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
+                $tenants = \tool_tenant\tenancy::get_tenants();
+                $options = [0 => get_string('shared', 'tool_certificate')];
+                foreach ($tenants as $tenant) {
+                    $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
+                }
+                $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
+            }
+
             // Create a 'fake' page to display the elements on - not yet saved in the DB.
             $page = new \stdClass();
             $page->id = 0;

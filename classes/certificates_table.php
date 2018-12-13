@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die;
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
- * Class for the report that displays all the certificates throughout the site.
+ * Class for the report that displays all the certificates for a given templateid.
  *
  * @package    tool_certificate
  * @copyright  2018 Daniel Neis <daniel@moodle.com>
@@ -49,17 +49,22 @@ class certificates_table extends \table_sql {
      * @param string|null $download The file type, null if we are not downloading
      */
     public function __construct($templateid, $download = null) {
-        parent::__construct('tool_certificate_report_table');
+        parent::__construct('tool_certificate_certificates_table');
+
+        $this->templateid = $templateid;
+        $this->template = \tool_certificate\template::find_by_id($templateid);
 
         $columns = array(
             'userfullname',
-            'code',
             'timecreated',
+            'expires',
+            'code',
         );
         $headers = array(
             get_string('fullname'),
-            get_string('code', 'tool_certificate'),
             get_string('receiveddate', 'tool_certificate'),
+            get_string('expires', 'tool_certificate'),
+            get_string('code', 'tool_certificate'),
         );
 
         // Check if we were passed a filename, which means we want to download it.
@@ -67,14 +72,11 @@ class certificates_table extends \table_sql {
             $this->is_downloading($download, 'certificate-report');
         }
 
-        $canissue = has_capability('tool/certificate:issue', \context_system::instance());
-        $canmanage = has_capability('tool/certificate:manage', \context_system::instance());
-
         if (!$this->is_downloading()) {
             $columns[] = 'download';
             $headers[] = get_string('file');
 
-            if ($canmanage) {
+            if ($this->template->can_issue()) {
                 $columns[] = 'revoke';
                 $headers[] = get_string('revoke', 'tool_certificate');
             }
@@ -88,14 +90,12 @@ class certificates_table extends \table_sql {
         $this->no_sorting('download');
         $this->no_sorting('revoke');
         $this->is_downloadable(true);
-
-        $this->templateid = $templateid;
     }
 
     /**
      * Generate the name column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_userfullname($issue) {
@@ -105,11 +105,28 @@ class certificates_table extends \table_sql {
     /**
      * Generate the certificate time created column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_timecreated($issue) {
         return userdate($issue->timecreated);
+    }
+
+    /**
+     * Generate the certificate expires column.
+     *
+     * @param \stdClass $certificate
+     * @return string
+     */
+    public function col_expires($certificate) {
+        if (!$certificate->expires) {
+            return get_string('never');
+        }
+        $column = userdate($certificate->expires);
+        if ($certificate->expires && $certificate->expires <= time()) {
+            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'), ['class' => 'badge badge-secondary']);
+        }
+        return $column;
     }
 
     /**
@@ -119,23 +136,21 @@ class certificates_table extends \table_sql {
      * @return string
      */
     public function col_code($issue) {
-        return $issue->code;
+        return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $issue->code]),
+                                  $issue->code, ['title' => get_string('verify', 'tool_certificate')]);
     }
 
     /**
      * Generate the download column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_download($issue) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
-        $link = new \moodle_url('/admin/tool/certificate/certificates.php',
-            array('templateid' => $this->templateid,
-                  'userid' => $issue->userid,
-                  'downloadcert' => '1'));
+        $icon = new \pix_icon('download', get_string('view'), 'tool_certificate');
+        $link = template::view_url($issue->code);
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }
@@ -143,18 +158,15 @@ class certificates_table extends \table_sql {
     /**
      * Generate the revoke column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
     public function col_revoke($issue) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('remove', get_string('revoke', 'tool_certificate'), 'tool_certificate');
+        $icon = new \pix_icon('t/delete', get_string('revoke', 'tool_certificate'));
         $link = new \moodle_url('/admin/tool/certificate/certificates.php',
-            array('issueid' => $issue->id,
-                  'templateid' => $issue->templateid,
-                  'sesskey' => sesskey(),
-                  'revokecert' => '1'));
+            array('issueid' => $issue->id, 'templateid' => $issue->templateid, 'sesskey' => sesskey(), 'revokecert' => '1'));
 
         return $OUTPUT->action_link($link, '', null, ['class' => 'delete-icon'], $icon);
     }
@@ -166,7 +178,7 @@ class certificates_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = certificate::get_number_of_issues_for_template($this->templateid);
+        $total = certificate::count_issues_for_template($this->templateid);
 
         $this->pagesize($pagesize, $total);
 
@@ -184,7 +196,7 @@ class certificates_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = certificate::get_number_of_issues($this->userid);
+        $total = certificate::count_issues_for_template($this->templateid);
         $this->out($total, false);
         exit;
     }

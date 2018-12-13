@@ -49,17 +49,19 @@ class my_certificates_table extends \table_sql {
      * @param string|null $download The file type, null if we are not downloading
      */
     public function __construct($userid, $download = null) {
-        parent::__construct('tool_certificate_report_table');
+        parent::__construct('tool_certificate_my_certificates_table');
 
         $columns = array(
             'name',
             'timecreated',
-            'code'
+            'expires',
+            'code',
         );
         $headers = array(
             get_string('name'),
             get_string('receiveddate', 'tool_certificate'),
-            get_string('code', 'tool_certificate')
+            get_string('expires', 'tool_certificate'),
+            get_string('code', 'tool_certificate'),
         );
 
         // Check if we were passed a filename, which means we want to download it.
@@ -90,9 +92,11 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_name($certificate) {
-        $context = \context_system::instance(); // TODO template context?
+        $context = \context::instance_by_id($certificate->contextid);
 
-        return format_string($certificate->name, true, ['context' => $context]);
+        $column = format_string($certificate->name, true, ['context' => $context]);
+
+        return $column;
     }
 
     /**
@@ -106,29 +110,44 @@ class my_certificates_table extends \table_sql {
     }
 
     /**
-     * Generate the code column.
+     * Generate the certificate expires column.
      *
      * @param \stdClass $certificate
      * @return string
      */
-    public function col_code($certificate) {
-        return $certificate->code;
+    public function col_expires($certificate) {
+        if (!$certificate->expires) {
+            return get_string('never');
+        }
+        $column = userdate($certificate->expires);
+        if ($certificate->expires && $certificate->expires <= time()) {
+            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'), ['class' => 'badge badge-secondary']);
+        }
+        return $column;
+    }
+
+    /**
+     * Generate the code column.
+     *
+     * @param \stdClass $issue
+     * @return string
+     */
+    public function col_code($issue) {
+        return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $issue->code]),
+                                  $issue->code, ['title' => get_string('verify', 'tool_certificate')]);
     }
 
     /**
      * Generate the download column.
      *
-     * @param \stdClass $certificate
+     * @param \stdClass $issue
      * @return string
      */
-    public function col_download($certificate) {
+    public function col_download($issue) {
         global $OUTPUT;
 
-        $icon = new \pix_icon('download', get_string('download'), 'tool_certificate');
-        $link = new \moodle_url('/admin/tool/certificate/my_certificates.php',
-            array('userid' => $this->userid,
-                  'tid' => $certificate->id,
-                  'downloadcert' => '1'));
+        $icon = new \pix_icon('download', get_string('view'), 'tool_certificate');
+        $link = template::view_url($issue->code);
 
         return $OUTPUT->action_link($link, '', null, null, $icon);
     }
@@ -140,11 +159,11 @@ class my_certificates_table extends \table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        $total = certificate::get_number_of_certificates_for_user($this->userid);
+        $total = certificate::count_issues_for_user($this->userid);
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = certificate::get_certificates_for_user($this->userid, $this->get_page_start(),
+        $this->rawdata = certificate::get_issues_for_user($this->userid, $this->get_page_start(),
             $this->get_page_size(), $this->get_sql_sort());
 
         // Set initial bars.
@@ -158,7 +177,7 @@ class my_certificates_table extends \table_sql {
      */
     public function download() {
         \core\session\manager::write_close();
-        $total = certificate::get_number_of_certificates_for_user($this->userid);
+        $total = certificate::count_issues_for_user($this->userid);
         $this->out($total, false);
         exit;
     }

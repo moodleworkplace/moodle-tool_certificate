@@ -36,29 +36,87 @@ defined('MOODLE_INTERNAL') || die();
 class element extends \tool_certificate\element {
 
     /**
+     * @var int Option to display only code
+     */
+    const DISPLAY_CODE = 1;
+
+    /**
+     * @var int Option to display code and a link
+     */
+    const DISPLAY_CODELINK = 2;
+
+    /**
+     * @var int Option to display verification URL
+     */
+    const DISPLAY_URL = 3;
+
+    /**
+     * This function renders the form elements when adding a certificate element.
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance
+     */
+    public function render_form_elements($mform) {
+
+        // Get the possible date options.
+        $options = [];
+        $options[self::DISPLAY_CODE] = get_string('displaycode', 'certificateelement_code');
+        $options[self::DISPLAY_CODELINK] = get_string('displaycodelink', 'certificateelement_code');
+        $options[self::DISPLAY_URL] = get_string('displayurl', 'certificateelement_code');
+
+        $mform->addElement('select', 'display', get_string('dateitem', 'certificateelement_date'), $options);
+        $mform->addHelpButton('display', 'display', 'certificateelement_code');
+
+        parent::render_form_elements($mform);
+    }
+
+    /**
+     * This will handle how form data will be saved into the data column in the
+     * tool_certificate_elements table.
+     *
+     * @param \stdClass $data the form data
+     * @return string the json encoded array
+     */
+    public function save_unique_data($data) {
+        // Array of data we will be storing in the database.
+        $arrtostore = array(
+            'display' => $data->display,
+        );
+
+        // Encode these variables before saving into the DB.
+        return json_encode($arrtostore);
+    }
+
+    /**
      * Handles rendering the element on the pdf.
      *
      * @param \pdf $pdf the pdf object
      * @param bool $preview true if it is a preview, false otherwise
      * @param \stdClass $user the user we are rendering this for
+     * @param \stdClass $issue the issue we are rendering
      */
-    public function render($pdf, $preview, $user) {
+    public function render($pdf, $preview, $user, $issue) {
         global $DB;
 
         if ($preview) {
             $code = \tool_certificate\certificate::generate_code();
         } else {
-            // Get the page.
-            $page = $DB->get_record('tool_certificate_pages', array('id' => $this->get_pageid()), '*', MUST_EXIST);
-            // Get the certificate this page belongs to.
-            $certificate = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
-            // Now we can get the issue for this user.
-            $issue = $DB->get_record('tool_certificate_issues', array('userid' => $user->id, 'templateid' => $certificate->id),
-                '*', MUST_EXIST);
             $code = $issue->code;
         }
 
-        \tool_certificate\element_helper::render_content($pdf, $this, $code);
+        $data = json_decode($this->get_data());
+        switch ($data->display) {
+            case self::DISPLAY_CODE:
+                $display = $code;
+                break;
+            case self::DISPLAY_CODELINK:
+                $display = \html_writer::link(\tool_certificate\template::verification_url($code), $code);
+                break;
+            case self::DISPLAY_URL:
+                $display = \tool_certificate\template::verification_url($code);
+                break;
+        }
+
+        \tool_certificate\element_helper::render_content($pdf, $this, $display);
     }
 
     /**
@@ -73,5 +131,22 @@ class element extends \tool_certificate\element {
         $code = \tool_certificate\certificate::generate_code();
 
         return \tool_certificate\element_helper::render_html_content($this, $code);
+    }
+
+    /**
+     * Sets the data on the form when editing an element.
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance
+     */
+    public function definition_after_data($mform) {
+        // Set the item and format for this element.
+        if (!empty($this->get_data())) {
+            $data = json_decode($this->get_data());
+
+            $element = $mform->getElement('display');
+            $element->setValue($data->display);
+        }
+
+        parent::definition_after_data($mform);
     }
 }

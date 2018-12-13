@@ -26,10 +26,6 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir . '/grade/constants.php');
-require_once($CFG->dirroot . '/grade/lib.php');
-require_once($CFG->dirroot . '/grade/querylib.php');
-
 /**
  * Class helper.
  *
@@ -137,12 +133,11 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_font($mform) {
-        $mform->addElement('select', 'font', get_string('font', 'tool_certificate'), \tool_certificate\certificate::get_fonts());
+        $mform->addElement('select', 'font', get_string('font', 'tool_certificate'), self::get_fonts());
         $mform->setType('font', PARAM_TEXT);
         $mform->setDefault('font', 'times');
         $mform->addHelpButton('font', 'font', 'tool_certificate');
-        $mform->addElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'),
-            \tool_certificate\certificate::get_font_sizes());
+        $mform->addElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'), self::get_font_sizes());
         $mform->setType('fontsize', PARAM_INT);
         $mform->setDefault('fontsize', 12);
         $mform->addHelpButton('fontsize', 'fontsize', 'tool_certificate');
@@ -387,6 +382,10 @@ class element_helper {
         return $options;
     }
 
+    /**
+     * Get the list of element plugins enabled on site level.
+     * @return array  The list of enabled plugins
+     */
     public static function get_enabled_plugins() {
         global $DB;
 
@@ -409,189 +408,64 @@ class element_helper {
     }
 
     /**
-     * Helper function to return all the grades items for a given course.
-     *
-     * @param \stdClass $course The course we want to return the grade items for
-     * @return array the array of gradeable items in the course
+     * Return the list of possible fonts to use.
      */
-    public static function get_grade_items($course) {
-        global $DB;
+    private static function get_fonts() {
+        global $CFG;
 
-        // Array to store the grade items.
-        $modules = array();
+        require_once($CFG->libdir . '/pdflib.php');
 
-        // Collect course modules data.
-        $modinfo = get_fast_modinfo($course);
-        $mods = $modinfo->get_cms();
-        $sections = $modinfo->get_section_info_all();
-
-        // Create the section label depending on course format.
-        $sectionlabel = get_string('section');
-        if ($course->format == 'topics') {
-            $sectionlabel = get_string('topic');
-        } else if ($course->format == 'weeks') {
-            $sectionlabel = get_string('week');
-        }
-
-        // Loop through each course section.
-        for ($i = 0; $i <= count($sections) - 1; $i++) {
-            // Confirm the index exists, should always be true.
-            if (isset($sections[$i])) {
-                // Get the individual section.
-                $section = $sections[$i];
-                // Get the mods for this section.
-                $sectionmods = explode(",", $section->sequence);
-                // Loop through the section mods.
-                foreach ($sectionmods as $sectionmod) {
-                    // Should never happen unless DB is borked.
-                    if (empty($mods[$sectionmod])) {
-                        continue;
-                    }
-                    $mod = $mods[$sectionmod];
-                    $instance = $DB->get_record($mod->modname, array('id' => $mod->instance));
-                    // Get the grade items for this activity.
-                    if ($gradeitems = grade_get_grade_items_for_activity($mod)) {
-                        $moditem = grade_get_grades($course->id, 'mod', $mod->modname, $mod->instance);
-                        $gradeitem = reset($moditem->items);
-                        if (isset($gradeitem->grademax)) {
-                            $modules[$mod->id] = $sectionlabel . ' ' . $section->section . ' : ' . $instance->name;
-                        }
-                    }
+        $arrfonts = [];
+        $pdf = new \pdf();
+        $fontfamilies = $pdf->get_font_families();
+        foreach ($fontfamilies as $fontfamily => $fontstyles) {
+            foreach ($fontstyles as $fontstyle) {
+                $fontstyle = strtolower($fontstyle);
+                if ($fontstyle == 'r') {
+                    $filenamewoextension = $fontfamily;
+                } else {
+                    $filenamewoextension = $fontfamily . $fontstyle;
                 }
-            }
-        }
-
-        if ($gradeitems = \grade_item::fetch_all(['courseid' => $course->id])) {
-            $arrgradeitems = [];
-            foreach ($gradeitems as $gi) {
-                // Skip the course and mod items since we already have them.
-                if ($gi->itemtype == 'mod' || $gi->itemtype == 'course') {
+                $fullpath = \TCPDF_FONTS::_getfontpath() . $filenamewoextension;
+                // Set the name of the font to null, the include next should then set this
+                // value, if it is not set then the file does not include the necessary data.
+                $name = null;
+                // Some files include a display name, the include next should then set this
+                // value if it is present, if not then $name is used to create the display name.
+                $displayname = null;
+                // Some of the TCPDF files include files that are not present, so we have to
+                // suppress warnings, this is the TCPDF libraries fault, grrr.
+                @include($fullpath . '.php');
+                // If no $name variable in file, skip it.
+                if (is_null($name)) {
                     continue;
                 }
-                $arrgradeitems['gradeitem:' . $gi->id] = get_string('gradeitem', 'grades') . ' : ' . $gi->get_name(true);
+                // Check if there is no display name to use.
+                if (is_null($displayname)) {
+                    // Format the font name, so "FontName-Style" becomes "Font Name - Style".
+                    $displayname = preg_replace("/([a-z])([A-Z])/", "$1 $2", $name);
+                    $displayname = preg_replace("/([a-zA-Z])-([a-zA-Z])/", "$1 - $2", $displayname);
+                }
+
+                $arrfonts[$filenamewoextension] = $displayname;
             }
-
-            // Alphabetise this.
-            asort($arrgradeitems);
-
-            // Merge results.
-            $modules = $modules + $arrgradeitems;
         }
+        ksort($arrfonts);
 
-        return $modules;
+        return $arrfonts;
     }
 
     /**
-     * Helper function to return the grade information for a course for a specified user.
-     *
-     * @param int $courseid
-     * @param int $gradeformat
-     * @param int $userid
-     * @return grade_information|bool the grade information, or false if there is none.
+     * Return the list of possible font sizes to use.
      */
-    public static function get_course_grade_info($courseid, $gradeformat, $userid) {
-        $courseitem = \grade_item::fetch_course_item($courseid);
+    private static function get_font_sizes() {
+        // Array to store the sizes.
+        $sizes = array();
 
-        if (!$courseitem) {
-            return false;
+        for ($i = 1; $i <= 200; $i++) {
+            $sizes[$i] = $i;
         }
 
-        // Define how many decimals to display.
-        $decimals = 2;
-        if ($gradeformat == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-            $decimals = 0;
-        }
-
-        $grade = new \grade_grade(array('itemid' => $courseitem->id, 'userid' => $userid));
-
-        return new grade_information(
-            $courseitem->get_name(),
-            $grade->finalgrade,
-            grade_format_gradevalue($grade->finalgrade, $courseitem, true, $gradeformat, $decimals),
-            $grade->get_dategraded()
-        );
-    }
-
-    /**
-     * Helper function to return the grade information for a module for a specified user.
-     *
-     * @param int $cmid
-     * @param int $gradeformat
-     * @param int $userid
-     * @return grade_information|bool the grade information, or false if there is none.
-     */
-    public static function get_mod_grade_info($cmid, $gradeformat, $userid) {
-        global $DB;
-
-        if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
-            return false;
-        }
-
-        if (!$module = $DB->get_record('modules', array('id' => $cm->module))) {
-            return false;
-        }
-
-        $gradeitem = grade_get_grades($cm->course, 'mod', $module->name, $cm->instance, $userid);
-
-        if (empty($gradeitem)) {
-            return false;
-        }
-
-        // Define how many decimals to display.
-        $decimals = 2;
-        if ($gradeformat == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-            $decimals = 0;
-        }
-
-        $item = new \grade_item();
-        $item->gradetype = GRADE_TYPE_VALUE;
-        $item->courseid = $cm->course;
-        $itemproperties = reset($gradeitem->items);
-        foreach ($itemproperties as $key => $value) {
-            $item->$key = $value;
-        }
-
-        $objgrade = $item->grades[$userid];
-
-        $dategraded = null;
-        if (!empty($objgrade->dategraded)) {
-            $dategraded = $objgrade->dategraded;
-        }
-
-        return new grade_information(
-            $item->name,
-            $objgrade->grade,
-            grade_format_gradevalue($objgrade->grade, $item, true, $gradeformat, $decimals),
-            $dategraded
-        );
-    }
-
-    /**
-     * Helper function to return the grade information for a grade item for a specified user.
-     *
-     * @param int $gradeitemid
-     * @param int $gradeformat
-     * @param int $userid
-     * @return grade_information|bool the grade information, or false if there is none.
-     */
-    public static function get_grade_item_info($gradeitemid, $gradeformat, $userid) {
-        if (!$gradeitem = \grade_item::fetch(['id' => $gradeitemid])) {
-            return false;
-        }
-
-        // Define how many decimals to display.
-        $decimals = 2;
-        if ($gradeformat == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-            $decimals = 0;
-        }
-
-        $grade = new \grade_grade(array('itemid' => $gradeitem->id, 'userid' => $userid));
-
-        return new grade_information(
-            $gradeitem->get_name(),
-            $grade->finalgrade,
-            grade_format_gradevalue($grade->finalgrade, $gradeitem, true, $gradeformat, $decimals),
-            $grade->get_dategraded()
-        );
+        return $sizes;
     }
 }

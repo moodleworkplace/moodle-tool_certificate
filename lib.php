@@ -42,9 +42,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // We are positioning the elements.
     if ($filearea === 'image') {
-        if ($context->contextlevel == CONTEXT_MODULE) {
-            require_login($course, false, $cm);
-        } else if ($context->contextlevel == CONTEXT_SYSTEM && !has_capability('tool/certificate:manage', $context)) {
+        if (!\tool_certificate::can_verify_loose()) {
             return false;
         }
 
@@ -76,48 +74,6 @@ function tool_certificate_output_fragment_editelement($args) {
     $form = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
 
     return $form->render();
-}
-
-/**
- * This function extends the settings navigation block for the site.
- *
- * It is safe to rely on PAGE here as we will only ever be within the module
- * context when this is called.
- *
- * @param settings_navigation $settings
- * @param navigation_node $certificatenode
- */
-function tool_certificate_extend_settings_navigation(settings_navigation $settings, navigation_node $certificatenode) {
-    global $DB, $PAGE;
-
-    $keys = $certificatenode->get_children_key_list();
-    $beforekey = null;
-    $i = array_search('modedit', $keys);
-    if ($i === false and array_key_exists(0, $keys)) {
-        $beforekey = $keys[0];
-    } else if (array_key_exists($i + 1, $keys)) {
-        $beforekey = $keys[$i + 1];
-    }
-
-    if (has_capability('tool/certificate:manage', $PAGE->cm->context)) {
-        // Get the template id.
-        $templateid = $DB->get_field('tool_certificate', 'templateid', array('id' => $PAGE->cm->instance));
-        $node = navigation_node::create(get_string('editcertificate', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid)),
-                navigation_node::TYPE_SETTING, null, 'tool_certificate_edit',
-                new pix_icon('t/edit', ''));
-        $certificatenode->add_node($node, $beforekey);
-    }
-
-    if (has_capability('tool/certificate:verifycertificate', $PAGE->cm->context)) {
-        $node = navigation_node::create(get_string('verifycertificate', 'tool_certificate'),
-            new moodle_url('/admin/tool/certificate/verify_certificate.php', array('contextid' => $PAGE->cm->context->id)),
-            navigation_node::TYPE_SETTING, null, 'tool_certificate_verify_certificate',
-            new pix_icon('t/check', ''));
-        $certificatenode->add_node($node, $beforekey);
-    }
-
-    return $certificatenode->trim_if_empty();
 }
 
 /**
@@ -182,4 +138,41 @@ function tool_certificate_get_fontawesome_icon_map() {
     return [
         'tool_certificate:download' => 'fa-download'
     ];
+}
+
+/**
+ * Callback to filter form-potential-users-selector
+ * @param string $area
+ * @param int $itemid
+ * @return array
+ */
+function tool_certificate_potential_users_selector($area, $itemid) {
+
+    $where = '';
+    $join = '';
+    $params = [];
+    if ($itemid) {
+        $template = \tool_certificate\template::find_by_id($itemid);
+
+        if ($template->get_tenant_id() == 0) {
+            if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+                $where .= ' ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now)';
+            } else {
+                list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u');
+                $where .= ' AND ci.id IS NULL
+                             OR (ci.expires > 0 AND ci.expires < :now)';
+            }
+        } else {
+            list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u', $template->get_tenant_id());
+            $where .= ' AND ci.id IS NULL
+                         OR (ci.expires > 0 AND ci.expires < :now)';
+        }
+
+        $join .= ' LEFT JOIN {tool_certificate_issues} ci
+                 ON u.id = ci.userid AND ci.templateid = :templateid';
+
+        $params['templateid'] = $itemid;
+        $params['now'] = time();
+    }
+    return [$join, $where, $params];
 }

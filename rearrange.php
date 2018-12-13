@@ -23,48 +23,31 @@
  */
 
 require_once('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 // The page of the certificate we are editing.
 $pid = required_param('pid', PARAM_INT);
 
-$page = $DB->get_record('tool_certificate_pages', array('id' => $pid), '*', MUST_EXIST);
-$template = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
-$elements = $DB->get_records('tool_certificate_elements', array('pageid' => $pid), 'sequence');
+$PAGE->set_context(null);
 
-// Set the template.
-$template = new \tool_certificate\template($template);
-// Perform checks.
-if ($cm = $template->get_cm()) {
-    require_login($cm->course, false, $cm);
-} else {
-    require_login();
-}
-// Make sure the user has the required capabilities.
+require_login();
+
+$PAGE->set_pagelayout('admin');
+$PAGE->set_url(new moodle_url('/admin/tool/certificate/rearrange.php', ['pid' => $pid]));
+
+$page = $DB->get_record('tool_certificate_pages', ['id' => $pid], '*', MUST_EXIST);
+
+$template = \tool_certificate\template::find_by_id($page->templateid);
+
 $template->require_manage();
 
-if ($template->get_context()->contextlevel == CONTEXT_MODULE) {
-    $certificate = $DB->get_record('tool_certificate', ['id' => $cm->instance], '*', MUST_EXIST);
-    $title = $certificate->name;
-    $heading = format_string($title);
-} else {
-    $title = $SITE->fullname;
-    $heading = $title;
-}
+$elements = $DB->get_records('tool_certificate_elements', ['pageid' => $pid], 'sequence');
 
-// Set the $PAGE settings.
-$pageurl = new moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $pid));
-\tool_certificate\page_helper::page_setup($pageurl, $template->get_context(), $title);
+$editstr = get_string('editcertificate', 'tool_certificate');
+$managestr = get_string('managetemplates', 'tool_certificate');
 
-// Add more links to the navigation.
-if (!$cm = $template->get_cm()) {
-    $str = get_string('managetemplates', 'tool_certificate');
-    $link = new moodle_url('/admin/tool/certificate/manage_templates.php');
-    $PAGE->navbar->add($str, new \action_link($link, $str));
-}
-
-$str = get_string('editcertificate', 'tool_certificate');
-$link = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
-$PAGE->navbar->add($str, new \action_link($link, $str));
+$PAGE->navbar->add($managestr, new \action_link(\tool_certificate\template::manage_url(), $managestr));
+$PAGE->navbar->add($editstr, new \action_link($template->edit_url(), $editstr));
 
 $PAGE->navbar->add(get_string('rearrangeelements', 'tool_certificate'));
 
@@ -89,7 +72,7 @@ $style = 'height: ' . $page->height . 'mm; line-height: normal; width: ' . $page
 $marginstyle = 'height: ' . $page->height . 'mm; width:1px; float:left; position:relative;';
 $html .= html_writer::start_tag('div', array(
     'data-templateid' => $template->get_id(),
-    'data-contextid' => $template->get_contextid(),
+    'data-contextid' => $template->get_context()->id,
     'id' => 'pdf',
     'style' => $style)
 );
@@ -124,7 +107,6 @@ if ($page->rightmargin) {
 $html .= html_writer::end_tag('div');
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
 echo $OUTPUT->heading(get_string('rearrangeelementsheading', 'tool_certificate'), 4);
 echo $html;
 $PAGE->requires->js_call_amd('tool_certificate/rearrange-area', 'init', array('#pdf'));

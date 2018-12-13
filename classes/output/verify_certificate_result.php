@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use renderable;
 use templatable;
+use tool_certificate\template;
 
 /**
  * Class to prepare a verification result for display.
@@ -54,15 +55,34 @@ class verify_certificate_result implements templatable, renderable {
     public $certificatename;
 
     /**
+     * @var string The time the issue was created.
+     */
+    public $timecreated;
+
+    /**
+     * @var string The timestamp the issue expires on.
+     */
+    public $expires;
+
+
+    /**
+     * @var string If issue expired based on current time.
+     */
+    public $expired;
+
+    /**
      * Constructor.
      *
-     * @param \stdClass $result
+     * @param \stdClass $issue
      */
-    public function __construct($result) {
-        $context = \context_system::instance(); // TODO template context?
-
-        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $result->userid));
-        $this->userfullname = fullname($result);
+    public function __construct($issue) {
+        $this->viewurl = template::view_url($issue->code);
+        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $issue->userid));
+        $this->userfullname = fullname($issue);
+        $this->certificatename = $issue->certificatename;
+        $this->timecreated = userdate($issue->timecreated);
+        $this->expires = userdate($issue->expires);
+        $this->expired = $issue->expires <= time();
     }
 
     /**
@@ -73,9 +93,13 @@ class verify_certificate_result implements templatable, renderable {
      */
     public function export_for_template(\renderer_base $output) {
         $result = new \stdClass();
+        $result->viewurl = $this->viewurl;
         $result->userprofileurl = $this->userprofileurl;
         $result->userfullname = $this->userfullname;
         $result->certificatename = $this->certificatename;
+        $result->timecreated = $this->timecreated;
+        $result->expires = $this->expires;
+        $result->expired = $this->expired;
 
         return $result;
     }

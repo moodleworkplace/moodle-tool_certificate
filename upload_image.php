@@ -23,17 +23,13 @@
  */
 
 require('../../../config.php');
+require_once($CFG->libdir.'/adminlib.php');
 
-require_login();
+admin_externalpage_setup('tool_certificate/managetemplates');
 
-$context = context_system::instance();
-require_capability('moodle/site:config', $context);
+require_capability('tool/certificate:imageforalltenants');
 
 $struploadimage = get_string('uploadimage', 'tool_certificate');
-
-// Set the page variables.
-$pageurl = new moodle_url('/admin/tool/certificate/upload_image.php');
-\tool_certificate\page_helper::page_setup($pageurl, $context, $SITE->fullname);
 
 // Additional page setup.
 $PAGE->navbar->add($struploadimage);
@@ -44,12 +40,12 @@ if ($uploadform->is_cancelled()) {
     redirect(new moodle_url('/admin/settings.php?section=toolcertificatemanagetemplates'));
 } else if ($data = $uploadform->get_data()) {
     // Handle file uploads.
-    \tool_certificate\certificate::upload_files($data->certificateimage, $context->id);
+    \tool_certificate\certificate::upload_files($data->certificateimage);
 
     redirect(new moodle_url('/admin/tool/certificate/upload_image.php'), get_string('changessaved'));
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($SITE->fullname);
+echo $OUTPUT->heading(get_string('uploadimage', 'tool_certificate'));
 $uploadform->display();
 echo $OUTPUT->footer();

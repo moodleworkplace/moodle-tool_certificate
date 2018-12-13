@@ -28,22 +28,14 @@ if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', true);
 }
 
-$tid = required_param('tid', PARAM_INT);
+$templateid = required_param('tid', PARAM_INT);
 $values = required_param('values', PARAM_RAW);
 $values = json_decode($values);
 
-// Make sure the template exists.
-$template = $DB->get_record('tool_certificate_templates', array('id' => $tid), '*', MUST_EXIST);
+require_login();
 
-// Set the template.
-$template = new \tool_certificate\template($template);
-// Perform checks.
-if ($cm = $template->get_cm()) {
-    $courseid = $cm->course;
-    require_login($courseid, false, $cm);
-} else {
-    require_login();
-}
+$template = new \tool_certificate\find_by_id($templateid);
+
 // Make sure the user has the required capabilities.
 $template->require_manage();
 
