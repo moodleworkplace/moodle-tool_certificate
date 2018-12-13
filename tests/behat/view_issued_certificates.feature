@@ -188,6 +188,7 @@ Feature: Being able to view the certificates that have been issued
     And I should see "User 12"
     And I follow "Manage certificate templates"
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
+    And "Issue new certificate" "link" should not exist
     And I should not see "User 2"
     And I should not see "User 11"
     And I should see "User 12"
