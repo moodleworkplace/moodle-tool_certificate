@@ -16,3 +16,7 @@ Issue a new certificate for a user from an existing template and saving custom d
     $expires = strtotime('+ 1 year');
 
     $template->issue_certificate($userid, $expires, $issuedata, $component);
+
+Get a list of certificate templates given a tenantid. For templates shared between tenants, use tenantid = 0.
+
+    $certificates = \tool_certificate\template::get_all_by_tenantid($tenantid);
