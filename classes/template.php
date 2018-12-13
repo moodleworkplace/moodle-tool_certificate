@@ -793,6 +793,23 @@ class template {
         return false;
     }
 
+    /**
+     * Return an array of certificate templates for the given tenantid.
+     *
+     * @param int $tenantid
+     * @return array
+     */
+    public static function get_all_by_tenantid(int $tenantid): array {
+        global $DB;
+
+        $certificates = [];
+        if ($templates = $DB->get_records('tool_certificate_templates', ['tenantid' => $tenantid])) {
+            foreach ($templates as $t) {
+                $certificates[] = new \tool_certificate\template($t);
+            }
+        }
+        return $certificates;
+    }
 
     /**
      * Issues a certificate to a user.
