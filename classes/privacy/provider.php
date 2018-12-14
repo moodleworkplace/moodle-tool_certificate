@@ -25,7 +25,9 @@ namespace tool_certificate\privacy;
 
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
+use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\contextlist;
+use core_privacy\local\request\userlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
@@ -38,10 +40,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider extends \core_privacy\local\request\userlist
-               implements \core_privacy\local\metadata\provider,
+class provider implements \core_privacy\local\metadata\provider,
                           \core_privacy\local\request\subsystem\plugin_provider,
-                          \core_privacy\local\request\core_user_data_provider {
+                          \core_privacy\local\request\core_user_data_provider,
+                          \core_privacy\local\request\core_userlist_provider {
 
     /**
      * Return the fields which contain personal data.
