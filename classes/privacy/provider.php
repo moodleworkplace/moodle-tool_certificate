@@ -86,10 +86,10 @@ class provider extends \core_privacy\local\request\userlist
      * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
      */
     public static function get_users_in_context(userlist $userlist) {
-	$context = $userlist->get_context();
-	if (!$context instanceof \context_system) {
-	    return;
-	}
+        $context = $userlist->get_context();
+        if (!$context instanceof \context_system) {
+            return;
+        }
         $sql = "SELECT userid FROM {tool_certificate_issues}";
         $userlist->add_from_sql('userid', $sql, []);
     }
