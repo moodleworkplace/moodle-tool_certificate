@@ -74,6 +74,15 @@ Feature: Being able to manage site templates
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
+  Scenario: Adding template with name too long
+    When I log in as "admin"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I press "Create template"
+    And I set the following fields to these values:
+      | Name | Certificate 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456 |
+    And I press "Save changes"
+    Then I should see "You have exceeded the maximum length allowed for the name"
+
   Scenario: Deleting a site template
     When the following certificate templates exist:
       | name |
