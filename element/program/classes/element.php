@@ -131,7 +131,7 @@ class element extends \tool_certificate\element {
             case 'completedcourses':
                 $display = \html_writer::start_tag('ul');
                 foreach ($data['completedcourses'] as $c) {
-                    $display .= \html_writer::tag('li', $c);
+                    $display .= \html_writer::tag('li', format_string($c));
                 }
                 $display .= \html_writer::end_tag('ul');
         }
