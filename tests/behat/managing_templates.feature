@@ -83,6 +83,21 @@ Feature: Being able to manage site templates
     And I press "Save changes"
     Then I should see "You have exceeded the maximum length allowed for the name"
 
+  Scenario: Adding template with invalid width, heigth and margins
+    When I log in as "admin"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I press "Create template"
+    And I set the following fields to these values:
+      | Name | Certificate 1 |
+      | Width | 0 |
+      | Height | 0 |
+      | Left margin | -1 |
+      | Right margin | -1 |
+    And I press "Save changes"
+    Then I should see "The width has to be a valid number greater than 0."
+    Then I should see "The height has to be a valid number greater than 0."
+    Then I should see "The margin has to be a valid number greater than 0."
+
   Scenario: Deleting a site template
     When the following certificate templates exist:
       | name |
