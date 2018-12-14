@@ -24,6 +24,7 @@
 
 use tool_certificate\privacy\provider;
 use core_privacy\local\metadata\collection;
+use \core_privacy\local\request\approved_userlist;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -36,6 +37,13 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+
+    /**
+     * Test set up.
+     */
+    public function setUp() {
+        $this->resetAfterTest();
+    }
 
     /**
      * Test provider::get_metadata
@@ -62,7 +70,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
      * Test for provider::get_contexts_for_userid().
      */
     public function test_get_contexts_for_userid() {
-        $this->resetAfterTest();
 
         // Add a template to the site.
         $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
@@ -89,12 +96,10 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
     }
 
     /**
-     * Test that only users within a course context are fetched.
+     * Test that only users within a context are fetched.
      */
     public function test_get_users_in_context() {
         global $DB;
-
-        $this->resetAfterTest();
 
         $component = 'tool_certificate';
 
@@ -125,7 +130,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
      * Test for provider::export_user_data().
      */
     public function test_export_user_data() {
-        $this->resetAfterTest();
 
         // Add a template to the site.
         $template = \tool_certificate\template::create((object)['name' => 'Site template']);
@@ -160,10 +164,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
     public function test_delete_data_for_all_users_in_context() {
         global $DB;
 
-        $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course();
-
         // Add a template to the site.
         $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
         $template2 = \tool_certificate\template::create((object)['name' => 'Second template']);
@@ -182,7 +182,14 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template1->get_id()]);
         $this->assertEquals(2, $count);
 
-        // Delete data based on context.
+        // Delete data on user context will do nothing.
+        $usercontext1 = \context_user::instance($user1->id);
+        provider::delete_data_for_all_users_in_context($usercontext1);
+
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template1->get_id()]);
+        $this->assertEquals(2, $count);
+
+        // Delete data on system context will delete certificate issues.
         $context = \context_system::instance();
         provider::delete_data_for_all_users_in_context($context);
 
@@ -197,20 +204,33 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
     public function test_delete_data_for_user() {
         global $DB;
 
-        $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course();
-
         $template = \tool_certificate\template::create((object)['name' => 'Site template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $usercontext1 = \context_user::instance($user1->id);
 
         $template->issue_certificate($user1->id);
         $template->issue_certificate($user2->id);
 
         // Before deletion we should have 2 issued certificates.
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template->get_id()]);
+        $this->assertEquals(2, $count);
+
+        // Delete data without context will do nothing.
+        $context = \context_system::instance();
+        $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'tool_certificate', []);
+        provider::delete_data_for_user($contextlist);
+
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template->get_id()]);
+        $this->assertEquals(2, $count);
+
+        // Delete data on user context will do nothing.
+        $context = \context_system::instance();
+        $contextlist = new \core_privacy\local\request\approved_contextlist($user1, 'tool_certificate', [$usercontext1->id]);
+        provider::delete_data_for_user($contextlist);
+
         $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template->get_id()]);
         $this->assertEquals(2, $count);
 
@@ -223,9 +243,39 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $this->assertEquals(0, $count);
 
         // Check the issue for the other user is still there.
-        $templateissue = $DB->get_records('tool_certificate_issues');
-        $this->assertCount(1, $templateissue);
-        $lastissue = reset($templateissue);
-        $this->assertEquals($user2->id, $lastissue->userid);
+        $count = $DB->count_records('tool_certificate_issues', ['templateid' => $template->get_id(), 'userid' => $user2->id]);
+        $this->assertEquals(1, $count);
+    }
+
+    /**
+     * Test for provider::delete_data_for_user().
+     */
+    public function test_delete_data_for_users() {
+
+        $component = 'tool_certificate';
+
+        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
+
+        // Create users who will be issued a certificate.
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $template->issue_certificate($user1->id);
+        $user2 = $this->getDataGenerator()->create_user();
+        $template->issue_certificate($user2->id);
+
+        $systemcontext = \context_system::instance();
+        $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(2, $userlist1);
+
+        // Convert $userlist1 into an approved_contextlist.
+        $approvedlist1 = new approved_userlist($systemcontext, $component, $userlist1->get_userids());
+
+        // Delete using delete_data_for_user.
+        provider::delete_data_for_users($approvedlist1);
+        // Re-fetch users in systemcontext.
+        $userlist1 = new \core_privacy\local\request\userlist($systemcontext, $component);
+        provider::get_users_in_context($userlist1);
+        $this->assertCount(0, $userlist1);
     }
 }
