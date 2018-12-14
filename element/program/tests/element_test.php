@@ -59,7 +59,8 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $element = $certificate1->new_element_for_page_id($pageid, 'program');
         $element->data = json_encode(['display' => 'certificationname']);
         $e = \tool_certificate\element_factory::get_element_instance($element);
-        $this->assertTrue(strpos($e->format_preview_data(), get_string('previewcertificationname', 'certificateelement_program')) >= 0);
+        $certificationstr = get_string('previewcertificationname', 'certificateelement_program');
+        $this->assertTrue(strpos($e->format_preview_data(), $certificationstr) >= 0);
 
         $element->data = json_encode(['display' => 'programname']);
         $e = \tool_certificate\element_factory::get_element_instance($element);
