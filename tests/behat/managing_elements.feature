@@ -12,6 +12,13 @@ Feature: Being able to manage elements in a certificate template
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit" "link"
 
+  Scenario: Add a certificate element with name too long
+    When I press "Add element"
+    And I set the following fields to these values:
+      | Element name | Element 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456 |
+    And I press "Save changes"
+    Then I should see "You have exceeded the maximum length allowed for the name"
+
   Scenario: Add and edit elements in a certificate template
     # Background image.
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
