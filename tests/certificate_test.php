@@ -55,6 +55,8 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
      */
     public function test_count_issues_for_template() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $certificate2 = $this->get_generator()->create_template((object)['name' => 'Certificate 2']);
+
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
@@ -65,8 +67,11 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $certificate1->issue_certificate($user1->id);
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
 
-        $certificate1->issue_certificate($user2->id);
-        $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
+        $certificate2->issue_certificate($user2->id);
+        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
+        $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_template($certificate2->get_id()));
+
+        $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_template(0));
     }
 
     /**
