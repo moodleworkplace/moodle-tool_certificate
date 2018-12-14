@@ -33,4 +33,3 @@ Feature: Manage certificate elements plugins
     Then "Enable" "link" should exist in the "Background image" "table_row"
     And I click on "Enable" "link" in the "Background image" "table_row"
     Then "Disable" "link" should exist in the "Background image" "table_row"
-
