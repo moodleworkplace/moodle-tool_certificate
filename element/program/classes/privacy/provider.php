@@ -1,5 +1,5 @@
 <?php
-// This file is part of the tool_certificate for Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,20 +15,33 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'certificateelement_program', language 'en'.
+ * Privacy Subsystem implementation for certificateelement_program.
  *
  * @package   certificateelement_program
  * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['displaycertificationname'] = 'Certification name';
-$string['displaycompletedcourses'] = 'Completed courses';
-$string['displaycompletiondate'] = 'Completion date';
-$string['displayprogramname'] = 'Program name';
-$string['fieldoptions'] = 'Field';
-$string['fieldoptions_help'] = 'The field to be displayed. If you need to display more than one field, add more instances of this element and configure accordingly.';
-$string['pluginname'] = 'Program';
-$string['previewcertificationname'] = 'Certification name preview';
-$string['previewprogramname'] = 'Program name preview';
-$string['privacy:metadata'] = 'The program plugin does not store any personal data.';
+namespace certificateelement_program\privacy;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Privacy Subsystem for certificateelement_program implementing null_provider.
+ *
+ * @package   certificateelement_program
+ * @copyright 2018 Daniel Neis Araujo <daniel@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class provider implements \core_privacy\local\metadata\null_provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
+}
