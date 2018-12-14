@@ -95,10 +95,60 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
         $tenant = $tenantgenerator->create_tenant();
 
-        $certificate3 = \tool_certificate\template::create((object)['name' => $cert2name, 'tenantid' => $tenant->id]);
+        $cert3name = 'Certificate 3';
+        $certificate3 = \tool_certificate\template::create((object)['name' => $cert3name, 'tenantid' => $tenant->id]);
         $this->assertEquals(3, $DB->count_records('tool_certificate_templates'));
         $tenantid = $DB->get_field('tool_certificate_templates', 'tenantid', ['id' => $certificate3->get_id()]);
         $this->assertEquals($tenant->id, $tenantid);
+    }
+
+    /**
+     * Test get_all_by_tenantid
+     */
+    public function test_get_all_by_tenantid() {
+
+        // There are no certificates in the beggining.
+        $this->assertEquals(0, count(\tool_certificate\template::get_all()));
+
+        // Create certificate.
+        $cert1name = 'Certificate 1';
+        $certificate1 = \tool_certificate\template::create((object)['name' => $cert1name]);
+
+        // Create certificate in another tenant.
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+        $cert2name = 'Certificate 2';
+        $certificate2 = \tool_certificate\template::create((object)['name' => $cert2name, 'tenantid' => $tenant->id]);
+
+        $this->assertEquals(1, count(\tool_certificate\template::get_all_by_tenantid(\tool_tenant\tenancy::get_default_tenant_id())));
+        $this->assertEquals(1, count(\tool_certificate\template::get_all_by_tenantid($tenant->id)));
+    }
+
+    /**
+     * Test get_all
+     */
+    public function test_get_all() {
+
+        $this->setAdminUser();
+
+        // There are no certificates in the beggining.
+        $this->assertEquals(0, count(\tool_certificate\template::get_all()));
+
+        // Create certificate.
+        $cert1name = 'Certificate 1';
+        $certificate1 = \tool_certificate\template::create((object)['name' => $cert1name]);
+
+        // Create certificate in another tenant.
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+        $cert2name = 'Certificate 2';
+        $certificate2 = \tool_certificate\template::create((object)['name' => $cert2name, 'tenantid' => $tenant->id]);
+
+        // Create certificate shared.
+        $cert3name = 'Certificate 3';
+        $certificate1 = \tool_certificate\template::create((object)['name' => $cert3name, 'tenantid' => 0]);
+
+        $this->assertEquals(2, count(\tool_certificate\template::get_all()));
     }
 
     /**

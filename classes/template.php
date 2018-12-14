@@ -793,6 +793,45 @@ class template {
         return false;
     }
 
+    /**
+     * Return an array of certificate templates for the given tenantid.
+     *
+     * @param int $tenantid
+     * @return array
+     */
+    public static function get_all_by_tenantid(int $tenantid): array {
+        global $DB;
+
+        $certificates = [];
+        if ($templates = $DB->get_records('tool_certificate_templates', ['tenantid' => $tenantid])) {
+            foreach ($templates as $t) {
+                $certificates[] = new \tool_certificate\template($t);
+            }
+        }
+        return $certificates;
+    }
+
+    /**
+     * Return an array of certificate templates that are shared or belong to current user's tenant.
+     *
+     * @return array
+     */
+    public static function get_all(): array {
+        global $DB;
+
+        $certificates = [];
+
+        $sql = "SELECT *
+                  FROM {tool_certificate_templates}
+                 WHERE tenantid = 0
+                    OR tenantid = :tenantid";
+        if ($templates = $DB->get_records_sql($sql, ['tenantid' => \tool_tenant\tenancy::get_tenant_id()])) {
+            foreach ($templates as $t) {
+                $certificates[] = new \tool_certificate\template($t);
+            }
+        }
+        return $certificates;
+    }
 
     /**
      * Issues a certificate to a user.
