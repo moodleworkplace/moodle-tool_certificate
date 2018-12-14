@@ -96,8 +96,8 @@ class behat_tool_certificate extends behat_base {
 
         $this->execute('behat_forms::i_set_the_field_to', array(get_string('code', 'tool_certificate'), $issue->code));
         $this->execute('behat_forms::press_button', get_string('verify', 'tool_certificate'));
-        $this->execute('behat_general::assert_page_contains_text', get_string('verified', 'tool_certificate'));
-        $this->execute('behat_general::assert_page_not_contains_text', get_string('notverified', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_contains_text', get_string('valid', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_not_contains_text', get_string('expired', 'tool_certificate'));
     }
 
     /**
