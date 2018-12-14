@@ -42,7 +42,7 @@ install:
 
 script:
   - moodle-plugin-ci phplint
-  - moodle-plugin-ci phpcpd
+  # - moodle-plugin-ci phpcpd
   # - moodle-plugin-ci phpmd # too much noise from this check, maybe, some day...
   - moodle-plugin-ci codechecker
   - moodle-plugin-ci phpdoc
