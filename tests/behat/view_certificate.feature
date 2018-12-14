@@ -1,0 +1,35 @@
+@tool @tool_certificate
+Feature: Being able to download valid certificates
+  In order to ensure that a user can download a valid certificate
+  As an admin and non-user
+  I need to be able to download a certificate
+
+  Background:
+    Given the following "users" exist:
+      | username | firstname | lastname | email                |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
+      | student1 | Student   | 1        | student1@example.com |
+    And the following certificate templates exist:
+      | name |
+      | Certificate 1 |
+      | Certificate 2 |
+    And the following certificate issues exist:
+      | template | user |
+      | Certificate 1 | student1 |
+
+  Scenario: Download a certificate as admin
+    When I log in as "admin"
+    And I visit the verification url for the site
+    And I verify the "Certificate 1" certificate for the user "student1"
+    And I click on "View certificate" "link"
+
+  Scenario: Verify a certificate as a guest using the site-wide URL
+    When I log in as "admin"
+    And I set the following system permissions of "Guest" role:
+      | capability | permission |
+      | tool/certificate:verifyforalltenants | Allow |
+    And I log out
+    And I log in as "guest"
+    And I visit the verification url for the site
+    And I verify the "Certificate 1" certificate for the user "student1"
+    And I click on "View certificate" "link"
