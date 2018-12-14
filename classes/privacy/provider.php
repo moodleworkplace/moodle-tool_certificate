@@ -38,7 +38,10 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider, \core_privacy\local\request\subsystem\plugin_provider {
+class provider extends \core_privacy\local\request\userlist
+               implements \core_privacy\local\metadata\provider,
+                          \core_privacy\local\request\subsystem\plugin_provider,
+                          \core_privacy\local\request\core_user_data_provider {
 
     /**
      * Return the fields which contain personal data.
@@ -53,7 +56,7 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
                 'userid' => 'privacy:metadata:tool_certificate_issues:userid',
                 'templateid' => 'privacy:metadata:tool_certificate_issues:templateid',
                 'code' => 'privacy:metadata:tool_certificate_issues:code',
-                'emailed' => 'privacy:metadata:tool_certificate_issues:emailed',
+                'expires' => 'privacy:metadata:tool_certificate_issues:expires',
                 'timecreated' => 'privacy:metadata:tool_certificate_issues:timecreated',
             ],
             'privacy:metadata:tool_certificate_issues'
@@ -69,21 +72,26 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
      * @return contextlist the list of contexts containing user info for the user.
      */
     public static function get_contexts_for_userid(int $userid) : contextlist {
-        $sql = "SELECT c.id
-                  FROM {context} c
-                 WHERE c.contextlevel = :contextlevel
-                 AND EXISTS (SELECT i.id
-                              FROM {tool_certificate_issues} i
-                             WHERE i.userid = :userid)";
-
-        $params = [
-            'contextlevel' => CONTEXT_SYSTEM,
-            'userid' => $userid,
-        ];
+        global $DB;
         $contextlist = new contextlist();
-        $contextlist->add_from_sql($sql, $params);
-
+        if ($DB->record_exists('tool_certificate_issues', ['userid' => $userid])) {
+            $contextlist->add_system_context();
+        }
         return $contextlist;
+    }
+
+    /**
+     * Get the list of users who have data within a context.
+     *
+     * @param userlist $userlist The userlist containing the list of users who have data in this context/plugin combination.
+     */
+    public static function get_users_in_context(userlist $userlist) {
+	$context = $userlist->get_context();
+	if (!$context instanceof \context_system) {
+	    return;
+	}
+        $sql = "SELECT userid FROM {tool_certificate_issues}";
+        $userlist->add_from_sql('userid', $sql, []);
     }
 
     /**
@@ -151,6 +159,21 @@ class provider implements \core_privacy\local\metadata\provider, \core_privacy\l
             }
             $DB->delete_records('tool_certificate_issues', ['userid' => $userid]);
         }
+    }
+
+    /**
+     * Delete multiple users within a single context.
+     *
+     * @param approved_userlist $userlist The approved context and user information to delete information for.
+     */
+    public static function delete_data_for_users(approved_userlist $userlist) {
+        global $DB;
+        $context = $userlist->get_context();
+        if (!$context instanceof \context_system) {
+            return;
+        }
+        list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        $DB->delete_records_select('tool_certificate_issues', ' userid ' . $userinsql, $userinparams);
     }
 
     /**
