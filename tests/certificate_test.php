@@ -54,15 +54,23 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
      * Test count issues for template.
      */
     public function test_count_issues_for_template() {
+        global $DB;
+
+        $this->setAdminUser();
+
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $certificate2 = $this->get_generator()->create_template((object)['name' => 'Certificate 2']);
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
 
         $certificate1->issue_certificate($user1->id);
 
         $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
+
+        $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id(), 0, 100, 'ci.code'));
 
         $certificate1->issue_certificate($user1->id);
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
@@ -72,6 +80,31 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_template($certificate2->get_id()));
 
         $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_template(0));
+
+        // Create certificate in another tenant.
+        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+        $tenant = $tenantgenerator->create_tenant();
+
+        $cert3name = 'Certificate 3';
+        $certificate3 = \tool_certificate\template::create((object)['name' => $cert3name, 'tenantid' => $tenant->id]);
+
+        $tenantgenerator->allocate_user($user3->id, $tenant->id);
+        $tenantgenerator->allocate_user($user4->id, $tenant->id);
+
+        $certificate3->issue_certificate($user3->id);
+        $certificate3->issue_certificate($user4->id);
+
+        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
+
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
+
+        $tenantgenerator->allocate_user($manager->id, $tenant->id);
+
+        $this->setUser($manager);
+
+        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
     }
 
     /**
@@ -79,26 +112,30 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
      */
     public function test_count_issues_for_user() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $certificate2 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $certificate3 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
         $certificate1->issue_certificate($user1->id);
-
         $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_user($user1->id));
 
-        $certificate1->issue_certificate($user1->id);
+        $certificate2->issue_certificate($user1->id);
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_user($user1->id));
 
         $certificate1->issue_certificate($user2->id);
         $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_user($user2->id));
 
-        $certificate1->issue_certificate($user2->id);
+        $certificate2->issue_certificate($user2->id);
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_user($user1->id));
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_user($user2->id));
 
-        $certificate1->issue_certificate($user2->id);
+        $certificate3->issue_certificate($user2->id);
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_user($user1->id));
         $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_user($user2->id));
+
+        $this->assertEquals(5, \tool_certificate\certificate::count_issues_for_user(0));
     }
 
     /**
@@ -170,6 +207,18 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
         $this->assertNotEmpty($event->get_description());
+
+        $this->assertTrue($result->success);
+        $this->assertEquals($result->issue->id, $issueid1);
+
+        // Now test with manager with no permission on all tenants
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
+
+        $this->setUser($manager);
+
+        $result = \tool_certificate\certificate::verify($code1);
 
         $this->assertTrue($result->success);
         $this->assertEquals($result->issue->id, $issueid1);
