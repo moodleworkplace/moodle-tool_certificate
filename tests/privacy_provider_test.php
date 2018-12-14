@@ -23,6 +23,7 @@
  */
 
 use tool_certificate\privacy\provider;
+use core_privacy\local\metadata\collection;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -37,12 +38,31 @@ defined('MOODLE_INTERNAL') || die();
 class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
 
     /**
+     * Test provider::get_metadata
+     */
+    public function test_get_metadata() {
+        $collection = new collection('tool_certificate');
+        $newcollection = provider::get_metadata($collection);
+        $itemcollection = $newcollection->get_collection();
+        $this->assertCount(1, $itemcollection);
+
+        $table = array_pop($itemcollection);
+        $this->assertEquals('tool_certificate_issues', $table->get_name());
+        $this->assertEquals('privacy:metadata:tool_certificate:issues', $table->get_summary());
+
+        $privacyfields = $table->get_privacy_fields();
+        $this->assertArrayHasKey('userid', $privacyfields);
+        $this->assertArrayHasKey('templateid', $privacyfields);
+        $this->assertArrayHasKey('code', $privacyfields);
+        $this->assertArrayHasKey('expires', $privacyfields);
+        $this->assertArrayHasKey('timecreated', $privacyfields);
+    }
+
+    /**
      * Test for provider::get_contexts_for_userid().
      */
     public function test_get_contexts_for_userid() {
         $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course();
 
         // Add a template to the site.
         $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
@@ -59,15 +79,16 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         // Check the context supplied is correct.
         $contextlist = provider::get_contexts_for_userid($user->id);
         $this->assertCount(1, $contextlist);
+
+        $contextids = $contextlist->get_contextids();
+        $this->assertContains(\context_system::instance()->id, $contextids);
     }
 
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_for_context() {
+    public function test_export_user_data() {
         $this->resetAfterTest();
-
-        $course = $this->getDataGenerator()->create_course();
 
         // Add a template to the site.
         $template = \tool_certificate\template::create((object)['name' => 'Site template']);
@@ -76,7 +97,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $this->create_certificate_issue($template->get_id(), $user1->id);
         $this->create_certificate_issue($template->get_id(), $user1->id);
         $this->create_certificate_issue($template->get_id(), $user2->id);
 
@@ -88,7 +108,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $this->assertTrue($writer->has_any_data());
 
         $data = $writer->get_data();
-        $this->assertCount(2, $data->issues);
+        $this->assertCount(1, $data->issues);
 
         $issues = $data->issues;
         foreach ($issues as $issue) {

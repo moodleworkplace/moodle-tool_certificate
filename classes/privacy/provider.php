@@ -61,7 +61,7 @@ class provider implements \core_privacy\local\metadata\provider,
                 'expires' => 'privacy:metadata:tool_certificate_issues:expires',
                 'timecreated' => 'privacy:metadata:tool_certificate_issues:timecreated',
             ],
-            'privacy:metadata:tool_certificate_issues'
+            'privacy:metadata:tool_certificate:issues'
         );
 
         return $items;
