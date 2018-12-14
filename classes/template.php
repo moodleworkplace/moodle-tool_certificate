@@ -814,7 +814,6 @@ class template {
     /**
      * Return an array of certificate templates that are shared or belong to current user's tenant.
      *
-     * @param int $tenantid
      * @return array
      */
     public static function get_all(): array {
