@@ -76,7 +76,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
     }
 
     /**
-     * Test format_preview_data
+     * Test format_issue_data
      */
     public function test_format_issue_data() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);

@@ -211,7 +211,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertTrue($result->success);
         $this->assertEquals($result->issue->id, $issueid1);
 
-        // Now test with manager with no permission on all tenants
+        // Now test with manager with no permission on all tenants.
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
         $manager = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
