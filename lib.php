@@ -42,7 +42,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // We are positioning the elements.
     if ($filearea === 'image') {
-        if (!\tool_certificate::can_verify_loose()) {
+        if (!\tool_certificate\template::can_verify_loose()) {
             return false;
         }
 

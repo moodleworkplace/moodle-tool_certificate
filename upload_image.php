@@ -27,7 +27,7 @@ require_once($CFG->libdir.'/adminlib.php');
 
 admin_externalpage_setup('tool_certificate/managetemplates');
 
-require_capability('tool/certificate:imageforalltenants');
+require_capability('tool/certificate:imageforalltenants', \context_system::instance());
 
 $struploadimage = get_string('uploadimage', 'tool_certificate');
 
@@ -37,10 +37,10 @@ $PAGE->navbar->add($struploadimage);
 $uploadform = new \tool_certificate\upload_image_form();
 
 if ($uploadform->is_cancelled()) {
-    redirect(new moodle_url('/admin/settings.php?section=toolcertificatemanagetemplates'));
+    redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
 } else if ($data = $uploadform->get_data()) {
     // Handle file uploads.
-    \tool_certificate\certificate::upload_files($data->certificateimage);
+    \tool_certificate\certificate::upload_files($data->certificateimage, \context_system::instance()->id);
 
     redirect(new moodle_url('/admin/tool/certificate/upload_image.php'), get_string('changessaved'));
 }
