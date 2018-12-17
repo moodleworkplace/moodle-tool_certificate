@@ -120,7 +120,8 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $cert2name = 'Certificate 2';
         $certificate2 = \tool_certificate\template::create((object)['name' => $cert2name, 'tenantid' => $tenant->id]);
 
-        $this->assertEquals(1, count(\tool_certificate\template::get_all_by_tenantid(\tool_tenant\tenancy::get_default_tenant_id())));
+        $defaulttenantid = \tool_tenant\tenancy::get_default_tenant_id();
+        $this->assertEquals(1, count(\tool_certificate\template::get_all_by_tenantid($defaulttenantid)));
         $this->assertEquals(1, count(\tool_certificate\template::get_all_by_tenantid($tenant->id)));
     }
 

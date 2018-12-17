@@ -81,8 +81,8 @@ class verify_certificate_result implements templatable, renderable {
         $this->userfullname = fullname($issue);
         $this->certificatename = $issue->certificatename;
         $this->timecreated = userdate($issue->timecreated);
-        $this->expires = userdate($issue->expires);
-        $this->expired = $issue->expires <= time();
+        $this->expires = ($issue->expires > 0) ? userdate($issue->expires) : get_string('never');
+        $this->expired = ($issue->expires > 0) && ($issue->expires <= time());
     }
 
     /**
