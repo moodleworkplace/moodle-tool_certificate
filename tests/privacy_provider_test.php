@@ -153,7 +153,10 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $issues = $data->issues;
         foreach ($issues as $issue) {
+            $this->assertArrayHasKey('certificatename', $issue);
             $this->assertArrayHasKey('code', $issue);
+            $this->assertArrayHasKey('data', $issue);
+            $this->assertArrayHasKey('expires', $issue);
             $this->assertArrayHasKey('timecreated', $issue);
         }
     }

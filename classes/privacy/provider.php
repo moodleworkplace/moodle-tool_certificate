@@ -106,13 +106,22 @@ class provider implements \core_privacy\local\metadata\provider,
 
         $user = $contextlist->get_user();
 
-        $params = ['userid' => $user->id];
-        $recordset = $DB->get_recordset_select('tool_certificate_issues', "userid = :userid", $params, 'timecreated, id ASC');
+        $sql = 'SELECT i.*, t.name as certificatename
+                  FROM {tool_certificate_issues} i
+                  JOIN {tool_certificate_templates} t
+                    ON (t.id = i.templateid)
+                 WHERE i.userid = :userid
+              ORDER BY  timecreated, id ASC';
+
+        $recordset = $DB->get_recordset_sql($sql, ['userid' => $user->id]);
 
         self::recordset_loop_and_export($recordset, 'templateid', [], function($carry, $record) {
 
             $carry[] = [
+                'certificatename' => $record->certificatename,
                 'code' => $record->code,
+                'data' => $record->data,
+                'expires' => transform::datetime($record->expires),
                 'timecreated' => transform::datetime($record->timecreated)
             ];
             return $carry;
