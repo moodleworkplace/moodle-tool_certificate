@@ -53,7 +53,7 @@ class tool_certificate_manage_templates_table_testcase extends advanced_testcase
         $certificate1 = \tool_certificate\template::create((object)['name' => $cert1name]);
         $table = new \tool_certificate\manage_templates_table();
         $table->query_db(10);
-        $this->assertEquals(1, sizeof($table->rawdata));
+        $this->assertEquals(1, count($table->rawdata));
 
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
         $manager = $this->getDataGenerator()->create_user();
@@ -62,6 +62,6 @@ class tool_certificate_manage_templates_table_testcase extends advanced_testcase
         $this->setUser($manager);
 
         $table->query_db(10);
-        $this->assertEquals(1, sizeof($table->rawdata));
+        $this->assertEquals(1, count($table->rawdata));
     }
 }
