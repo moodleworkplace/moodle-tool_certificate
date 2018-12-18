@@ -35,7 +35,8 @@ $anycaps = array_merge($managecaps, $verifycaps, $viewcaps, $imagecaps, $issueca
 
 if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
 
-    $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')));
+    $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')),
+        'location');
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/managetemplates',
                 get_string('managetemplates', 'tool_certificate'),
