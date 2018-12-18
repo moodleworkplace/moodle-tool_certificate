@@ -123,8 +123,8 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $certificate1->issue_certificate($user1->id);
         $certificate2->issue_certificate($user1->id);
 
-        $issues =  \tool_certificate\certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
-        $this->assertEquals(1, sizeof($issues));
+        $issues = \tool_certificate\certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
+        $this->assertEquals(1, count($issues));
 
         $issue = array_pop($issues);
         $this->assertEquals('Certificate 1', $issue->name);
@@ -136,15 +136,15 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
 
         $this->setUser($manager);
 
-        $issues =  \tool_certificate\certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
-        $this->assertEquals(1, sizeof($issues));
+        $issues = \tool_certificate\certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
+        $this->assertEquals(1, count($issues));
 
         $issue = array_pop($issues);
         $this->assertEquals('Certificate 1', $issue->name);
         $this->assertEquals($certificate1->get_id(), $issue->templateid);
 
         $issues = \tool_certificate\certificate::get_issues_for_template($certificate2->get_id(), 0, 100);
-        $this->assertEquals(1, sizeof($issues));
+        $this->assertEquals(1, count($issues));
 
         $issue = array_pop($issues);
         $this->assertEquals('Certificate 2', $issue->name);
