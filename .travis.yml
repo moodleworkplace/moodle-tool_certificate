@@ -50,6 +50,18 @@ script:
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
   - moodle-plugin-ci grunt
+  - moodle-plugin-ci phpunit
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_bgimage
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_border
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_code
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_date
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_digitalsignature
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_image
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_program
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_studentname
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_text
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_userfield
+  - cd moodle; vendor/bin/phpunit --testsuite certificateelement_userpicture
   - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v admin/tool/dataprivacy/tests/metadata_registry_test.php
   - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v lib/tests/externallib_test.php
   - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v privacy/tests/provider_test.php
