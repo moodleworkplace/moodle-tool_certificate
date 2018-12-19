@@ -118,10 +118,10 @@ class provider implements \core_privacy\local\metadata\provider,
         self::recordset_loop_and_export($recordset, 'templateid', [], function($carry, $record) {
 
             $carry[] = [
-                'certificatename' => $record->certificatename,
+                'certificatename' => format_string($record->certificatename),
                 'code' => $record->code,
-                'data' => $record->data,
-                'expires' => transform::datetime($record->expires),
+                'data' => self::export_issue_data($record->data),
+                'expires' => $record->expires ? transform::datetime($record->expires) : null,
                 'timecreated' => transform::datetime($record->timecreated)
             ];
             return $carry;
@@ -134,6 +134,15 @@ class provider implements \core_privacy\local\metadata\provider,
             helper::export_context_files($context, $user);
             writer::with_context($context)->export_data([], $finaldata);
         });
+    }
+
+    protected static function export_issue_data($data) {
+        if (!strlen($data)) {
+            return null;
+        }
+        $data = json_decode($data, true);
+        array_walk_recursive($data, 'format_string');
+        return $data;
     }
 
     /**
