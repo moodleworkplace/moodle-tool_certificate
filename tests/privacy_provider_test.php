@@ -138,7 +138,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $template->issue_certificate($user1->id);
+        $template->issue_certificate($user1->id, null, ['a' => 'b', 'c' => ['d' => 'e']]);
         $template->issue_certificate($user2->id);
 
         // Export all of the data for the context for user 1.
@@ -153,7 +153,10 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $issues = $data->issues;
         foreach ($issues as $issue) {
+            $this->assertArrayHasKey('certificatename', $issue);
             $this->assertArrayHasKey('code', $issue);
+            $this->assertArrayHasKey('data', $issue);
+            $this->assertArrayHasKey('expires', $issue);
             $this->assertArrayHasKey('timecreated', $issue);
         }
     }

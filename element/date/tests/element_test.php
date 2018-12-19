@@ -68,6 +68,19 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
     }
 
     /**
+     * Test save_unique_data
+     */
+    public function test_save_unique_data() {
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $certificate1->add_page();
+        $element = $certificate1->new_element_for_page_id($pageid, 'date');
+        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $newdata = (object)['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
+                            'dateformat' => 'strftimedate'];
+        $this->assertEquals(json_encode($newdata), $e->save_unique_data($newdata));
+    }
+
+    /**
      * Test get_date_formats
      */
     public function test_get_date_formats() {

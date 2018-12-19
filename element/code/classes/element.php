@@ -114,6 +114,8 @@ class element extends \tool_certificate\element {
             case self::DISPLAY_URL:
                 $display = \tool_certificate\template::verification_url($code);
                 break;
+            default:
+                $display = $code;
         }
 
         \tool_certificate\element_helper::render_content($pdf, $this, $display);
