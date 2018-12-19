@@ -76,7 +76,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
     }
 
     /**
-     * Test format_preview_data
+     * Test format_issue_data
      */
     public function test_format_issue_data() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
@@ -115,5 +115,17 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $e = \tool_certificate\element_factory::get_element_instance($element);
         $this->assertTrue(strpos($data['completedcourses'][$course1->id], $e->format_issue_data($encodeddata)) >= 0);
         $this->assertTrue(strpos($data['completedcourses'][$course2->id], $e->format_issue_data($encodeddata)) >= 0);
+    }
+
+    /**
+     * Test save_unique_data
+     */
+    public function test_save_unique_data() {
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $certificate1->add_page();
+        $element = $certificate1->new_element_for_page_id($pageid, 'program');
+        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $newdata = (object)['display' => 'certificationname'];
+        $this->assertEquals(json_encode($newdata), $e->save_unique_data($newdata));
     }
 }

@@ -60,4 +60,16 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
         $e = \tool_certificate\element_factory::get_element_instance($element);
         $this->assertFalse(empty($e->render_html()));
     }
+
+    /**
+     * Test save_unique_data
+     */
+    public function test_save_unique_data() {
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $certificate1->add_page();
+        $element = $certificate1->new_element_for_page_id($pageid, 'code');
+        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $newdata = (object)['display' => \certificateelement_code\element::DISPLAY_CODE];
+        $this->assertEquals(json_encode($newdata), $e->save_unique_data($newdata));
+    }
 }

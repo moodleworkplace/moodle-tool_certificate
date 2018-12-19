@@ -106,13 +106,22 @@ class provider implements \core_privacy\local\metadata\provider,
 
         $user = $contextlist->get_user();
 
-        $params = ['userid' => $user->id];
-        $recordset = $DB->get_recordset_select('tool_certificate_issues', "userid = :userid", $params, 'timecreated, id ASC');
+        $sql = 'SELECT i.*, t.name as certificatename
+                  FROM {tool_certificate_issues} i
+                  JOIN {tool_certificate_templates} t
+                    ON (t.id = i.templateid)
+                 WHERE i.userid = :userid
+              ORDER BY  timecreated, id ASC';
+
+        $recordset = $DB->get_recordset_sql($sql, ['userid' => $user->id]);
 
         self::recordset_loop_and_export($recordset, 'templateid', [], function($carry, $record) {
 
             $carry[] = [
+                'certificatename' => format_string($record->certificatename),
                 'code' => $record->code,
+                'data' => self::export_issue_data($record->data),
+                'expires' => $record->expires ? transform::datetime($record->expires) : null,
                 'timecreated' => transform::datetime($record->timecreated)
             ];
             return $carry;
@@ -125,6 +134,21 @@ class provider implements \core_privacy\local\metadata\provider,
             helper::export_context_files($context, $user);
             writer::with_context($context)->export_data([], $finaldata);
         });
+    }
+
+    /**
+     * Export json-encoded issue data
+     *
+     * @param string $data
+     * @return mixed|null
+     */
+    protected static function export_issue_data($data) {
+        if (!strlen($data)) {
+            return null;
+        }
+        $data = json_decode($data, true);
+        array_walk_recursive($data, 'format_string');
+        return $data;
     }
 
     /**

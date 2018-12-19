@@ -51,7 +51,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
     }
 
     /**
-     * Test count issues for template.
+     * Test count_issues_for_template
      */
     public function test_count_issues_for_template() {
         global $DB;
@@ -105,6 +105,50 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->setUser($manager);
 
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
+    }
+
+    /**
+     * Test get_issues_for_template
+     */
+    public function test_get_issues_for_template() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $certificate2 = $this->get_generator()->create_template((object)['name' => 'Certificate 2']);
+
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $certificate1->issue_certificate($user1->id);
+        $certificate2->issue_certificate($user1->id);
+
+        $issues = \tool_certificate\certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
+        $this->assertEquals(1, count($issues));
+
+        $issue = array_pop($issues);
+        $this->assertEquals('Certificate 1', $issue->name);
+
+        // Now test with manager with no permission on all tenants.
+        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $manager = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
+
+        $this->setUser($manager);
+
+        $issues = \tool_certificate\certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
+        $this->assertEquals(1, count($issues));
+
+        $issue = array_pop($issues);
+        $this->assertEquals('Certificate 1', $issue->name);
+        $this->assertEquals($certificate1->get_id(), $issue->templateid);
+
+        $issues = \tool_certificate\certificate::get_issues_for_template($certificate2->get_id(), 0, 100);
+        $this->assertEquals(1, count($issues));
+
+        $issue = array_pop($issues);
+        $this->assertEquals('Certificate 2', $issue->name);
+        $this->assertEquals($certificate2->get_id(), $issue->templateid);
     }
 
     /**
@@ -211,7 +255,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertTrue($result->success);
         $this->assertEquals($result->issue->id, $issueid1);
 
-        // Now test with manager with no permission on all tenants
+        // Now test with manager with no permission on all tenants.
         $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
         $manager = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
