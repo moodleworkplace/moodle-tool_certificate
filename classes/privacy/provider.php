@@ -136,6 +136,12 @@ class provider implements \core_privacy\local\metadata\provider,
         });
     }
 
+    /**
+     * Export json-encoded issue data
+     *
+     * @param string $data
+     * @return mixed|null
+     */
     protected static function export_issue_data($data) {
         if (!strlen($data)) {
             return null;
