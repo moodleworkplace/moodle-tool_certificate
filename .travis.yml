@@ -21,7 +21,7 @@ addons:
 env:
  global:
   - MOODLE_REPO=git://github.com/moodlesp/moodle.git
-  - MOODLE_BRANCH=MDL-57898-master
+  - MOODLE_BRANCH=workplace
  matrix:
   - DB=pgsql
 
