@@ -38,7 +38,7 @@ install:
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_wp
   - moodle-plugin-ci install
-  - moodle-plugin-ci add-config '$CFG->theme = "workplace";'
+  - cd moodle; php admin/tool/behat/cli/init.php -a
 
 script:
   - moodle-plugin-ci phplint
@@ -55,4 +55,4 @@ script:
   - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v lib/tests/externallib_test.php
   - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v privacy/tests/provider_test.php
   - moodle-plugin-ci phpunit --coverage-text
-  - moodle-plugin-ci behat
+  - moodle-plugin-ci behat --suite workplace
