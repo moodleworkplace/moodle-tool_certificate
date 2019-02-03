@@ -38,7 +38,6 @@ install:
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_wp
   - moodle-plugin-ci install
-  - cd moodle; php admin/tool/behat/cli/init.php -a
 
 script:
   - moodle-plugin-ci phplint
