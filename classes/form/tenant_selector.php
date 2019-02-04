@@ -26,6 +26,7 @@ namespace tool_certificate\form;
 defined('MOODLE_INTERNAL') || die();
 
 use moodleform;
+use tool_tenant\tenancy;
 
 require_once($CFG->libdir . '/formslib.php');
 

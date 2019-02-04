@@ -43,9 +43,9 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/col
 class edit_form extends \moodleform {
 
     /**
-     * @var int The id of the template being used.
+     * @var \tool_certificate\template Edited template
      */
-    protected $tid = null;
+    protected $template = null;
 
     /**
      * @var int The total number of pages for this cert.
@@ -65,17 +65,24 @@ class edit_form extends \moodleform {
         $mform->addRule('name', null, 'required');
 
         // Get the number of pages for this module.
-        if (isset($this->_customdata['tid'])) {
 
-            if ($this->_customdata['tenantid'] > 0) {
-                $tenantname = $DB->get_field('tool_tenant', 'name', ['id' => $this->_customdata['tenantid']]);
-            } else {
-                $tenantname = get_string('shared', 'tool_certificate');
+        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
+            $tenants = \tool_tenant\tenancy::get_tenants();
+            $options = [0 => get_string('shared', 'tool_certificate')];
+            foreach ($tenants as $tenant) {
+                $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
             }
-            $mform->addElement('static', 'tenantid', get_string('selectedtenant', 'tool_certificate'), $tenantname);
+            $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
+        }
 
-            $this->tid = $this->_customdata['tid'];
-            if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid), 'sequence')) {
+        if (isset($this->_customdata['template'])) {
+
+            $this->template = $this->_customdata['template'];
+            if (isset($tenants)) {
+                $mform->freeze('tenantid');
+            }
+
+            if ($pages = $this->template->get_pages()) {
                 $this->numpages = count($pages);
                 foreach ($pages as $p) {
                     $this->add_certificate_page_elements($p);
@@ -83,15 +90,6 @@ class edit_form extends \moodleform {
             }
 
         } else { // Add a new template.
-
-            if (has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
-                $tenants = \tool_tenant\tenancy::get_tenants();
-                $options = [0 => get_string('shared', 'tool_certificate')];
-                foreach ($tenants as $tenant) {
-                    $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
-                }
-                $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
-            }
 
             // Create a 'fake' page to display the elements on - not yet saved in the DB.
             $page = new \stdClass();
@@ -101,10 +99,10 @@ class edit_form extends \moodleform {
         }
 
         // Link to add another page, only display it when the template has been created.
-        if (isset($this->_customdata['tid'])) {
+        if ($this->template) {
             $addpagelink = new \moodle_url('/admin/tool/certificate/edit.php',
                 array(
-                    'tid' => $this->tid,
+                    'tid' => $this->template->get_id(),
                     'aid' => 1,
                     'action' => 'addpage',
                     'sesskey' => sesskey()
@@ -125,7 +123,14 @@ class edit_form extends \moodleform {
 
         $mform->addElement('hidden', 'tid');
         $mform->setType('tid', PARAM_INT);
-        $mform->setDefault('tid', $this->tid);
+
+        if ($this->template) {
+            $this->set_data([
+                'id' => $this->template->get_id(),
+                'tid' => $this->template->get_id(),
+                'name' => $this->template->get_name(),
+                'tenantid' => $this->template->get_tenant_id()]);
+        }
     }
 
     /**
@@ -137,9 +142,9 @@ class edit_form extends \moodleform {
         $mform = $this->_form;
 
         // Check that we are updating a current certificate.
-        if ($this->tid) {
+        if ($this->template) {
             // Get the pages for this certificate.
-            if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->tid))) {
+            if ($pages = $this->template->get_pages()) {
                 // Loop through the pages.
                 foreach ($pages as $p) {
                     // Set the width.
@@ -222,11 +227,12 @@ class edit_form extends \moodleform {
         if ($this->numpages > 1) {
             $mform->addElement('header', 'page_' . $page->id, get_string('page', 'tool_certificate', $page->sequence));
         }
+        $tid = $this->template ? $this->template->get_id() : 0;
 
         $editlink = '/admin/tool/certificate/edit.php';
-        $editlinkparams = array('tid' => $this->tid, 'sesskey' => sesskey());
+        $editlinkparams = array('tid' => $tid, 'sesskey' => sesskey());
         $editelementlink = '/admin/tool/certificate/edit_element.php';
-        $editelementlinkparams = array('tid' => $this->tid, 'sesskey' => sesskey());
+        $editelementlinkparams = array('tid' => $tid, 'sesskey' => sesskey());
 
         // Place the ordering arrows.
         // Only display the move up arrow if it is not the first.

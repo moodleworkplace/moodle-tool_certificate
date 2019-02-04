@@ -53,8 +53,8 @@ if ($code) {
     $form->set_data(['code' => $code]);
 }
 
+echo $PAGE->set_heading($heading);
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
 echo $form->display();
 if ($form->get_data()) {
     $result = \tool_certificate\certificate::verify($code);

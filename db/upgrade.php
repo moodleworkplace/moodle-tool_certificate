@@ -84,5 +84,28 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2018051710, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2019020300) {
+
+        // Define key tenantid (foreign) to be dropped form tool_certificate_templates.
+        $table = new xmldb_table('tool_certificate_templates');
+        $key = new xmldb_key('tenantid', XMLDB_KEY_FOREIGN, ['tenantid'], 'tool_tenant', ['id']);
+
+        // Launch drop key tenantid.
+        $dbman->drop_key($table, $key);
+
+        // Tenantid can not be null.
+        $DB->execute('UPDATE {tool_certificate_templates} SET tenantid = 0 WHERE tenantid IS NULL');
+
+        // Changing nullability of field tenantid on table tool_certificate_templates to not null.
+        $table = new xmldb_table('tool_certificate_templates');
+        $field = new xmldb_field('tenantid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'timemodified');
+
+        // Launch change of nullability for field tenantid.
+        $dbman->change_field_notnull($table, $field);
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2019020300, 'tool', 'certificate');
+    }
+
     return true;
 }

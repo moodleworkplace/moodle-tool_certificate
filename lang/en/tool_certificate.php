@@ -36,7 +36,7 @@ $string['copy'] = 'Copy';
 $string['coursetimereq'] = 'Required minutes in course';
 $string['coursetimereq_help'] = 'Enter here the minimum amount of time, in minutes, that a student must be logged into the course before they will be able to receive
 the certificate.';
-$string['createtemplate'] = 'Create template';
+$string['createtemplate'] = 'New template';
 $string['certificate:issue'] = 'Issue certificate for users';
 $string['certificate:issueforalltenants'] = 'Issue certificate for users in all tenants';
 $string['certificate:imageforalltenants'] = 'Manage certificate images';
