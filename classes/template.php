@@ -664,6 +664,8 @@ class template {
      * @return bool
      */
     public function can_revoke(): bool {
+        // TODO this needs arguments (possibly $userid?) to know which issue are we revoking
+        // (it is possible that it is an issue on a shared template from another tenant).
         return $this->can_issue();
     }
 
@@ -716,7 +718,7 @@ class template {
      */
     public static function get_issue_from_code($issuecode): \stdClass {
         global $DB;
-        return $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
+        return $DB->get_record('tool_certificate_issues', ['code' => $issuecode], '*', MUST_EXIST);
     }
 
     /**

@@ -48,14 +48,22 @@ class issues_list extends system_report {
         if ($templateid = $this->get_parameter('templateid', 0, PARAM_INT)) {
             $this->template = \tool_certificate\template::find_by_id($templateid);
         }
+        parent::initialise();
+        $this->set_main_table('tool_certificate_issues', 'i');
+        $this->set_main_filter('templateid', $templateid);
+        $this->set_joins(['INNER JOIN {user} u ON u.id = i.userid']);
         if (!$templateid || !$this->template->can_view_issues()) {
             // TODO SP-277 it would be better to throw exception here but there is a situation
             // when parameter is not present.
             $this->set_sql_filter('1=0');
+        } else if (!template::can_issue_or_manage_all_tenants()) {
+            // View only issues from the same tenant.
+            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
+            $this->set_joins([$tenantjoin]);
+            $this->set_sql_filter($tenantwhere, $tenantparams);
+        } else {
+            $this->set_other_filters(['u.deleted' => 0]);
         }
-        parent::initialise();
-        $this->set_main_table('tool_certificate_issues', 'i');
-        $this->set_main_filter('templateid', $templateid);
     }
 
     /**
@@ -69,7 +77,7 @@ class issues_list extends system_report {
             'tool_certificate_issues',
             'tool_certificate',
             1,
-            'INNER JOIN {user} u ON u.id = i.userid',
+            '',
             array("'fullname' AS fullname, "  . get_all_user_name_fields(true, 'u'), ''),
             null,
             true,
@@ -228,6 +236,9 @@ class issues_list extends system_report {
      */
     public function col_revoke($id) {
         global $OUTPUT;
+        if (!$this->template->can_revoke()) {
+            return '';
+        }
 
         $icon = new \pix_icon('a/wp-trash', get_string('revoke', 'tool_certificate'), 'theme');
         $link = new \moodle_url('/admin/tool/certificate/certificates.php',
