@@ -143,7 +143,8 @@ class certificates_list extends system_report {
     /**
      * Generate the actions column.
      *
-     * @param \stdClass $row
+     * @param mixed $value
+     * @param \stdClass $template
      * @return string
      */
     public function col_actions($value, \stdClass $template) {
@@ -181,11 +182,13 @@ class certificates_list extends system_report {
 
         }
 
-        $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
-        $issuesstr  = get_string('certificatesissued', 'tool_certificate');
+        if ($templateobj->can_view_issues()) {
+            $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
+            $issuesstr  = get_string('certificatesissued', 'tool_certificate');
 
-        $actions .= $OUTPUT->action_icon($issueslink,
-            new \pix_icon('a/wp-list', $issuesstr, 'theme'));
+            $actions .= $OUTPUT->action_icon($issueslink,
+                new \pix_icon('a/wp-list', $issuesstr, 'theme'));
+        }
 
         if ($templateobj->can_issue()) {
             $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));

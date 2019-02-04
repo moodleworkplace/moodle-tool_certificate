@@ -668,6 +668,23 @@ class template {
     }
 
     /**
+     * Can view issues for this template
+     * @return bool
+     */
+    public function can_view_issues() {
+        $context = \context_system::instance();
+        if (has_any_capability(['tool/certificate:issueforalltenants', 'tool/certificate:manageforalltenants'],
+            $context)) {
+            return true;
+        }
+        if ($this->get_tenant_id() && $this->get_tenant_id() != tenancy::get_tenant_id()) {
+            return false;
+        }
+        return has_any_capability(['tool/certificate:issue', 'tool/certificate:manage',
+            'tool/certificate:viewallcertificates'], $context);
+    }
+
+    /**
      * If current user can verify certificates
      *
      * @return bool

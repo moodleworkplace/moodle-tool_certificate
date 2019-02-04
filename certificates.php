@@ -45,20 +45,11 @@ admin_externalpage_setup('tool_certificate/managetemplates');
 
 $template = \tool_certificate\template::find_by_id($templateid);
 
-if (!\tool_certificate\template::can_verify_loose()) {
+if (!$template->can_view_issues()) {
     print_error('issueormanagenotallowed', 'tool_certificate');
 }
 
-$pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid,
-    'page' => $page, 'perpage' => $perpage));
-
-$table = new \tool_certificate\certificates_table($templateid, $download);
-$table->define_baseurl($pageurl);
-
-if ($table->is_downloading()) {
-    $table->download();
-    exit();
-}
+$pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
 
 $heading = get_string('certificates', 'tool_certificate');
 
@@ -89,12 +80,14 @@ if ($revokecert && confirm_sesskey()) {
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 }
 
-echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
-echo html_writer::div(get_string('certificatesdescription', 'tool_certificate', $template->get_name()));
+$report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\issues_list::class,
+    ['templateid' => $template->get_id()]);
+$r = new \tool_wp\output\content_with_heading($report->output($OUTPUT), format_string($template->get_name()));
 if ($template->can_issue()) {
-    $newissuestr = get_string('issuenewcertificates', 'tool_certificate');
-    echo html_writer::link($template->new_issue_url(), $newissuestr, ['class' => 'btn btn-primary']);
+    $r->add_button(get_string('issuenewcertificates', 'tool_certificate'),
+        $template->new_issue_url());
 }
-$table->out($perpage, false);
+echo $OUTPUT->header();
+echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
+
 echo $OUTPUT->footer();
