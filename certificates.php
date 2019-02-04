@@ -80,14 +80,15 @@ if ($revokecert && confirm_sesskey()) {
     redirect(new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]));
 }
 
+$output = $PAGE->get_renderer('tool_certificate');
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\issues_list::class,
     ['templateid' => $template->get_id()]);
-$r = new \tool_wp\output\content_with_heading($report->output($OUTPUT), format_string($template->get_name()));
+$r = new \tool_wp\output\content_with_heading($report->output($output), format_string($template->get_name()));
 if ($template->can_issue()) {
     $r->add_button(get_string('issuenewcertificates', 'tool_certificate'),
         $template->new_issue_url());
 }
 echo $OUTPUT->header();
-echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
+echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($output));
 
 echo $OUTPUT->footer();
