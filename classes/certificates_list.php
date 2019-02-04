@@ -42,7 +42,7 @@ class certificates_list extends system_report {
     /**
      * Initialise
      */
-    public function initialise() {
+    protected function initialise() {
         parent::initialise();
         $this->set_main_table('tool_certificate_templates', 'c');
         $this->set_downloadable(false);
@@ -51,7 +51,7 @@ class certificates_list extends system_report {
     /**
      * Set columns
      */
-    public function set_columns() {
+    protected function set_columns() {
         $newcolumn = new report_column(
             'name',
             get_string('name', 'tool_certificate'),
