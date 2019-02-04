@@ -45,14 +45,17 @@ class issues_list extends system_report {
      * Initialise the report
      */
     protected function initialise() {
-        $templateid = $this->get_parameter('templateid', 0, PARAM_INT);
-        $this->template = \tool_certificate\template::find_by_id($templateid);
-        if (!$this->template->can_view_issues()) {
-            print_error('issueormanagenotallowed', 'tool_certificate');
+        if ($templateid = $this->get_parameter('templateid', 0, PARAM_INT)) {
+            $this->template = \tool_certificate\template::find_by_id($templateid);
+        }
+        if (!$templateid || !$this->template->can_view_issues()) {
+            // TODO SP-277 it would be better to throw exception here but there is a situation
+            // when parameter is not present.
+            $this->set_sql_filter('1=0');
         }
         parent::initialise();
         $this->set_main_table('tool_certificate_issues', 'i');
-        $this->set_main_filter('templateid', $this->template->get_id());
+        $this->set_main_filter('templateid', $templateid);
     }
 
     /**
@@ -82,7 +85,7 @@ class issues_list extends system_report {
             get_string('receiveddate', 'tool_certificate'),
             'tool_certificate_issues',
             'tool_certificate',
-            1,
+            2,
             '',
             array('i.timecreated', ''),
             null,
@@ -99,7 +102,7 @@ class issues_list extends system_report {
             get_string('expires', 'tool_certificate'),
             'tool_certificate_issues',
             'tool_certificate',
-            1,
+            3,
             '',
             array('i.expires', ''),
             null,
@@ -116,7 +119,7 @@ class issues_list extends system_report {
             get_string('code', 'tool_certificate'),
             'tool_certificate_issues',
             'tool_certificate',
-            1,
+            4,
             '',
             array('i.code', ''),
             null,
@@ -134,7 +137,7 @@ class issues_list extends system_report {
             get_string('file'),
             'tool_certificate_issues',
             'tool_certificate',
-            1,
+            5,
             '',
             array('i.code', ''),
             'download',
@@ -145,23 +148,22 @@ class issues_list extends system_report {
         $newcolumn->add_callback([$this, 'col_download']);
         $this->add_column($newcolumn);
 
-        if ($this->template->can_issue()) {
-            $newcolumn = new report_column(
-                'revoke',
-                get_string('revoke', 'tool_certificate'),
-                'tool_certificate_issues',
-                'tool_certificate',
-                1,
-                '',
-                array('i.id', ''),
-                'revoke',
-                true,
-                false,
-                true
-            );
-            $newcolumn->add_callback([$this, 'col_revoke']);
-            $this->add_column($newcolumn);
-        }
+        // Revoke column.
+        $newcolumn = new report_column(
+            'revoke',
+            get_string('revoke', 'tool_certificate'),
+            'tool_certificate_issues',
+            'tool_certificate',
+            6,
+            '',
+            array('i.id', ''),
+            'revoke',
+            true,
+            !($this->template && $this->template->can_issue()),
+            true
+        );
+        $newcolumn->add_callback([$this, 'col_revoke']);
+        $this->add_column($newcolumn);
 
     }
 

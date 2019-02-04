@@ -73,24 +73,24 @@ class certificates_list extends system_report {
         // For certificates we want a custom tenant filter, so disable automatic one.
         $this->automatictenantfilter = false;
 
-        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
-            // User can manage all tenants' templates. Display all templates and the tenant column.
-            $newcolumn = new report_column(
-                'tenantname',
-                get_string('tenant', 'tool_certificate'),
-                'tenant',
-                'tool_certificate',
-                2,
-                'LEFT JOIN {tool_tenant} t ON t.id = c.tenantid',
-                ['t.name', []],
-                'tenantname',
-                true,
-                false,
-                true
-            );
-            $newcolumn->add_callback([$this, 'col_tenant_name']);
-            $this->add_column($newcolumn);
-        } else {
+        // Add 'Tenant' column visible only for users who can manage all tenants.
+        $newcolumn = new report_column(
+            'tenantname',
+            get_string('tenant', 'tool_certificate'),
+            'tenant',
+            'tool_certificate',
+            2,
+            'LEFT JOIN {tool_tenant} t ON t.id = c.tenantid',
+            ['t.name', []],
+            'tenantname',
+            true,
+            !\tool_certificate\template::can_issue_or_manage_all_tenants(),
+            true
+        );
+        $newcolumn->add_callback([$this, 'col_tenant_name']);
+        $this->add_column($newcolumn);
+
+        if (!\tool_certificate\template::can_issue_or_manage_all_tenants()) {
             // User can not manage all tenants' templates. Display templates from own tenant
             // and shared templates, do not display tenant column.
             $tenantid = db::generate_param_name();
