@@ -37,8 +37,8 @@ install:
   - moodle-plugin-ci add-plugin moodlesp/moodle-theme_workplace
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_tenant
   - moodle-plugin-ci add-plugin moodlesp/moodle-tool_wp
+  - moodle-plugin-ci add-plugin moodlesp/moodle-tool_reportbuilder
   - moodle-plugin-ci install
-  - cd moodle; php admin/tool/behat/cli/init.php -a
 
 script:
   - moodle-plugin-ci phplint

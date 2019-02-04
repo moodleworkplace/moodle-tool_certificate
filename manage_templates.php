@@ -111,15 +111,10 @@ if ($tid) {
                 echo $OUTPUT->confirm($message, $yesurl, $nourl);
                 echo $OUTPUT->footer();
                 exit();
-            } else {
-                if (has_capability('tool/certificate:manageforalltenants', $context)) {
-                    $tenantid = optional_param('tenantid', null, PARAM_INT);
-                } else {
-                    $tenantid = null;
-                }
             }
 
             // Copy the data to the new template.
+            $tenantid = optional_param('tenantid', null, PARAM_INT);
             $template->duplicate($tenantid);
 
             // Redirect back to the manage templates page.
@@ -128,14 +123,16 @@ if ($tid) {
     }
 }
 
-$table = new \tool_certificate\manage_templates_table();
-$table->define_baseurl($pageurl);
+$PAGE->set_title(get_string('managetemplates', 'tool_certificate'));
+$PAGE->set_heading(get_string('managetemplates', 'tool_certificate'));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('managetemplates', 'tool_certificate'));
+
+$report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\certificates_list::class);
+$r = new \tool_wp\output\content_with_heading($report->output($OUTPUT));
 if (\tool_certificate\template::can_create()) {
-    $url = \tool_certificate\template::new_template_url();
-    echo $OUTPUT->single_button($url, get_string('createtemplate', 'tool_certificate'), 'get');
+    $r->add_button(get_string('createtemplate', 'tool_certificate'),
+        \tool_certificate\template::new_template_url());
 }
-$table->out($perpage, false);
+echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 echo $OUTPUT->footer();

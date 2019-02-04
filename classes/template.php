@@ -67,6 +67,9 @@ class template {
      */
     protected $timecreated;
 
+    /** @var array */
+    protected $pages;
+
     /**
      * The constructor.
      *
@@ -107,6 +110,19 @@ class template {
     }
 
     /**
+     * Template pages.
+     * @return \stdClass[]
+     */
+    public function get_pages() {
+        global $DB;
+        if ($this->pages === null) {
+            $this->pages = $DB->get_records('tool_certificate_pages',
+                ['templateid' => $this->id], 'sequence ASC');
+        }
+        return $this->pages;
+    }
+
+    /**
      * Handles adding another page to the template.
      *
      * @return int the id of the page
@@ -134,6 +150,7 @@ class template {
         $page->timemodified = $page->timecreated;
 
         // Insert the page.
+        $this->pages = null;
         return $DB->insert_record('tool_certificate_pages', $page);
     }
 
@@ -169,6 +186,7 @@ class template {
                 $DB->update_record('tool_certificate_pages', $p);
             }
         }
+        $this->pages = null;
     }
 
     /**
@@ -213,6 +231,7 @@ class template {
             return false;
         }
 
+        $this->pages = null;
         return true;
     }
 
@@ -250,6 +269,7 @@ class template {
                  WHERE templateid = :templateid
                    AND sequence > :sequence";
         $DB->execute($sql, array('templateid' => $this->id, 'sequence' => $page->sequence));
+        $this->pages = null;
     }
 
     /**
@@ -298,7 +318,7 @@ class template {
         require_once($CFG->libdir . '/pdflib.php');
 
         // Get the pages for the template, there should always be at least one page for each template.
-        if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->id), 'sequence ASC')) {
+        if ($pages = $this->get_pages()) {
             // Create the pdf object.
             $pdf = new \pdf();
 
@@ -343,7 +363,7 @@ class template {
         global $DB;
 
         // Get the pages for the template, there should always be at least one page for each template.
-        if ($templatepages = $DB->get_records('tool_certificate_pages', array('templateid' => $this->id))) {
+        if ($templatepages = $this->get_pages()) {
             // Loop through the pages.
             foreach ($templatepages as $templatepage) {
                 $page = clone($templatepage);
@@ -383,14 +403,12 @@ class template {
     public function duplicate($tenantid = null) {
         $data = new \stdClass();
         $data->name = $this->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
-        if ($tenantid) {
+        if (isset($tenantid)
+                && has_capability('tool/certificate:manageforalltenants', $this->get_context())
+                && ($tenantid == 0 || array_key_exists($tenantid, tenancy::get_tenants()))) {
             $data->tenantid = $tenantid;
         } else {
-            if (self::can_issue_or_manage_all_tenants()) {
-                $data->tenantid = $this->get_tenant_id();
-            } else {
-                $data->tenantid = tenancy::get_tenant_id();
-            }
+            $data->tenantid = tenancy::get_tenant_id();
         }
         $newtemplate = self::create($data);
 
@@ -646,7 +664,26 @@ class template {
      * @return bool
      */
     public function can_revoke(): bool {
+        // TODO this needs arguments (possibly $userid?) to know which issue are we revoking
+        // (it is possible that it is an issue on a shared template from another tenant).
         return $this->can_issue();
+    }
+
+    /**
+     * Can view issues for this template
+     * @return bool
+     */
+    public function can_view_issues() {
+        $context = \context_system::instance();
+        if (has_any_capability(['tool/certificate:issueforalltenants', 'tool/certificate:manageforalltenants'],
+            $context)) {
+            return true;
+        }
+        if ($this->get_tenant_id() && $this->get_tenant_id() != tenancy::get_tenant_id()) {
+            return false;
+        }
+        return has_any_capability(['tool/certificate:issue', 'tool/certificate:manage',
+            'tool/certificate:viewallcertificates'], $context);
     }
 
     /**
@@ -681,7 +718,7 @@ class template {
      */
     public static function get_issue_from_code($issuecode): \stdClass {
         global $DB;
-        return $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
+        return $DB->get_record('tool_certificate_issues', ['code' => $issuecode], '*', MUST_EXIST);
     }
 
     /**
@@ -704,11 +741,12 @@ class template {
         if ($userid == $USER->id) {
             return true;
         }
-        if (has_capability('tool/certificate:issueforalltenants')) {
+        $context = \context_system::instance();
+        if (has_capability('tool/certificate:issueforalltenants', $context)) {
             return true;
         }
         return (has_any_capability(['tool/certificate:viewallcertificates', 'tool/certificate:issue'],
-                                   context_system::instance()) &&
+                                   $context) &&
                 (tenancy::get_tenant_id() == tenancy::get_tenant_id($userid)));
     }
 
@@ -751,6 +789,7 @@ class template {
                                 'tool/certificate:manageforalltenants'], \context_system::instance())) {
             return true;
         }
+        return false;
     }
 
     /**

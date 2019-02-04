@@ -40,7 +40,7 @@ if ($templateid) {
     $template->require_manage();
 
     $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
-    $heading = get_string('editcertificate', 'tool_certificate');
+    $heading = format_string($template->get_name());
     $PAGE->navbar->add($heading, new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $templateid]));
 
 } else {
@@ -55,7 +55,8 @@ if ($templateid) {
     $heading = get_string('addcertificate', 'tool_certificate');
 }
 
-$PAGE->set_title(format_string($heading));
+$PAGE->set_title($heading);
+$PAGE->set_heading($heading);
 
 // Flag to determine if we are deleting anything.
 $deleting = false;
@@ -140,9 +141,7 @@ if ($deleting) {
 }
 
 if ($templateid) {
-    $mform = new \tool_certificate\edit_form($pageurl, ['tid' => $templateid, 'tenantid' => $template->get_tenant_id()]);
-    // Set the name for the form.
-    $mform->set_data(['name' => $template->get_name()]);
+    $mform = new \tool_certificate\edit_form($pageurl, ['template' => $template]);
 } else {
     $mform = new \tool_certificate\edit_form($pageurl);
 }
@@ -210,14 +209,16 @@ if ($data = $mform->get_data()) {
     // Check if we want to preview this custom certificate.
     if (!empty($data->previewbtn)) {
         redirect($template->preview_url());
+    } else if (!$templateid) {
+        // Redirect to the editing page to show form with recent updates.
+        $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
+        redirect($url);
+    } else {
+        redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
     }
 
-    // Redirect to the editing page to show form with recent updates.
-    $url = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->get_id()));
-    redirect($url);
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
 $mform->display();
 echo $OUTPUT->footer();
