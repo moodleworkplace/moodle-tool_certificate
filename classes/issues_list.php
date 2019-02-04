@@ -44,7 +44,7 @@ class issues_list extends system_report {
     /**
      * Initialise the report
      */
-    public function initialise() {
+    protected function initialise() {
         $templateid = $this->get_parameter('templateid', 0, PARAM_INT);
         $this->template = \tool_certificate\template::find_by_id($templateid);
         if (!$this->template->can_view_issues()) {

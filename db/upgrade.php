@@ -103,7 +103,6 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         // Launch change of nullability for field tenantid.
         $dbman->change_field_notnull($table, $field);
 
-
         // Certificate savepoint reached.
         upgrade_plugin_savepoint(true, 2019020300, 'tool', 'certificate');
     }
