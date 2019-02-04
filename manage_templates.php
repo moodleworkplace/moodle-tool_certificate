@@ -128,12 +128,11 @@ $PAGE->set_heading(get_string('managetemplates', 'tool_certificate'));
 
 echo $OUTPUT->header();
 
-$data = ['tabheading' => '', 'addbuttontitle'];
-if (\tool_certificate\template::can_create()) {
-    $data['addbuttontitle'] = get_string('createtemplate', 'tool_certificate');
-    $data['addbuttonurl'] = \tool_certificate\template::new_template_url()->out(false);
-}
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\certificates_list::class);
-$data['certificateslisttable'] = $report->output($OUTPUT);
-echo $OUTPUT->render_from_template('tool_certificate/manage_certificates', $data);
+$r = new \tool_wp\output\content_with_heading($report->output($OUTPUT));
+if (\tool_certificate\template::can_create()) {
+    $r->add_button(get_string('createtemplate', 'tool_certificate'),
+        \tool_certificate\template::new_template_url());
+}
+echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 echo $OUTPUT->footer();

@@ -27,7 +27,7 @@ Feature: Being able to manage site templates
   Scenario: Adding a site template
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Create template"
+    And I follow "New template"
     And I set the field "Name" to "Certificate 1"
     And I press "Save changes"
     And I add the element "Border" to page "1" of the "Certificate 1" certificate template
@@ -50,7 +50,7 @@ Feature: Being able to manage site templates
       | manager | Tenant 2 |
     And I log in as "manager"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Create template"
+    And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
       | Select tenant | Tenant 2 |
@@ -67,7 +67,7 @@ Feature: Being able to manage site templates
       | manager | certificatemanager | System       |           |
     And I log in as "manager"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Create template"
+    And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
     And I press "Save changes"
@@ -77,7 +77,7 @@ Feature: Being able to manage site templates
   Scenario: Adding template with name too long
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Create template"
+    And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456 |
     And I press "Save changes"
@@ -86,7 +86,7 @@ Feature: Being able to manage site templates
   Scenario: Adding template with invalid width, heigth and margins
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Create template"
+    And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
       | Width | 0 |

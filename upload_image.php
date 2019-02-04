@@ -25,14 +25,7 @@
 require('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-admin_externalpage_setup('tool_certificate/managetemplates');
-
-require_capability('tool/certificate:imageforalltenants', \context_system::instance());
-
-$struploadimage = get_string('uploadimage', 'tool_certificate');
-
-// Additional page setup.
-$PAGE->navbar->add($struploadimage);
+admin_externalpage_setup('tool_certificate/images');
 
 $uploadform = new \tool_certificate\upload_image_form();
 
@@ -45,7 +38,7 @@ if ($uploadform->is_cancelled()) {
     redirect(new moodle_url('/admin/tool/certificate/upload_image.php'), get_string('changessaved'));
 }
 
+$PAGE->set_heading(get_string('certificateimages', 'tool_certificate'));
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('uploadimage', 'tool_certificate'));
 $uploadform->display();
 echo $OUTPUT->footer();
