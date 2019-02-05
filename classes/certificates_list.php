@@ -94,7 +94,7 @@ class certificates_list extends system_report {
             // User can not manage all tenants' templates. Display templates from own tenant
             // and shared templates, do not display tenant column.
             $tenantid = db::generate_param_name();
-            $this->set_joins(['LEFT JOIN {tool_tenant} t ON t.id = c.tenantid'], []);
+            $this->add_joins(['LEFT JOIN {tool_tenant} t ON t.id = c.tenantid'], []);
             $this->set_sql_filter("(c.tenantid = :{$tenantid} OR c.tenantid = 0)",
                 [$tenantid => \tool_tenant\tenancy::get_tenant_id()]);
         }
