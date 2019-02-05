@@ -51,7 +51,7 @@ class issues_list extends system_report {
         parent::initialise();
         $this->set_main_table('tool_certificate_issues', 'i');
         $this->set_main_filter('templateid', $templateid);
-        $this->set_joins(['INNER JOIN {user} u ON u.id = i.userid']);
+        $this->add_joins(['INNER JOIN {user} u ON u.id = i.userid']);
         if (!$templateid || !$this->template->can_view_issues()) {
             // TODO SP-277 it would be better to throw exception here but there is a situation
             // when parameter is not present.
@@ -59,10 +59,10 @@ class issues_list extends system_report {
         } else if (!template::can_issue_or_manage_all_tenants()) {
             // View only issues from the same tenant.
             list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
-            $this->set_joins([$tenantjoin]);
+            $this->add_joins([$tenantjoin]);
             $this->set_sql_filter($tenantwhere, $tenantparams);
         } else {
-            $this->set_other_filters(['u.deleted' => 0]);
+            $this->add_other_filters(['u.deleted' => 0]);
         }
     }
 
