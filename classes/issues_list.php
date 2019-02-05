@@ -164,8 +164,8 @@ class issues_list extends system_report {
             'tool_certificate',
             6,
             '',
-            array('i.id', ''),
-            'revoke',
+            ['i.id', []],
+            'revoked',
             true,
             !($this->template && $this->template->can_issue()),
             true
