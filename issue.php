@@ -63,8 +63,8 @@ $url = new moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $tem
 $heading = get_string('issuenewcertificates', 'tool_certificate');
 
 $PAGE->navbar->add($heading, $url);
+$PAGE->set_heading($heading);
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading($heading);
 echo $form->display();
 echo $OUTPUT->footer();
