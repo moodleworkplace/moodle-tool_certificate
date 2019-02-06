@@ -55,14 +55,17 @@ class my_certificates_table extends \table_sql {
             'name',
             'timecreated',
             'expires',
-            'code',
         );
         $headers = array(
             get_string('name'),
             get_string('receiveddate', 'tool_certificate'),
             get_string('expires', 'tool_certificate'),
-            get_string('code', 'tool_certificate'),
         );
+
+        if (template::can_verify_loose()) {
+            $columns[] = 'code';
+            $headers[] = get_string('code', 'tool_certificate');
+        }
 
         // Check if we were passed a filename, which means we want to download it.
         if ($download) {
