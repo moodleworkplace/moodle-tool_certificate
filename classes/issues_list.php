@@ -247,4 +247,13 @@ class issues_list extends system_report {
         return $OUTPUT->action_link($link, '', null, ['class' => 'delete-icon'], $icon);
     }
 
+    /**
+     * CSS class for the row
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    public function get_row_class(\stdClass $row): string {
+        return ($row->expires && $row->expires < time()) ? 'dimmed_text' : '';
+    }
 }
