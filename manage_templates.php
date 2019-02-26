@@ -129,7 +129,7 @@ $PAGE->set_heading(get_string('managetemplates', 'tool_certificate'));
 echo $OUTPUT->header();
 
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\certificates_list::class);
-$r = new \tool_wp\output\content_with_heading($report->output($OUTPUT));
+$r = new \tool_wp\output\content_with_heading($report->output());
 if (\tool_certificate\template::can_create()) {
     $r->add_button(get_string('createtemplate', 'tool_certificate'),
         \tool_certificate\template::new_template_url());

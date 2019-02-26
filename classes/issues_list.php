@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use tool_reportbuilder\local\helpers\user_fields;
+use tool_reportbuilder\report_action;
 use tool_reportbuilder\report_column;
 use tool_reportbuilder\system_report;
 
@@ -48,131 +50,104 @@ class issues_list extends system_report {
         if ($templateid = $this->get_parameter('templateid', 0, PARAM_INT)) {
             $this->template = \tool_certificate\template::find_by_id($templateid);
         }
-        parent::initialise();
+        $this->set_columns();
         $this->set_main_table('tool_certificate_issues', 'i');
-        $this->set_main_filter('templateid', $templateid);
-        $this->add_joins(['INNER JOIN {user} u ON u.id = i.userid']);
-        if (!$templateid || !$this->template->can_view_issues()) {
-            // TODO SP-277 it would be better to throw exception here but there is a situation
-            // when parameter is not present.
-            $this->set_sql_filter('1=0');
-        } else if (!template::can_issue_or_manage_all_tenants()) {
+        $this->add_base_condition_simple('i.templateid', $templateid);
+        $this->add_base_join('INNER JOIN {user} u ON u.id = i.userid');
+        if (!template::can_issue_or_manage_all_tenants()) {
             // View only issues from the same tenant.
             list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
-            $this->add_joins([$tenantjoin]);
-            $this->set_sql_filter($tenantwhere, $tenantparams);
+            $this->add_base_join($tenantjoin);
+            $this->add_base_condition_sql($tenantwhere, $tenantparams);
         } else {
-            $this->add_other_filters(['u.deleted' => 0]);
+            $this->add_base_condition_simple('u.deleted', 0);
         }
+        $this->add_base_fields('i.id, i.expires, i.code'); // Necessary for row class and actions.
+        $this->set_actions();
+    }
+
+    /**
+     * Validates access to view this report with the given parameters
+     *
+     * @return bool
+     */
+    protected function can_view(): bool {
+        return $this->template && $this->template->can_view_issues();
     }
 
     /**
      * Columns definitions
      */
     protected function set_columns() {
+        $this->add_entity('tool_certificate_issues', new \lang_string('entitycertificateissues', 'tool_certificate'));
+        $this->add_entity('user', new \lang_string('entityuser', 'tool_reportbuilder'));
+
         // Column "fullname".
-        $newcolumn = new report_column(
+        $newcolumn = (new report_column(
             'fullname',
-            get_string('fullname'),
-            'tool_certificate_issues',
-            'tool_certificate',
-            1,
-            '',
-            array("'fullname' AS fullname, "  . get_all_user_name_fields(true, 'u'), ''),
-            null,
-            true,
-            false,
-            false
-        );
+            new \lang_string('fullname'),
+            'user'
+        ))
+            ->add_fields(user_fields::get_all_user_name_fields(true, 'u'))
+            ->set_is_default(true, 1)
+            ->set_is_sort_enabled(true);
         $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'fullname']);
         $this->add_column($newcolumn);
 
         // Column "awarded".
-        $newcolumn = new report_column(
+        $newcolumn = (new report_column(
             'timecreated',
-            get_string('receiveddate', 'tool_certificate'),
-            'tool_certificate_issues',
-            'tool_certificate',
-            2,
-            '',
-            array('i.timecreated', ''),
-            null,
-            true,
-            false,
-            true
-        );
+            new \lang_string('receiveddate', 'tool_certificate'),
+            'tool_certificate_issues'
+        ))
+            ->add_fields('i.timecreated')
+            ->set_is_default(true, 2)
+            ->set_is_sort_enabled(true);
         $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'userdate']);
         $this->add_column($newcolumn);
 
         // Column "expires".
-        $newcolumn = new report_column(
+        $newcolumn = (new report_column(
             'expires',
-            get_string('expires', 'tool_certificate'),
-            'tool_certificate_issues',
-            'tool_certificate',
-            3,
-            '',
-            array('i.expires', ''),
-            null,
-            true,
-            false,
-            true
-        );
+            new \lang_string('expires', 'tool_certificate'),
+            'tool_certificate_issues'
+        ))
+            ->add_field('i.expires')
+            ->set_is_default(true, 3)
+            ->set_is_sort_enabled(true);
         $newcolumn->add_callback([$this, 'col_expires']);
         $this->add_column($newcolumn);
 
         // Column "code".
-        $newcolumn = new report_column(
+        $newcolumn = (new report_column(
             'code',
-            get_string('code', 'tool_certificate'),
-            'tool_certificate_issues',
-            'tool_certificate',
-            4,
-            '',
-            array('i.code', ''),
-            null,
-            true,
-            false,
-            true
-        );
+            new \lang_string('code', 'tool_certificate'),
+            'tool_certificate_issues'
+        ))
+            ->add_field('i.code')
+            ->set_is_default(true, 4)
+            ->set_is_sort_enabled(true);
         $newcolumn->add_callback([$this, 'col_code']);
         $this->add_column($newcolumn);
+    }
 
-        // Column "file".
-        // TODO this column should not be added if we download report.
-        $newcolumn = new report_column(
-            'download',
-            get_string('file'),
-            'tool_certificate_issues',
-            'tool_certificate',
-            5,
-            '',
-            array('i.code', ''),
-            'download',
-            true,
-            false,
-            true
-        );
-        $newcolumn->add_callback([$this, 'col_download']);
-        $this->add_column($newcolumn);
+    /**
+     * Issue actions
+     */
+    protected function set_actions() {
+        // File.
+        $icon = new \pix_icon('a/wp-search', get_string('view'), 'theme');
+        $link = template::view_url(':code');
+        $this->add_action((new report_action($link, $icon, [])));
 
-        // Revoke column.
-        $newcolumn = new report_column(
-            'revoke',
-            get_string('revoke', 'tool_certificate'),
-            'tool_certificate_issues',
-            'tool_certificate',
-            6,
-            '',
-            ['i.id', []],
-            'revoked',
-            true,
-            !($this->template && $this->template->can_issue()),
-            true
-        );
-        $newcolumn->add_callback([$this, 'col_revoke']);
-        $this->add_column($newcolumn);
+        // Revoke.
+        if ($this->template && $this->template->can_revoke()) {
+            $icon = new \pix_icon('a/wp-trash', get_string('revoke', 'tool_certificate'), 'theme');
+            $link = new \moodle_url('/admin/tool/certificate/certificates.php',
+                ['issueid' => ':id', 'sesskey' => sesskey(), 'revokecert' => '1']);
 
+            $this->add_action((new report_action($link, $icon, ['class' => 'delete-icon'])));
+        }
     }
 
     /**
@@ -210,41 +185,6 @@ class issues_list extends system_report {
     public function col_code($code) {
         return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]),
             $code, ['title' => get_string('verify', 'tool_certificate')]);
-    }
-
-    /**
-     * Generate the download column.
-     *
-     * @param string $code
-     * @return string
-     */
-    public function col_download($code) {
-        global $OUTPUT;
-
-        // TODO is this correct icon for download?
-        $icon = new \pix_icon('a/wp-search', get_string('view'), 'theme');
-        $link = template::view_url($code);
-
-        return $OUTPUT->action_link($link, '', null, null, $icon);
-    }
-
-    /**
-     * Generate the revoke column.
-     *
-     * @param int $id
-     * @return string
-     */
-    public function col_revoke($id) {
-        global $OUTPUT;
-        if (!$this->template->can_revoke()) {
-            return '';
-        }
-
-        $icon = new \pix_icon('a/wp-trash', get_string('revoke', 'tool_certificate'), 'theme');
-        $link = new \moodle_url('/admin/tool/certificate/certificates.php',
-            ['issueid' => $id, 'sesskey' => sesskey(), 'revokecert' => '1']);
-
-        return $OUTPUT->action_link($link, '', null, ['class' => 'delete-icon'], $icon);
     }
 
     /**
