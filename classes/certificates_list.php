@@ -43,75 +43,73 @@ class certificates_list extends system_report {
      * Initialise
      */
     protected function initialise() {
-        parent::initialise();
-        $this->set_main_table('tool_certificate_templates', 'c');
+        $this->set_columns();
+        // Set main table. For certificates we want a custom tenant filter, so disable automatic one.
+        $this->set_main_table('tool_certificate_templates', 'c', false);
         $this->set_downloadable(false);
+    }
+
+    /**
+     * Validates access to view this report with the given parameters
+     *
+     * @return bool
+     */
+    protected function can_view(): bool {
+        // TODO: Implement can_view() method.
+        return true;
     }
 
     /**
      * Set columns
      */
     protected function set_columns() {
-        $newcolumn = new report_column(
+        $this->add_entity('tool_certificate', new \lang_string('entitycertificate', 'tool_certificate'));
+
+        $newcolumn = (new report_column(
             'name',
-            get_string('name', 'tool_certificate'),
-            'certificate',
-            'tool_certificate',
-            1,
-            null,
-            ['c.*', []],
-            null,
-            true,
-            false,
-            true
-        );
+            new \lang_string('name', 'tool_certificate'),
+            'tool_certificate'
+        ))
+            ->add_field('c.name')
+            ->set_is_default(true, 1)
+            ->set_is_sort_enabled(true);
         $newcolumn->add_callback(function($v) {
             return format_string($v);
         });
         $this->add_column($newcolumn);
 
-        // For certificates we want a custom tenant filter, so disable automatic one.
-        $this->automatictenantfilter = false;
-
         // Add 'Tenant' column visible only for users who can manage all tenants.
-        $newcolumn = new report_column(
+        $newcolumn = (new report_column(
             'tenantname',
-            get_string('tenant', 'tool_certificate'),
-            'tenant',
-            'tool_certificate',
-            2,
-            'LEFT JOIN {tool_tenant} t ON t.id = c.tenantid',
-            ['t.name', []],
-            'tenantname',
-            true,
-            !\tool_certificate\template::can_issue_or_manage_all_tenants(),
-            true
-        );
-        $newcolumn->add_callback([$this, 'col_tenant_name']);
+            new \lang_string('tenant', 'tool_certificate'),
+            'tool_certificate'
+        ))
+            ->set_join('LEFT JOIN {tool_tenant} t ON t.id = c.tenantid')
+            ->add_field('t.name', 'tenantname')
+            ->add_field('c.tenantid')
+            ->set_is_default(true, 2)
+            ->set_is_sort_enabled(true)
+            ->set_is_available(\tool_certificate\template::can_issue_or_manage_all_tenants())
+            ->add_callback([$this, 'col_tenant_name']);
         $this->add_column($newcolumn);
 
         if (!\tool_certificate\template::can_issue_or_manage_all_tenants()) {
             // User can not manage all tenants' templates. Display templates from own tenant
             // and shared templates, do not display tenant column.
             $tenantid = db::generate_param_name();
-            $this->add_joins(['LEFT JOIN {tool_tenant} t ON t.id = c.tenantid'], []);
-            $this->set_sql_filter("(c.tenantid = :{$tenantid} OR c.tenantid = 0)",
+            $this->add_base_join('LEFT JOIN {tool_tenant} t ON t.id = c.tenantid');
+            $this->add_base_condition_sql("(c.tenantid = :{$tenantid} OR c.tenantid = 0)",
                 [$tenantid => \tool_tenant\tenancy::get_tenant_id()]);
         }
 
-        $newcolumn = new report_column(
+        // TODO replace with report builder actions.
+        $newcolumn = (new report_column(
             'actions',
-            '',
-            'actions',
-            'tool_certificate',
-            3,
             null,
-            ['c.id', []],
-            'certactions',
-            true,
-            false,
-            false
-        );
+            'tool_certificate'
+        ))
+            ->add_field('c.id', 'certactions')
+            ->set_is_default(true, 3);
         $newcolumn->add_callback([$this, 'col_actions']);
         $this->add_column($newcolumn);
     }
@@ -148,10 +146,12 @@ class certificates_list extends system_report {
      * @return string
      */
     public function col_actions($value, \stdClass $template) {
-        global $OUTPUT;
+        global $OUTPUT, $DB;
 
         $actions = '';
 
+        // TODO SP-422 not effective.
+        $template = $DB->get_record('tool_certificate_templates', array('id' => $value), '*', MUST_EXIST);
         $templateobj = new template($template);
         if ($templateobj->can_duplicate()) {
             $duplicatelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',

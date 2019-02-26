@@ -83,7 +83,7 @@ if ($revokecert && confirm_sesskey()) {
 
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\issues_list::class,
     ['templateid' => $template->get_id()]);
-$r = new \tool_wp\output\content_with_heading($report->output($OUTPUT), format_string($template->get_name()));
+$r = new \tool_wp\output\content_with_heading($report->output(), format_string($template->get_name()));
 if ($template->can_issue()) {
     $r->add_button(get_string('issuenewcertificates', 'tool_certificate'),
         $template->new_issue_url());
