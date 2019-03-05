@@ -90,7 +90,7 @@ class issues_list extends system_report {
         ))
             ->add_fields(user_fields::get_all_user_name_fields(true, 'u'))
             ->set_is_default(true, 1)
-            ->set_is_sort_enabled(true);
+            ->set_is_sortable(true, true);
         $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'fullname']);
         $this->add_column($newcolumn);
 
@@ -102,7 +102,7 @@ class issues_list extends system_report {
         ))
             ->add_fields('i.timecreated')
             ->set_is_default(true, 2)
-            ->set_is_sort_enabled(true);
+            ->set_is_sortable(true);
         $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'userdate']);
         $this->add_column($newcolumn);
 
@@ -114,7 +114,7 @@ class issues_list extends system_report {
         ))
             ->add_field('i.expires')
             ->set_is_default(true, 3)
-            ->set_is_sort_enabled(true);
+            ->set_is_sortable(true);
         $newcolumn->add_callback([$this, 'col_expires']);
         $this->add_column($newcolumn);
 
@@ -126,7 +126,7 @@ class issues_list extends system_report {
         ))
             ->add_field('i.code')
             ->set_is_default(true, 4)
-            ->set_is_sort_enabled(true);
+            ->set_is_sortable(true);
         $newcolumn->add_callback([$this, 'col_code']);
         $this->add_column($newcolumn);
     }
