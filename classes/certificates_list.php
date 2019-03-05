@@ -63,7 +63,7 @@ class certificates_list extends system_report {
      * Set columns
      */
     protected function set_columns() {
-        $this->add_entity('tool_certificate', new \lang_string('entitycertificate', 'tool_certificate'));
+        $this->annotate_entity('tool_certificate', new \lang_string('entitycertificate', 'tool_certificate'));
 
         $newcolumn = (new report_column(
             'name',
@@ -72,7 +72,7 @@ class certificates_list extends system_report {
         ))
             ->add_field('c.name')
             ->set_is_default(true, 1)
-            ->set_is_sort_enabled(true);
+            ->set_is_sortable(true, true);
         $newcolumn->add_callback(function($v) {
             return format_string($v);
         });
@@ -84,11 +84,11 @@ class certificates_list extends system_report {
             new \lang_string('tenant', 'tool_certificate'),
             'tool_certificate'
         ))
-            ->set_join('LEFT JOIN {tool_tenant} t ON t.id = c.tenantid')
+            ->add_join('LEFT JOIN {tool_tenant} t ON t.id = c.tenantid')
             ->add_field('t.name', 'tenantname')
             ->add_field('c.tenantid')
             ->set_is_default(true, 2)
-            ->set_is_sort_enabled(true)
+            ->set_is_sortable(true)
             ->set_is_available(\tool_certificate\template::can_issue_or_manage_all_tenants())
             ->add_callback([$this, 'col_tenant_name']);
         $this->add_column($newcolumn);
