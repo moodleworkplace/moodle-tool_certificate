@@ -24,7 +24,7 @@
 
 namespace tool_certificate;
 
-use tool_reportbuilder\local\helpers\user_fields;
+use tool_reportbuilder\local\entities\user as user_entity;
 use tool_reportbuilder\report_action;
 use tool_reportbuilder\report_column;
 use tool_reportbuilder\system_report;
@@ -79,8 +79,8 @@ class issues_list extends system_report {
      * Columns definitions
      */
     protected function set_columns() {
-        $this->add_entity('tool_certificate_issues', new \lang_string('entitycertificateissues', 'tool_certificate'));
-        $this->add_entity('user', new \lang_string('entityuser', 'tool_reportbuilder'));
+        $this->annotate_entity('tool_certificate_issues', new \lang_string('entitycertificateissues', 'tool_certificate'));
+        $this->annotate_entity('user', new \lang_string('entityuser', 'tool_reportbuilder'));
 
         // Column "fullname".
         $newcolumn = (new report_column(
@@ -88,7 +88,7 @@ class issues_list extends system_report {
             new \lang_string('fullname'),
             'user'
         ))
-            ->add_fields(user_fields::get_all_user_name_fields(true, 'u'))
+            ->add_fields(user_entity::get_all_user_name_fields(true, 'u'))
             ->set_is_default(true, 1)
             ->set_is_sortable(true, true);
         $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'fullname']);
