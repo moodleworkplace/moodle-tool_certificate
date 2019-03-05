@@ -63,7 +63,7 @@ class certificates_list extends system_report {
      * Set columns
      */
     protected function set_columns() {
-        $this->add_entity('tool_certificate', new \lang_string('entitycertificate', 'tool_certificate'));
+        $this->annotate_entity('tool_certificate', new \lang_string('entitycertificate', 'tool_certificate'));
 
         $newcolumn = (new report_column(
             'name',
