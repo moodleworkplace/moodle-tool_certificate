@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2018121200; // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051700; // Requires this Moodle version (3.5).
+$plugin->version   = 2019030700;
+$plugin->requires  = 2019012401;
 $plugin->component = 'certificateelement_program';
