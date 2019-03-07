@@ -24,16 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-$plugin->version   = 2019020300; // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2018051700; // Requires this Moodle version (3.5).
+$plugin->version   = 2019030700;
+$plugin->requires  = 2019012401;
 $plugin->cron      = 0; // Period for cron to check this module (secs).
 $plugin->component = 'tool_certificate';
 
-$plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = "3.5.4"; // User-friendly version number.
+$plugin->maturity  = MATURITY_ALPHA;
+$plugin->release = '0.2.0';
 
 $plugin->dependencies   = array(
-    'tool_tenant' => '2018110600',
-    'tool_wp' => '2018112601',
-    'tool_reportbuilder' => '2019012810',
+    'tool_tenant' => '2019030700',
+    'tool_wp' => '2019030700',
 );
