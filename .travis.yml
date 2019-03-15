@@ -44,11 +44,12 @@ script:
   - moodle-plugin-ci phplint
   # - moodle-plugin-ci phpcpd
   # - moodle-plugin-ci phpmd # too much noise from this check, maybe, some day...
-  - moodle-plugin-ci codechecker
+  - moodle-plugin-ci codechecker --files all --max-warnings 0
   - moodle-plugin-ci phpdoc
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints
   - moodle-plugin-ci mustache
+  - moodle-plugin-ci eslint --max-warnings 0
   - moodle-plugin-ci grunt
   - moodle-plugin-ci phpunit
   - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v admin/tool/dataprivacy/tests/metadata_registry_test.php
