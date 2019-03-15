@@ -70,8 +70,6 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
 
         $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
 
-        $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id(), 0, 100, 'ci.code'));
-
         $certificate1->issue_certificate($user1->id);
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate1->get_id()));
 
@@ -82,6 +80,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_template(0));
 
         // Create certificate in another tenant.
+        /** @var tool_tenant_generator $tenantgenerator */
         $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
         $tenant = $tenantgenerator->create_tenant();
 
