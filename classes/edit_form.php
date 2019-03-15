@@ -60,58 +60,28 @@ class edit_form extends \moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('text', 'name', get_string('name', 'tool_certificate'), 'maxlength="255"');
-        $mform->setType('name', PARAM_TEXT);
-        $mform->addRule('name', null, 'required');
+        $this->template = $this->_customdata['template'];
 
         // Get the number of pages for this module.
-
-        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
-            $tenants = \tool_tenant\tenancy::get_tenants();
-            $options = [0 => get_string('shared', 'tool_certificate')];
-            foreach ($tenants as $tenant) {
-                $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
+        if ($pages = $this->template->get_pages()) {
+            $this->numpages = count($pages);
+            foreach ($pages as $p) {
+                $this->add_certificate_page_elements($p);
             }
-            $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
-        }
-
-        if (isset($this->_customdata['template'])) {
-
-            $this->template = $this->_customdata['template'];
-            if (isset($tenants)) {
-                $mform->freeze('tenantid');
-            }
-
-            if ($pages = $this->template->get_pages()) {
-                $this->numpages = count($pages);
-                foreach ($pages as $p) {
-                    $this->add_certificate_page_elements($p);
-                }
-            }
-
-        } else { // Add a new template.
-
-            // Create a 'fake' page to display the elements on - not yet saved in the DB.
-            $page = new \stdClass();
-            $page->id = 0;
-            $page->sequence = 1;
-            $this->add_certificate_page_elements($page);
         }
 
         // Link to add another page, only display it when the template has been created.
-        if ($this->template) {
-            $addpagelink = new \moodle_url('/admin/tool/certificate/edit.php',
-                array(
-                    'tid' => $this->template->get_id(),
-                    'aid' => 1,
-                    'action' => 'addpage',
-                    'sesskey' => sesskey()
-                )
-            );
-            $icon = $OUTPUT->pix_icon('t/switch_plus', get_string('addcertpage', 'tool_certificate'));
-            $addpagehtml = \html_writer::link($addpagelink, $icon . get_string('addcertpage', 'tool_certificate'));
-            $mform->addElement('html', \html_writer::tag('div', $addpagehtml, array('class' => 'addpage')));
-        }
+        $addpagelink = new \moodle_url('/admin/tool/certificate/edit.php',
+            array(
+                'tid' => $this->template->get_id(),
+                'aid' => 1,
+                'action' => 'addpage',
+                'sesskey' => sesskey()
+            )
+        );
+        $icon = $OUTPUT->pix_icon('t/switch_plus', get_string('addcertpage', 'tool_certificate'));
+        $addpagehtml = \html_writer::link($addpagelink, $icon . get_string('addcertpage', 'tool_certificate'));
+        $mform->addElement('html', \html_writer::tag('div', $addpagehtml, array('class' => 'addpage')));
 
         // Add the submit buttons.
         $previewstring = get_string('savechangespreview', 'tool_certificate');
@@ -119,17 +89,14 @@ class edit_form extends \moodleform {
         $group = array();
         $group[] = $mform->createElement('submit', 'submitbtn', $savestring);
         $group[] = $mform->createElement('submit', 'previewbtn', $previewstring, array(), false);
+        $group[] = $mform->createElement('cancel');
         $mform->addElement('group', 'submitbtngroup', '', $group, '', false);
 
         $mform->addElement('hidden', 'tid');
         $mform->setType('tid', PARAM_INT);
 
         if ($this->template) {
-            $this->set_data([
-                'id' => $this->template->get_id(),
-                'tid' => $this->template->get_id(),
-                'name' => $this->template->get_name(),
-                'tenantid' => $this->template->get_tenant_id()]);
+            $this->set_data(['tid' => $this->template->get_id()]);
         }
     }
 
@@ -173,10 +140,6 @@ class edit_form extends \moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
-        if (\core_text::strlen($data['name']) > 255) {
-            $errors['name'] = get_string('nametoolong', 'tool_certificate');
-        }
 
         // Go through the data and check any width, height or margin  values.
         foreach ($data as $key => $value) {

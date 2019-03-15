@@ -60,12 +60,16 @@ Feature: View links on admin tree
     And I log in as "manager"
     And I am on site homepage
     When I navigate to "Certificates > Manage certificate templates" in site administration
+    And I wait "2" seconds
     And I click on "Issue new certificate from this template" "link"
+    And I wait "2" seconds
     And I open the autocomplete suggestions list
     And I click on "User One" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
-    Then I should see "One issue was created"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    Then "User One" "text" should exist in the "report-table" "table"
+    And I log out
 
   Scenario: Manager without issue capability
     When I log in as "admin"

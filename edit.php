@@ -25,35 +25,21 @@
 require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$templateid = optional_param('tid', 0, PARAM_INT);
+$templateid = required_param('tid', PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 if ($action) {
     $actionid = required_param('aid', PARAM_INT);
 }
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
-if ($templateid) {
-    // Edit an existing template.
-    admin_externalpage_setup('tool_certificate/managetemplates');
+admin_externalpage_setup('tool_certificate/managetemplates');
 
-    $template = \tool_certificate\template::find_by_id($templateid);
-    $template->require_manage();
+$template = \tool_certificate\template::find_by_id($templateid);
+$template->require_manage();
 
-    $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
-    $heading = format_string($template->get_name());
-    $PAGE->navbar->add($heading, new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $templateid]));
-
-} else {
-    // Adding a new template.
-    admin_externalpage_setup('tool_certificate/addcertificate');
-
-    if (!\tool_certificate\template::can_create()) {
-        print_error('createnotallowed', 'tool_certificate');
-    }
-
-    $pageurl = new moodle_url('/admin/tool/certificate/edit.php');
-    $heading = get_string('addcertificate', 'tool_certificate');
-}
+$pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
+$heading = format_string($template->get_name());
+$PAGE->navbar->add($heading, new moodle_url('/admin/tool/certificate/edit.php', ['tid' => $templateid]));
 
 $PAGE->set_title($heading);
 $PAGE->set_heading($heading);
@@ -140,48 +126,11 @@ if ($deleting) {
     exit();
 }
 
-if ($templateid) {
-    $mform = new \tool_certificate\edit_form($pageurl, ['template' => $template]);
-} else {
-    $mform = new \tool_certificate\edit_form($pageurl);
-}
+$mform = new \tool_certificate\edit_form($pageurl, ['template' => $template]);
 
-if ($data = $mform->get_data()) {
-    // If there is no id, then we are creating a template.
-    if (!$templateid) {
-        $template = \tool_certificate\template::create($data);
-
-        // Create a page for this template.
-        $pageid = $template->add_page();
-
-        // Associate all the data from the form to the newly created page.
-        $width = 'pagewidth_' . $pageid;
-        $height = 'pageheight_' . $pageid;
-        $leftmargin = 'pageleftmargin_' . $pageid;
-        $rightmargin = 'pagerightmargin_' . $pageid;
-        $rightmargin = 'pagerightmargin_' . $pageid;
-
-        $data->$width = $data->pagewidth_0;
-        $data->$height = $data->pageheight_0;
-        $data->$leftmargin = $data->pageleftmargin_0;
-        $data->$rightmargin = $data->pagerightmargin_0;
-
-        // We may also have clicked to add an element, so these need changing as well.
-        if (isset($data->element_0) && isset($data->addelement_0)) {
-            $element = 'element_' . $pageid;
-            $addelement = 'addelement_' . $pageid;
-            $data->$element = $data->element_0;
-            $data->$addelement = $data->addelement_0;
-
-            // Need to remove the temporary element and add element placeholders so we
-            // don't try add an element to the wrong page.
-            unset($data->element_0);
-            unset($data->addelement_0);
-        }
-    }
-
-    // Save any data for the template.
-    $template->save($data);
+if ($mform->is_cancelled()) {
+    redirect(new moodle_url('/admin/tool/certificate/manage_templates.php'));
+} else if ($data = $mform->get_data()) {
 
     // Save any page data.
     $template->save_page($data);
@@ -218,6 +167,11 @@ if ($data = $mform->get_data()) {
     }
 
 }
+
+$edit = new \tool_wp\output\page_header_button(get_string('editdetails', 'tool_certificate'),
+    ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
+$PAGE->set_button($edit->render($OUTPUT) . $PAGE->button);
+$PAGE->requires->js_call_amd('tool_certificate/template-edit', 'init');
 
 echo $OUTPUT->header();
 $mform->display();

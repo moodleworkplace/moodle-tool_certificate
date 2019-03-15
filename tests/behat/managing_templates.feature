@@ -24,12 +24,14 @@ Feature: Being able to manage site templates
       | Tenant 2 |
     And I log out
 
+  @javascript
   Scenario: Adding a site template
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "New template"
+    And I wait "3" seconds
     And I set the field "Name" to "Certificate 1"
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I add the element "Border" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 5 |
@@ -38,6 +40,7 @@ Feature: Being able to manage site templates
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
+  @javascript
   Scenario: Adding a template to another tenant
     When the following "users" exist:
       | username | firstname | lastname | email           |
@@ -54,10 +57,11 @@ Feature: Being able to manage site templates
     And I set the following fields to these values:
       | Name | Certificate 1 |
       | Select tenant | Tenant 2 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
+  @javascript
   Scenario: Adding a template without manageforalltenants capability
     When the following "users" exist:
       | username | firstname | lastname | email           |
@@ -70,25 +74,19 @@ Feature: Being able to manage site templates
     And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
-  Scenario: Adding template with name too long
-    When I log in as "admin"
-    And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I follow "New template"
-    And I set the following fields to these values:
-      | Name | Certificate 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456 |
-    And I press "Save changes"
-    Then I should see "You have exceeded the maximum length allowed for the name"
-
+  @javascript
   Scenario: Adding template with invalid width, heigth and margins
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I set the following fields to these values:
       | Width | 0 |
       | Height | 0 |
       | Left margin | -1 |
@@ -104,7 +102,7 @@ Feature: Being able to manage site templates
       | Certificate 1 |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on ".delete-icon" "css_element" in the "Certificate 1" "table_row"
+    And I click on "Delete" "link" in the "Certificate 1" "table_row"
     And I press "Cancel"
     And I should see "Certificate 1"
     And I click on "Delete" "link" in the "Certificate 1" "table_row"
@@ -123,7 +121,7 @@ Feature: Being able to manage site templates
       | Certificate 1 |
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Edit" "link" should exist in the "Certificate 1" "table_row"
+    And "Edit content" "link" should exist in the "Certificate 1" "table_row"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I press "Cancel"
     And I should see "Certificate 1"
@@ -151,9 +149,9 @@ Feature: Being able to manage site templates
       | Certificate 2 | Tenant 2 |
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Edit" "link" should exist in the "Certificate 1" "table_row"
+    And "Edit content" "link" should exist in the "Certificate 1" "table_row"
     And I should not see "Certificate 2"
-    And "Edit" "link" should not exist in the "Certificate 0" "table_row"
+    And "Edit content" "link" should not exist in the "Certificate 0" "table_row"
     And I click on "Duplicate" "link" in the "Certificate 0" "table_row"
     And I press "Continue"
     Then I should see "Certificate 0"

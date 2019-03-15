@@ -85,9 +85,10 @@ $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\is
     ['templateid' => $template->get_id()]);
 $r = new \tool_wp\output\content_with_heading($report->output(), format_string($template->get_name()));
 if ($template->can_issue()) {
-    $r->add_button(get_string('issuenewcertificates', 'tool_certificate'),
-        $template->new_issue_url());
+    $r->add_button(get_string('issuenewcertificates', 'tool_certificate'), null,
+        ['data-tid' => $template->get_id()]);
 }
+$PAGE->requires->js_call_amd('tool_certificate/certificates-list', 'init');
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 

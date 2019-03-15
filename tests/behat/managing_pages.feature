@@ -10,7 +10,7 @@ Feature: Being able to manage pages in a certificate template
       | Certificate 1 | 1 |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit" "link"
+    And I click on "Edit content" "link"
 
   Scenario: Adding a page to a certificate template
     When I follow "Add page"

@@ -10,7 +10,7 @@ Feature: Being able to manage elements in a certificate template
       | Certificate 1 | 1 |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit" "link"
+    And I click on "Edit content" "link"
 
   Scenario: Add a certificate element with name too long
     When I press "Add element"
@@ -192,11 +192,11 @@ Feature: Being able to manage elements in a certificate template
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I press "Save changes"
     And I should see "Student name" in the "elementstable" "table"
-    And I click on ".delete-icon" "css_element" in the "Student name" "table_row"
+    And I click on "Delete" "link" in the "Student name" "table_row"
     And I press "Cancel"
     And I should see "Background image" in the "elementstable" "table"
     And I should see "Student name" in the "elementstable" "table"
-    And I click on ".delete-icon" "css_element" in the "Student name" "table_row"
+    And I click on "Delete" "link" in the "Student name" "table_row"
     And I press "Continue"
     And I should see "Background image" in the "elementstable" "table"
     And I should not see "Student name" in the "elementstable" "table"

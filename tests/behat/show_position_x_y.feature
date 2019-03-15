@@ -14,7 +14,7 @@ Feature: Being able to set a site setting to determine whether or not to display
       | showposxy | 0 | tool_certificate |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit" "link"
+    And I click on "Edit content" "link"
     And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I should not see "Position X"
     And I should not see "Position Y"
@@ -24,7 +24,7 @@ Feature: Being able to set a site setting to determine whether or not to display
       | showposxy | 1 | tool_certificate |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit" "link"
+    And I click on "Edit content" "link"
     And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I should see "Position X"
     And I should see "Position Y"
