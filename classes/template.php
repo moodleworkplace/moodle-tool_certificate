@@ -24,6 +24,7 @@
 
 namespace tool_certificate;
 
+use core\output\inplace_editable;
 use tool_tenant\tenancy;
 
 defined('MOODLE_INTERNAL') || die();
@@ -67,6 +68,9 @@ class template {
      */
     protected $timecreated;
 
+    /** @var int $timemodified */
+    protected $timemodified;
+
     /** @var array */
     protected $pages;
 
@@ -79,13 +83,18 @@ class template {
         $this->id = $template->id;
         $this->tenantid = $template->tenantid;
         $this->name = $template->name;
-        $this->contextid = $template->contextid;
+        if (isset($template->contextid)) {
+            $this->contextid = $template->contextid;
+            $this->context = \context::instance_by_id($this->contextid);
+        } else {
+            $this->context = \context_system::instance();
+            $this->contextid = $this->context->id;
+        }
         if (isset($template->timecreated)) {
             $this->timecreated = $template->timecreated;
         } else {
             $this->timecreated = time();
         }
-        $this->context = \context::instance_by_id($this->contextid);
     }
 
     /**
@@ -98,15 +107,13 @@ class template {
 
         $savedata = new \stdClass();
         $savedata->id = $this->id;
-        $savedata->tenantid = $this->tenantid;
-        $savedata->name = $data->name;
+        $savedata->name = clean_param($data->name, PARAM_TEXT);
         $savedata->timemodified = time();
-        $savedata->timecreated = $this->timecreated;
-        $savedata->contextid = $this->contextid;
-
-        \tool_certificate\event\template_updated::create_from_template($savedata)->trigger();
 
         $DB->update_record('tool_certificate_templates', $savedata);
+        $this->name = $savedata->name;
+
+        \tool_certificate\event\template_updated::create_from_template($this)->trigger();
     }
 
     /**
@@ -223,8 +230,7 @@ class template {
         // Revoke certificate issues.
         $this->revoke_issues($this->id);
 
-        $deletedtemplate = $DB->get_record('tool_certificate_templates', ['id' => $this->id]);
-        \tool_certificate\event\template_deleted::create_from_template($deletedtemplate)->trigger();
+        \tool_certificate\event\template_deleted::create_from_template($this)->trigger();
 
         // Now, finally delete the actual template.
         if (!$DB->delete_records('tool_certificate_templates', array('id' => $this->id))) {
@@ -488,12 +494,55 @@ class template {
     }
 
     /**
+     * Returns the formatted name of the template.
+     *
+     * @return string the name of the template
+     */
+    public function get_formatted_name() {
+        return format_string($this->name, true, ['escape' => false]);
+    }
+
+    /**
+     * Get editable name
+     *
+     * @return inplace_editable
+     */
+    public function get_editable_name() : inplace_editable {
+        $editable = $this->can_manage();
+        $displayname = $this->get_formatted_name();
+        if ($editable) {
+            $displayname = \html_writer::link($this->edit_url(), $displayname);
+        }
+        return new \core\output\inplace_editable('tool_certificate',
+            'templatename', $this->get_id(), $editable,
+            $displayname, $this->get_name(),
+            get_string('edittemplatename', 'tool_certificate'),
+            get_string('newvaluefor', 'form', $this->get_formatted_name()));
+    }
+
+    /**
      * Returns the context id.
      *
      * @return \context the context
      */
     public function get_context() {
         return $this->context;
+    }
+
+    /**
+     * Convert to record
+     *
+     * @return object
+     */
+    public function to_record() {
+        return (object)[
+            'id' => $this->id,
+            'name' => $this->name,
+            'contextid' => $this->contextid,
+            'timecreated' => $this->timecreated,
+            'timemodified' => $this->timemodified,
+            'tenantid' => $this->tenantid,
+        ];
     }
 
     /**
@@ -812,10 +861,11 @@ class template {
             $template->tenantid = tenancy::get_default_tenant_id();
         }
         $template->id = $DB->insert_record('tool_certificate_templates', $template);
+        $template = new \tool_certificate\template($template);
 
         \tool_certificate\event\template_created::create_from_template($template)->trigger();
 
-        return new \tool_certificate\template($template);
+        return $template;
     }
 
     /**

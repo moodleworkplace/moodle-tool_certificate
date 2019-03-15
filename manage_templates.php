@@ -43,7 +43,7 @@ admin_externalpage_setup('tool_certificate/managetemplates');
 $canissue = has_capability('tool/certificate:issue', $context);
 $canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], $context);
 
-if (!\tool_certificate\template::can_verify_loose()) {
+if (!\tool_certificate\template::can_view_admin_tree()) {
     print_error('permissiondenied', 'tool_certificate');
 }
 
@@ -131,8 +131,8 @@ echo $OUTPUT->header();
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\certificates_list::class);
 $r = new \tool_wp\output\content_with_heading($report->output());
 if (\tool_certificate\template::can_create()) {
-    $r->add_button(get_string('createtemplate', 'tool_certificate'),
-        \tool_certificate\template::new_template_url());
+    $r->add_button(get_string('createtemplate', 'tool_certificate'));
 }
+$PAGE->requires->js_call_amd('tool_certificate/templates-list', 'init');
 echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 echo $OUTPUT->footer();

@@ -106,18 +106,11 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'elementname') {
         $element = $DB->get_record('tool_certificate_elements', array('id' => $itemid), '*', MUST_EXIST);
         $page = $DB->get_record('tool_certificate_pages', array('id' => $element->pageid), '*', MUST_EXIST);
-        $template = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
 
         // Set the template object.
-        $template = new \tool_certificate\template($template);
-        // Perform checks.
-        if ($cm = $template->get_cm()) {
-            require_login($cm->course, false, $cm);
-        } else {
-            $PAGE->set_context(context_system::instance());
-            require_login();
-        }
+        $template = \tool_certificate\template::find_by_id($page->templateid);
         // Make sure the user has the required capabilities.
+        external_api::validate_context(context_system::instance());
         $template->require_manage();
 
         // Clean input and update the record.
@@ -127,7 +120,16 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
         $DB->update_record('tool_certificate_elements', $updateelement);
 
         return new \core\output\inplace_editable('tool_certificate', 'elementname', $element->id, true,
-            $updateelement->name, $updateelement->name);
+            format_string($updateelement->name), $updateelement->name);
+    }
+
+    if ($itemtype === 'templatename') {
+        $template = \tool_certificate\template::find_by_id($itemid);
+        $template->require_manage();
+        external_api::validate_context(context_system::instance());
+        $template->require_manage();
+        $template->save((object)['name' => $newvalue]);
+        return $template->get_editable_name();
     }
 }
 
@@ -156,7 +158,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
     if ($template->get_tenant_id() == 0 && \tool_certificate\template::can_issue_or_manage_all_tenants()) {
         $join = '';
         $params = [];
-        $where = ' ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now)';
+        $where = ' (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
     } else if ($template->can_issue()) {
         list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u', $template->get_tenant_id());
         $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';

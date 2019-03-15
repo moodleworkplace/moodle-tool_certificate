@@ -58,11 +58,14 @@ Feature: Being able to manually issue a certificate to a user
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
+    And I wait "3" seconds
     And I open the autocomplete suggestions list
     And I click on "Student 1" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
-    Then I should see "One issue was created"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
+    Then "Student 1" "text" should exist in the "report-table" "table"
+    And I log out
 
   Scenario: Issue a certificate as admin, from the list of issues
     When I log in as "admin"
@@ -72,8 +75,9 @@ Feature: Being able to manually issue a certificate to a user
     And I open the autocomplete suggestions list
     And I click on "Student 1" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
-    Then I should see "One issue was created"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    Then "Student 1" "text" should exist in the "report-table" "table"
+    And I log out
 
   Scenario: Issue certificate as a tenant issuer
     Given the following certificate issues exist:
@@ -100,7 +104,8 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 13"
     And I click on "User 12" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
     And I should see "User 12"
     And I should not see "User 13"
@@ -114,7 +119,8 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 11"
     And I click on "User 13" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should not see "User 2"
     And I should not see "User 11"
     And I should see "User 12"
@@ -167,6 +173,7 @@ Feature: Being able to manually issue a certificate to a user
     And I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # It is possible to issue certificate0 to users from all tenants (except for those who already have this certificate).
+    And I wait "3" seconds
     And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
     And I open the autocomplete suggestions list
     And I should not see "User 12"
@@ -176,7 +183,8 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "Admin User"
     And I click on "User 13" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should see "User 13"
     And I should see "User 22"
     And I should not see "User 11"
@@ -193,7 +201,8 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "Admin User"
     And I click on "User 12" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I press "Issue new certificates"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 12"
     And I should not see "User 2"
     And I should see "User 11"

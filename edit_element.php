@@ -52,7 +52,7 @@ if ($action == 'edit') {
         'pageid' => $pageid, 'action' => $action]);
 }
 
-$PAGE->navbar->add(get_string('editcertificate', 'tool_certificate'), new moodle_url('/admin/tool/certificate/edit.php',
+$PAGE->navbar->add($template->get_formatted_name(), new moodle_url('/admin/tool/certificate/edit.php',
     array('tid' => $templateid)));
 
 $heading = get_string('editelement', 'tool_certificate');
