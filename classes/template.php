@@ -642,6 +642,21 @@ class template {
     }
 
     /**
+     * Returns an element if it belongs to this template, false otherwise.
+     *
+     * @param int $id
+     * @return template
+     */
+    public static function find_by_element_id($id) : template {
+        global $DB;
+        $template = $DB->get_record_sql('SELECT t.* FROM {tool_certificate_templates} t
+            JOIN {tool_certificate_pages} p ON p.templateid = t.id
+            JOIN {tool_certificate_elements} e ON e.pageid = p.id
+            WHERE e.id = :id', ['id' => $id], MUST_EXIST);
+        return new self($template);
+    }
+
+    /**
      * Returns a new element if pageid belongs to this template, false otherwise.
      *
      * @param int $pageid

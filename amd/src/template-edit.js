@@ -21,8 +21,8 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/config'],
-function($, ModalForm, Tabs, Notification, Str, Config) {
+define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax'],
+function($, ModalForm, Tabs, Notification, Str, Ajax) {
     var editReportDetailsHandler = function(e) {
         e.preventDefault();
         var el = $(e.currentTarget),
@@ -33,7 +33,6 @@ function($, ModalForm, Tabs, Notification, Str, Config) {
             formClass: 'tool_certificate\\form\\details',
             args: {id: id},
             modalConfig: {title: Str.get_string('editcertificate', 'tool_certificate', name)},
-            contextId: Config.contextid,
             triggerElement: el,
         });
         // Override onInit() function to change the text for the save button.
@@ -47,10 +46,32 @@ function($, ModalForm, Tabs, Notification, Str, Config) {
         };
     };
 
+    var deleteElement = function(e) {
+        e.preventDefault();
+        Str.get_strings([
+            {key: 'confirm'},
+            {key: 'deleteelementconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
+            {key: 'delete'},
+            {key: 'cancel'}
+        ]).done(function(s) {
+            Notification.confirm(s[0], s[1], s[2], s[3], function() {
+                var promises = Ajax.call([
+                    {methodname: 'tool_certificate_delete_element',
+                        args: {id: $(e.currentTarget).attr('data-id')}}
+                ]);
+                promises[0].done(function() {
+                    // TODO reload only list of elements.
+                    window.location.reload();
+                }).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
+    };
+
     return {
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
             $('[data-action="editdetails"]').on('click', editReportDetailsHandler);
+            $('[data-action="deleteelement"]').on('click', deleteElement);
         }
     };
 });

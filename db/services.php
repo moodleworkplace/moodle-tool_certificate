@@ -64,4 +64,11 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'tool_certificate_delete_element' => array(
+        'classname'   => \tool_certificate\external\elements::class,
+        'methodname'  => 'delete_element',
+        'description' => 'Deletes an element',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
 );

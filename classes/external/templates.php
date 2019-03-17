@@ -100,10 +100,7 @@ class templates extends \external_api {
             ['id' => $templateid]);
         self::validate_context(\context_system::instance());
         $template = \tool_certificate\template::find_by_id($params['id']);
-        if (!$template->can_manage()) {
-            throw new \required_capability_exception($template->get_context(), 'tool/certificate:manage',
-                'nopermissions', 'error');
-        }
+        $template->require_manage();
 
         $template->delete();
     }
