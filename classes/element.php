@@ -100,7 +100,7 @@ abstract class element {
     /**
      * @var bool $showposxy Show position XY form elements?
      */
-    protected $showposxy;
+    protected $showposxy = true;
 
     /**
      * Constructor.
@@ -108,8 +108,6 @@ abstract class element {
      * @param \stdClass $element the element data
      */
     public function __construct($element) {
-        $showposxy = get_config('tool_certificate', 'showposxy');
-
         // Keeping this for legacy reasons so we do not break third-party elements.
         $this->element = clone($element);
 
@@ -124,7 +122,6 @@ abstract class element {
         $this->posy = $element->posy;
         $this->width = $element->width;
         $this->refpoint = $element->refpoint;
-        $this->showposxy = isset($showposxy) && $showposxy;
     }
 
     /**
@@ -134,6 +131,15 @@ abstract class element {
      */
     public function get_id() {
         return $this->id;
+    }
+
+    /**
+     * Returns the elmeent.
+     *
+     * @return int
+     */
+    public function get_element() {
+        return $this->element->element;
     }
 
     /**
@@ -227,6 +233,25 @@ abstract class element {
     }
 
     /**
+     * Converts to stdClass
+     * @return \stdClass
+     */
+    public function to_record() : \stdClass {
+        return (object)[
+            'id' => $this->id,
+            'element' => $this->element->element,
+            'name' => $this->name,
+            'font' => $this->font,
+            'fontsize' => $this->fontsize,
+            'colour' => $this->colour,
+            'posx' => $this->posx,
+            'posy' => $this->posy,
+            'width' => $this->width,
+            'refpoint' => $this->refpoint
+        ];
+    }
+
+    /**
      * This function renders the form elements when adding a certificate element.
      * Can be overridden if more functionality is needed.
      *
@@ -240,6 +265,7 @@ abstract class element {
             element_helper::render_form_element_position($mform);
         }
         element_helper::render_form_element_width($mform);
+        element_helper::render_form_element_refpoint($mform);
     }
 
     /**
@@ -319,14 +345,21 @@ abstract class element {
         // Check if we are updating, or inserting a new element.
         if (!empty($this->id)) { // Must be updating a record in the database.
             $element->id = $this->id;
-            return $DB->update_record('tool_certificate_elements', $element);
+            $DB->update_record('tool_certificate_elements', $element);
         } else { // Must be adding a new one.
             $element->element = $data->element;
             $element->pageid = $data->pageid;
             $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
             $element->timecreated = time();
-            return $DB->insert_record('tool_certificate_elements', $element);
+            $id = $DB->insert_record('tool_certificate_elements', $element);
+            $this->id = $id;
         }
+        foreach ($element as $key => $value) {
+            if (property_exists($this, $key) && $key !== 'element') {
+                $this->$key = $value;
+            }
+        }
+        return true;
     }
 
     /**

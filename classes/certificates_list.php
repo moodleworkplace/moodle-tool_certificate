@@ -195,7 +195,7 @@ class certificates_list extends system_report {
             ->add_callback(function($row) {
                 $t = new template($row);
                 $row->name = $t->get_formatted_name();
-                return $t->can_manage();
+                return $t->can_duplicate();
             })
         );
 

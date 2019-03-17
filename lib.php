@@ -59,24 +59,6 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 }
 
 /**
- * Serve the edit element as a fragment.
- *
- * @param array $args List of named arguments for the fragment loader.
- * @return string
- */
-function tool_certificate_output_fragment_editelement($args) {
-    global $DB;
-
-    // Get the element.
-    $element = $DB->get_record('tool_certificate_elements', array('id' => $args['elementid']), '*', MUST_EXIST);
-
-    $pageurl = new moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $element->pageid));
-    $form = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
-
-    return $form->render();
-}
-
-/**
  * Add nodes to myprofile page.
  *
  * @param \core_user\output\myprofile\tree $tree Tree object
@@ -104,23 +86,17 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
     global $DB, $PAGE;
 
     if ($itemtype === 'elementname') {
-        $element = $DB->get_record('tool_certificate_elements', array('id' => $itemid), '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', array('id' => $element->pageid), '*', MUST_EXIST);
-
-        // Set the template object.
-        $template = \tool_certificate\template::find_by_id($page->templateid);
-        // Make sure the user has the required capabilities.
+        // Validate access.
+        $template = \tool_certificate\template::find_by_element_id($itemid);
         external_api::validate_context(context_system::instance());
         $template->require_manage();
 
         // Clean input and update the record.
-        $updateelement = new stdClass();
-        $updateelement->id = $element->id;
-        $updateelement->name = clean_param($newvalue, PARAM_TEXT);
-        $DB->update_record('tool_certificate_elements', $updateelement);
+        $newvalue = clean_param($newvalue, PARAM_TEXT);
+        $DB->update_record('tool_certificate_elements', (object)['id' => $itemid, 'name' => $newvalue]);
 
-        return new \core\output\inplace_editable('tool_certificate', 'elementname', $element->id, true,
-            format_string($updateelement->name), $updateelement->name);
+        return new \core\output\inplace_editable('tool_certificate', 'elementname', $itemid, true,
+            format_string($newvalue), $newvalue);
     }
 
     if ($itemtype === 'templatename') {

@@ -36,7 +36,7 @@ Feature: Being able to manage site templates
     And I set the following fields to these values:
       | Width  | 5 |
       | Colour | #045ECD |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
@@ -86,9 +86,9 @@ Feature: Being able to manage site templates
       | Name | Certificate 1 |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I set the following fields to these values:
-      | Width | 0 |
-      | Height | 0 |
-      | Left margin | -1 |
+      | Page width   | 0  |
+      | Page height  | 0  |
+      | Left margin  | -1 |
       | Right margin | -1 |
     And I press "Save changes"
     Then I should see "The width has to be a valid number greater than 0."
@@ -121,7 +121,9 @@ Feature: Being able to manage site templates
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And "Edit content" "link" should exist in the "Certificate 1" "table_row"
+    And I wait "2" seconds
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
+    And I wait "2" seconds
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (duplicate)"

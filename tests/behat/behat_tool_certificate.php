@@ -51,6 +51,10 @@ class behat_tool_certificate extends behat_base {
     public function i_add_the_element_to_the_certificate_template_page($elementname, $pagenum, $templatename) {
         global $DB;
 
+        if (!$this->running_javascript()) {
+            throw new coding_exception('You can only add element using the selenium driver.');
+        }
+
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
         $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
             '*', MUST_EXIST);

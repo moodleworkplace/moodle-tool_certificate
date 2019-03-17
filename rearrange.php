@@ -96,7 +96,8 @@ if ($elements) {
                     $class = 'element refpoint-left';
             }
             $html .= html_writer::tag('div', $e->render_html(), array('class' => $class,
-                'data-refpoint' => $element->refpoint, 'id' => 'element-' . $element->id));
+                'data-refpoint' => $element->refpoint, 'id' => 'element-' . $element->id,
+                'data-action' => 'editelement', 'data-id' => $element->id, 'data-name' => format_string($element->name)));
         }
     }
 }

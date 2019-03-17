@@ -34,22 +34,6 @@ $functions = array(
         'ajax'        => true,
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-    'tool_certificate_save_element' => array(
-        'classname'   => \tool_certificate\external::class,
-        'methodname'  => 'save_element',
-        'classpath'   => '',
-        'description' => 'Saves data for an element',
-        'type'        => 'write',
-        'ajax'        => true
-    ),
-    'tool_certificate_get_element_html' => array(
-        'classname'   => \tool_certificate\external::class,
-        'methodname'  => 'get_element_html',
-        'classpath'   => '',
-        'description' => 'Returns the HTML to display for an element',
-        'type'        => 'read',
-        'ajax'        => true
-    ),
     'tool_certificate_duplicate_template' => array(
         'classname'   => \tool_certificate\external\templates::class,
         'methodname'  => 'duplicate_template',

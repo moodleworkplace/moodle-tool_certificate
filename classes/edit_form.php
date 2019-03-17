@@ -209,13 +209,13 @@ class edit_form extends \moodleform {
             $mform->addElement('html', $OUTPUT->action_icon($url, new \pix_icon('t/down', get_string('movedown'))));
         }
 
-        $mform->addElement('text', 'pagewidth_' . $page->id, get_string('width', 'tool_certificate'));
+        $mform->addElement('text', 'pagewidth_' . $page->id, get_string('pagewidth', 'tool_certificate'));
         $mform->setType('pagewidth_' . $page->id, PARAM_INT);
         $mform->setDefault('pagewidth_' . $page->id, '210');
         $mform->addRule('pagewidth_' . $page->id, null, 'required', null, 'client');
         $mform->addHelpButton('pagewidth_' . $page->id, 'width', 'tool_certificate');
 
-        $mform->addElement('text', 'pageheight_' . $page->id, get_string('height', 'tool_certificate'));
+        $mform->addElement('text', 'pageheight_' . $page->id, get_string('pageheight', 'tool_certificate'));
         $mform->setType('pageheight_' . $page->id, PARAM_INT);
         $mform->setDefault('pageheight_' . $page->id, '297');
         $mform->addRule('pageheight_' . $page->id, null, 'required', null, 'client');
@@ -252,7 +252,8 @@ class edit_form extends \moodleform {
                 $link = new \moodle_url($editelementlink, $editelementlinkparams + array('id' => $element->id,
                     'action' => 'edit'));
                 $icons = $OUTPUT->action_icon($link, new \pix_icon('t/edit', get_string('edit')), null,
-                    array('class' => 'action-icon edit-icon'));
+                    array('class' => 'action-icon edit-icon', 'data-action' => 'editelement', 'data-id' => $element->id,
+                        'data-name' => format_string($element->name)));
                 // Link to delete the element.
                 $icons .= $OUTPUT->action_icon(new \moodle_url('#'), new \pix_icon('t/delete', get_string('delete')), null,
                     array('class' => 'action-icon delete-icon', 'data-action' => 'deleteelement', 'data-id' => $element->id,
@@ -291,7 +292,7 @@ class edit_form extends \moodleform {
         $group = array();
         $group[] = $mform->createElement('select', 'element_' . $page->id, '', element_helper::get_available_element_types());
         $group[] = $mform->createElement('submit', 'addelement_' . $page->id, get_string('addelement', 'tool_certificate'),
-            array(), false);
+            array('data-action' => 'addelement', 'data-pageid' => $page->id), false);
         $mform->addElement('group', 'elementgroup', '', $group, '', false);
 
         // Add option to delete this page if there is more than one page.
