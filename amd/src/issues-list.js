@@ -16,19 +16,19 @@
 /**
  * AMD module used when viewing the list of issued certificates
  *
- * @module     tool_certificate/certificates-list
+ * @module     tool_certificate/issues-list
  * @package    tool_certificate
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str'],
-function($, ModalForm, Tabs, Notification, Str) {
+define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax'],
+function($, ModalForm, Tabs, Notification, Str, Ajax) {
 
     /**
-     * Add template dialogue
+     * Add issue dialogue
      * @param {Event} e
      */
-    var displayIssue = function(e) {
+    var addIssue = function(e) {
         e.preventDefault();
         var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\certificate_issues',
@@ -42,13 +42,38 @@ function($, ModalForm, Tabs, Notification, Str) {
         };
     };
 
+    /**
+     * Revoke issue
+     * @param {Event} e
+     */
+    var revokeIssue = function(e) {
+        e.preventDefault();
+        Str.get_strings([
+            {key: 'confirm'},
+            {key: 'revokecertificateconfirm', component: 'tool_certificate'},
+            {key: 'revoke', component: 'tool_certificate'},
+            {key: 'cancel'}
+        ]).done(function(s) {
+            Notification.confirm(s[0], s[1], s[2], s[3], function() {
+                var promises = Ajax.call([
+                    {methodname: 'tool_certificate_revoke_issue',
+                        args: {id: $(e.currentTarget).attr('data-id')}}
+                ]);
+                promises[0].done(function() {
+                    window.location.reload();
+                }).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
+    };
+
     return {
         /**
          * Init page
          */
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
-            $('[data-tabs-element="addbutton"]').on('click', displayIssue);
+            $('[data-tabs-element="addbutton"]').on('click', addIssue);
+            $('[data-action="revoke"]').on('click', revokeIssue);
         }
     };
 });

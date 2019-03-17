@@ -71,10 +71,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
-        $result = \tool_certificate\external::delete_issue($i2);
-
-        // We need to execute the return values cleaning process to simulate the web service server.
-        external_api::clean_returnvalue(\tool_certificate\external::delete_issue_returns(), $result);
+        $result = \tool_certificate\external\issues::revoke_issue($i2);
 
         $issues = $DB->get_records('tool_certificate_issues');
         $this->assertCount(1, $issues);
@@ -111,7 +108,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
 
         // Try and delete without logging in.
         $this->expectException('require_login_exception');
-        \tool_certificate\external::delete_issue($i2);
+        \tool_certificate\external\issues::revoke_issue($i2);
     }
 
     /**
@@ -144,7 +141,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
 
         // Try and delete without the required capability.
         $this->expectException('required_capability_exception');
-        \tool_certificate\external::delete_issue($i2);
+        \tool_certificate\external\issues::revoke_issue($i2);
     }
 
     /**

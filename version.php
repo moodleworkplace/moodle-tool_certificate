@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-$plugin->version   = 2019030700;
+$plugin->version   = 2019030702;
 $plugin->requires  = 2019012401;
 $plugin->cron      = 0; // Period for cron to check this module (secs).
 $plugin->component = 'tool_certificate';

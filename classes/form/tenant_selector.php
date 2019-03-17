@@ -23,12 +23,11 @@
  */
 
 namespace tool_certificate\form;
+
 defined('MOODLE_INTERNAL') || die();
 
-use moodleform;
-use tool_tenant\tenancy;
-
-require_once($CFG->libdir . '/formslib.php');
+use tool_certificate\template;
+use tool_wp\modal_form;
 
 /**
  * Select tenant when duplicating a template.
@@ -37,7 +36,22 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tenant_selector extends moodleform {
+class tenant_selector extends modal_form {
+
+    /** @var template */
+    protected $template;
+
+    /**
+     * Get template
+     *
+     * @return template
+     */
+    protected function get_template() : template {
+        if ($this->template === null) {
+            $this->template = template::find_by_id($this->_ajaxformdata['id']);
+        }
+        return $this->template;
+    }
 
     /**
      * Form definition.
@@ -45,19 +59,56 @@ class tenant_selector extends moodleform {
     public function definition() {
         $mform =& $this->_form;
 
-        $tenants = \tool_tenant\tenancy::get_tenants();
-        $options = [0 => get_string('shared', 'tool_certificate')];
-        foreach ($tenants as $tenant) {
-            $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
+        $mform->addElement('static', 'confirmmessage', '',
+            get_string('duplicatetemplateconfirm', 'tool_certificate',
+                $this->get_template()->get_formatted_name()));
+
+        if (has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
+            $tenants = \tool_tenant\tenancy::get_tenants();
+            $options = [0 => get_string('shared', 'tool_certificate')];
+            foreach ($tenants as $tenant) {
+                $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
+            }
+            $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
         }
-        $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
 
-        $group[] = $mform->addElement('hidden', 'action', 'duplicate');
-        $mform->setType('action', PARAM_ALPHANUMEXT);
+        $mform->addElement('hidden', 'id');
+        $mform->setType('id', PARAM_INT);
 
-        $group = array();
-        $group[] = $mform->createElement('submit', 'submitbtn', get_string('select'));
-        $group[] = $mform->createElement('cancel', 'cancelbtn', get_string('cancel'));
-        $mform->addElement('group', 'actiongroup', '', $group, '', false);
+        $this->add_action_buttons();
+    }
+
+    /**
+     * Check if current user has access to this form, otherwise throw exception
+     *
+     * Sometimes permission check may depend on the action and/or id of the entity.
+     * If necessary, form data is available in $this->_ajaxformdata
+     */
+    public function require_access() {
+        if (!$this->get_template()->can_duplicate()) {
+            throw new \required_capability_exception(\context_system::instance(), 'tool/certificate:manage',
+                'nopermissions', 'error');
+        }
+    }
+
+    /**
+     * Process the form submission
+     *
+     * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
+     *
+     * @param \stdClass $data
+     */
+    public function process(\stdClass $data) {
+        $this->get_template()->duplicate($data->tenantid);
+    }
+
+    /**
+     * Load in existing data as form defaults
+     *
+     * Can be overridden to retrieve existing values from db by entity id and also
+     * to preprocess editor and filemanager elements
+     */
+    public function set_data_for_modal() {
+        $this->set_data($this->get_template()->to_record());
     }
 }

@@ -198,8 +198,6 @@ class template {
 
     /**
      * Handles deleting the template.
-     *
-     * @return bool return true if the deletion was successful, false otherwise
      */
     public function delete() {
         global $DB;
@@ -223,22 +221,15 @@ class template {
         }
 
         // Delete the pages.
-        if (!$DB->delete_records('tool_certificate_pages', array('templateid' => $this->id))) {
-            return false;
-        }
+        $DB->delete_records('tool_certificate_pages', array('templateid' => $this->id));
 
         // Revoke certificate issues.
-        $this->revoke_issues($this->id);
-
-        \tool_certificate\event\template_deleted::create_from_template($this)->trigger();
+        $this->revoke_issues();
 
         // Now, finally delete the actual template.
-        if (!$DB->delete_records('tool_certificate_templates', array('id' => $this->id))) {
-            return false;
-        }
+        $DB->delete_records('tool_certificate_templates', array('id' => $this->id));
 
-        $this->pages = null;
-        return true;
+        \tool_certificate\event\template_deleted::create_from_template($this)->trigger();
     }
 
     /**

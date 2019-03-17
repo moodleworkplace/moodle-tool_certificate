@@ -21,8 +21,8 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str'],
-function($, ModalForm, Tabs, Notification, Str) {
+define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax'],
+function($, ModalForm, Tabs, Notification, Str, Ajax) {
 
     /**
      * Display modal form
@@ -92,6 +92,60 @@ function($, ModalForm, Tabs, Notification, Str) {
         // No action on submit.
     };
 
+    var duplicateMultitenant = function(e) {
+        e.preventDefault();
+        var modal = new ModalForm({
+            formClass: 'tool_certificate\\form\\tenant_selector',
+            args: {id: $(e.currentTarget).attr('data-id')},
+            modalConfig: {title: Str.get_string('confirm')},
+            saveButtonText: Str.get_string('duplicate', 'tool_certificate'),
+            triggerElement: $(e.currentTarget),
+        });
+        modal.onSubmitSuccess = function() {
+            window.location.reload();
+        };
+    };
+
+    var duplicateSingletenant = function(e) {
+        e.preventDefault();
+        Str.get_strings([
+            {key: 'confirm'},
+            {key: 'duplicatetemplateconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
+            {key: 'duplicate', component: 'tool_certificate'},
+            {key: 'cancel'}
+        ]).done(function(s) {
+            Notification.confirm(s[0], s[1], s[2], s[3], function() {
+                var promises = Ajax.call([
+                    {methodname: 'tool_certificate_duplicate_template',
+                        args: {id: $(e.currentTarget).attr('data-id')}}
+                ]);
+                promises[0].done(function() {
+                    window.location.reload();
+                }).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
+    };
+
+    var deleteTemplate = function(e) {
+        e.preventDefault();
+        Str.get_strings([
+            {key: 'confirm'},
+            {key: 'deletetemplateconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
+            {key: 'delete'},
+            {key: 'cancel'}
+        ]).done(function(s) {
+            Notification.confirm(s[0], s[1], s[2], s[3], function() {
+                var promises = Ajax.call([
+                    {methodname: 'tool_certificate_delete_template',
+                        args: {id: $(e.currentTarget).attr('data-id')}}
+                ]);
+                promises[0].done(function() {
+                    window.location.reload();
+                }).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
+    };
+
     return {
         /**
          * Init page
@@ -101,6 +155,9 @@ function($, ModalForm, Tabs, Notification, Str) {
             $('[data-tabs-element="addbutton"]').on('click', displayAddTemplate);
             $('[data-action="editdetails"]').on('click', displayEditTemplate);
             $('[data-action="issue"]').on('click', displayIssue);
+            $('[data-action="duplicate"][data-selecttenant="1"]').on('click', duplicateMultitenant);
+            $('[data-action="duplicate"][data-selecttenant="0"]').on('click', duplicateSingletenant);
+            $('[data-action="delete"]').on('click', deleteTemplate);
         }
     };
 });

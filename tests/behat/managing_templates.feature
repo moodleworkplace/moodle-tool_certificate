@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @javascript
 Feature: Being able to manage site templates
   In order to ensure managing site templates works as expected
   As an admin
@@ -24,10 +24,10 @@ Feature: Being able to manage site templates
       | Tenant 2 |
     And I log out
 
-  @javascript
   Scenario: Adding a site template
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
+    And I wait "2" seconds
     And I follow "New template"
     And I wait "3" seconds
     And I set the field "Name" to "Certificate 1"
@@ -40,7 +40,6 @@ Feature: Being able to manage site templates
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
-  @javascript
   Scenario: Adding a template to another tenant
     When the following "users" exist:
       | username | firstname | lastname | email           |
@@ -103,10 +102,10 @@ Feature: Being able to manage site templates
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Delete" "link" in the "Certificate 1" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
     And I click on "Delete" "link" in the "Certificate 1" "table_row"
-    And I press "Continue"
+    And I click on "Delete" "button" in the "Confirm" "dialogue"
     Then I should not see "Certificate 1"
 
   Scenario: Duplicating a site template from the same tenant without manageforalltenants
@@ -123,11 +122,11 @@ Feature: Being able to manage site templates
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And "Edit content" "link" should exist in the "Certificate 1" "table_row"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (duplicate)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I press "Continue"
+    And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (duplicate)"
     And I log out
@@ -153,7 +152,7 @@ Feature: Being able to manage site templates
     And I should not see "Certificate 2"
     And "Edit content" "link" should not exist in the "Certificate 0" "table_row"
     And I click on "Duplicate" "link" in the "Certificate 0" "table_row"
-    And I press "Continue"
+    And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 0"
     And I should see "Certificate 0 (duplicate)"
     And I log out
@@ -176,14 +175,14 @@ Feature: Being able to manage site templates
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (duplicate)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
       |  Select tenant | Tenant 2 |
-    And I press "Select"
-    # TODO remove (no need in extra confirmation):
-    And I press "Continue"
+    And I click on "Duplicate" "button" in the ".modal.show .modal-footer" "css_element"
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (duplicate)"
+    And I should see "Tenant 2" in the "Certificate 1 (duplicate)" "table_row"
+    And I log out
