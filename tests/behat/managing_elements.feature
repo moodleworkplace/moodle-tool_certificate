@@ -185,6 +185,7 @@ Feature: Being able to manage elements in a certificate template
     And I press "Save and close"
     And I press "Save changes and preview"
 
+  @javascript
   Scenario: Delete an element from a certificate template
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save changes"
@@ -193,10 +194,10 @@ Feature: Being able to manage elements in a certificate template
     And I press "Save changes"
     And I should see "Student name" in the "elementstable" "table"
     And I click on "Delete" "link" in the "Student name" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Background image" in the "elementstable" "table"
     And I should see "Student name" in the "elementstable" "table"
     And I click on "Delete" "link" in the "Student name" "table_row"
-    And I press "Continue"
+    And I click on "Delete" "button" in the "Confirm" "dialogue"
     And I should see "Background image" in the "elementstable" "table"
     And I should not see "Student name" in the "elementstable" "table"

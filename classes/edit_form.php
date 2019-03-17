@@ -254,10 +254,9 @@ class edit_form extends \moodleform {
                 $icons = $OUTPUT->action_icon($link, new \pix_icon('t/edit', get_string('edit')), null,
                     array('class' => 'action-icon edit-icon'));
                 // Link to delete the element.
-                $link = new \moodle_url($editlink, $editlinkparams + array('action' => 'deleteelement',
-                    'aid' => $element->id));
-                $icons .= $OUTPUT->action_icon($link, new \pix_icon('t/delete', get_string('delete')), null,
-                    array('class' => 'action-icon delete-icon'));
+                $icons .= $OUTPUT->action_icon(new \moodle_url('#'), new \pix_icon('t/delete', get_string('delete')), null,
+                    array('class' => 'action-icon delete-icon', 'data-action' => 'deleteelement', 'data-id' => $element->id,
+                        'data-name' => format_string($element->name)));
                 // Now display any moving arrows if they are needed.
                 if ($numelements > 1) {
                     // Only display the move up arrow if it is not the first.
