@@ -88,7 +88,7 @@ if ($template->can_issue()) {
     $r->add_button(get_string('issuenewcertificates', 'tool_certificate'), null,
         ['data-tid' => $template->get_id()]);
 }
-$PAGE->requires->js_call_amd('tool_certificate/certificates-list', 'init');
+$PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 

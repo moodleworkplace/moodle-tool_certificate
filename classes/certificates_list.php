@@ -188,22 +188,25 @@ class certificates_list extends system_report {
         );
 
         // Duplicate.
-        $duplicatelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
-            array('tid' => ':id', 'action' => 'duplicate', 'sesskey' => sesskey()));
+        $selecttenant = has_capability('tool/certificate:manageforalltenants', \context_system::instance());
         $icon = new \pix_icon('a/wp-duplicate', get_string('duplicate'), 'theme');
-        $this->add_action((new report_action($duplicatelink, $icon, []))
+        $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'duplicate',
+                'data-id' => ':id', 'data-selecttenant' => (int)$selecttenant, 'data-name' => ':name']))
             ->add_callback(function($row) {
-                return (new template($row))->can_duplicate();
+                $t = new template($row);
+                $row->name = $t->get_formatted_name();
+                return $t->can_manage();
             })
         );
 
         // Delete.
-        $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
-            array('tid' => ':id', 'action' => 'delete', 'sesskey' => sesskey()));
         $icon = new \pix_icon('a/wp-trash', get_string('delete'), 'theme');
-        $this->add_action((new report_action($deletelink, $icon, []))
+        $this->add_action((new report_action(new \moodle_url('#'), $icon,
+                ['data-action' => 'delete', 'data-id' => ':id', 'data-name' => ':name']))
             ->add_callback(function($row) {
-                return (new template($row))->can_manage();
+                $t = new template($row);
+                $row->name = $t->get_formatted_name();
+                return $t->can_manage();
             })
         );
 

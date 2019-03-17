@@ -38,9 +38,11 @@ if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')),
         'location');
 
-    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/managetemplates',
+    $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/managetemplates',
                 get_string('managetemplates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/manage_templates.php'), $anycaps));
+                new moodle_url('/admin/tool/certificate/manage_templates.php'), function() {
+                    return \tool_certificate\template::can_view_admin_tree();
+        }));
 
     $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
                 get_string('verifycertificates', 'tool_certificate'),
