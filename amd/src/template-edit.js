@@ -67,11 +67,43 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
         }).fail(Notification.exception);
     };
 
+    var editElement = function(e) {
+        e.preventDefault();
+        var modal = new ModalForm({
+            formClass: 'tool_certificate\\edit_element_form',
+            args: {id: $(e.currentTarget).attr('data-id')},
+            modalConfig: {title: Str.get_string('editelement', 'tool_certificate', $(e.currentTarget).attr('data-name'))},
+            saveButtonText: Str.get_string('save'),
+            triggerElement: $(e.currentTarget),
+        });
+        modal.onSubmitSuccess = function() {
+            window.location.reload();
+        };
+    };
+
+    var addElement = function(e) {
+        e.preventDefault();
+        var pageid = $(e.currentTarget).attr('data-pageid'),
+            type = $('#id_element_' + pageid).val();
+        var modal = new ModalForm({
+            formClass: 'tool_certificate\\edit_element_form',
+            args: {pageid: pageid, element: type},
+            modalConfig: {title: Str.get_string('addelement', 'tool_certificate')},
+            saveButtonText: Str.get_string('save'),
+            triggerElement: $(e.currentTarget),
+        });
+        modal.onSubmitSuccess = function() {
+            window.location.reload();
+        };
+    };
+
     return {
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
             $('[data-action="editdetails"]').on('click', editReportDetailsHandler);
             $('[data-action="deleteelement"]').on('click', deleteElement);
+            $('[data-action="editelement"]').on('click', editElement);
+            $('[data-action="addelement"]').on('click', addElement);
         }
     };
 });

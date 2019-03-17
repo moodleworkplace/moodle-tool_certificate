@@ -181,6 +181,14 @@ class element_helper {
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
         $mform->addHelpButton('width', 'elementwidth', 'tool_certificate');
+    }
+
+    /**
+     * Helper function to render reference point element.
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     */
+    public static function render_form_element_refpoint($mform) {
         $refpointoptions = array();
         $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('topleft', 'tool_certificate');
         $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('topcenter', 'tool_certificate');

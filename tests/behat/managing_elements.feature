@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @javascript
 Feature: Being able to manage elements in a certificate template
   In order to ensure managing elements in a certificate template works as expected
   As an admin
@@ -12,30 +12,23 @@ Feature: Being able to manage elements in a certificate template
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link"
 
-  Scenario: Add a certificate element with name too long
-    When I press "Add element"
-    And I set the following fields to these values:
-      | Element name | Element 1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456 |
-    And I press "Save changes"
-    Then I should see "You have exceeded the maximum length allowed for the name"
-
   Scenario: Add and edit elements in a certificate template
     # Background image.
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Background image" in the "elementstable" "table"
     # Border.
     And I add the element "Border" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 2 |
       | Colour | #045ECD |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Border" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Border" "table_row"
+    And I click on "Edit" "link" in the "Border" "table_row"
     And the following fields match these values:
-      | Width  | 2 |
+      | id_width | 2 |
       | Colour | #045ECD |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Code.
     And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
@@ -44,16 +37,16 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Code" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Code" "table_row"
+    And I click on "Edit" "link" in the "Code" "table_row"
     And the following fields match these values:
       | Font                     | Helvetica |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Date.
     And I add the element "Date" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
@@ -64,9 +57,9 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD           |
       | Width                    | 20                |
       | Reference point location | Top left          |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Date" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Date" "table_row"
+    And I click on "Edit" "link" in the "Date" "table_row"
     And the following fields match these values:
       | Date item                | Issued date |
       | Date format              | 2                 |
@@ -75,7 +68,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD           |
       | Width                    | 20                |
       | Reference point location | Top left          |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Digital signature.
     And I add the element "Digital signature" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
@@ -86,9 +79,9 @@ Feature: Being able to manage elements in a certificate template
       | Signature contact info | Sauron                     |
       | Width                  | 25                         |
       | Height                 | 15                         |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Digital signature" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Digital signature" "table_row"
+    And I click on "Edit" "link" in the "Digital signature" "table_row"
     And the following fields match these values:
       | Signature name         | This is the signature name |
       | Signature password     | Some awesome password      |
@@ -97,19 +90,19 @@ Feature: Being able to manage elements in a certificate template
       | Signature contact info | Sauron                     |
       | Width                  | 25                         |
       | Height                 | 15                         |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Image.
     And I add the element "Image" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 25 |
       | Height | 15 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Image" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Image" "table_row"
+    And I click on "Edit" "link" in the "Image" "table_row"
     And the following fields match these values:
       | Width  | 25 |
       | Height | 15 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Student name.
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
@@ -118,16 +111,16 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Student name" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Student name" "table_row"
+    And I click on "Edit" "link" in the "Student name" "table_row"
     And the following fields match these values:
       | Font                     | Helvetica |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Text.
     And I add the element "Text" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
@@ -137,9 +130,9 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Text" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "Text" "table_row"
+    And I click on "Edit" "link" in the "Text" "table_row"
     And the following fields match these values:
       | Text                     | Test this |
       | Font                     | Helvetica |
@@ -147,7 +140,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # User field.
     And I add the element "User field" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
@@ -157,9 +150,9 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "User field" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "User field" "table_row"
+    And I click on "Edit" "link" in the "User field" "table_row"
     And the following fields match these values:
       | User field               | Country   |
       | Font                     | Helvetica |
@@ -167,31 +160,30 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # User picture.
     And I add the element "User picture" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 10 |
       | Height | 10 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "User picture" in the "elementstable" "table"
-    And I click on ".edit-icon" "css_element" in the "User picture" "table_row"
+    And I click on "Edit" "link" in the "User picture" "table_row"
     And the following fields match these values:
       | Width  | 10 |
       | Height | 10 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Just to test there are no exceptions being thrown.
     And I follow "Reposition elements"
     And I press "Save and close"
     And I press "Save changes and preview"
 
-  @javascript
   Scenario: Delete an element from a certificate template
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Background image" in the "elementstable" "table"
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Student name" in the "elementstable" "table"
     And I click on "Delete" "link" in the "Student name" "table_row"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"

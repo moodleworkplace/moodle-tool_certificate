@@ -90,27 +90,6 @@ if ($templateid) {
                     );
                 }
                 break;
-            case 'deleteelement' :
-                if (!empty($confirm)) { // Check they have confirmed the deletion.
-                    $template->delete_element($actionid);
-                } else {
-                    // Set deletion flag to true.
-                    $deleting = true;
-                    // Create the message.
-                    $message = get_string('deleteelementconfirm', 'tool_certificate');
-                    // Create the link options.
-                    $nourl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));
-                    $yesurl = new moodle_url('/admin/tool/certificate/edit.php',
-                        array(
-                            'tid' => $templateid,
-                            'action' => 'deleteelement',
-                            'aid' => $actionid,
-                            'confirm' => 1,
-                            'sesskey' => sesskey()
-                        )
-                    );
-                }
-                break;
         }
     }
 }
