@@ -91,6 +91,10 @@ class edit_element_form extends modal_form {
     public function definition() {
         $mform =& $this->_form;
 
+        // Empty header that will not be displayed but at the same time advanced elements will work.
+        $mform->addElement('header', 'general', '');
+        $mform->setDisableShortforms(true);
+
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
 

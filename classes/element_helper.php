@@ -165,10 +165,13 @@ class element_helper {
         $mform->setType('posx', PARAM_INT);
         $mform->setDefault('posx', 0);
         $mform->addHelpButton('posx', 'posx', 'tool_certificate');
+        $mform->setAdvanced('posx');
+
         $mform->addElement('text', 'posy', get_string('posy', 'tool_certificate'), array('size' => 10));
         $mform->setType('posy', PARAM_INT);
         $mform->setDefault('posy', 0);
         $mform->addHelpButton('posy', 'posy', 'tool_certificate');
+        $mform->setAdvanced('posy');
     }
 
     /**
@@ -181,6 +184,7 @@ class element_helper {
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
         $mform->addHelpButton('width', 'elementwidth', 'tool_certificate');
+        $mform->setAdvanced('width');
     }
 
     /**
@@ -197,6 +201,7 @@ class element_helper {
         $mform->setType('refpoint', PARAM_INT);
         $mform->setDefault('refpoint', self::CUSTOMCERT_REF_POINT_TOPCENTER);
         $mform->addHelpButton('refpoint', 'refpoint', 'tool_certificate');
+        $mform->setAdvanced('refpoint');
     }
 
     /**
