@@ -59,24 +59,6 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 }
 
 /**
- * Serve the edit element as a fragment.
- *
- * @param array $args List of named arguments for the fragment loader.
- * @return string
- */
-function tool_certificate_output_fragment_editelement($args) {
-    global $DB;
-
-    // Get the element.
-    $element = $DB->get_record('tool_certificate_elements', array('id' => $args['elementid']), '*', MUST_EXIST);
-
-    $pageurl = new moodle_url('/admin/tool/certificate/rearrange.php', array('pid' => $element->pageid));
-    $form = new \tool_certificate\edit_element_form($pageurl, array('element' => $element));
-
-    return $form->render();
-}
-
-/**
  * Add nodes to myprofile page.
  *
  * @param \core_user\output\myprofile\tree $tree Tree object
@@ -104,30 +86,26 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
     global $DB, $PAGE;
 
     if ($itemtype === 'elementname') {
-        $element = $DB->get_record('tool_certificate_elements', array('id' => $itemid), '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', array('id' => $element->pageid), '*', MUST_EXIST);
-        $template = $DB->get_record('tool_certificate_templates', array('id' => $page->templateid), '*', MUST_EXIST);
-
-        // Set the template object.
-        $template = new \tool_certificate\template($template);
-        // Perform checks.
-        if ($cm = $template->get_cm()) {
-            require_login($cm->course, false, $cm);
-        } else {
-            $PAGE->set_context(context_system::instance());
-            require_login();
-        }
-        // Make sure the user has the required capabilities.
+        // Validate access.
+        $template = \tool_certificate\template::find_by_element_id($itemid);
+        external_api::validate_context(context_system::instance());
         $template->require_manage();
 
         // Clean input and update the record.
-        $updateelement = new stdClass();
-        $updateelement->id = $element->id;
-        $updateelement->name = clean_param($newvalue, PARAM_TEXT);
-        $DB->update_record('tool_certificate_elements', $updateelement);
+        $newvalue = clean_param($newvalue, PARAM_TEXT);
+        $DB->update_record('tool_certificate_elements', (object)['id' => $itemid, 'name' => $newvalue]);
 
-        return new \core\output\inplace_editable('tool_certificate', 'elementname', $element->id, true,
-            $updateelement->name, $updateelement->name);
+        return new \core\output\inplace_editable('tool_certificate', 'elementname', $itemid, true,
+            format_string($newvalue), $newvalue);
+    }
+
+    if ($itemtype === 'templatename') {
+        $template = \tool_certificate\template::find_by_id($itemid);
+        $template->require_manage();
+        external_api::validate_context(context_system::instance());
+        $template->require_manage();
+        $template->save((object)['name' => $newvalue]);
+        return $template->get_editable_name();
     }
 }
 
@@ -156,7 +134,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
     if ($template->get_tenant_id() == 0 && \tool_certificate\template::can_issue_or_manage_all_tenants()) {
         $join = '';
         $params = [];
-        $where = ' ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now)';
+        $where = ' (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
     } else if ($template->can_issue()) {
         list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u', $template->get_tenant_id());
         $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';

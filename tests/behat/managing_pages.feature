@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @javascript
 Feature: Being able to manage pages in a certificate template
   In order to ensure managing pages in a certificate template works as expected
   As an admin
@@ -10,7 +10,7 @@ Feature: Being able to manage pages in a certificate template
       | Certificate 1 | 1 |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit" "link"
+    And I click on "Edit content" "link"
 
   Scenario: Adding a page to a certificate template
     When I follow "Add page"
@@ -19,9 +19,9 @@ Feature: Being able to manage pages in a certificate template
 
   Scenario: Deleting a page from a certificate template
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
-    And I press "Save changes"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Add page"
     And I should see "Page 1"
     And I should see "Page 2"

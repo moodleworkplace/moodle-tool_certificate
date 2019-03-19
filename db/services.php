@@ -25,29 +25,34 @@
 defined('MOODLE_INTERNAL') || die();
 
 $functions = array(
-    'tool_certificate_delete_issue' => array(
-        'classname'   => 'tool_certificate\external',
-        'methodname'  => 'delete_issue',
+    'tool_certificate_revoke_issue' => array(
+        'classname'   => \tool_certificate\external\issues::class,
+        'methodname'  => 'revoke_issue',
         'classpath'   => '',
-        'description' => 'Delete an issue for a certificate',
+        'description' => 'Revoke an issue for a certificate',
         'type'        => 'write',
         'ajax'        => true,
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
-    'tool_certificate_save_element' => array(
-        'classname'   => 'tool_certificate\external',
-        'methodname'  => 'save_element',
-        'classpath'   => '',
-        'description' => 'Saves data for an element',
+    'tool_certificate_duplicate_template' => array(
+        'classname'   => \tool_certificate\external\templates::class,
+        'methodname'  => 'duplicate_template',
+        'description' => 'Duplicates a template',
         'type'        => 'write',
-        'ajax'        => true
+        'ajax'        => true,
     ),
-    'tool_certificate_get_element_html' => array(
-        'classname'   => 'tool_certificate\external',
-        'methodname'  => 'get_element_html',
-        'classpath'   => '',
-        'description' => 'Returns the HTML to display for an element',
-        'type'        => 'read',
-        'ajax'        => true
+    'tool_certificate_delete_template' => array(
+        'classname'   => \tool_certificate\external\templates::class,
+        'methodname'  => 'delete_template',
+        'description' => 'Deletes a template',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
+    'tool_certificate_delete_element' => array(
+        'classname'   => \tool_certificate\external\elements::class,
+        'methodname'  => 'delete_element',
+        'description' => 'Deletes an element',
+        'type'        => 'write',
+        'ajax'        => true,
     ),
 );

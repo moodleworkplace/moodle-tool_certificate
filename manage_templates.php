@@ -25,103 +25,11 @@
 require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$action = optional_param('action', '', PARAM_ALPHA);
-$confirm = optional_param('confirm', 0, PARAM_INT);
-$page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', 10, PARAM_INT);
-
-if ($action) {
-    $tid = required_param('tid', PARAM_INT);
-} else {
-    $tid = optional_param('tid', 0, PARAM_INT);
-}
-
-$context = context_system::instance();
-
 admin_externalpage_setup('tool_certificate/managetemplates');
 
+$context = context_system::instance();
 $canissue = has_capability('tool/certificate:issue', $context);
 $canmanage = has_any_capability(['tool/certificate:manage', 'tool/certificate:manageforalltenants'], $context);
-
-if (!\tool_certificate\template::can_verify_loose()) {
-    print_error('permissiondenied', 'tool_certificate');
-}
-
-// Set up the page.
-$pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php');
-
-if ($tid) {
-
-    $template = \tool_certificate\template::find_by_id($tid);
-    $template->can_manage();
-
-    if ($action && confirm_sesskey()) {
-        $url = '/admin/tool/certificate/manage_templates.php';
-        $nourl = new moodle_url($url);
-        $yesurl = new moodle_url($url, ['tid' => $tid, 'action' => $action, 'confirm' => 1, 'sesskey' => sesskey()]);
-
-        // Check if we are deleting a template.
-        if ($action == 'delete') {
-            if (!$confirm) {
-                // Show a confirmation page.
-                $heading = get_string('deleteconfirm', 'tool_certificate');
-                $PAGE->navbar->add($heading);
-                $message = get_string('deletetemplateconfirm', 'tool_certificate');
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading($heading);
-                echo $OUTPUT->confirm($message, $yesurl, $nourl);
-                echo $OUTPUT->footer();
-                exit();
-            }
-
-            // Delete the template.
-            $template->delete();
-
-            // Redirect back to the manage templates page.
-            redirect($pageurl);
-
-        } else if ($action == 'duplicate') {
-            if (!$confirm) {
-                if (has_capability('tool/certificate:manageforalltenants', $context)) {
-                    $pageurl->param('tid', $tid);
-                    $tenantform = new \tool_certificate\form\tenant_selector($pageurl->out());
-                    if ($tenantform->is_cancelled()) {
-                        redirect($pageurl);
-                    }
-                    if ($data = $tenantform->get_data()) {
-                        $tenantid = $data->tenantid;
-                        $yesurl->param('tenantid', $tenantid);
-                    } else {
-                        // Show a page to select tenant.
-                        $heading = get_string('duplicateselecttenant', 'tool_certificate');
-                        $PAGE->navbar->add($heading);
-                        echo $OUTPUT->header();
-                        echo $OUTPUT->heading($heading);
-                        $tenantform->display();
-                        echo $OUTPUT->footer();
-                        exit();
-                    }
-                }
-                // Show a confirmation page.
-                $heading = get_string('duplicateconfirm', 'tool_certificate');
-                $PAGE->navbar->add($heading);
-                $message = get_string('duplicatetemplateconfirm', 'tool_certificate');
-                echo $OUTPUT->header();
-                echo $OUTPUT->heading($heading);
-                echo $OUTPUT->confirm($message, $yesurl, $nourl);
-                echo $OUTPUT->footer();
-                exit();
-            }
-
-            // Copy the data to the new template.
-            $tenantid = optional_param('tenantid', null, PARAM_INT);
-            $template->duplicate($tenantid);
-
-            // Redirect back to the manage templates page.
-            redirect($pageurl);
-        }
-    }
-}
 
 $PAGE->set_title(get_string('managetemplates', 'tool_certificate'));
 $PAGE->set_heading(get_string('managetemplates', 'tool_certificate'));
@@ -131,8 +39,8 @@ echo $OUTPUT->header();
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\certificates_list::class);
 $r = new \tool_wp\output\content_with_heading($report->output());
 if (\tool_certificate\template::can_create()) {
-    $r->add_button(get_string('createtemplate', 'tool_certificate'),
-        \tool_certificate\template::new_template_url());
+    $r->add_button(get_string('createtemplate', 'tool_certificate'));
 }
+$PAGE->requires->js_call_amd('tool_certificate/templates-list', 'init');
 echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 echo $OUTPUT->footer();

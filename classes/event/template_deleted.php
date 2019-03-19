@@ -24,6 +24,8 @@
 
 namespace tool_certificate\event;
 
+use tool_certificate\template;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -76,16 +78,16 @@ class template_deleted extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param \stdClass $template
+     * @param template $template
      * @return template_deleted
      */
-    public static function create_from_template(\stdClass $template) : template_deleted {
+    public static function create_from_template(template $template) : template_deleted {
         $data = array(
-            'context' => \context::instance_by_id($template->contextid),
-            'objectid' => $template->id,
+            'context' => $template->get_context(),
+            'objectid' => $template->get_id(),
         );
         $event = self::create($data);
-        $event->add_record_snapshot('tool_certificate_templates', $template);
+        $event->add_record_snapshot('tool_certificate_templates', $template->to_record());
         return $event;
     }
 }

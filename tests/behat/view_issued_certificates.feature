@@ -75,20 +75,21 @@ Feature: Being able to view the certificates that have been issued
     And I should see "User 11"
     And I should see "User 12"
 
-  Scenario: Revoke an issued certificate ad admin
+  @javascript
+  Scenario: Revoke an issued certificate as admin
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
     And I should see "User 12"
     And I click on "Revoke" "link" in the "User 12" "table_row"
-    And I press "Cancel"
+    And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
     And I should see "User 12"
     And I click on "Revoke" "link" in the "User 12" "table_row"
-    And I press "Continue"
+    And I click on "Revoke" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
-    And I should not see "USer 12"
+    And I should not see "User 12"
 
   Scenario: View certificates in your own tenant as a certificate issuer
     And the following "role assigns" exist:
@@ -176,7 +177,6 @@ Feature: Being able to view the certificates that have been issued
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
-    And I should see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 2"
@@ -254,7 +254,6 @@ Feature: Being able to view the certificates that have been issued
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
-    And I should see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And "Issue new certificate from this template" "link" should not exist in the "Certificate 2" "table_row"

@@ -24,6 +24,7 @@
 
 namespace tool_certificate;
 
+use tool_reportbuilder\report_action;
 use tool_reportbuilder\report_column;
 use tool_reportbuilder\system_report;
 use tool_wp\db;
@@ -46,7 +47,9 @@ class certificates_list extends system_report {
         $this->set_columns();
         // Set main table. For certificates we want a custom tenant filter, so disable automatic one.
         $this->set_main_table('tool_certificate_templates', 'c', false);
+        $this->add_base_fields('c.id, c.name, c.tenantid');
         $this->set_downloadable(false);
+        $this->add_actions();
     }
 
     /**
@@ -55,8 +58,7 @@ class certificates_list extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        // TODO: Implement can_view() method.
-        return true;
+        return template::can_view_admin_tree();
     }
 
     /**
@@ -70,11 +72,13 @@ class certificates_list extends system_report {
             new \lang_string('name', 'tool_certificate'),
             'tool_certificate'
         ))
-            ->add_field('c.name')
+            ->add_fields('c.name, c.id, c.tenantid')
             ->set_is_default(true, 1)
             ->set_is_sortable(true, true);
-        $newcolumn->add_callback(function($v) {
-            return format_string($v);
+        $newcolumn->add_callback(function($v, $row) {
+            global $OUTPUT;
+            $t = new template($row);
+            return $t->get_editable_name()->render($OUTPUT);
         });
         $this->add_column($newcolumn);
 
@@ -101,17 +105,6 @@ class certificates_list extends system_report {
             $this->add_base_condition_sql("(c.tenantid = :{$tenantid} OR c.tenantid = 0)",
                 [$tenantid => \tool_tenant\tenancy::get_tenant_id()]);
         }
-
-        // TODO replace with report builder actions.
-        $newcolumn = (new report_column(
-            'actions',
-            null,
-            'tool_certificate'
-        ))
-            ->add_field('c.id', 'certactions')
-            ->set_is_default(true, 3);
-        $newcolumn->add_callback([$this, 'col_actions']);
-        $this->add_column($newcolumn);
     }
 
     /**
@@ -139,64 +132,83 @@ class certificates_list extends system_report {
     }
 
     /**
-     * Generate the actions column.
-     *
-     * @param mixed $value
-     * @param \stdClass $template
-     * @return string
+     * Actions
      */
-    public function col_actions($value, \stdClass $template) {
-        global $OUTPUT, $DB;
+    protected function add_actions() {
 
-        $actions = '';
+        // Edit content.
+        $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => ':id'));
+        $icon = new \pix_icon('a/wp-arrow-right', get_string('editcontent', 'tool_certificate'), 'theme');
+        $this->add_action((new report_action($editlink, $icon, []))
+            ->add_callback(function($row) {
+                return (new template($row))->can_manage();
+            })
+        );
 
-        // TODO SP-422 not effective.
-        $template = $DB->get_record('tool_certificate_templates', array('id' => $value), '*', MUST_EXIST);
-        $templateobj = new template($template);
-        if ($templateobj->can_duplicate()) {
-            $duplicatelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
-                array('tid' => $template->id, 'action' => 'duplicate', 'sesskey' => sesskey()));
+        // Edit details.
+        $editlink = new \moodle_url('#');
+        $icon = new \pix_icon('a/wp-cog', get_string('editdetails', 'tool_certificate'), 'theme');
+        $this->add_action(
+            (new report_action($editlink, $icon, ['data-action' => 'editdetails', 'data-id' => ':id', 'data-name' => ':name']))
+                ->add_callback(function($row) {
+                    $t = new template($row);
+                    $row->name = $t->get_formatted_name();
+                    return $t->can_manage();
+                })
+        );
 
-            $actions .= $OUTPUT->action_icon($duplicatelink,
-                new \pix_icon('a/wp-duplicate', get_string('duplicate'), 'theme'), null,
-                array('class' => 'action-icon duplicate-icon'));
+        // Preview.
+        $previewlink = new \moodle_url('/admin/tool/certificate/view.php',
+            ['preview' => 1, 'templateid' => ':id', 'code' => 'previewing']);
+        $icon = new \pix_icon('a/wp-search', get_string('preview'), 'theme');
+        $this->add_action((new report_action($previewlink, $icon, []))
+            ->add_callback(function($row) {
+                return (new template($row))->can_manage();
+            })
+        );
 
-        }
-        if ($templateobj->can_manage()) {
+        // View issue.
+        $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => ':id'));
+        $issuesstr  = get_string('certificatesissued', 'tool_certificate');
+        $icon = new \pix_icon('a/wp-list', $issuesstr, 'theme');
+        $this->add_action((new report_action($issueslink, $icon, []))
+            ->add_callback(function($row) {
+                return (new template($row))->can_view_issues();
+            })
+        );
 
-            $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => $template->id));
-            $actions .= $OUTPUT->action_icon($editlink,
-                new \pix_icon('a/wp-cog', get_string('edit'), 'theme'));
+        // Issue.
+        $newissuelink = new \moodle_url('#');
+        $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
+        $icon = new \pix_icon('a/wp-plus', $newissuestr, 'theme');
+        $this->add_action((new report_action($newissuelink, $icon, ['data-action' => 'issue', 'data-tid' => ':id']))
+            ->add_callback(function($row) {
+                return (new template($row))->can_issue();
+            })
+        );
 
-            $deletelink = new \moodle_url('/admin/tool/certificate/manage_templates.php',
-                array('tid' => $template->id, 'action' => 'delete', 'sesskey' => sesskey()));
+        // Duplicate.
+        $selecttenant = has_capability('tool/certificate:manageforalltenants', \context_system::instance());
+        $icon = new \pix_icon('a/wp-duplicate', get_string('duplicate'), 'theme');
+        $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'duplicate',
+                'data-id' => ':id', 'data-selecttenant' => (int)$selecttenant, 'data-name' => ':name']))
+            ->add_callback(function($row) {
+                $t = new template($row);
+                $row->name = $t->get_formatted_name();
+                return $t->can_duplicate();
+            })
+        );
 
-            $actions .= $OUTPUT->action_icon($deletelink,
-                new \pix_icon('a/wp-trash', get_string('delete'), 'theme'), null,
-                array('class' => 'action-icon delete-icon'));
+        // Delete.
+        $icon = new \pix_icon('a/wp-trash', get_string('delete'), 'theme');
+        $this->add_action((new report_action(new \moodle_url('#'), $icon,
+                ['data-action' => 'delete', 'data-id' => ':id', 'data-name' => ':name']))
+            ->add_callback(function($row) {
+                $t = new template($row);
+                $row->name = $t->get_formatted_name();
+                return $t->can_manage();
+            })
+        );
 
-            $previewlink = $templateobj->preview_url();
-            $actions .= $OUTPUT->action_icon($previewlink,
-                new \pix_icon('a/wp-search', get_string('preview'), 'theme'), null,
-                array('class' => 'action-icon preview-icon'));
-
-        }
-
-        if ($templateobj->can_view_issues()) {
-            $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $template->id));
-            $issuesstr  = get_string('certificatesissued', 'tool_certificate');
-
-            $actions .= $OUTPUT->action_icon($issueslink,
-                new \pix_icon('a/wp-list', $issuesstr, 'theme'));
-        }
-
-        if ($templateobj->can_issue()) {
-            $newissuelink = new \moodle_url('/admin/tool/certificate/issue.php', array('templateid' => $template->id));
-            $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
-            $actions .= $OUTPUT->action_icon($newissuelink,
-                new \pix_icon('a/wp-plus', $newissuestr, 'theme'));
-        }
-
-        return $actions;
     }
 }
