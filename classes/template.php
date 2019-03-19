@@ -863,6 +863,14 @@ class template {
     }
 
     /**
+     * Can manage shared images
+     * @return bool
+     */
+    public static function can_manage_images() {
+        return has_capability('tool/certificate:imageforalltenants', \context_system::instance());
+    }
+
+    /**
      * Creates a template.
      *
      * @param \stdClass $formdata Associative array with data to create template.
