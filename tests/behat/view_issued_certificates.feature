@@ -177,7 +177,6 @@ Feature: Being able to view the certificates that have been issued
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
-    And I should see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 2"
@@ -255,7 +254,6 @@ Feature: Being able to view the certificates that have been issued
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
-    And I should see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And "Issue new certificate from this template" "link" should not exist in the "Certificate 2" "table_row"
