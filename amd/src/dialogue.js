@@ -38,7 +38,7 @@ define(['core/yui'], function(Y) {
         var parent = this;
 
         // Default for wide is false.
-        if (typeof wide == 'undefined') {
+        if (typeof wide === 'undefined') {
             wide = false;
         }
 

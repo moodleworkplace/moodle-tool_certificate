@@ -24,6 +24,8 @@
 
 namespace certificateelement_image;
 
+use tool_certificate\element_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -75,8 +77,9 @@ class element extends \tool_certificate\element {
         $mform->setDefault('height', 0);
         $mform->addHelpButton('height', 'height', 'certificateelement_image');
 
-        if (get_config('tool_certificate', 'showposxy')) {
+        if ($this->showposxy) {
             \tool_certificate\element_helper::render_form_element_position($mform);
+            element_helper::render_form_element_refpoint($mform);
         }
 
         $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
@@ -105,7 +108,7 @@ class element extends \tool_certificate\element {
         }
 
         // Validate the position.
-        if (get_config('tool_certificate', 'showposxy')) {
+        if ($this->showposxy) {
             $errors += \tool_certificate\element_helper::validate_form_element_position($data);
         }
 

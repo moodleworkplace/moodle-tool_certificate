@@ -132,6 +132,7 @@ class element extends \tool_certificate\element {
     public function render_html() {
         $code = \tool_certificate\certificate::generate_code();
 
+        // TODO this is different from render() !
         return \tool_certificate\element_helper::render_html_content($this, $code);
     }
 

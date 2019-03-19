@@ -25,9 +25,8 @@
 namespace tool_certificate\form;
 defined('MOODLE_INTERNAL') || die();
 
-use moodleform;
-
-require_once($CFG->libdir . '/formslib.php');
+use tool_certificate\template;
+use tool_wp\modal_form;
 
 /**
  * Certificate issues form class.
@@ -36,7 +35,22 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class certificate_issues extends moodleform {
+class certificate_issues extends modal_form {
+
+    /** @var template */
+    protected $template;
+
+    /**
+     * Get template
+     *
+     * @return template
+     */
+    protected function get_template() : template {
+        if ($this->template === null) {
+            $this->template = template::find_by_id($this->_ajaxformdata['tid']);
+        }
+        return $this->template;
+    }
 
     /**
      * Definition of the form with user selector and expiration time to issue certificates.
@@ -44,18 +58,71 @@ class certificate_issues extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
+        $mform->addElement('hidden', 'tid');
+        $mform->setType('tid', PARAM_INT);
+
         $options = array(
             'ajax' => 'tool_wp/form-potential-user-selector',
             'multiple' => true,
             'data-component' => 'tool_certificate',
             'data-area' => 'issue',
-            'data-itemid' => $this->_customdata['templateid']
+            'data-itemid' => $this->get_template()->get_id()
         );
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
 
-        $mform->addElement('date_time_selector', 'expires', '', ['optional' => true]);
+        $mform->addElement('date_time_selector', 'expires', get_string('expires', 'tool_certificate'),
+            ['optional' => true]);
         $mform->addElement('submit', 'submit', get_string('issuecertificates', 'tool_certificate'));
         $mform->addElement('cancel');
+    }
+
+    /**
+     * Check if current user has access to this form, otherwise throw exception
+     *
+     * Sometimes permission check may depend on the action and/or id of the entity.
+     * If necessary, form data is available in $this->_ajaxformdata
+     */
+    public function require_access() {
+        if (!$this->get_template()->can_issue()) {
+            print_error('issuenotallowed', 'tool_certificate');
+        }
+    }
+
+    /**
+     * Process the form submission
+     *
+     * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
+     *
+     * @param \stdClass $data
+     */
+    public function process(\stdClass $data) {
+        $i = 0;
+        foreach ($data->users as $userid) {
+            if ($this->get_template()->can_issue($userid)) {
+                $result = $this->get_template()->issue_certificate($userid, $data->expires);
+                if ($result) {
+                    $i++;
+                }
+            }
+        }
+        if ($i == 0) {
+            $notification = get_string('noissueswerecreated', 'tool_certificate');
+        } else if ($i == 1) {
+            $notification = get_string('oneissuewascreated', 'tool_certificate');
+        } else {
+            $notification = get_string('aissueswerecreated', 'tool_certificate', $i);
+        }
+        // TODO SP-444 there is no nice way to show these notifications at the moment.
+    }
+
+    /**
+     * Load in existing data as form defaults
+     *
+     * Can be overridden to retrieve existing values from db by entity id and also
+     * to preprocess editor and filemanager elements
+     */
+    public function set_data_for_modal() {
+        $this->set_data(['tid' => $this->_ajaxformdata['tid']]);
     }
 }

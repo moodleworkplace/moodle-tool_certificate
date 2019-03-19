@@ -46,8 +46,8 @@ $elements = $DB->get_records('tool_certificate_elements', ['pageid' => $pid], 's
 $editstr = get_string('editcertificate', 'tool_certificate');
 $managestr = get_string('managetemplates', 'tool_certificate');
 
-$PAGE->navbar->add($managestr, new \action_link(\tool_certificate\template::manage_url(), $managestr));
-$PAGE->navbar->add($editstr, new \action_link($template->edit_url(), $editstr));
+$PAGE->navbar->add($managestr, \tool_certificate\template::manage_url());
+$PAGE->navbar->add($template->get_formatted_name(), $template->edit_url());
 
 $PAGE->navbar->add(get_string('rearrangeelements', 'tool_certificate'));
 
@@ -96,7 +96,8 @@ if ($elements) {
                     $class = 'element refpoint-left';
             }
             $html .= html_writer::tag('div', $e->render_html(), array('class' => $class,
-                'data-refpoint' => $element->refpoint, 'id' => 'element-' . $element->id));
+                'data-refpoint' => $element->refpoint, 'id' => 'element-' . $element->id,
+                'data-action' => 'editelement', 'data-id' => $element->id, 'data-name' => format_string($element->name)));
         }
     }
 }

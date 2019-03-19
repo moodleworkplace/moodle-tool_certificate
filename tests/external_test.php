@@ -71,10 +71,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
 
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
 
-        $result = \tool_certificate\external::delete_issue($i2);
-
-        // We need to execute the return values cleaning process to simulate the web service server.
-        external_api::clean_returnvalue(\tool_certificate\external::delete_issue_returns(), $result);
+        $result = \tool_certificate\external\issues::revoke_issue($i2);
 
         $issues = $DB->get_records('tool_certificate_issues');
         $this->assertCount(1, $issues);
@@ -111,7 +108,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
 
         // Try and delete without logging in.
         $this->expectException('require_login_exception');
-        \tool_certificate\external::delete_issue($i2);
+        \tool_certificate\external\issues::revoke_issue($i2);
     }
 
     /**
@@ -144,49 +141,6 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
 
         // Try and delete without the required capability.
         $this->expectException('required_capability_exception');
-        \tool_certificate\external::delete_issue($i2);
-    }
-
-    /**
-     * Test the get_element_html web service.
-     */
-    public function test_get_element_html() {
-        global $DB;
-
-        $this->setAdminUser();
-
-        // Create a certificate template.
-        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'code');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
-        $eid = $e->save_form_elements((object)['name' => 'Test', 'pageid' => $pageid,
-                                        'element' => 'code', 'display' => \certificateelement_code\element::DISPLAY_CODE]);
-        $this->assertFalse(empty(\tool_certificate\external::get_element_html($certificate1->get_id(), $eid)));
-        $this->assertEquals('Test', $DB->get_field('tool_certificate_elements', 'name', ['id' => $eid]));
-    }
-
-    /**
-     * Test the save_element web service.
-     */
-    public function test_save_element() {
-        global $DB;
-
-        $this->setAdminUser();
-
-        // Create a certificate template.
-        $certificate1 = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'code');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
-        $values = (object)['name' => 'Test', 'pageid' => $pageid,
-                           'element' => 'code', 'display' => \certificateelement_code\element::DISPLAY_CODE];
-        $eid = $e->save_form_elements($values);
-
-        $newvalues = [['name' => 'fontsize', 'value' => 42],
-                      ['name' => 'display', 'value' => \certificateelement_code\element::DISPLAY_CODE]];
-        \tool_certificate\external::save_element($certificate1->get_id(), $eid, $newvalues);
-
-        $this->assertEquals(42, $DB->get_field('tool_certificate_elements', 'fontsize', ['id' => $eid]));
+        \tool_certificate\external\issues::revoke_issue($i2);
     }
 }

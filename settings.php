@@ -26,35 +26,33 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
-$managecaps = ['tool/certificate:manage', 'tool/certificate:manageforalltenants'];
-$verifycaps = ['tool/certificate:verify'];
-$viewcaps = ['tool/certificate:viewallcertificates'];
-$imagecaps = ['tool/certificate:imageforalltenants'];
-$issuecaps = ['tool/certificate:issue', 'tool/certificate:issueforalltenants'];
-$anycaps = array_merge($managecaps, $verifycaps, $viewcaps, $imagecaps, $issuecaps);
-
 if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')),
         'location');
 
-    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/managetemplates',
+    $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/managetemplates',
                 get_string('managetemplates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/manage_templates.php'), $anycaps));
+                new moodle_url('/admin/tool/certificate/manage_templates.php'), function() {
+                    return \tool_certificate\template::can_view_admin_tree();
+                }
+        ));
 
-    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/verify',
+    $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/verify',
                 get_string('verifycertificates', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/index.php'), $anycaps));
+                new moodle_url('/admin/tool/certificate/index.php'), function() {
+                    return \tool_certificate\template::can_verify_loose();
+                }
+        ));
 
-    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/addcertificate',
-                get_string('addcertificate', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/edit.php'), $managecaps));
-
-    $ADMIN->add('certificates', new admin_externalpage('tool_certificate/images',
+    $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/images',
                 get_string('certificateimages', 'tool_certificate'),
-                new moodle_url('/admin/tool/certificate/upload_image.php'), $imagecaps));
+                new moodle_url('/admin/tool/certificate/upload_image.php'), function() {
+                    return \tool_certificate\template::can_manage_images();
+                }
+            ));
+}
 
-    if ($hassiteconfig) {
-        $ADMIN->add('tools', new tool_certificate_admin_page_manage_element_plugins());
-    }
+if ($hassiteconfig) {
+    $ADMIN->add('tools', new tool_certificate_admin_page_manage_element_plugins());
 }

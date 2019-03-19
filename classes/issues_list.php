@@ -143,10 +143,8 @@ class issues_list extends system_report {
         // Revoke.
         if ($this->template && $this->template->can_revoke()) {
             $icon = new \pix_icon('a/wp-trash', get_string('revoke', 'tool_certificate'), 'theme');
-            $link = new \moodle_url('/admin/tool/certificate/certificates.php',
-                ['issueid' => ':id', 'sesskey' => sesskey(), 'revokecert' => '1']);
-
-            $this->add_action((new report_action($link, $icon, ['class' => 'delete-icon'])));
+            $this->add_action((new report_action(new \moodle_url('#'), $icon,
+                ['data-action' => 'revoke', 'data-id' => ':id'])));
         }
     }
 
