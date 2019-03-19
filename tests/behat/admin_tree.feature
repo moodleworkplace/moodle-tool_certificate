@@ -22,7 +22,6 @@ Feature: View links on admin tree
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
     And I should see "Verify certificates"
-    And I should see "Add certificate template"
 
   Scenario: Manager without manage capability should not see option to add certificate template
     When I log in as "admin"
