@@ -58,30 +58,30 @@ class tool_certificate_userpicture_element_test_testcase extends advanced_testca
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
 
-        $element = (object)['name' => 'Test', 'pageid' => $pageid, 'element' => 'userpicture'];
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $element = (object)['name' => 'Test'];
+        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
         $this->assertTrue(empty($e->render_html()));
 
-        $element = (object)['name' => 'Test', 'pageid' => $pageid, 'element' => 'userpicture',
+        $element = (object)['name' => 'Test',
                             'data' => json_encode(['width' => 100, 'height' => 200])];
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
         $this->assertTrue(strpos($e->render_html(), 'img') !== false);
 
-        $element = (object)['name' => 'Test', 'pageid' => $pageid, 'element' => 'userpicture',
+        $element = (object)['name' => 'Test',
                             'data' => json_encode(['width' => 0, 'height' => 200])];
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
         $this->assertTrue(strpos($e->render_html(), 'width') !== false);
         $this->assertTrue(strpos($e->render_html(), 'height') !== false);
 
-        $element = (object)['name' => 'Test', 'pageid' => $pageid, 'element' => 'userpicture',
+        $element = (object)['name' => 'Test',
                             'data' => json_encode(['width' => 100, 'height' => 0])];
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
         $this->assertTrue(strpos($e->render_html(), 'width') !== false);
         $this->assertTrue(strpos($e->render_html(), 'height') !== false);
 
-        $element = (object)['name' => 'Test', 'pageid' => $pageid, 'element' => 'userpicture',
+        $element = (object)['name' => 'Test',
                             'data' => json_encode(['width' => 0, 'height' => 0])];
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
         $this->assertFalse(strpos($e->render_html(), 'width'));
         $this->assertFalse(strpos($e->render_html(), 'height'));
     }

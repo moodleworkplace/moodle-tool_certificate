@@ -34,7 +34,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 
 admin_externalpage_setup('tool_certificate/managetemplates');
 
-$template = \tool_certificate\template::find_by_id($templateid);
+$template = \tool_certificate\template::instance($templateid);
 $template->require_manage();
 
 $pageurl = new moodle_url('/admin/tool/certificate/edit.php', array('tid' => $templateid));

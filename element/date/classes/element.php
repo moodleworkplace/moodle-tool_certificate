@@ -168,24 +168,6 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This function is responsible for handling the restoration process of the element.
-     *
-     * We will want to update the course module the date element is pointing to as it will
-     * have changed in the course restore.
-     *
-     * @param \restore_certificate_activity_task $restore
-     */
-    public function after_restore($restore) {
-        global $DB;
-
-        $dateinfo = json_decode($this->get_data());
-        if ($newitem = \restore_dbops::get_backup_ids_record($restore->get_restoreid(), 'course_module', $dateinfo->dateitem)) {
-            $dateinfo->dateitem = $newitem->newitemid;
-            $DB->set_field('tool_certificate_elements', 'data', $this->save_unique_data($dateinfo), array('id' => $this->get_id()));
-        }
-    }
-
-    /**
      * Helper function to return all the date formats.
      *
      * @return array the list of date formats

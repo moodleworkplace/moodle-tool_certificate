@@ -44,4 +44,34 @@ class tool_certificate_generator extends component_generator_base {
     public function create_template($record = null): \tool_certificate\template {
         return \tool_certificate\template::create($record);
     }
+
+    /**
+     * Create a page
+     *
+     * @param $template
+     * @param null $record
+     * @return \tool_certificate\page
+     */
+    public function create_page($template, $record = null) : \tool_certificate\page {
+        if (!$template instanceof \tool_certificate\template) {
+            $template = \tool_certificate\template::instance($template);
+        }
+        $pageid = $template->add_page();
+        return \tool_certificate\page::instance($pageid);
+    }
+
+    /**
+     * New instance of an element class (not saved)
+     *
+     * @param int $pageid
+     * @param string $elementtype
+     * @param array $data
+     * @return \tool_certificate\element
+     */
+    public function new_element(int $pageid, string $elementtype, $data = []) {
+        $data = (array)$data;
+        $data['element'] = $elementtype;
+        $data['pageid'] = $pageid;
+        return \tool_certificate\element::instance(0, (object)$data);
+    }
 }

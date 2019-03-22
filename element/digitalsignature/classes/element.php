@@ -44,10 +44,8 @@ class element extends \certificateelement_image\element {
 
     /**
      * Constructor.
-     *
-     * @param \stdClass $element the element data
      */
-    public function __construct($element) {
+    protected function __construct() {
         global $COURSE;
 
         $this->signaturefilemanageroptions = [
@@ -56,7 +54,7 @@ class element extends \certificateelement_image\element {
             'accepted_types' => ['.crt']
         ];
 
-        parent::__construct($element);
+        parent::__construct();
     }
 
     /**

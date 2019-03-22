@@ -54,7 +54,7 @@ class tool_certificate_bgimage_element_test_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $element = $certificate1->new_element_for_page_id($pageid, 'bgimage');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = \tool_certificate\element::instance(0, $element);
         // Default element has no data. TODO: test with a proper image.
         $this->assertTrue(empty($e->render_html()));
     }

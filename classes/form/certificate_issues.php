@@ -47,7 +47,7 @@ class certificate_issues extends modal_form {
      */
     protected function get_template() : template {
         if ($this->template === null) {
-            $this->template = template::find_by_id($this->_ajaxformdata['tid']);
+            $this->template = template::instance($this->_ajaxformdata['tid']);
         }
         return $this->template;
     }

@@ -77,7 +77,7 @@ class certificates_list extends system_report {
             ->set_is_sortable(true, true);
         $newcolumn->add_callback(function($v, $row) {
             global $OUTPUT;
-            $t = new template($row);
+            $t = template::instance(0, $row);
             return $t->get_editable_name()->render($OUTPUT);
         });
         $this->add_column($newcolumn);
@@ -141,7 +141,7 @@ class certificates_list extends system_report {
         $icon = new \pix_icon('a/wp-arrow-right', get_string('editcontent', 'tool_certificate'), 'theme');
         $this->add_action((new report_action($editlink, $icon, []))
             ->add_callback(function($row) {
-                return (new template($row))->can_manage();
+                return template::instance(0, $row)->can_manage();
             })
         );
 
@@ -151,7 +151,7 @@ class certificates_list extends system_report {
         $this->add_action(
             (new report_action($editlink, $icon, ['data-action' => 'editdetails', 'data-id' => ':id', 'data-name' => ':name']))
                 ->add_callback(function($row) {
-                    $t = new template($row);
+                    $t = template::instance(0, $row);
                     $row->name = $t->get_formatted_name();
                     return $t->can_manage();
                 })
@@ -163,7 +163,7 @@ class certificates_list extends system_report {
         $icon = new \pix_icon('a/wp-search', get_string('preview'), 'theme');
         $this->add_action((new report_action($previewlink, $icon, []))
             ->add_callback(function($row) {
-                return (new template($row))->can_manage();
+                return template::instance(0, $row)->can_manage();
             })
         );
 
@@ -173,7 +173,7 @@ class certificates_list extends system_report {
         $icon = new \pix_icon('a/wp-list', $issuesstr, 'theme');
         $this->add_action((new report_action($issueslink, $icon, []))
             ->add_callback(function($row) {
-                return (new template($row))->can_view_issues();
+                return template::instance(0, $row)->can_view_issues();
             })
         );
 
@@ -183,7 +183,7 @@ class certificates_list extends system_report {
         $icon = new \pix_icon('a/wp-plus', $newissuestr, 'theme');
         $this->add_action((new report_action($newissuelink, $icon, ['data-action' => 'issue', 'data-tid' => ':id']))
             ->add_callback(function($row) {
-                return (new template($row))->can_issue();
+                return template::instance(0, $row)->can_issue();
             })
         );
 
@@ -193,7 +193,7 @@ class certificates_list extends system_report {
         $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'duplicate',
                 'data-id' => ':id', 'data-selecttenant' => (int)$selecttenant, 'data-name' => ':name']))
             ->add_callback(function($row) {
-                $t = new template($row);
+                $t = template::instance(0, $row);
                 $row->name = $t->get_formatted_name();
                 return $t->can_duplicate();
             })
@@ -204,7 +204,7 @@ class certificates_list extends system_report {
         $this->add_action((new report_action(new \moodle_url('#'), $icon,
                 ['data-action' => 'delete', 'data-id' => ':id', 'data-name' => ':name']))
             ->add_callback(function($row) {
-                $t = new template($row);
+                $t = template::instance(0, $row);
                 $row->name = $t->get_formatted_name();
                 return $t->can_manage();
             })

@@ -34,7 +34,7 @@ $values = json_decode($values);
 
 require_login();
 
-$template = \tool_certificate\template::find_by_id($templateid);
+$template = \tool_certificate\template::instance($templateid);
 
 // Make sure the user has the required capabilities.
 $template->require_manage();
@@ -46,4 +46,5 @@ foreach ($values as $value) {
     $element->posx = $value->posx;
     $element->posy = $value->posy;
     $DB->update_record('tool_certificate_elements', $element);
+    // TODO will be moved to WS.
 }

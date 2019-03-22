@@ -48,7 +48,7 @@ class issues_list extends system_report {
      */
     protected function initialise() {
         if ($templateid = $this->get_parameter('templateid', 0, PARAM_INT)) {
-            $this->template = \tool_certificate\template::find_by_id($templateid);
+            $this->template = \tool_certificate\template::instance($templateid);
         }
         $this->set_columns();
         $this->set_main_table('tool_certificate_issues', 'i');

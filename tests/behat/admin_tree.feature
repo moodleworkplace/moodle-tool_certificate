@@ -65,7 +65,7 @@ Feature: View links on admin tree
     And I open the autocomplete suggestions list
     And I click on "User One" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     Then "User One" "text" should exist in the "report-table" "table"
     And I log out

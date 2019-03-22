@@ -56,8 +56,7 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
     public function test_render_html_content() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'code');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'code');
         $this->assertFalse(empty($e->render_html()));
     }
 
@@ -67,8 +66,7 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
     public function test_save_unique_data() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'code');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'code');
         $newdata = (object)['display' => \certificateelement_code\element::DISPLAY_CODE];
         $this->assertEquals(json_encode($newdata), $e->save_unique_data($newdata));
     }
