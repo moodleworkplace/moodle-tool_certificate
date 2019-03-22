@@ -87,20 +87,17 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
 
     if ($itemtype === 'elementname') {
         // Validate access.
-        $template = \tool_certificate\template::find_by_element_id($itemid);
         external_api::validate_context(context_system::instance());
-        $template->require_manage();
+        $element = \tool_certificate\element::instance($itemid);
+        $element->get_template()->require_manage();
 
-        // Clean input and update the record.
-        $newvalue = clean_param($newvalue, PARAM_TEXT);
-        $DB->update_record('tool_certificate_elements', (object)['id' => $itemid, 'name' => $newvalue]);
-
+        $element->update_name($newvalue);
         return new \core\output\inplace_editable('tool_certificate', 'elementname', $itemid, true,
-            format_string($newvalue), $newvalue);
+            format_string($element->get_name()), $element->get_name());
     }
 
     if ($itemtype === 'templatename') {
-        $template = \tool_certificate\template::find_by_id($itemid);
+        $template = \tool_certificate\template::instance($itemid);
         $template->require_manage();
         external_api::validate_context(context_system::instance());
         $template->require_manage();
@@ -129,7 +126,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
         return null;
     }
 
-    $template = \tool_certificate\template::find_by_id($itemid);
+    $template = \tool_certificate\template::instance($itemid);
 
     if ($template->get_tenant_id() == 0 && \tool_certificate\template::can_issue_or_manage_all_tenants()) {
         $join = '';

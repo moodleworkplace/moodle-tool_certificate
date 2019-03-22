@@ -197,7 +197,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     public function test_find_by_id() {
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $this->assertEquals($certname, \tool_certificate\template::find_by_id($certificate1->get_id())->get_name());
+        $this->assertEquals($certname, \tool_certificate\template::instance($certificate1->get_id())->get_name());
     }
 
     /**

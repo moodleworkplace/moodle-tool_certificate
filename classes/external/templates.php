@@ -59,7 +59,7 @@ class templates extends \external_api {
         $params = self::validate_parameters(self::duplicate_template_parameters(),
             ['id' => $templateid, 'tenantid' => $tenantid]);
         self::validate_context(\context_system::instance());
-        $template = \tool_certificate\template::find_by_id($params['id']);
+        $template = \tool_certificate\template::instance($params['id']);
         if (!$template->can_duplicate()) {
             throw new \required_capability_exception($template->get_context(), 'tool/certificate:manage',
                 'nopermissions', 'error');
@@ -99,7 +99,7 @@ class templates extends \external_api {
         $params = self::validate_parameters(self::delete_template_parameters(),
             ['id' => $templateid]);
         self::validate_context(\context_system::instance());
-        $template = \tool_certificate\template::find_by_id($params['id']);
+        $template = \tool_certificate\template::instance($params['id']);
         $template->require_manage();
 
         $template->delete();

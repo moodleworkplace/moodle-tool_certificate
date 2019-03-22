@@ -37,91 +37,70 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class element {
 
-    /**
-     * @var \stdClass $element The data for the element we are adding - do not use, kept for legacy reasons.
-     */
-    protected $element;
-
-    /**
-     * @var int The id.
-     */
-    protected $id;
-
-    /**
-     * @var int The page id.
-     */
-    protected $pageid;
-
-    /**
-     * @var string The name.
-     */
-    protected $name;
-
-    /**
-     * @var mixed The data.
-     */
-    protected $data;
-
-    /**
-     * @var string The font name.
-     */
-    protected $font;
-
-    /**
-     * @var int The font size.
-     */
-    protected $fontsize;
-
-    /**
-     * @var string The font colour.
-     */
-    protected $colour;
-
-    /**
-     * @var int The position x.
-     */
-    protected $posx;
-
-    /**
-     * @var int The position y.
-     */
-    protected $posy;
-
-    /**
-     * @var int The width.
-     */
-    protected $width;
-
-    /**
-     * @var int The refpoint.
-     */
-    protected $refpoint;
+    /** @var persistent\element  */
+    protected $persistent;
 
     /**
      * @var bool $showposxy Show position XY form elements?
      */
     protected $showposxy = true;
 
+    /** @var page */
+    protected $page = null;
+
     /**
      * Constructor.
-     *
-     * @param \stdClass $element the element data
      */
-    public function __construct($element) {
-        // Keeping this for legacy reasons so we do not break third-party elements.
-        $this->element = clone($element);
+    protected function __construct() {
+    }
 
-        $this->id = $element->id;
-        $this->pageid = $element->pageid;
-        $this->name = $element->name;
-        $this->data = $element->data;
-        $this->font = $element->font;
-        $this->fontsize = $element->fontsize;
-        $this->colour = $element->colour;
-        $this->posx = $element->posx;
-        $this->posy = $element->posy;
-        $this->width = $element->width;
-        $this->refpoint = $element->refpoint;
+    /**
+     * Create instance of an element
+     *
+     * @param int $id
+     * @param null|\stdClass $obj
+     * @return element
+     * @throws \moodle_exception
+     */
+    public static function instance(int $id = 0, ?\stdClass $obj = null) : element {
+        $element = self::instance_from_persistent(new \tool_certificate\persistent\element($id, $obj));
+        if (!$element) {
+            throw new \moodle_exception('not found'); // TODO string.
+        }
+        return $element;
+    }
+
+    /**
+     * Helper method to create an instance from persistent
+     *
+     * @param \tool_certificate\persistent\element $persistent
+     * @return element
+     */
+    protected static function instance_from_persistent(\tool_certificate\persistent\element $persistent) :? element {
+        // Get the class name.
+        /** @var element $classname */
+        $classname = '\\certificateelement_' . $persistent->get('element') . '\\element';
+
+        // Ensure the necessary class exists.
+        if (!class_exists($classname) || !is_subclass_of($classname, self::class)) {
+            return null;
+        }
+
+        /** @var self $el */
+        $el = new $classname($persistent);
+        $el->persistent = $persistent;
+        return $el;
+    }
+
+    /**
+     * New instance (not saved)
+     *
+     * @param string $elementtype
+     * @param int $pageid
+     * @return element
+     */
+    public static function new_instance(string $elementtype, int $pageid) : self {
+        return self::instance(0, (object)['element' => $elementtype, 'pageid' => $pageid]);
     }
 
     /**
@@ -130,7 +109,7 @@ abstract class element {
      * @return int
      */
     public function get_id() {
-        return $this->id;
+        return $this->persistent->get('id');
     }
 
     /**
@@ -139,7 +118,7 @@ abstract class element {
      * @return int
      */
     public function get_element() {
-        return $this->element->element;
+        return $this->persistent->get('element');
     }
 
     /**
@@ -148,7 +127,7 @@ abstract class element {
      * @return int
      */
     public function get_pageid() {
-        return $this->pageid;
+        return $this->persistent->get('pageid');
     }
 
     /**
@@ -157,7 +136,7 @@ abstract class element {
      * @return int
      */
     public function get_name() {
-        return $this->name;
+        return $this->persistent->get('name');
     }
 
     /**
@@ -166,7 +145,7 @@ abstract class element {
      * @return mixed
      */
     public function get_data() {
-        return $this->data;
+        return $this->persistent->get('data');
     }
 
     /**
@@ -175,7 +154,7 @@ abstract class element {
      * @return string
      */
     public function get_font() {
-        return $this->font;
+        return $this->persistent->get('font');
     }
 
     /**
@@ -184,7 +163,7 @@ abstract class element {
      * @return int
      */
     public function get_fontsize() {
-        return $this->fontsize;
+        return $this->persistent->get('fontsize');
     }
 
     /**
@@ -193,7 +172,7 @@ abstract class element {
      * @return string
      */
     public function get_colour() {
-        return $this->colour;
+        return $this->persistent->get('colour');
     }
 
     /**
@@ -202,7 +181,7 @@ abstract class element {
      * @return int
      */
     public function get_posx() {
-        return $this->posx;
+        return $this->persistent->get('posx');
     }
 
     /**
@@ -211,7 +190,7 @@ abstract class element {
      * @return int
      */
     public function get_posy() {
-        return $this->posy;
+        return $this->persistent->get('posy');
     }
 
     /**
@@ -220,7 +199,7 @@ abstract class element {
      * @return int
      */
     public function get_width() {
-        return $this->width;
+        return $this->persistent->get('width');
     }
 
     /**
@@ -229,7 +208,7 @@ abstract class element {
      * @return int
      */
     public function get_refpoint() {
-        return $this->refpoint;
+        return $this->persistent->get('refpoint');
     }
 
     /**
@@ -237,18 +216,7 @@ abstract class element {
      * @return \stdClass
      */
     public function to_record() : \stdClass {
-        return (object)[
-            'id' => $this->id,
-            'element' => $this->element->element,
-            'name' => $this->name,
-            'font' => $this->font,
-            'fontsize' => $this->fontsize,
-            'colour' => $this->colour,
-            'posx' => $this->posx,
-            'posy' => $this->posy,
-            'width' => $this->width,
-            'refpoint' => $this->refpoint
-        ];
+        return $this->persistent->to_record();
     }
 
     /**
@@ -277,17 +245,9 @@ abstract class element {
     public function definition_after_data($mform) {
         // Loop through the properties of the element and set the values
         // of the corresponding form element, if it exists.
-        $properties = [
-            'name' => $this->name,
-            'font' => $this->font,
-            'fontsize' => $this->fontsize,
-            'colour' => $this->colour,
-            'posx' => $this->posx,
-            'posy' => $this->posy,
-            'width' => $this->width,
-            'refpoint' => $this->refpoint
-        ];
-        foreach ($properties as $property => $value) {
+        $record = $this->persistent->to_record();
+        unset($record->timecreated, $record->timemodifed, $record->pageid);
+        foreach ($record as $property => $value) {
             if (!is_null($value) && $mform->elementExists($property)) {
                 $element = $mform->getElement($property);
                 $element->setValue($value);
@@ -325,41 +285,37 @@ abstract class element {
      * @return bool true of success, false otherwise.
      */
     public function save_form_elements($data) {
-        global $DB;
-
-        // Get the data from the form.
-        $element = new \stdClass();
-        $element->name = $data->name;
-        $element->data = $this->save_unique_data($data);
-        $element->font = (isset($data->font)) ? $data->font : null;
-        $element->fontsize = (isset($data->fontsize)) ? $data->fontsize : null;
-        $element->colour = (isset($data->colour)) ? $data->colour : null;
-        if ($this->showposxy) {
-            $element->posx = (isset($data->posx)) ? $data->posx : null;
-            $element->posy = (isset($data->posy)) ? $data->posy : null;
+        if (!empty($data->id)) {
+            unset($data->pageid, $data->element);
         }
-        $element->width = (isset($data->width)) ? $data->width : null;
-        $element->refpoint = (isset($data->refpoint)) ? $data->refpoint : null;
-        $element->timemodified = time();
-
-        // Check if we are updating, or inserting a new element.
-        if (!empty($this->id)) { // Must be updating a record in the database.
-            $element->id = $this->id;
-            $DB->update_record('tool_certificate_elements', $element);
-        } else { // Must be adding a new one.
-            $element->element = $data->element;
-            $element->pageid = $data->pageid;
-            $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
-            $element->timecreated = time();
-            $id = $DB->insert_record('tool_certificate_elements', $element);
-            $this->id = $id;
-        }
-        foreach ($element as $key => $value) {
-            if (property_exists($this, $key) && $key !== 'element') {
-                $this->$key = $value;
+        foreach (array_keys(\tool_certificate\persistent\element::properties_definition()) as $key) {
+            if (!in_array($key, ['id', 'data', 'sequence']) && isset($data->$key)) {
+                $this->persistent->set($key, $data->$key);
             }
         }
+        $this->persistent->set('data', $this->save_unique_data($data));
+
+        if (!$this->persistent->get('id')) {
+
+            // TODO this should not be here.
+            if (empty($data->name)) {
+                $this->persistent->set('name', get_string('pluginname', 'certificateelement_' . $data->element));
+            }
+            $this->persistent->set('sequence', \tool_certificate\element_helper::get_element_sequence($data->pageid));
+        }
+
+        $this->persistent->save();
+
         return true;
+    }
+
+    /**
+     * Update name
+     * @param string $newname
+     */
+    public function update_name(string $newname) {
+        $this->persistent->set('name', $newname);
+        $this->persistent->save();
     }
 
     /**
@@ -378,11 +334,16 @@ abstract class element {
      * This handles copying data from another element of the same type.
      * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return bool returns true if the data was copied successfully, false otherwise
+     * @param \int $pageid
+     * @return element new element
      */
-    public function copy_element($data) {
-        return true;
+    public function duplicate(int $pageid) : element {
+        $record = $this->persistent->to_record();
+        unset($record->id, $record->timemodified, $record->timecreated);
+        $record->pageid = $pageid;
+        $el = self::instance(0, $record);
+        $el->persistent->save();
+        return $el;
     }
 
     /**
@@ -426,33 +387,49 @@ abstract class element {
      * @return bool success return true if deletion success, false otherwise
      */
     public function delete() {
-        global $DB;
-
-        return $DB->delete_records('tool_certificate_elements', array('id' => $this->id));
+        return $this->persistent->delete();
     }
 
     /**
-     * This function is responsible for handling the restoration process of the element.
+     * Load a list of records.
      *
-     * For example, the function may save data that is related to another course module, this
-     * data will need to be updated if we are restoring the course as the course module id will
-     * be different in the new course.
+     * @param array $filters Filters to apply.
+     * @param string $sort Field to sort by.
+     * @param string $order Sort order.
+     * @param int $skip Limitstart.
+     * @param int $limit Number of rows to return.
      *
-     * @param \restore_certificate_activity_task $restore
+     * @return \tool_certificate\element[]
      */
-    public function after_restore($restore) {
-
-    }
-
-    /**
-     * Magic getter for read only access.
-     *
-     * @param string $name
-     */
-    public function __get($name) {
-        debugging('Please call the appropriate get_* function instead of relying on magic getters', DEBUG_DEVELOPER);
-        if (property_exists($this->element, $name)) {
-            return $this->element->$name;
+    public static function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
+        /** @var \tool_certificate\persistent\element[] $instances */
+        $instances = \tool_certificate\persistent\element::get_records($filters, $sort, $order, $skip, $limit);
+        $els = [];
+        foreach ($instances as $instance) {
+            if ($element = self::instance_from_persistent($instance)) {
+                $els[$element->get_id()] = $element;
+            }
         }
+        return $els;
     }
+
+    /**
+     * Get page
+     * @return page
+     */
+    public function get_page() : page {
+        if ($this->page === null) {
+            $this->page = page::instance($this->persistent->get('pageid'));
+        }
+        return $this->page;
+    }
+
+    /**
+     * Get template
+     * @return template
+     */
+    public function get_template() : template {
+        return $this->get_page()->get_template();
+    }
+
 }

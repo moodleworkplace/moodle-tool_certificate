@@ -44,10 +44,8 @@ class element extends \tool_certificate\element {
 
     /**
      * Constructor.
-     *
-     * @param \stdClass $element the element data
      */
-    public function __construct($element) {
+    protected function __construct() {
         global $COURSE;
 
         $this->filemanageroptions = array(
@@ -56,7 +54,7 @@ class element extends \tool_certificate\element {
             'accepted_types' => 'image'
         );
 
-        parent::__construct($element);
+        parent::__construct();
     }
 
     /**
@@ -296,29 +294,6 @@ class element extends \tool_certificate\element {
         $element->setValue($draftitemid);
 
         parent::definition_after_data($mform);
-    }
-
-    /**
-     * This function is responsible for handling the restoration process of the element.
-     *
-     * We will want to update the file's pathname hash.
-     *
-     * @param \restore_certificate_activity_task $restore
-     */
-    public function after_restore($restore) {
-        global $DB;
-
-        // Get the current data we have stored for this element.
-        $elementinfo = json_decode($this->get_data());
-
-        // Update the context.
-        $elementinfo->contextid = \context_system::instance()->id;
-
-        // Encode again before saving.
-        $elementinfo = json_encode($elementinfo);
-
-        // Perform the update.
-        $DB->set_field('tool_certificate_elements', 'data', $elementinfo, array('id' => $this->get_id()));
     }
 
     /**

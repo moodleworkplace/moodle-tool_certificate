@@ -43,7 +43,7 @@ $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_P
 
 admin_externalpage_setup('tool_certificate/managetemplates');
 
-$template = \tool_certificate\template::find_by_id($templateid);
+$template = \tool_certificate\template::instance($templateid);
 
 if (!$template->can_view_issues()) {
     print_error('issueormanagenotallowed', 'tool_certificate');

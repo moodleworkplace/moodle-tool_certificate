@@ -143,7 +143,7 @@ class element extends \tool_certificate\element {
      * @return string The formated field to be displayed
      */
     public function format_preview_data() {
-        $data = json_decode($this->data, true);
+        $data = json_decode($this->get_data(), true);
         switch ($data['display']) {
             case 'certificationname':
                 $display = get_string('previewcertificationname', 'certificateelement_program');

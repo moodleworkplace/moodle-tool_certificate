@@ -66,7 +66,7 @@ class edit_form extends \moodleform {
         if ($pages = $this->template->get_pages()) {
             $this->numpages = count($pages);
             foreach ($pages as $p) {
-                $this->add_certificate_page_elements($p);
+                $this->add_certificate_page_elements($p->to_record());
             }
         }
 
@@ -113,7 +113,8 @@ class edit_form extends \moodleform {
             // Get the pages for this certificate.
             if ($pages = $this->template->get_pages()) {
                 // Loop through the pages.
-                foreach ($pages as $p) {
+                foreach ($pages as $page) {
+                    $p = $page->to_record();
                     // Set the width.
                     $element = $mform->getElement('pagewidth_' . $p->id);
                     $element->setValue($p->width);

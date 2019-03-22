@@ -1,0 +1,88 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_certificate/edit_layout_page
+
+    The certificate edit layout
+
+    Classes required for JS:
+    * None
+
+    Data attibutes required for JS:
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "id": 1,
+        "title": "Page 1",
+        "editlabel": "Edit",
+        "deletelabel": "Delete",
+        "pagelayout": "Page layout editor",
+        "haselements": 1,
+        "elements": [
+            {"name": "Element1", "type": "Type1", "id": 1},
+            {"name": "Element2", "type": "Type2", "id": 2},
+            {"name": "Element3", "type": "Type3", "id": 3}
+        ]
+    }
+}}
+<div class="card mb-3" data-region="page" data-id="{{id}}">
+    <div class="card-header p-0" id="page-{{id}}-heading">
+        <div class="mb-0 d-flex">
+            <button class="btn btn-link text-left ws-toggle nomargin ml-1" data-toggle="collapse" data-target="#page-{{id}}" aria-expanded="true" aria-controls="page-{{id}}">
+                <span class="togglesectionicon collapsed-icon-container">
+                    {{#pix}} t/collapsedcaret, core, {{#str}} expand, moodle {{/str}}{{/pix}}
+                </span>
+                <span class="togglesectionicon expanded-icon-container">
+                    {{#pix}} t/expanded, core, {{#str}} collapse, moodle {{/str}}{{/pix}}
+                </span>
+                {{title}}
+            </button>
+            <span class="ml-auto">
+                <a class="btn btn-link p-0" data-action="moveup" href="#" data-id="{{id}}" title="{{#str}}moveup{{/str}}">
+                    {{#pix}} a/wp-arrow-up, theme {{/pix}}
+                </a>
+                <a class="btn btn-link p-0" data-action="movedown" href="#" data-id="{{id}}" title="{{#str}}movedown{{/str}}">
+                    {{#pix}} a/wp-arrow-down, theme {{/pix}}
+                </a>
+                <a class="btn btn-link p-0" data-action="editpage" href="#" data-id="{{id}}" title="{{#str}}edit{{/str}}">
+                    {{#pix}} a/wp-cog, theme {{/pix}}
+                </a>
+                <a class="btn btn-link p-0" data-action="deletepage" href="#" data-id="{{id}}" title="{{#str}}delete{{/str}}">
+                    {{#pix}} a/wp-trash, theme {{/pix}}
+                </a>
+            </span>
+        </div>
+    </div>
+    <div id="page-{{id}}" class="collapse show" aria-labelledby="page-{{id}}-heading">
+        <div class="card-body p-3">
+            <div class="row">
+                <div class="col-4">
+                    <div data-region="elementlist" data-id="{{id}}">
+                        {{> tool_certificate/edit_layout_elementlist}}
+                    </div>
+                    <div><a class="btn btn-primary" href="#" data-action="addelement" data-pageid="{{id}}">Add element</a></div>
+                </div>
+                <div class="col-8 mdl-align" data-region="pagelayout" data-id="{{id}}">
+                    {{{pagelayout}}}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

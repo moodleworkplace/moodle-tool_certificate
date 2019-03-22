@@ -57,13 +57,13 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE, 'dateformat' => 0]);
-        $formdata = (object)['name' => 'Date element', 'data' => $data,  'element' => 'date', 'pageid' => $pageid];
-        $e = \tool_certificate\element_factory::get_element_instance($formdata);
+        $formdata = (object)['name' => 'Date element', 'data' => $data];
+        $e = $this->get_generator()->new_element($pageid, 'date', $formdata);
         $this->assertFalse(empty($e->render_html()));
 
         $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_EXPIRY, 'dateformat' => 0]);
         $formdata->data = $data;
-        $e = \tool_certificate\element_factory::get_element_instance($formdata);
+        $e = $this->get_generator()->new_element($pageid, 'date', $formdata);
         $this->assertFalse(empty($e->render_html()));
     }
 
@@ -73,8 +73,7 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
     public function test_save_unique_data() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'date');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $e = $this->get_generator()->new_element($pageid, 'date');
         $newdata = (object)['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
                             'dateformat' => 'strftimedate'];
         $this->assertEquals(json_encode($newdata), $e->save_unique_data($newdata));

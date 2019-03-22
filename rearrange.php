@@ -37,7 +37,7 @@ $PAGE->set_url(new moodle_url('/admin/tool/certificate/rearrange.php', ['pid' =>
 
 $page = $DB->get_record('tool_certificate_pages', ['id' => $pid], '*', MUST_EXIST);
 
-$template = \tool_certificate\template::find_by_id($page->templateid);
+$template = \tool_certificate\template::instance($page->templateid);
 
 $template->require_manage();
 
@@ -83,7 +83,7 @@ if ($page->leftmargin) {
 if ($elements) {
     foreach ($elements as $element) {
         // Get an instance of the element class.
-        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
+        if ($e = \tool_certificate\element::instance(0, $element)) {
             switch ($element->refpoint) {
                 case \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPRIGHT:
                     $class = 'element refpoint-right';

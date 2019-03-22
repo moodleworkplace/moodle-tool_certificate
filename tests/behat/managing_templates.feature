@@ -31,12 +31,12 @@ Feature: Being able to manage site templates
     And I follow "New template"
     And I wait "3" seconds
     And I set the field "Name" to "Certificate 1"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I add the element "Border" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Width  | 5 |
       | Colour | #045ECD |
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
@@ -56,7 +56,7 @@ Feature: Being able to manage site templates
     And I set the following fields to these values:
       | Name | Certificate 1 |
       | Select tenant | Tenant 2 |
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
@@ -73,7 +73,7 @@ Feature: Being able to manage site templates
     And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
@@ -84,7 +84,7 @@ Feature: Being able to manage site templates
     And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I set the following fields to these values:
       | Page width   | 0  |
       | Page height  | 0  |
@@ -177,13 +177,13 @@ Feature: Being able to manage site templates
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Cancel" in the modal form dialogue
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (duplicate)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
       |  Select tenant | Tenant 2 |
-    And I click on "Duplicate" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Duplicate" in the modal form dialogue
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (duplicate)"
     And I should see "Tenant 2" in the "Certificate 1 (duplicate)" "table_row"

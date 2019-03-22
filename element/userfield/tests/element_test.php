@@ -64,8 +64,8 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
         $pageid = $certificate1->add_page();
         $element = $certificate1->new_element_for_page_id($pageid, 'userfield');
 
-        $formdata = (object)['name' => 'User email element', 'data' => 'email',  'element' => 'userfield', 'pageid' => $pageid];
-        $e = \tool_certificate\element_factory::get_element_instance($formdata);
+        $formdata = (object)['name' => 'User email element', 'data' => 'email'];
+        $e = $this->get_generator()->new_element($pageid, 'userfield', $formdata);
 
         $this->assertTrue(strpos($e->render_html(), '@') !== false);
 
@@ -74,8 +74,8 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
                 'shortname' => 'frogdesc', 'name' => 'Description of frog', 'categoryid' => 1,
                 'datatype' => 'textarea'));
 
-        $formdata = (object)['name' => 'User custom field element', 'data' => $id1,  'element' => 'userfield', 'pageid' => $pageid];
-        $e = \tool_certificate\element_factory::get_element_instance($formdata);
+        $formdata = (object)['name' => 'User custom field element', 'data' => $id1];
+        $e = $this->get_generator()->new_element($pageid, 'userfield', $formdata);
 
         profile_save_data((object)['id' => $USER->id, 'profile_field_frogdesc' => 'Gryffindor']);
 

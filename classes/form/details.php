@@ -47,7 +47,7 @@ class details extends modal_form {
      */
     protected function get_template() : ?template {
         if ($this->template === null && !empty($this->_ajaxformdata['id'])) {
-            $this->template = template::find_by_id($this->_ajaxformdata['id']);
+            $this->template = template::instance($this->_ajaxformdata['id']);
         }
         return $this->template;
     }

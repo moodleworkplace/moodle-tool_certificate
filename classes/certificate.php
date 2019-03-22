@@ -227,7 +227,7 @@ class certificate {
 
         $result->success = false;
         if ($issue = $DB->get_record_sql($sql, $conditions)) {
-            $template = \tool_certificate\template::find_by_id($issue->templateid);
+            $template = \tool_certificate\template::instance($issue->templateid);
             if ($template->can_verify()) {
                 $result->success = true;
                 $result->issue = $issue;

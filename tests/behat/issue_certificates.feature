@@ -62,7 +62,7 @@ Feature: Being able to manually issue a certificate to a user
     And I open the autocomplete suggestions list
     And I click on "Student 1" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     Then "Student 1" "text" should exist in the "report-table" "table"
     And I log out
@@ -75,7 +75,7 @@ Feature: Being able to manually issue a certificate to a user
     And I open the autocomplete suggestions list
     And I click on "Student 1" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     Then "Student 1" "text" should exist in the "report-table" "table"
     And I log out
 
@@ -104,7 +104,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 13"
     And I click on "User 12" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
     And I should see "User 12"
@@ -119,7 +119,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 11"
     And I click on "User 13" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should not see "User 2"
     And I should not see "User 11"
@@ -183,7 +183,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "Admin User"
     And I click on "User 13" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should see "User 13"
     And I should see "User 22"
@@ -201,7 +201,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "Admin User"
     And I click on "User 12" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 12"
     And I should not see "User 2"
