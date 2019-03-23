@@ -61,8 +61,8 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
         $this->setAdminUser();
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'userfield');
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
+        $element = $this->get_generator()->new_element($pageid, 'userfield');
 
         $formdata = (object)['name' => 'User email element', 'data' => 'email'];
         $e = $this->get_generator()->new_element($pageid, 'userfield', $formdata);

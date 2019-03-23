@@ -244,8 +244,8 @@ class tool_certificate_template_testcase extends advanced_testcase {
         // Second certificate with pages.
         $certname = 'Certificate 2';
         $certificate2 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $certificate2->add_page();
-        $certificate2->add_page();
+        $this->get_generator()->create_page($certificate2);
+        $this->get_generator()->create_page($certificate2);
 
         $certificate2->delete();
 
@@ -272,7 +272,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $certificate1->add_page();
+        $this->get_generator()->create_page($certificate1);
         $this->assertEquals(1, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
     }
 
@@ -283,8 +283,8 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $pageid1 = $certificate1->add_page();
-        $pageid2 = $certificate1->add_page();
+        $pageid1 = $this->get_generator()->create_page($certificate1)->get_id();
+        $pageid2 = $this->get_generator()->create_page($certificate1)->get_id();
         $this->assertEquals(2, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
         $certificate1->delete_page($pageid1);
         $this->assertEquals(1, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
@@ -299,7 +299,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $pagedata = (object)['tid' => $certificate1->get_id(),
                              'pagewidth_'.$pageid => 333, 'pageheight_'.$pageid => 444,
                              'pageleftmargin_'.$pageid => 333, 'pagerightmargin_'.$pageid => 444];

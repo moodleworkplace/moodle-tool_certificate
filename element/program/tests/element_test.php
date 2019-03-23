@@ -55,7 +55,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
      */
     public function test_format_preview_data() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
         $element->data = json_encode(['display' => 'certificationname']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
@@ -80,7 +80,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
      */
     public function test_format_issue_data() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
         $element->data = json_encode(['display' => 'certificationname']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
@@ -123,7 +123,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
     public function test_save_unique_data() {
         global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'program');
         $newdata = (object)['display' => 'certificationname'];
         $expected = json_encode($newdata);

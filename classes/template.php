@@ -372,49 +372,6 @@ class template {
     }
 
     /**
-     * Handles moving an item on a template.
-     *
-     * @param string $itemname the item we are moving
-     * @param int $itemid the id of the item
-     * @param string $direction the direction
-     */
-    public function move_item($itemname, $itemid, $direction) {
-        // TODO not used.
-        global $DB;
-
-        $table = 'tool_certificate_';
-        if ($itemname == 'page') {
-            $table .= 'pages';
-        } else { // Must be an element.
-            $table .= 'elements';
-        }
-
-        if ($moveitem = $DB->get_record($table, array('id' => $itemid))) {
-            // Check which direction we are going.
-            if ($direction == 'up') {
-                $sequence = $moveitem->sequence - 1;
-            } else { // Must be down.
-                $sequence = $moveitem->sequence + 1;
-            }
-
-            // Get the item we will be swapping with. Make sure it is related to the same template (if it's
-            // a page) or the same page (if it's an element).
-            if ($itemname == 'page') {
-                $params = array('templateid' => $moveitem->templateid);
-            } else { // Must be an element.
-                $params = array('pageid' => $moveitem->pageid);
-            }
-            $swapitem = $DB->get_record($table, $params + array('sequence' => $sequence));
-        }
-
-        // Check that there is an item to move, and an item to swap it with.
-        if ($moveitem && !empty($swapitem)) {
-            $DB->set_field($table, 'sequence', $swapitem->sequence, array('id' => $moveitem->id));
-            $DB->set_field($table, 'sequence', $moveitem->sequence, array('id' => $swapitem->id));
-        }
-    }
-
-    /**
      * Returns the id of the template.
      *
      * @return int the id of the template
@@ -447,7 +404,6 @@ class template {
      * @return string the name of the template
      */
     public function get_formatted_name() {
-        // TODO should be in exporter.
         return format_string($this->get_name(), true, ['escape' => false]);
     }
 
@@ -457,7 +413,6 @@ class template {
      * @return inplace_editable
      */
     public function get_editable_name() : inplace_editable {
-        // TODO should be in exporter.
         $editable = $this->can_manage();
         $displayname = $this->get_formatted_name();
         if ($editable) {
@@ -583,26 +538,6 @@ class template {
             JOIN {tool_certificate_pages} p ON p.templateid = t.id
             WHERE p.id = :id', ['id' => $id], MUST_EXIST);
         return self::instance(0, $template);
-    }
-
-    /**
-     * Returns a new element if pageid belongs to this template, false otherwise.
-     *
-     * @param int $pageid
-     * @param string $elementtype
-     * @return bool|\stdClass
-     */
-    public function new_element_for_page_id($pageid, $elementtype) {
-        // TODO only used in tests.
-        global $DB;
-        $pagetemplate = $DB->get_field('tool_certificate_pages', 'templateid', ['id' => $pageid], MUST_EXIST);
-        if ($pagetemplate != $this->get_id()) {
-            return false;
-        }
-        $element = new \stdClass();
-        $element->element = $elementtype;
-        $element->pageid = $pageid;
-        return $element;
     }
 
     /**

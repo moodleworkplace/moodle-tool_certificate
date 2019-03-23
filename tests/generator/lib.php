@@ -49,15 +49,16 @@ class tool_certificate_generator extends component_generator_base {
      * Create a page
      *
      * @param \tool_certificate\template|int $template
-     * @param null $record
+     * @param array|stdClass $record
      * @return \tool_certificate\page
      */
     public function create_page($template, $record = null) : \tool_certificate\page {
         if (!$template instanceof \tool_certificate\template) {
             $template = \tool_certificate\template::instance($template);
         }
-        $pageid = $template->add_page();
-        return \tool_certificate\page::instance($pageid);
+        $page = $template->new_page();
+        $page->save((object)($record ?: []));
+        return $page;
     }
 
     /**
