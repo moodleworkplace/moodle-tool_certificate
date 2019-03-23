@@ -1,0 +1,63 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_certificate/edit_layout
+
+    The certificate edit layout
+
+    Classes required for JS:
+    * snapdraggable
+
+    Data attibutes required for JS:
+    * All data- attributes
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "elements": [
+            {"name": "Element1", "type": "Type1", "id": 1},
+            {"name": "Element2", "type": "Type2", "id": 2},
+            {"name": "Element3", "type": "Type3", "id": 3}
+        ],
+        "leftmargin": 10,
+        "rightmargin": 10,
+        "width": 200,
+        "height": 100
+    }
+}}
+<div id="pdf{{id}}" data-region="pdf" data-pagewidth="{{width}}" data-pageheight="{{height}}" data-pagecentre="{{pagecentreoffset}}" class="snapdraggable">
+    <div data-posx="{{leftmargin}}" data-height="{{height}}" data-width="{{widthbetweenmargins}}" class="snapdraggable"></div>
+    <div data-region='pagecenter' data-height="{{height}}" class="snapdraggable"></div>
+    {{#elements}}
+        <a href="#" data-region="pdfelement" id="element-{{id}}" data-action="editelement" data-id="{{id}}" data-name="{{name}}"
+            data-fontsize="{{fontsize}}" {{#width}}data-width="{{width}}"{{/width}}
+            {{#draggable}}data-drag-type="move" data-refpoint="{{refpoint}}" data-posx="{{posx}}" data-posy="{{posy}}"{{/draggable}}>
+        {{{html}}}
+        </a>
+    {{/elements}}
+    {{#leftmargin}}
+    <div data-posx="{{leftmargin}}" data-height="{{height}}" class="verticalline dottedline"></div>
+    {{/leftmargin}}
+    {{#rightmargin}}
+    <div data-posx="{{rightmarginoffset}}" data-height="{{height}}" class="verticalline dottedline"></div>
+    {{/rightmargin}}
+    <div data-height="{{height}}" data-posx="0" class="verticalline solidline"></div>
+    <div data-height="{{height}}" data-posx="{{width}}" class="verticalline solidline"></div>
+    <div data-width="{{width}}" data-posy="0" class="horizontalline solidline"></div>
+    <div data-width="{{width}}" data-posy="{{height}}" class="horizontalline solidline"></div>
+</div>

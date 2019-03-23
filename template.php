@@ -23,5 +23,48 @@
  */
 
 require_once(__DIR__ . '/../../../config.php');
+require_once($CFG->libdir . '/adminlib.php');
 
-admin_externalpage_setup('tool_certificate/managetemplates');
+$pageid = optional_param('pageid', 0, PARAM_INT);
+$action = optional_param('action', null, PARAM_ALPHANUMEXT);
+if ($pageid && $action) {
+    $page = \tool_certificate\page::instance($pageid);
+    $template = $page->get_template();
+} else {
+    $templateid = required_param('id', PARAM_INT);
+    $template = \tool_certificate\template::instance($templateid);
+}
+
+$pageurl = new moodle_url('/admin/tool/certificate/template.php', array('id' => $template->get_id()));
+admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+
+$template->require_manage();
+
+if ($action && $pageid) {
+    require_sesskey();
+    if ($action === 'moveuppage') {
+        $template->move_page($pageid, -1);
+    } else if ($action === 'movedownpage') {
+        $template->move_page($pageid, 1);
+    } else if ($action === 'deletepage') {
+        $template->delete_page($pageid);
+    }
+    redirect($pageurl);
+}
+
+$heading = $template->get_formatted_name();
+$PAGE->navbar->add($heading, $pageurl);
+
+$PAGE->set_title($heading);
+$PAGE->set_heading($heading);
+
+$output = $PAGE->get_renderer('tool_certificate');
+$edit = new \tool_wp\output\page_header_button(get_string('editdetails', 'tool_certificate'),
+    ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
+$PAGE->set_button($edit->render($output) . $PAGE->button);
+
+echo $OUTPUT->header();
+
+$data = $template->get_exporter()->export($OUTPUT);
+echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $data);
+echo $OUTPUT->footer();

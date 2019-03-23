@@ -80,8 +80,7 @@ class page {
      */
     public function get_elements() {
         if ($this->elements === null) {
-            $this->elements = \tool_certificate\element::get_records(
-                ['pageid' => $this->persistent->get('id')], 'sequence', 'ASC');
+            $this->elements = \tool_certificate\element::get_elements_in_page($this);
         }
         return $this->elements;
     }
@@ -105,19 +104,19 @@ class page {
     /**
      * Load a list of records.
      *
-     * @param array $filters Filters to apply.
-     * @param string $sort Field to sort by.
-     * @param string $order Sort order.
-     * @param int $skip Limitstart.
-     * @param int $limit Number of rows to return.
+     * @param template $template
      *
      * @return self[]
      */
-    public static function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
-        $instances = \tool_certificate\persistent\page::get_records($filters, $sort, $order, $skip, $limit);
+    public static function get_pages_in_template(template $template) {
+        /** @var \tool_certificate\persistent\page[] $instances */
+        $instances = \tool_certificate\persistent\page::get_records(
+            ['templateid' => $template->get_id()], 'sequence', 'ASC');
         $pages = [];
         foreach ($instances as $instance) {
-            $pages[$instance->get('id')] = self::instance_from_persistent($instance);
+            $page = self::instance_from_persistent($instance);
+            $page->template = $template;
+            $pages[$instance->get('id')] = $page;
         }
         return $pages;
     }
@@ -149,28 +148,46 @@ class page {
     }
 
     /**
-     * Duplicate page
+     * Save with new data
+     *
+     * @param \stdClass $data
+     */
+    public function save(\stdClass $data) {
+        $properties = \tool_certificate\persistent\page::properties_definition();
+        foreach ($data as $key => $value) {
+            if (array_key_exists($key, $properties) && $key !== 'id') {
+                $this->persistent->set($key, $value);
+            }
+        }
+        $this->persistent->save();
+    }
+
+    /**
+     * Duplicate page with all elements (used inside "duplicate template" task)
      *
      * @param int $templateid target template id
-     * @param bool $withelements
      * @return page
      */
-    public function duplicate(int $templateid, bool $withelements = true) : page {
+    public function duplicate(int $templateid) : page {
         $record = $this->persistent->to_record();
         unset($record->id, $record->timemodified, $record->timecreated);
-        if ($templateid == $record->templateid) {
-            $record->sequence++;
-        }
         $record->templateid = $templateid;
         $page = self::instance(0, $record);
         $page->persistent->save();
 
-        if ($withelements) {
-            foreach ($this->get_elements() as $el) {
-                $el->duplicate($page->get_id());
-            }
+        foreach ($this->get_elements() as $el) {
+            $el->duplicate($page->get_id());
         }
 
         return $page;
+    }
+
+    /**
+     * Export
+     *
+     * @return output\page
+     */
+    public function get_exporter() : \tool_certificate\output\page {
+        return new \tool_certificate\output\page($this->persistent, ['page' => $this]);
     }
 }

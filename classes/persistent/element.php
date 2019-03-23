@@ -129,6 +129,6 @@ class element extends persistent {
         if ($this->get('id') && $this->get('pageid') && (int)$value != $this->get('pageid')) {
             throw new \coding_exception('Page of existing element can not be changed');
         }
-        return $this->raw_set('element', $value);
+        return $this->raw_set('pageid', $value);
     }
 }

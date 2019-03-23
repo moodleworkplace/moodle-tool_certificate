@@ -73,4 +73,57 @@ class elements extends \external_api {
     public static function delete_element_returns() {
         return null;
     }
+
+    /**
+     * Returns the update_element() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function update_element_parameters() {
+        return new \external_function_parameters(
+            array(
+                'id' => new \external_value(PARAM_INT, 'Element id'),
+                'sequence' => new \external_value(PARAM_INT, 'Sequence', VALUE_DEFAULT, -1),
+                'posx' => new \external_value(PARAM_INT, 'X position', VALUE_DEFAULT, -1),
+                'posy' => new \external_value(PARAM_INT, 'Y position', VALUE_DEFAULT, -1),
+            )
+        );
+    }
+
+    /**
+     * Handles update element
+     *
+     * @param int $elementid
+     * @param int $sequence
+     * @param int $posx
+     * @param int $posy
+     */
+    public static function update_element($elementid, $sequence, $posx, $posy) {
+        $params = self::validate_parameters(self::update_element_parameters(),
+            ['id' => $elementid, 'sequence' => $sequence, 'posx' => $posx, 'posy' => $posy]);
+        self::validate_context(\context_system::instance());
+        $template = template::find_by_element_id($params['id']);
+        $template->require_manage();
+        if ($params['sequence'] > 0) {
+            return $template->update_element_sequence($params['id'], $params['sequence']);
+        }
+        if ($params['posx'] >= 0 && $params['posy'] >= 0) {
+            foreach ($template->get_pages() as $page) {
+                foreach ($page->get_elements() as $element) {
+                    if ($element->get_id() == $params['id']) {
+                        $element->save((object)['posx' => $params['posx'], 'posy' => $params['posy']]);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the update_element result value.
+     */
+    public static function update_element_returns() {
+        return new \external_value(PARAM_BOOL, 'success');
+    }
 }

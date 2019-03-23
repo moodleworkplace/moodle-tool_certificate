@@ -89,10 +89,28 @@ class template {
      */
     public function get_pages() {
         if ($this->pages === null) {
-            $this->pages = \tool_certificate\page::get_records(
-                ['templateid' => $this->persistent->get('id')], 'sequence', 'ASC');
+            $this->pages = \tool_certificate\page::get_pages_in_template($this);
         }
         return $this->pages;
+    }
+
+    /**
+     * New page (not saved)
+     *
+     * @return page
+     */
+    public function new_page() {
+        $pages = $this->get_pages();
+
+        if ($pages) {
+            $lastpage = array_pop($pages);
+            $data = $lastpage->to_record();
+            unset($data->id, $data->timecreated, $data->timemodified);
+            $data->sequence++;
+        } else {
+            $data = (object)['templateid' => $this->get_id()];
+        }
+        return page::instance(0, $data);
     }
 
     /**
@@ -101,14 +119,9 @@ class template {
      * @return int the id of the page
      */
     public function add_page() {
-        $pages = $this->get_pages();
-
-        if ($pages) {
-            $lastpage = array_pop($pages);
-        } else {
-            $lastpage = page::instance(0, (object)['templateid' => $this->get_id()]);
-        }
-        $page = $lastpage->duplicate($this->get_id(), false);
+        // TODO only used in unittests.
+        $page = $this->new_page();
+        $page->save((object)[]);
         $this->pages = null;
         return $page->get_id();
     }
@@ -302,6 +315,63 @@ class template {
     }
 
     /**
+     * Move page up or down one
+     *
+     * @param int $pageid
+     * @param int $direction
+     */
+    public function move_page(int $pageid, int $direction) {
+        $pages = $this->get_pages();
+        $ids = array_keys($pages);
+        if (($idx = array_search($pageid, $ids)) === false) {
+            return;
+        }
+        if ($idx + $direction < 0 || $idx + $direction >= count($pages)) {
+            return;
+        }
+        $t = $ids[$idx + $direction];
+        $ids[$idx + $direction] = $ids[$idx];
+        $ids[$idx] = $t;
+        foreach ($ids as $sequence => $id) {
+            $pages[$id]->save((object)['sequence' => $sequence]);
+        }
+        $this->pages = null;
+    }
+
+    /**
+     * Update element sequence
+     *
+     * @param int $elementid
+     * @param int $sequence
+     * @return bool
+     */
+    public function update_element_sequence(int $elementid, int $sequence) {
+        if ($sequence < 1) {
+            return false;
+        }
+        foreach ($this->get_pages() as $page) {
+            $elementids = array_keys($page->get_elements());
+            if (!in_array($elementid, $elementids)) {
+                continue;
+            }
+            if ($sequence > count($elementids)) {
+                return false;
+            }
+            $elementids = array_diff($elementids, [$elementid]);
+            array_splice($elementids, $sequence - 1, 0, [$elementid]);
+            $idx = 1;
+            foreach ($elementids as $id) {
+                if ($page->get_elements()[$id]->get_sequence() != $idx) {
+                    $page->get_elements()[$id]->save((object)['sequence' => $idx]);
+                }
+                $idx++;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Handles moving an item on a template.
      *
      * @param string $itemname the item we are moving
@@ -309,6 +379,7 @@ class template {
      * @param string $direction the direction
      */
     public function move_item($itemname, $itemid, $direction) {
+        // TODO not used.
         global $DB;
 
         $table = 'tool_certificate_';
@@ -463,7 +534,7 @@ class template {
      * @return \moodle_url
      */
     public function edit_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/edit.php', ['tid' => $this->get_id()]);
+        return new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->get_id()]);
     }
 
     /**
@@ -483,15 +554,6 @@ class template {
      */
     public static function manage_url(): \moodle_url {
         return new \moodle_url('/admin/tool/certificate/manage_templates.php');
-    }
-
-    /**
-     * The URL to create a new certificate template
-     *
-     * @return \moodle_url
-     */
-    public static function new_template_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/edit.php');
     }
 
     /**
@@ -857,5 +919,14 @@ class template {
         foreach ($issues as $issue) {
             \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
         }
+    }
+
+    /**
+     * Export
+     *
+     * @return output\template
+     */
+    public function get_exporter() : \tool_certificate\output\template {
+        return new \tool_certificate\output\template($this->persistent, ['template' => $this]);
     }
 }

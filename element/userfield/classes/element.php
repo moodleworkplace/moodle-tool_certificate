@@ -80,14 +80,16 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the text
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        return $data->userfield;
+    public function save(\stdClass $data) {
+        if (property_exists($data, 'userfield')) {
+            $data->data = $data->userfield;
+        }
+        parent::save($data);
     }
 
     /**
@@ -112,8 +114,9 @@ class element extends \tool_certificate\element {
                     require_once($CFG->dirroot . '/user/profile/lib.php');
                     require_once($file);
                     $class = "profile_field_{$field->datatype}";
-                    $field = new $class($field->id, $user->id);
-                    $value = $field->display_data();
+                    /** @var \profile_field_base $pfield */
+                    $pfield = new $class($field->id, $user->id);
+                    $value = $pfield->display_data();
                 }
             }
         } else if (!empty($user->$field)) { // Field in the user table.
@@ -146,8 +149,9 @@ class element extends \tool_certificate\element {
                     require_once($CFG->dirroot . '/user/profile/lib.php');
                     require_once($file);
                     $class = "profile_field_{$field->datatype}";
-                    $field = new $class($field->id, $USER->id);
-                    if ($fieldvalue = $field->display_data()) {
+                    /** @var \profile_field_base $pfield */
+                    $pfield = new $class($field->id, $USER->id);
+                    if ($fieldvalue = $pfield->display_data()) {
                         // Ok, found a value for the user, let's show that instead.
                         $value = $fieldvalue;
                     }

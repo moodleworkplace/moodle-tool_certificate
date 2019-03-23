@@ -52,11 +52,11 @@ class page extends persistent {
             ),
             'width' => array(
                 'type' => PARAM_INT,
-                'default' => 0,
+                'default' => 297,
             ),
             'height' => array(
                 'type' => PARAM_INT,
-                'default' => 0,
+                'default' => 210,
             ),
             'leftmargin' => array(
                 'type' => PARAM_INT,
@@ -71,6 +71,20 @@ class page extends persistent {
                 'default' => 0
             ),
         );
+    }
+
+    /**
+     * Magic setter for pageid
+     *
+     * @param int $value
+     * @return element
+     * @throws \coding_exception
+     */
+    protected function set_templateid($value) {
+        if ($this->get('id') && $this->get('templateid') && (int)$value != $this->get('templateid')) {
+            throw new \coding_exception('Template of existing page can not be changed');
+        }
+        return $this->raw_set('templateid', $value);
     }
 
 }

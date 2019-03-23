@@ -57,18 +57,20 @@ class tool_certificate_border_element_test_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $e = $this->get_generator()->new_element($pageid, 'border');
-        // The border is not printed in html when positioning elements.
-        $this->assertTrue(empty($e->render_html()));
+        $this->assertNotEmpty($e->render_html());
     }
 
     /**
      * Test save_unique_data
      */
     public function test_save_unique_data() {
+        global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $e = $this->get_generator()->new_element($pageid, 'border');
         $newdata = (object)['width' => 300];
-        $this->assertEquals($newdata->width, $e->save_unique_data($newdata));
+        $e->save($newdata);
+        $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
+        $this->assertEquals($newdata->width, $el->data);
     }
 }

@@ -24,6 +24,8 @@
 
 namespace certificateelement_border;
 
+use tool_certificate\element_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -35,6 +37,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class element extends \tool_certificate\element {
 
+    /** @var bool $hasposition Element can be positioned (has x, y, refpoint) */
+    protected $hasposition = false;
+
+    /** @var bool $istext This is a text element, it has font, color and width limiter */
+    protected $istext = false;
+
     /**
      * This function renders the form elements when adding a certificate element.
      *
@@ -42,12 +50,13 @@ class element extends \tool_certificate\element {
      */
     public function render_form_elements($mform) {
         // We want to define the width of the border.
-        $mform->addElement('text', 'width', get_string('width', 'certificateelement_border'), array('size' => 10));
-        $mform->setType('width', PARAM_INT);
-        $mform->addHelpButton('width', 'width', 'certificateelement_border');
+        element_helper::render_form_element_width($mform, 'certificateelement_border');
+        $mform->setDefault('width', 1);
 
         // The only other thing to define is the colour we want the border to be.
-        \tool_certificate\element_helper::render_form_element_colour($mform);
+        element_helper::render_form_element_colour($mform);
+
+        parent::render_form_elements($mform);
     }
 
     /**
@@ -60,7 +69,8 @@ class element extends \tool_certificate\element {
      */
     public function render($pdf, $preview, $user, $issue) {
         $colour = \TCPDF_COLORS::convertHTMLColorToDec($this->get_colour(), $colour);
-        $pdf->SetLineStyle(array('width' => $this->get_data(), 'color' => $colour));
+        // Set double width because half of the width will be outside of the page.
+        $pdf->SetLineStyle(array('width' => 2 * $this->get_data(), 'color' => $colour));
         $pdf->Line(0, 0, $pdf->getPageWidth(), 0);
         $pdf->Line($pdf->getPageWidth(), 0, $pdf->getPageWidth(), $pdf->getPageHeight());
         $pdf->Line(0, $pdf->getPageHeight(), $pdf->getPageWidth(), $pdf->getPageHeight());
@@ -76,29 +86,24 @@ class element extends \tool_certificate\element {
      * @return string the html
      */
     public function render_html() {
-        return '';
-    }
+        $html = '';
+        $page = $this->get_page()->to_record();
+        $width = $this->get_data();
+        $style = 'position: absolute; background-color: ' . $this->get_colour() . '';
+        $html .= \html_writer::tag('div', '',
+            ['data-width' => $width, 'data-height' => $page->height, 'style' => $style,
+                'data-posx' => 0, 'data-posy' => 0]);
+        $html .= \html_writer::tag('div', '',
+            ['data-width' => $width, 'data-height' => $page->height, 'style' => $style,
+                'data-posx' => $page->width - $width, 'data-posy' => 0]);
+        $html .= \html_writer::tag('div', '',
+            ['data-width' => $page->width, 'data-height' => $width, 'style' => $style,
+                'data-posx' => 0, 'data-posy' => 0]);
+        $html .= \html_writer::tag('div', '',
+            ['data-width' => $page->width, 'data-height' => $width, 'style' => $style,
+                'data-posx' => 0, 'data-posy' => $page->height - $width]);
 
-    /**
-     * Performs validation on the element values.
-     *
-     * @param array $data the submitted data
-     * @param array $files the submitted files
-     * @return array the validation errors
-     */
-    public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        $errors = array();
-
-        // Check if width is not set, or not numeric or less than 0.
-        if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] <= 0)) {
-            $errors['width'] = get_string('invalidwidth', 'certificateelement_border');
-        }
-
-        // Validate the colour.
-        $errors += \tool_certificate\element_helper::validate_form_element_colour($data);
-
-        return $errors;
+        return $html;
     }
 
     /**
@@ -115,13 +120,15 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        return $data->width;
+    public function save(\stdClass $data) {
+        if (property_exists($data, 'width')) {
+            $data->data = $data->width;
+        }
+        parent::save($data);
     }
 }

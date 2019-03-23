@@ -36,31 +36,21 @@
         ]
     }
 }}
-{{#haselements}}
-<table class="generaltable elementstable p-1">
-    <thead>
-    <tr>
-        <th class="mdl-left">{{#str}}name, tool_certificate{{/str}}</th>
-        <th class="mdl-left">{{#str}}type, tool_certificate{{/str}}</th>
-        <th class="mdl-right lastcol"></th>
-    </tr>
-    </thead>
-    <tbody>
+<div data-region="elementlist" data-id="{{id}}">
     {{#elements}}
-        <tr>
-            <td class="mdl-left">{{> core/drag_handle}}{{{name}}}</td>
-            <td class="mdl-left">{{{type}}}</td>
-            <td class="mdl-right">
-                <a class="btn btn-link p-0" data-action="editelement" href="#" data-id="{{id}}" title="{{#str}}edit{{/str}}">
+        <div data-region="pageelement" data-id="{{id}}" class="mb-2 mt-2 d-flex">
+            {{> core/drag_handle}}
+            <span>{{{icon}}}</span>
+            {{#editablename}}{{> core/inplace_editable}}{{/editablename}} - {{sequence}}
+
+            <span class="ml-auto">
+                <a class="btn btn-link p-0" data-action="editelement" href="#" data-id="{{id}}" data-name="{{name}}" title="{{#str}}edit{{/str}}">
                     {{#pix}} a/wp-cog, theme {{/pix}}
                 </a>
-                <a class="btn btn-link p-0" data-action="deleteelement" href="#" data-id="{{id}}" title="{{#str}}delete{{/str}}">
+                <a class="btn btn-link p-0" data-action="deleteelement" href="#" data-id="{{id}}" data-name="{{name}}" title="{{#str}}delete{{/str}}">
                     {{#pix}} a/wp-trash, theme {{/pix}}
                 </a>
-
-            </td>
-        </tr>
+            </span>
+        </div>
     {{/elements}}
-    </tbody>
-</table>
-{{/haselements}}
+</div>
