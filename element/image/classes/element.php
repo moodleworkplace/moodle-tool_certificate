@@ -42,6 +42,9 @@ class element extends \tool_certificate\element {
      */
     protected $filemanageroptions = array();
 
+    /** @var bool $istext This is a text element, it has font, color and width limiter */
+    protected $istext = false;
+
     /**
      * Constructor.
      */
@@ -65,52 +68,13 @@ class element extends \tool_certificate\element {
     public function render_form_elements($mform) {
         $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
 
-        $mform->addElement('text', 'width', get_string('width', 'certificateelement_image'), array('size' => 10));
-        $mform->setType('width', PARAM_INT);
-        $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'certificateelement_image');
-
-        $mform->addElement('text', 'height', get_string('height', 'certificateelement_image'), array('size' => 10));
-        $mform->setType('height', PARAM_INT);
-        $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'certificateelement_image');
-
-        if ($this->showposxy) {
-            \tool_certificate\element_helper::render_form_element_position($mform);
-            element_helper::render_form_element_refpoint($mform);
-        }
+        element_helper::render_form_element_width($mform, 'certificateelement_image');
+        element_helper::render_form_element_height($mform, 'certificateelement_image');
 
         $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
-    }
 
-    /**
-     * Performs validation on the element values.
-     *
-     * @param array $data the submitted data
-     * @param array $files the submitted files
-     * @return array the validation errors
-     */
-    public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        $errors = array();
-
-        // Check if width is not set, or not numeric or less than 0.
-        if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
-            $errors['width'] = get_string('invalidwidth', 'certificateelement_image');
-        }
-
-        // Check if height is not set, or not numeric or less than 0.
-        if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
-            $errors['height'] = get_string('invalidheight', 'certificateelement_image');
-        }
-
-        // Validate the position.
-        if ($this->showposxy) {
-            $errors += \tool_certificate\element_helper::validate_form_element_position($data);
-        }
-
-        return $errors;
+        parent::render_form_elements($mform);
     }
 
     /**
@@ -118,22 +82,19 @@ class element extends \tool_certificate\element {
      * Can be overridden if more functionality is needed.
      *
      * @param \stdClass $data the form data
-     * @return bool true of success, false otherwise.
      */
-    public function save_form_elements($data) {
-        global $COURSE, $SITE;
-
-        // Set the context.
-        if ($COURSE->id == $SITE->id) {
-            $context = \context_system::instance();
-        } else {
-            $context = \context_course::instance($COURSE->id);
+    public function save(\stdClass $data) {
+        // Handle file uploads.
+        if (property_exists($data, 'certificateimage')) {
+            \tool_certificate\certificate::upload_files($data->certificateimage,
+                $this->get_template()->get_context()->id);
         }
 
-        // Handle file uploads.
-        \tool_certificate\certificate::upload_files($data->certificateimage, $context->id);
+        if (property_exists($data, 'height')) {
+            $data->data = $this->calculate_additional_data($data);
+        }
 
-        return parent::save_form_elements($data);
+        parent::save($data);
     }
 
     /**
@@ -143,7 +104,7 @@ class element extends \tool_certificate\element {
      * @param \stdClass $data the form data
      * @return string the json encoded array
      */
-    public function save_unique_data($data) {
+    private function calculate_additional_data($data) {
         $arrtostore = [
             'width' => !empty($data->width) ? (int) $data->width : 0,
             'height' => !empty($data->height) ? (int) $data->height : 0
@@ -188,15 +149,7 @@ class element extends \tool_certificate\element {
         }
 
         if ($file = $this->get_file()) {
-            $location = make_request_directory() . '/target';
-            $file->copy_content_to($location);
-
-            $mimetype = $file->get_mimetype();
-            if ($mimetype == 'image/svg+xml') {
-                $pdf->ImageSVG($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
-            } else {
-                $pdf->Image($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
-            }
+            element_helper::render_image($pdf, $this, $file, [], $imageinfo->width, $imageinfo->height);
         }
     }
 
@@ -228,27 +181,10 @@ class element extends \tool_certificate\element {
             $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'tool_certificate', 'image', $file->get_itemid(),
                 $file->get_filepath(), $file->get_filename());
             $fileimageinfo = $file->get_imageinfo();
-            $whratio = $fileimageinfo['width'] / $fileimageinfo['height'];
-            // The size of the images to use in the CSS style.
-            $style = '';
-            if ($imageinfo->width === 0 && $imageinfo->height === 0) {
-                $style .= 'width: ' . $fileimageinfo['width'] . 'px; ';
-                $style .= 'height: ' . $fileimageinfo['height'] . 'px';
-            } else if ($imageinfo->width === 0) { // Then the height must be set.
-                // We must get the width based on the height to keep the ratio.
-                $style .= 'width: ' . ($imageinfo->height * $whratio) . 'mm; ';
-                $style .= 'height: ' . $imageinfo->height . 'mm';
-            } else if ($imageinfo->height === 0) { // Then the width must be set.
-                $style .= 'width: ' . $imageinfo->width . 'mm; ';
-                // We must get the height based on the width to keep the ratio.
-                $style .= 'height: ' . ($imageinfo->width / $whratio) . 'mm';
-            } else { // Must both be set.
-                $style .= 'width: ' . $imageinfo->width . 'mm; ';
-                $style .= 'height: ' . $imageinfo->height . 'mm';
-            }
 
-            return \html_writer::tag('img', '', array('src' => $url, 'style' => $style));
+            return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo->width, (float)$imageinfo->height);
         }
+        return '';
     }
 
     /**

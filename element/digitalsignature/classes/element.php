@@ -90,20 +90,8 @@ class element extends \certificateelement_image\element {
         $mform->setType('signaturecontactinfo', PARAM_TEXT);
         $mform->setDefault('signaturecontactinfo', '');
 
-        $mform->addElement('text', 'width', get_string('width', 'certificateelement_image'), array('size' => 10));
-        $mform->setType('width', PARAM_INT);
-        $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'certificateelement_image');
-
-        $mform->addElement('text', 'height', get_string('height', 'certificateelement_image'), array('size' => 10));
-        $mform->setType('height', PARAM_INT);
-        $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'certificateelement_image');
-
-        if ($this->showposxy) {
-            \tool_certificate\element_helper::render_form_element_position($mform);
-            element_helper::render_form_element_refpoint($mform);
-        }
+        element_helper::render_form_element_width($mform, 'certificateelement_image');
+        element_helper::render_form_element_height($mform, 'certificateelement_image');
 
         $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
@@ -111,6 +99,8 @@ class element extends \certificateelement_image\element {
         $mform->addElement('filemanager', 'digitalsignature',
             get_string('uploaddigitalsignature', 'certificateelement_digitalsignature'), '',
             $this->signaturefilemanageroptions);
+
+        \tool_certificate\element::render_form_elements($mform);
     }
 
     /**
@@ -118,25 +108,25 @@ class element extends \certificateelement_image\element {
      * Can be overridden if more functionality is needed.
      *
      * @param \stdClass $data the form data
-     * @return bool true of success, false otherwise.
      */
-    public function save_form_elements($data) {
-        global $COURSE, $SITE;
-
-        // Set the context.
-        if ($COURSE->id == $SITE->id) {
-            $context = \context_system::instance();
-        } else {
-            $context = \context_course::instance($COURSE->id);
+    public function save(\stdClass $data) {
+        // Handle file uploads.
+        if (property_exists($data, 'certificateimage')) {
+            \tool_certificate\certificate::upload_files($data->certificateimage,
+                $this->get_template()->get_context()->id);
         }
 
-        // Handle file uploads.
-        \tool_certificate\certificate::upload_files($data->certificateimage, $context->id);
-
         // Handle file certificate uploads.
-        \tool_certificate\certificate::upload_files($data->digitalsignature, $context->id, 'signature');
+        if (property_exists($data, 'digitalsignature')) {
+            \tool_certificate\certificate::upload_files($data->digitalsignature,
+                $this->get_template()->get_context()->id, 'signature');
+        }
 
-        return parent::save_form_elements($data);
+        if (property_exists($data, 'signaturename')) {
+            $data->data = $this->calculate_additional_data($data);
+        }
+
+        \tool_certificate\element::save($data);
     }
 
     /**
@@ -146,7 +136,7 @@ class element extends \certificateelement_image\element {
      * @param \stdClass $data the form data
      * @return string the json encoded array
      */
-    public function save_unique_data($data) {
+    private function calculate_additional_data($data) {
         $arrtostore = [
             'signaturename' => $data->signaturename,
             'signaturepassword' => $data->signaturepassword,
@@ -214,15 +204,7 @@ class element extends \certificateelement_image\element {
         }
 
         if ($file = $this->get_file()) {
-            $location = make_request_directory() . '/target';
-            $file->copy_content_to($location);
-
-            $mimetype = $file->get_mimetype();
-            if ($mimetype == 'image/svg+xml') {
-                $pdf->ImageSVG($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
-            } else {
-                $pdf->Image($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
-            }
+            element_helper::render_image($pdf, $this, $file, [], $imageinfo->width, $imageinfo->height);
         }
 
         if ($signaturefile = $this->get_signature_file()) {

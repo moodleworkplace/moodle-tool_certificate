@@ -120,10 +120,7 @@ class element_helper {
             $fontstyle .= '; font-style: italic';
         }
 
-        $style = $fontstyle . '; color: ' . $element->get_colour() . '; font-size: ' . $element->get_fontsize() . 'pt;';
-        if ($element->get_width()) {
-            $style .= ' width: ' . $element->get_width() . 'mm';
-        }
+        $style = $fontstyle . '; color: ' . $element->get_colour() . ';';
         return \html_writer::div($content, '', array('style' => $style));
     }
 
@@ -153,6 +150,10 @@ class element_helper {
         $mform->setType('colour', PARAM_RAW); // Need to validate that this is a valid colour.
         $mform->setDefault('colour', '#000000');
         $mform->addHelpButton('colour', 'fontcolour', 'tool_certificate');
+
+        $mform->addFormRule(function($data, $files) {
+            return element_helper::validate_form_element_colour($data);
+        });
     }
 
     /**
@@ -172,19 +173,78 @@ class element_helper {
         $mform->setDefault('posy', 0);
         $mform->addHelpButton('posy', 'posy', 'tool_certificate');
         $mform->setAdvanced('posy');
+
+        $mform->addFormRule(function($data, $files) {
+            return element_helper::validate_form_element_position($data);
+        });
     }
 
     /**
-     * Helper function to render the width element.
+     * Helper function to render the width element (the width limiter for the text, advanced element)
      *
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
-    public static function render_form_element_width($mform) {
+    public static function render_form_element_text_width($mform) {
         $mform->addElement('text', 'width', get_string('elementwidth', 'tool_certificate'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
         $mform->addHelpButton('width', 'elementwidth', 'tool_certificate');
         $mform->setAdvanced('width');
+
+        $mform->addFormRule(function($data, $files) {
+            $errors = [];
+            // Check if width is less than 0.
+            if (isset($data['width']) && $data['width'] < 0) {
+                $errors['width'] = get_string('invalidelementwidth', 'tool_certificate');
+            }
+            return $errors;
+        });
+    }
+
+    /**
+     * Helper function to render the width of an element (an image)
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     * @param string $stringcomponent component for the strings:
+     *     'width', 'width_help', 'invalidwidth'
+     */
+    public static function render_form_element_width($mform, $stringcomponent = 'certificateelement_image') {
+        $mform->addElement('text', 'width', get_string('width', $stringcomponent), array('size' => 10));
+        $mform->setType('width', PARAM_INT);
+        $mform->setDefault('width', 0);
+        $mform->addHelpButton('width', 'width', $stringcomponent);
+
+        $mform->addFormRule(function($data, $files) use ($stringcomponent) {
+            $errors = [];
+            // Check if width is not set, or not numeric or less than 0.
+            if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
+                $errors['width'] = get_string('invalidwidth', $stringcomponent);
+            }
+            return $errors;
+        });
+    }
+
+    /**
+     * Helper function to render the height of an element (an image)
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     * @param string $stringcomponent component for the strings:
+     *     'height', 'height_help', 'invalidheight'
+     */
+    public static function render_form_element_height($mform, $stringcomponent = 'certificateelement_image') {
+        $mform->addElement('text', 'height', get_string('height', $stringcomponent), array('size' => 10));
+        $mform->setType('height', PARAM_INT);
+        $mform->setDefault('height', 0);
+        $mform->addHelpButton('height', 'height', $stringcomponent);
+
+        $mform->addFormRule(function($data, $files) use ($stringcomponent) {
+            $errors = [];
+            // Check if height is not set, or not numeric or less than 0.
+            if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
+                $errors['height'] = get_string('invalidheight', $stringcomponent);
+            }
+            return $errors;
+        });
     }
 
     /**
@@ -235,23 +295,6 @@ class element_helper {
         // Check if posy is not set, or not numeric or less than 0.
         if ((!isset($data['posy'])) || (!is_numeric($data['posy'])) || ($data['posy'] < 0)) {
             $errors['posy'] = get_string('invalidposition', 'tool_certificate', 'Y');
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Helper function to perform validation on the width element.
-     *
-     * @param array $data the submitted data
-     * @return array the validation errors
-     */
-    public static function validate_form_element_width($data) {
-        $errors = array();
-
-        // Check if width is less than 0.
-        if (isset($data['width']) && $data['width'] < 0) {
-            $errors['width'] = get_string('invalidelementwidth', 'tool_certificate');
         }
 
         return $errors;
@@ -381,13 +424,13 @@ class element_helper {
 
         // Loop through the enabled plugins.
         foreach ($plugins as $plugin) {
+            /** @var element $classname */
             $classname = '\\certificateelement_' . $plugin. '\\element';
             // Ensure the necessary class exists.
-            if (class_exists($classname)) {
+            if (class_exists($classname) && is_subclass_of($classname, element::class)) {
                 // Additionally, check if the user is allowed to add the element at all.
                 if ($classname::can_add()) {
-                    $component = "certificateelement_{$plugin}";
-                    $options[$plugin] = get_string('pluginname', $component);
+                    $options[$plugin] = $classname::get_element_type_name();
                 }
             }
         }
@@ -480,5 +523,72 @@ class element_helper {
         }
 
         return $sizes;
+    }
+
+    /**
+     * Helps to render an image element and calculate width and height
+     *
+     * @param string $url
+     * @param array $imageinfo array with 'width' and 'height' attributes for width and height of image in px
+     * @param float $width display width in mm, 0 for automatic
+     * @param float $height display height in mm, 0 for automatic
+     * @return string
+     */
+    public static function render_image_html(string $url, array $imageinfo, float $width, float $height) {
+        if (!$width && !$height) {
+            // Width and height are not set, convert px to mm.
+            // 1 px = 1/96 inch = 0.264583 mm .
+            $width = (float)$imageinfo['width'] * 0.264583;
+            $height = (float)$imageinfo['height'] * 0.264583;
+        } else if (!$width || !$height) {
+            $whratio = (float)$imageinfo['width'] / (float)$imageinfo['height'];
+            $width = $width ?: $height * $whratio;
+            $height = $height ?: $width / $whratio;
+        }
+
+        return \html_writer::tag('img', '', array('src' => $url,
+            'data-width' => $width, 'data-height' => $height));
+    }
+
+    /**
+     * Helps to render an image element in PDF
+     *
+     * @param \pdf $pdf
+     * @param element $element
+     * @param \stored_file|string $file
+     * @param array $imageinfo
+     * @param int $width
+     * @param int $height
+     */
+    public static function render_image(\pdf $pdf, element $element, $file, array $imageinfo, $width, $height) {
+        if ($file instanceof \stored_file) {
+            $location = make_request_directory() . '/target';
+            $file->copy_content_to($location);
+
+            $mimetype = $file->get_mimetype();
+            $imageinfo = $file->get_imageinfo();
+        } else {
+            $location = $file;
+            $mimetype = 'image/jpg';
+        }
+
+        if (!$width && !$height) {
+            // Width and height are not set, convert px to mm.
+            // 1 px = 1/96 inch = 0.264583 mm .
+            $width = (float)$imageinfo['width'] * 0.264583;
+            $height = (float)$imageinfo['height'] * 0.264583;
+        } else if (!$width || !$height) {
+            $whratio = (float)$imageinfo['width'] / (float)$imageinfo['height'];
+            $width = $width ?: $height * $whratio;
+            $height = $height ?: $width / $whratio;
+        }
+
+        $x = $element->get_posx() - $width * $element->get_refpoint() / 2;
+
+        if ($mimetype == 'image/svg+xml') {
+            $pdf->ImageSVG($location, $x, $element->get_posy(), $width, $height);
+        } else {
+            $pdf->Image($location, $x, $element->get_posy(), $width, $height);
+        }
     }
 }

@@ -35,6 +35,12 @@ defined('MOODLE_INTERNAL') || die();
  */
 class element extends \certificateelement_image\element {
 
+    /** @var bool $hasposition Element can be positioned (has x, y, refpoint) */
+    protected $hasposition = false;
+
+    /** @var bool $istext This is a text element, it has font, color and width limiter */
+    protected $istext = false;
+
     /**
      * This function renders the form elements when adding a certificate element.
      *
@@ -44,18 +50,7 @@ class element extends \certificateelement_image\element {
         $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
         $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
-    }
-
-    /**
-     * Performs validation on the element values.
-     *
-     * @param array $data the submitted data
-     * @param array $files the submitted files
-     * @return array the validation errors
-     */
-    public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        return array();
+        \tool_certificate\element::render_form_elements($mform);
     }
 
     /**
@@ -123,8 +118,8 @@ class element extends \certificateelement_image\element {
             $page = $this->get_page()->to_record();
 
             // Set the image to the size of the page.
-            $style = 'width: ' . $page->width . 'mm; height: ' . $page->height . 'mm';
-            return \html_writer::tag('img', '', array('src' => $url, 'style' => $style));
+            return \html_writer::tag('img', '', array('src' => $url,
+                'data-width' => $page->width, 'data-height' => $page->height));
         }
     }
 }

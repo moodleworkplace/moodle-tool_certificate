@@ -49,38 +49,17 @@ class behat_tool_certificate extends behat_base {
      * @param string $templatename
      */
     public function i_add_the_element_to_the_certificate_template_page($elementname, $pagenum, $templatename) {
-        global $DB;
-
         if (!$this->running_javascript()) {
             throw new coding_exception('You can only add element using the selenium driver.');
         }
 
-        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
-            '*', MUST_EXIST);
+        $this->execute('behat_general::i_click_on_in_the',
+            array(get_string('addelement', 'tool_certificate'), "button",
+                "//*[@data-region='page'][{$pagenum}]", "xpath_element"));
 
-        $this->execute('behat_forms::i_set_the_field_to', array($this->escape('element_' . $page->id),
-            $this->escape($elementname)));
-        $this->execute('behat_forms::press_button', get_string('addelement', 'tool_certificate'));
-    }
-
-    /**
-     * Deletes an element from a specified page of a template.
-     *
-     * @Given /^I delete page "(?P<page_number>\d+)" of the "(?P<template_name>(?:[^"]|\\")*)" certificate template$/
-     * @param int $pagenum
-     * @param string $templatename
-     */
-    public function i_delete_the_certificate_page($pagenum, $templatename) {
-        global $DB;
-
-        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
-            '*', MUST_EXIST);
-
-        $this->execute('behat_general::i_click_on_in_the', array('Delete page', 'link',
-            $this->escape('#id_page_' . $page->id), 'css_element'));
-        $this->execute('behat_forms::press_button', get_string('continue'));
+        $this->execute('behat_general::i_click_on_in_the',
+            array($elementname, "link",
+                "//*[@data-region='page'][{$pagenum}]//*[@data-region='elementtypeslist']", "xpath_element"));
     }
 
     /**

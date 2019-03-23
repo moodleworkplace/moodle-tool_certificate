@@ -48,7 +48,7 @@ class tool_certificate_generator extends component_generator_base {
     /**
      * Create a page
      *
-     * @param $template
+     * @param \tool_certificate\template|int $template
      * @param null $record
      * @return \tool_certificate\page
      */

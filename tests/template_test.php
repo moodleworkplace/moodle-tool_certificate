@@ -234,7 +234,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\tool_certificate\event\template_deleted', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $this->assertEquals($certificate1->edit_url(), $event->get_url());
+        $this->assertEquals(\tool_certificate\template::manage_url(), $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
         $this->assertNotEmpty($event->get_description());

@@ -55,4 +55,11 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'tool_certificate_update_element' => array(
+        'classname'   => \tool_certificate\external\elements::class,
+        'methodname'  => 'update_element',
+        'description' => 'Updates an element',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
 );

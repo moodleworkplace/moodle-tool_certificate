@@ -58,7 +58,7 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
         $pageid = $certificate1->add_page();
         $e = $this->get_generator()->new_element($pageid, 'text');
         $formdata = (object)['name' => 'Text element', 'text' => 'Here is the text', 'element' => 'text', 'pageid' => $pageid];
-        $e->save_form_elements($formdata);
+        $e->save($formdata);
         $this->assertFalse(empty($e->render_html()));
 
     }
@@ -67,10 +67,13 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
      * Test save_unique_data
      */
     public function test_save_unique_data() {
+        global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $e = $this->get_generator()->new_element($pageid, 'text');
         $newdata = (object)['text' => 'New text'];
-        $this->assertEquals($newdata->text, $e->save_unique_data($newdata));
+        $e->save($newdata);
+        $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
+        $this->assertEquals($newdata->text, $el->data);
     }
 }

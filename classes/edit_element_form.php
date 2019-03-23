@@ -96,6 +96,9 @@ class edit_element_form extends modal_form {
         $mform->addElement('hidden', 'element');
         $mform->setType('element', PARAM_ALPHANUMEXT);
 
+        $mform->addElement('static', 'type', get_string('type', 'tool_certificate'),
+            $this->get_element()->get_element_type_name());
+
         $this->get_element()->render_form_elements($mform);
 
         $this->add_action_buttons(true);
@@ -147,7 +150,7 @@ class edit_element_form extends modal_form {
      * @return \stdClass
      */
     public function process(\stdClass $data) {
-        $this->get_element()->save_form_elements($data);
+        $this->get_element()->save($data);
         $data = $this->get_element()->to_record();
         $data->html = $this->get_element()->render_html();
         $data->name = format_string($data->name);

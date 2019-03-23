@@ -14,6 +14,7 @@ Feature: Being able to manage elements in a certificate template
 
   Scenario: Add and edit elements in a certificate template
     # Background image.
+    When I change window size to "large"
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save" in the modal form dialogue
     And I should see "Background image" in the "elementstable" "table"
@@ -173,23 +174,21 @@ Feature: Being able to manage elements in a certificate template
       | Width  | 10 |
       | Height | 10 |
     And I press "Save" in the modal form dialogue
-    # Just to test there are no exceptions being thrown.
-    And I follow "Reposition elements"
-    And I press "Save and close"
-    And I press "Save changes and preview"
+    And I log out
 
   Scenario: Delete an element from a certificate template
+    When I change window size to "large"
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save" in the modal form dialogue
-    And I should see "Background image" in the "elementstable" "table"
+    And I should see "Background image" in the "[data-region=\"elementlist\"]" "css_element"
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I press "Save" in the modal form dialogue
-    And I should see "Student name" in the "elementstable" "table"
+    And I should see "Student name" in the "[data-region=\"elementlist\"]" "css_element"
     And I click on "Delete" "link" in the "Student name" "table_row"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
-    And I should see "Background image" in the "elementstable" "table"
-    And I should see "Student name" in the "elementstable" "table"
+    And I should see "Background image" in the "[data-region=\"elementlist\"]" "css_element"
+    And I should see "Student name" in the "[data-region=\"elementlist\"]" "css_element"
     And I click on "Delete" "link" in the "Student name" "table_row"
     And I click on "Delete" "button" in the "Confirm" "dialogue"
-    And I should see "Background image" in the "elementstable" "table"
-    And I should not see "Student name" in the "elementstable" "table"
+    And I should see "Background image" in the "[data-region=\"elementlist\"]" "css_element"
+    And I should not see "Student name" in the "[data-region=\"elementlist\"]" "css_element"

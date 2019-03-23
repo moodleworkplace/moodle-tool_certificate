@@ -121,10 +121,14 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
      * Test save_unique_data
      */
     public function test_save_unique_data() {
+        global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $certificate1->add_page();
         $e = $this->get_generator()->new_element($pageid, 'program');
         $newdata = (object)['display' => 'certificationname'];
-        $this->assertEquals(json_encode($newdata), $e->save_unique_data($newdata));
+        $expected = json_encode($newdata);
+        $e->save($newdata);
+        $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
+        $this->assertEquals($expected, $el->data);
     }
 }

@@ -84,13 +84,11 @@ Feature: Being able to manage site templates
     And I follow "New template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
-    And I press "Save" in the modal form dialogue
-    And I set the following fields to these values:
       | Page width   | 0  |
       | Page height  | 0  |
       | Left margin  | -1 |
       | Right margin | -1 |
-    And I press "Save changes"
+    And I press "Save" in the modal form dialogue
     Then I should see "The width has to be a valid number greater than 0."
     Then I should see "The height has to be a valid number greater than 0."
     Then I should see "The margin has to be a valid number greater than 0."

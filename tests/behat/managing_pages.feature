@@ -14,6 +14,7 @@ Feature: Being able to manage pages in a certificate template
 
   Scenario: Adding a page to a certificate template
     When I follow "Add page"
+    And I press "Save" in the modal form dialogue
     And I should see "Page 1"
     And I should see "Page 2"
 
@@ -23,10 +24,15 @@ Feature: Being able to manage pages in a certificate template
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I press "Save" in the modal form dialogue
     And I follow "Add page"
+    And I press "Save" in the modal form dialogue
     And I should see "Page 1"
     And I should see "Page 2"
-    And I delete page "2" of the "Certificate 1" certificate template
-    And I should see "Background image" in the "elementstable" "table"
-    And I should see "Student name" in the "elementstable" "table"
-    And I should not see "Page 1"
+    And I click on "Delete" "link" in the "[data-region=\"page\"]" "css_element"
+    And I click on "Delete" "button" in the "Confirm" "dialogue"
+    And I should see "Background image" in the "[data-region=\"elementlist\"]" "css_element"
+    And I should see "Student name" in the "[data-region=\"elementlist\"]" "css_element"
+    And I should see "Page 1"
     And I should not see "Page 2"
+    And I should not see "Background image"
+    And I should not see "Student name"
+    And I log out

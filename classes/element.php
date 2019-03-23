@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use core\output\inplace_editable;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -40,10 +42,11 @@ abstract class element {
     /** @var persistent\element  */
     protected $persistent;
 
-    /**
-     * @var bool $showposxy Show position XY form elements?
-     */
-    protected $showposxy = true;
+    /** @var bool $hasposition Element can be positioned (has x, y, refpoint) */
+    protected $hasposition = true;
+
+    /** @var bool $istext This is a text element, it has font, color and width limiter */
+    protected $istext = true;
 
     /** @var page */
     protected $page = null;
@@ -212,6 +215,15 @@ abstract class element {
     }
 
     /**
+     * Get sequence
+     *
+     * @return int
+     */
+    public function get_sequence() : int {
+        return $this->persistent->get('sequence');
+    }
+
+    /**
      * Converts to stdClass
      * @return \stdClass
      */
@@ -227,13 +239,19 @@ abstract class element {
      */
     public function render_form_elements($mform) {
         // Render the common elements.
-        element_helper::render_form_element_font($mform);
-        element_helper::render_form_element_colour($mform);
-        if ($this->showposxy) {
+        if ($this->istext) {
+            element_helper::render_form_element_font($mform);
+            element_helper::render_form_element_colour($mform);
+        }
+        if ($this->hasposition) {
             element_helper::render_form_element_position($mform);
         }
-        element_helper::render_form_element_width($mform);
-        element_helper::render_form_element_refpoint($mform);
+        if ($this->istext) {
+            element_helper::render_form_element_text_width($mform);
+        }
+        if ($this->hasposition) {
+            element_helper::render_form_element_refpoint($mform);
+        }
     }
 
     /**
@@ -264,75 +282,42 @@ abstract class element {
      * @return array the validation errors
      */
     public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        $errors = array();
-
-        // Common validation methods.
-        $errors += element_helper::validate_form_element_colour($data);
-        if ($this->showposxy) {
-            $errors += element_helper::validate_form_element_position($data);
-        }
-        $errors += element_helper::validate_form_element_width($data);
-
-        return $errors;
+        return [];
     }
 
     /**
      * Handles saving the form elements created by this element.
      * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return bool true of success, false otherwise.
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_form_elements($data) {
-        if (!empty($data->id)) {
+    public function save(\stdClass $data) {
+        unset($data->id);
+        if (!empty($this->persistent->get('id'))) {
             unset($data->pageid, $data->element);
         }
         foreach (array_keys(\tool_certificate\persistent\element::properties_definition()) as $key) {
-            if (!in_array($key, ['id', 'data', 'sequence']) && isset($data->$key)) {
+            if (property_exists($data, $key)) {
                 $this->persistent->set($key, $data->$key);
             }
         }
-        $this->persistent->set('data', $this->save_unique_data($data));
 
         if (!$this->persistent->get('id')) {
 
             // TODO this should not be here.
-            if (empty($data->name)) {
-                $this->persistent->set('name', get_string('pluginname', 'certificateelement_' . $data->element));
+            if (empty($data->name) && empty($this->persistent->get('name'))) {
+                $this->persistent->set('name', get_string('pluginname',
+                    'certificateelement_' . $this->persistent->get('element')));
             }
-            $this->persistent->set('sequence', \tool_certificate\element_helper::get_element_sequence($data->pageid));
+            $this->persistent->set('sequence',
+                \tool_certificate\element_helper::get_element_sequence($this->persistent->get('pageid')));
         }
 
         $this->persistent->save();
-
-        return true;
     }
 
     /**
-     * Update name
-     * @param string $newname
-     */
-    public function update_name(string $newname) {
-        $this->persistent->set('name', $newname);
-        $this->persistent->save();
-    }
-
-    /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
-     * Can be overridden if more functionality is needed.
-     *
-     * @param \stdClass $data the form data
-     * @return string the unique data to save
-     */
-    public function save_unique_data($data) {
-        return '';
-    }
-
-    /**
-     * This handles copying data from another element of the same type.
-     * Can be overridden if more functionality is needed.
+     * Duplicates element (used as part of "duplicate template" task)
      *
      * @param \int $pageid
      * @return element new element
@@ -393,20 +378,18 @@ abstract class element {
     /**
      * Load a list of records.
      *
-     * @param array $filters Filters to apply.
-     * @param string $sort Field to sort by.
-     * @param string $order Sort order.
-     * @param int $skip Limitstart.
-     * @param int $limit Number of rows to return.
+     * @param page $page
      *
      * @return \tool_certificate\element[]
      */
-    public static function get_records($filters = array(), $sort = '', $order = 'ASC', $skip = 0, $limit = 0) {
+    public static function get_elements_in_page(page $page) {
         /** @var \tool_certificate\persistent\element[] $instances */
-        $instances = \tool_certificate\persistent\element::get_records($filters, $sort, $order, $skip, $limit);
+        $instances = \tool_certificate\persistent\element::get_records(
+            ['pageid' => $page->get_id()], 'sequence', 'ASC');
         $els = [];
         foreach ($instances as $instance) {
             if ($element = self::instance_from_persistent($instance)) {
+                $element->page = $page;
                 $els[$element->get_id()] = $element;
             }
         }
@@ -432,4 +415,56 @@ abstract class element {
         return $this->get_page()->get_template();
     }
 
+    /**
+     * Export
+     *
+     * @return output\element
+     */
+    public function get_exporter() : \tool_certificate\output\element {
+        return new \tool_certificate\output\element($this->persistent, ['element' => $this]);
+    }
+
+    /**
+     * Inplace editable name
+     * @return inplace_editable
+     */
+    public function get_inplace_editable() : inplace_editable {
+        return new \core\output\inplace_editable('tool_certificate', 'elementname',
+            $this->get_id(), true,
+            format_string($this->get_name()), $this->get_name());
+    }
+
+    /**
+     * Name of the type of the element
+     * @return string
+     */
+    public static function get_element_type_name() {
+        $parts = preg_split('/\\\\/', static::class);
+        return get_string('pluginname', $parts[0]);
+    }
+
+    /**
+     * Element type icon or spacer if there is no icon
+     * @param bool $withtitle
+     * @return \pix_icon
+     */
+    public static function get_element_type_image(bool $withtitle = false) : \pix_icon {
+        global $PAGE;
+        $parts = preg_split('/\\\\/', static::class);
+        $pluginname = $parts[0];
+        $title = $withtitle ? self::get_element_type_name() : '';
+        if ($PAGE->theme->resolve_image_location('icon', $pluginname, false)) {
+            return new \pix_icon('icon', $title, $pluginname, ['class' => 'icon pluginicon']);
+        } else {
+            return new \pix_icon('spacer', $title, 'moodle', ['class' => 'icon pluginicon noicon']);
+        }
+    }
+
+    /**
+     * Can element be dragged?
+     * @return bool
+     */
+    public function is_draggable() : bool {
+        return $this->hasposition;
+    }
 }

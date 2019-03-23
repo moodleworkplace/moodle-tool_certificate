@@ -69,21 +69,16 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        // Array of data we will be storing in the database.
-        $arrtostore = array(
-            'dateitem' => $data->dateitem,
-            'dateformat' => $data->dateformat
-        );
-
-        // Encode these variables before saving into the DB.
-        return json_encode($arrtostore);
+    public function save(\stdClass $data) {
+        if (property_exists($data, 'dateitem') || property_exists($data, 'dateformat')) {
+            $data->data = json_encode(['dateitem' => $data->dateitem, 'dateformat' => $data->dateformat]);
+        }
+        parent::save($data);
     }
 
     /**

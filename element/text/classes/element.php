@@ -49,14 +49,16 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the text
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        return $data->text;
+    public function save(\stdClass $data) {
+        if (property_exists($data, 'text')) {
+            $data->data = $data->text;
+        }
+        parent::save($data);
     }
 
     /**

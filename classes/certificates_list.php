@@ -137,7 +137,7 @@ class certificates_list extends system_report {
     protected function add_actions() {
 
         // Edit content.
-        $editlink = new \moodle_url('/admin/tool/certificate/edit.php', array('tid' => ':id'));
+        $editlink = new \moodle_url('/admin/tool/certificate/template.php', array('id' => ':id'));
         $icon = new \pix_icon('a/wp-arrow-right', get_string('editcontent', 'tool_certificate'), 'theme');
         $this->add_action((new report_action($editlink, $icon, []))
             ->add_callback(function($row) {

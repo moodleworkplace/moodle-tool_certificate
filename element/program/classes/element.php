@@ -57,20 +57,16 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        // Array of data we will be storing in the database.
-        $arrtostore = array(
-            'display' => $data->display,
-        );
-
-        // Encode these variables before saving into the DB.
-        return json_encode($arrtostore);
+    public function save(\stdClass $data) {
+        if (property_exists($data, 'display')) {
+            $data->data = json_encode(['display' => $data->display]);
+        }
+        parent::save($data);
     }
 
     /**
@@ -101,7 +97,7 @@ class element extends \tool_certificate\element {
     public function render($pdf, $preview, $user, $issue) {
         global $DB;
         if ($preview) {
-            $display = 'Dummy content for program element';
+            $display = $this->format_preview_data();
         } else if (($issue->component == 'tool_program') || ($issue->component == 'tool_certification')) {
             $display = $this->format_issue_data($issue->data);
         } else {

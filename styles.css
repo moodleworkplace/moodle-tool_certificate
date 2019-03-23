@@ -78,3 +78,72 @@
 .moodle-dialogue #editelementform fieldset.hidden {
     display: block;
 }
+
+/* Template editor */
+
+#page-admin-tool-certificate-template [data-region="pdf"] {
+    clear: both;
+    position: relative;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] > * {
+    position: absolute;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"] {
+    display: inline-block;
+    word-wrap: break-word;
+    text-decoration: none;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"]:not(.recalculated) [data-region="pdfelement"],
+#page-admin-tool-certificate-template [data-region="pdf"]:not(.recalculated) * {
+    opacity: 0;
+}
+
+/* Elements refpoint */
+
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint]:before {
+    background-image: url([[pix:tool_certificate|target]]);
+    background-repeat: no-repeat;
+    content: "";
+    display: block;
+    float: left;
+    height: 9px;
+    width: 100%;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint="0"]:before {
+    background-position: left top;
+    margin: -4px -5px -5px -4px;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint="1"]:before {
+    background-position: center top;
+    margin: -4px 0 -5px 0;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint="2"]:before {
+    background-position: right top;
+    margin: -4px -5px -5px 4px;
+}
+
+/* Page margins */
+
+#page-admin-tool-certificate-template [data-region="pdf"] .verticalline {
+    width: 1px;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] .horizontalline {
+    height: 1px;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] .dottedline {
+    border-left: 1px dotted black;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] .solidline {
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    line-height: normal;
+}

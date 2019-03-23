@@ -91,9 +91,8 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
         $element = \tool_certificate\element::instance($itemid);
         $element->get_template()->require_manage();
 
-        $element->update_name($newvalue);
-        return new \core\output\inplace_editable('tool_certificate', 'elementname', $itemid, true,
-            format_string($element->get_name()), $element->get_name());
+        $element->save((object)['name' => $newvalue]);
+        return $element->get_inplace_editable();
     }
 
     if ($itemtype === 'templatename') {

@@ -48,14 +48,16 @@
         ]
     }
 }}
-<style>
-    [data-region=page]:first-child [data-action=moveup],
-    [data-region=page]:last-child [data-action=movedown] {
-        display: none;
-    }
-</style>
-<div>
+{{> tool_wp/tab_heading }}
+<div data-region="template" data-id="{{id}}">
 {{#pages}}
     {{> tool_certificate/edit_layout_page}}
 {{/pages}}
 </div>
+{{#js}}
+    require(['tool_certificate/template-edit'],
+        function(T) {
+            T.init();
+        }
+    );
+{{/js}}
