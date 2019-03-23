@@ -1,8 +1,0 @@
-{
-    "moodle-tool_certificate-rearrange": {
-        "requires": [
-            "dd-delegate",
-            "dd-drag"
-        ]
-    }
-}

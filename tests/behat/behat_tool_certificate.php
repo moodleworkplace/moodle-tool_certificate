@@ -172,7 +172,7 @@ class behat_tool_certificate extends behat_base {
             $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
-                    $template->add_page();
+                    $template->new_page()->save((object)[]);
                 }
             }
         }

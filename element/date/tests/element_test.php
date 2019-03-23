@@ -55,7 +55,7 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
      */
     public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE, 'dateformat' => 0]);
         $formdata = (object)['name' => 'Date element', 'data' => $data];
         $e = $this->get_generator()->new_element($pageid, 'date', $formdata);
@@ -73,7 +73,7 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
     public function test_save_unique_data() {
         global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'date');
         $newdata = (object)['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
                             'dateformat' => 'strftimedate'];
