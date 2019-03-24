@@ -114,19 +114,6 @@ class template {
     }
 
     /**
-     * Handles adding another page to the template.
-     *
-     * @return int the id of the page
-     */
-    public function add_page() {
-        // TODO only used in unittests.
-        $page = $this->new_page();
-        $page->save((object)[]);
-        $this->pages = null;
-        return $page->get_id();
-    }
-
-    /**
      * Handles saving page data.
      *
      * @param \stdClass $data the template data
@@ -455,16 +442,6 @@ class template {
     }
 
     /**
-     * The URL to preview a template
-     *
-     * @return \moodle_url
-     */
-    public function preview_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/view.php',
-            ['preview' => 1, 'templateid' => $this->get_id(), 'code' => 'previewing']);
-    }
-
-    /**
      * The URL to view an issued certificate
      *
      * @param string $code
@@ -472,15 +449,6 @@ class template {
      */
     public static function view_url($code): \moodle_url {
         return new \moodle_url('/admin/tool/certificate/view.php', ['code' => $code]);
-    }
-
-    /**
-     * The URL to issue a new certificate from this template
-     *
-     * @return \moodle_url
-     */
-    public function new_issue_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $this->get_id()]);
     }
 
     /**
@@ -523,20 +491,6 @@ class template {
             JOIN {tool_certificate_pages} p ON p.templateid = t.id
             JOIN {tool_certificate_elements} e ON e.pageid = p.id
             WHERE e.id = :id', ['id' => $id], MUST_EXIST);
-        return self::instance(0, $template);
-    }
-
-    /**
-     * Returns a template a page belongs to
-     *
-     * @param int $id
-     * @return template
-     */
-    public static function find_by_page_id($id) : template {
-        global $DB;
-        $template = $DB->get_record_sql('SELECT t.* FROM {tool_certificate_templates} t
-            JOIN {tool_certificate_pages} p ON p.templateid = t.id
-            WHERE p.id = :id', ['id' => $id], MUST_EXIST);
         return self::instance(0, $template);
     }
 

@@ -56,15 +56,25 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
     public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE, 'dateformat' => 0]);
-        $formdata = (object)['name' => 'Date element', 'data' => $data];
-        $e = $this->get_generator()->new_element($pageid, 'date', $formdata);
-        $this->assertFalse(empty($e->render_html()));
+        $formdata = ['name' => 'Date element', 'dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE, 'dateformat' => 'strftimedateshort'];
+        $e = $this->get_generator()->create_element($pageid, 'date', $formdata);
+        $this->assertNotEmpty($e->render_html());
 
-        $data = json_encode(['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_EXPIRY, 'dateformat' => 0]);
-        $formdata->data = $data;
-        $e = $this->get_generator()->new_element($pageid, 'date', $formdata);
-        $this->assertFalse(empty($e->render_html()));
+        $formdata['dateitem'] = \certificateelement_date\element::CUSTOMCERT_DATE_EXPIRY;
+        $formdata['dateformat'] = 'strftimedateshort';
+        $e = $this->get_generator()->create_element($pageid, 'date', $formdata);
+        $this->assertNotEmpty($e->render_html());
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(), time() + YEARSECS);
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 
     /**

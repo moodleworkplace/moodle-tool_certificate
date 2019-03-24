@@ -192,3 +192,36 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     And I should see "Background image" in the "[data-region='elementlist']" "css_element"
     And I should not see "Student name" in the "[data-region='elementlist']" "css_element"
+
+  Scenario: Edit element name on a certificate template
+    When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
+    And I press "Save" in the modal form dialogue
+    And I click on "Edit element name" "link" in the "Background image" "list_item"
+    And I set the field "New value for Background image" to "Sunrise"
+    And I press key "13" in the field "New value for Background image"
+    And I should not see "Background image"
+    And I should see "Sunrise"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I click on "Edit content" "link"
+    And I should not see "Background image"
+    And I should see "Sunrise"
+    And I log out
+
+  Scenario: Rearrange elements on a certificate template
+    When I add the element "Date" to page "1" of the "Certificate 1" certificate template
+    And I press "Save" in the modal form dialogue
+    When I add the element "Student name" to page "1" of the "Certificate 1" certificate template
+    And I press "Save" in the modal form dialogue
+    When I add the element "Code" to page "1" of the "Certificate 1" certificate template
+    And I press "Save" in the modal form dialogue
+    Then "Date" "list_item" should appear before "Student name" "list_item"
+    And "Student name" "list_item" should appear before "Code" "list_item"
+    And I click on "Bring forward or move back" "button" in the "Date" "list_item"
+    And I follow "After \" Student name \""
+    And "Student name" "list_item" should appear before "Date" "list_item"
+    Then "Date" "list_item" should appear before "Code" "list_item"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I click on "Edit content" "link"
+    And "Student name" "list_item" should appear before "Date" "list_item"
+    Then "Date" "list_item" should appear before "Code" "list_item"
+    And I log out

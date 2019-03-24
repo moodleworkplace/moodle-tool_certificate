@@ -135,7 +135,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
         list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u', $template->get_tenant_id());
         $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
     } else {
-        throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions');
+        throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions', 'error');
     }
 
     $join .= ' LEFT JOIN {tool_certificate_issues} ci ON u.id = ci.userid AND ci.templateid = :templateid';

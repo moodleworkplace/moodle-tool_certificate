@@ -66,6 +66,7 @@ $string['editcertificate'] = 'Edit certificate \'{$a}\'';
 $string['editcontent'] = 'Edit content';
 $string['editdetails'] = 'Edit details';
 $string['editelement'] = 'Edit \'{$a}\'';
+$string['editelementname'] = 'Edit element name';
 $string['editpage'] = 'Edit page {$a}';
 $string['edittemplate'] = 'Edit template';
 $string['edittemplatename'] = 'Edit template name';

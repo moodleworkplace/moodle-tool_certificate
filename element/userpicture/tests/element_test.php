@@ -58,30 +58,37 @@ class tool_certificate_userpicture_element_test_testcase extends advanced_testca
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
 
-        $element = (object)['name' => 'Test'];
-        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
+        $element = ['name' => 'Test'];
+        $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);
         $this->assertTrue(empty($e->render_html()));
 
-        $element = (object)['name' => 'Test',
-                            'data' => json_encode(['width' => 100, 'height' => 200])];
-        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
+        $element = ['name' => 'Test', 'width' => 100, 'height' => 200];
+        $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);
         $this->assertTrue(strpos($e->render_html(), 'img') !== false);
 
-        $element = (object)['name' => 'Test',
-                            'data' => json_encode(['width' => 0, 'height' => 200])];
-        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
+        $element = ['name' => 'Test', 'width' => 0, 'height' => 200];
+        $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);
         $this->assertTrue(strpos($e->render_html(), 'width') !== false);
         $this->assertTrue(strpos($e->render_html(), 'height') !== false);
 
-        $element = (object)['name' => 'Test',
-                            'data' => json_encode(['width' => 100, 'height' => 0])];
-        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
+        $element = ['name' => 'Test', 'width' => 100, 'height' => 0];
+        $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);
         $this->assertTrue(strpos($e->render_html(), 'width') !== false);
         $this->assertTrue(strpos($e->render_html(), 'height') !== false);
 
-        $element = (object)['name' => 'Test',
-                            'data' => json_encode(['width' => 0, 'height' => 0])];
-        $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
+        $element = ['name' => 'Test', 'width' => 0, 'height' => 0];
+        $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);
         $this->assertEquals(0, strpos($e->render_html(), '<img'));
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 }

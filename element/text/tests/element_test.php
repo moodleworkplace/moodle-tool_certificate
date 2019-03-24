@@ -57,10 +57,21 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'text');
-        $formdata = (object)['name' => 'Text element', 'text' => 'Here is the text', 'element' => 'text', 'pageid' => $pageid];
+        $formdata = (object)['name' => 'Text element', 'text' => 'Here is <script>XSS</script>the text', 'element' => 'text', 'pageid' => $pageid];
         $e->save($formdata);
-        $this->assertFalse(empty($e->render_html()));
+        $html = $e->render_html();
+        $this->assertContains('Here is the text', $html);
 
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 
     /**

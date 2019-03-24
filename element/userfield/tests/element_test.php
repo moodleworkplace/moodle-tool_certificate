@@ -62,10 +62,10 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $element = $this->get_generator()->new_element($pageid, 'userfield');
+        $element = $this->get_generator()->create_element($pageid, 'userfield');
 
         $formdata = (object)['name' => 'User email element', 'data' => 'email'];
-        $e = $this->get_generator()->new_element($pageid, 'userfield', $formdata);
+        $e = $this->get_generator()->create_element($pageid, 'userfield', $formdata);
 
         $this->assertTrue(strpos($e->render_html(), '@') !== false);
 
@@ -75,10 +75,21 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
                 'datatype' => 'textarea'));
 
         $formdata = (object)['name' => 'User custom field element', 'data' => $id1];
-        $e = $this->get_generator()->new_element($pageid, 'userfield', $formdata);
+        $e = $this->get_generator()->create_element($pageid, 'userfield', $formdata);
 
         profile_save_data((object)['id' => $USER->id, 'profile_field_frogdesc' => 'Gryffindor']);
 
         $this->assertTrue(strpos($e->render_html(), 'Gryffindor') !== false);
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 }

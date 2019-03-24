@@ -74,27 +74,7 @@ class element_helper {
         if ($w and $w < $actualwidth) {
             $actualwidth = $w;
         }
-
-        switch ($refpoint) {
-            case self::CUSTOMCERT_REF_POINT_TOPRIGHT:
-                $x = $element->get_posx() - $actualwidth;
-                if ($x < 0) {
-                    $x = 0;
-                    $w = $element->get_posx();
-                } else {
-                    $w = $actualwidth;
-                }
-                break;
-            case self::CUSTOMCERT_REF_POINT_TOPCENTER:
-                $x = $element->get_posx() - $actualwidth / 2;
-                if ($x < 0) {
-                    $x = 0;
-                    $w = $element->get_posx() * 2;
-                } else {
-                    $w = $actualwidth;
-                }
-                break;
-        }
+        $x -= ((int)$refpoint) * $actualwidth / 2;
 
         if ($w) {
             $w += 0.0001;
@@ -289,11 +269,11 @@ class element_helper {
         $errors = array();
 
         // Check if posx is not set, or not numeric or less than 0.
-        if ((!isset($data['posx'])) || (!is_numeric($data['posx'])) || ($data['posx'] < 0)) {
+        if ((!isset($data['posx'])) || (!is_numeric($data['posx']))) {
             $errors['posx'] = get_string('invalidposition', 'tool_certificate', 'X');
         }
         // Check if posy is not set, or not numeric or less than 0.
-        if ((!isset($data['posy'])) || (!is_numeric($data['posy'])) || ($data['posy'] < 0)) {
+        if ((!isset($data['posy'])) || (!is_numeric($data['posy']))) {
             $errors['posy'] = get_string('invalidposition', 'tool_certificate', 'Y');
         }
 
