@@ -49,7 +49,7 @@ function xmldb_tool_certificate_upgrade($oldversion) {
     }
 
     if ($oldversion < 2019030707) {
-        // {"width":0,"height":0,"contextid":"1","filearea":"image","itemid":"0","filepath":"\/","filename":"Black Labrador Puppy.jpg"}
+        // Change instances of bgimage to image.
         $elements = $DB->get_records('tool_certificate_elements', ['element' => 'bgimage']);
         foreach ($elements as $element) {
             $data = @json_decode($element->data, true);
@@ -59,6 +59,14 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         }
 
         upgrade_plugin_savepoint(true, 2019030707, 'tool', 'certificate');
+    }
+
+    if ($oldversion < 2019030708) {
+        // Change instances of studentname to userfield.
+        $DB->execute("UPDATE {tool_certificate_elements} SET element = ?, data = ? WHERE element = ?",
+            ['userfield', 'fullname', 'studentname']);
+
+        upgrade_plugin_savepoint(true, 2019030708, 'tool', 'certificate');
     }
 
     return true;

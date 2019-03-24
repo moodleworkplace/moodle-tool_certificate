@@ -300,7 +300,7 @@ class template {
 
         // Copy the data to the new template.
         foreach ($this->get_pages() as $page) {
-            $page->duplicate($newtemplate->get_id());
+            $page->duplicate($newtemplate);
         }
 
         return $newtemplate;
