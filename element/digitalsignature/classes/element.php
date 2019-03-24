@@ -63,7 +63,7 @@ class element extends \certificateelement_image\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
+        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_shared_images_list());
 
         $mform->addElement('select', 'signaturefileid', get_string('digitalsignature', 'certificateelement_digitalsignature'),
             self::get_signatures());

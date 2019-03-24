@@ -35,5 +35,31 @@ function xmldb_tool_certificate_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
+    if ($oldversion < 2019030706) {
+
+        // Changing type of field element on table tool_certificate_elements to char.
+        $table = new xmldb_table('tool_certificate_elements');
+        $field = new xmldb_field('element', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'name');
+
+        // Launch change of type for field element.
+        $dbman->change_field_type($table, $field);
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2019030706, 'tool', 'certificate');
+    }
+
+    if ($oldversion < 2019030707) {
+        // {"width":0,"height":0,"contextid":"1","filearea":"image","itemid":"0","filepath":"\/","filename":"Black Labrador Puppy.jpg"}
+        $elements = $DB->get_records('tool_certificate_elements', ['element' => 'bgimage']);
+        foreach ($elements as $element) {
+            $data = @json_decode($element->data, true);
+            $data['isbackground'] = 1;
+            $DB->update_record('tool_certificate_elements',
+                ['id' => $element->id, 'element' => 'image', 'data' => json_encode($data)]);
+        }
+
+        upgrade_plugin_savepoint(true, 2019030707, 'tool', 'certificate');
+    }
+
     return true;
 }
