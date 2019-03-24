@@ -75,4 +75,65 @@ class tool_certificate_generator extends component_generator_base {
         $data['pageid'] = $pageid;
         return \tool_certificate\element::instance(0, (object)$data);
     }
+
+    /**
+     * Creates an element on a page
+     *
+     * @param int $pageid
+     * @param string $elementtype
+     * @param array $data
+     * @return \tool_certificate\element
+     */
+    public function create_element(int $pageid, string $elementtype, $data = []) {
+        $el = $this->new_element($pageid, $elementtype);
+        $el->save((object)$data);
+        return $el;
+    }
+
+    /**
+     * @param int|stdClass|\tool_certificate\template $certificate
+     * @param stdClass|int $user
+     * @param int $expires
+     * @param array $data
+     * @param string $component
+     * @return mixed
+     */
+    public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate') {
+        global $DB;
+        if (is_int($certificate)) {
+            $certificate = \tool_certificate\template::instance($certificate);
+        } else if (!$certificate instanceof \tool_certificate\template) {
+            $certificate = \tool_certificate\template::instance(0, $certificate);
+        }
+        $userid = is_object($user) ? $user->id : $user;
+        $issueid = $certificate->issue_certificate($userid, $expires, $data, $component);
+        return $DB->get_record('tool_certificate_issues', ['id' => $issueid], '*', MUST_EXIST);
+    }
+
+    /**
+     * Generate pdf and returns as string
+     *
+     * @param int|stdClass|\tool_certificate\template $certificate
+     * @param bool $preview
+     * @param null $issue
+     * @return string
+     */
+    public function generate_pdf($certificate, $preview = false, $issue = null) {
+        $instance = null;
+        $instanceid = 0;
+        if ($certificate instanceof \tool_certificate\template) {
+            $instance = $certificate->to_record();
+        } else if (is_object($certificate)) {
+            $instance = $certificate;
+        } else {
+            $instanceid = $certificate;
+        }
+
+        ob_start();
+        \tool_certificate\template::instance($instanceid, $instance)->generate_pdf($preview, $issue);
+        $filecontents = ob_get_contents();
+        ob_end_clean();
+
+        return $filecontents;
+    }
 }

@@ -208,3 +208,19 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 11"
     And I should not see "User 13"
     And I log out
+
+  Scenario: Revoke issued certificate as a tenant issuer
+    Given the following certificate issues exist:
+      | template      | user   |
+      | Certificate 1 | user11 |
+      | Certificate 1 | user12 |
+    When I log in as "issuer1"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I should see "User 11"
+    And I should see "User 12"
+    And I click on "Revoke" "link" in the "User 11" "table_row"
+    And I click on "Revoke" "button" in the "Confirm" "dialogue"
+    And I should not see "User 11"
+    And I should see "User 12"
+    And I log out

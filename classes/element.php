@@ -96,17 +96,6 @@ abstract class element {
     }
 
     /**
-     * New instance (not saved)
-     *
-     * @param string $elementtype
-     * @param int $pageid
-     * @return element
-     */
-    public static function new_instance(string $elementtype, int $pageid) : self {
-        return self::instance(0, (object)['element' => $elementtype, 'pageid' => $pageid]);
-    }
-
-    /**
      * Returns the id.
      *
      * @return int
@@ -429,9 +418,12 @@ abstract class element {
      * @return inplace_editable
      */
     public function get_inplace_editable() : inplace_editable {
+        $formattedname = format_string($this->get_name(), true, ['escape' => false]);
         return new \core\output\inplace_editable('tool_certificate', 'elementname',
             $this->get_id(), true,
-            format_string($this->get_name()), $this->get_name());
+            $formattedname, $this->get_name(),
+            get_string('editelementname', 'tool_certificate'),
+            get_string('newvaluefor', 'form', $formattedname));
     }
 
     /**

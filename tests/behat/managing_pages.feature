@@ -34,3 +34,16 @@ Feature: Being able to manage pages in a certificate template
     And I should not see "Background image"
     And I should not see "Student name"
     And I log out
+
+  Scenario: Rearrange pages in a certificate template
+    When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
+    And I press "Save" in the modal form dialogue
+    And I follow "Add page"
+    And I press "Save" in the modal form dialogue
+    And I add the element "Student name" to page "2" of the "Certificate 1" certificate template
+    And I press "Save" in the modal form dialogue
+    And I click on "Move down" "link" in the "//*[@data-region='page'][1]" "xpath_element"
+    Then "Student name" "text" should appear before "Background image" "text"
+    And I click on "Move up" "link" in the "//*[@data-region='page'][2]" "xpath_element"
+    Then "Student name" "text" should appear after "Background image" "text"
+    And I log out

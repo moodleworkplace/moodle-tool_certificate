@@ -84,8 +84,8 @@ class elements extends \external_api {
             array(
                 'id' => new \external_value(PARAM_INT, 'Element id'),
                 'sequence' => new \external_value(PARAM_INT, 'Sequence', VALUE_DEFAULT, -1),
-                'posx' => new \external_value(PARAM_INT, 'X position', VALUE_DEFAULT, -1),
-                'posy' => new \external_value(PARAM_INT, 'Y position', VALUE_DEFAULT, -1),
+                'posx' => new \external_value(PARAM_INT, 'X position', VALUE_OPTIONAL),
+                'posy' => new \external_value(PARAM_INT, 'Y position', VALUE_OPTIONAL),
             )
         );
     }
@@ -98,7 +98,7 @@ class elements extends \external_api {
      * @param int $posx
      * @param int $posy
      */
-    public static function update_element($elementid, $sequence, $posx, $posy) {
+    public static function update_element($elementid, $sequence, $posx = null, $posy = null) {
         $params = self::validate_parameters(self::update_element_parameters(),
             ['id' => $elementid, 'sequence' => $sequence, 'posx' => $posx, 'posy' => $posy]);
         self::validate_context(\context_system::instance());
@@ -107,7 +107,7 @@ class elements extends \external_api {
         if ($params['sequence'] > 0) {
             return $template->update_element_sequence($params['id'], $params['sequence']);
         }
-        if ($params['posx'] >= 0 && $params['posy'] >= 0) {
+        if (isset($params['posx']) && isset($params['posy'])) {
             foreach ($template->get_pages() as $page) {
                 foreach ($page->get_elements() as $element) {
                     if ($element->get_id() == $params['id']) {

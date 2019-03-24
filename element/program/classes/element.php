@@ -122,6 +122,7 @@ class element extends \tool_certificate\element {
                 $display = format_string($data['programname']);
                 break;
             case 'completiondate':
+                // TODO see element "Date" for format options, take from there.
                 $display = userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false);
                 break;
             case 'completedcourses':
@@ -148,7 +149,7 @@ class element extends \tool_certificate\element {
                 $display = get_string('previewprogramname', 'certificateelement_program');
                 break;
             case 'completiondate':
-                $display = userdate(time(), get_string('strftimedatefullshort', 'langconfig'), 99, false);
+                $display = userdate(time(), get_string('strftimedate', 'langconfig'), 99, false);
                 break;
             case 'completedcourses':
                 $courses = ['A course example', 'Second course example', 'Yet another course completed'];

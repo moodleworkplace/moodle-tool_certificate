@@ -53,8 +53,19 @@ class tool_certificate_bgimage_element_test_testcase extends advanced_testcase {
     public function test_render_html_content() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $element = $this->get_generator()->new_element($pageid, 'bgimage');
+        $element = $this->get_generator()->create_element($pageid, 'bgimage');
         // Default element has no data. TODO: test with a proper image.
         $this->assertTrue(empty($element->render_html()));
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 }

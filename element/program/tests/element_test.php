@@ -131,4 +131,30 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
         $this->assertEquals($expected, $el->data);
     }
+
+    /**
+     * Test rendering
+     */
+    public function test_render_content() {
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
+        foreach (['programname', 'certificationname', 'completiondate', 'completedcourses'] as $displaytype) {
+            $formdata = ['display' => $displaytype];
+            $e = $this->get_generator()->create_element($pageid, 'program', $formdata);
+            $this->assertNotEmpty($e->render_html());
+        }
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(),
+            null, ['programname' => 'P', 'certificationname' => 'C', 'completiondate' => time(),
+                'completedcourses' => []], 'tool_certification');
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+    }
 }
