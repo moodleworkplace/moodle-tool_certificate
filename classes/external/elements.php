@@ -83,9 +83,9 @@ class elements extends \external_api {
         return new \external_function_parameters(
             array(
                 'id' => new \external_value(PARAM_INT, 'Element id'),
-                'sequence' => new \external_value(PARAM_INT, 'Sequence', VALUE_DEFAULT, -1),
-                'posx' => new \external_value(PARAM_INT, 'X position', VALUE_OPTIONAL),
-                'posy' => new \external_value(PARAM_INT, 'Y position', VALUE_OPTIONAL),
+                'sequence' => new \external_value(PARAM_INT, 'Sequence', VALUE_DEFAULT, null),
+                'posx' => new \external_value(PARAM_INT, 'X position', VALUE_DEFAULT, null),
+                'posy' => new \external_value(PARAM_INT, 'Y position', VALUE_DEFAULT, null),
             )
         );
     }
@@ -98,13 +98,13 @@ class elements extends \external_api {
      * @param int $posx
      * @param int $posy
      */
-    public static function update_element($elementid, $sequence, $posx = null, $posy = null) {
+    public static function update_element($elementid, $sequence, $posx, $posy) {
         $params = self::validate_parameters(self::update_element_parameters(),
             ['id' => $elementid, 'sequence' => $sequence, 'posx' => $posx, 'posy' => $posy]);
         self::validate_context(\context_system::instance());
         $template = template::find_by_element_id($params['id']);
         $template->require_manage();
-        if ($params['sequence'] > 0) {
+        if (isset($params['sequence'])) {
             return $template->update_element_sequence($params['id'], $params['sequence']);
         }
         if (isset($params['posx']) && isset($params['posy'])) {

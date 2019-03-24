@@ -91,12 +91,14 @@ class tool_certificate_generator extends component_generator_base {
     }
 
     /**
+     * Issue a certificate
+     *
      * @param int|stdClass|\tool_certificate\template $certificate
      * @param stdClass|int $user
      * @param int $expires
      * @param array $data
      * @param string $component
-     * @return mixed
+     * @return stdClass
      */
     public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate') {
         global $DB;

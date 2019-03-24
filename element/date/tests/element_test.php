@@ -56,7 +56,8 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
     public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $formdata = ['name' => 'Date element', 'dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE, 'dateformat' => 'strftimedateshort'];
+        $formdata = ['name' => 'Date element', 'dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
+            'dateformat' => 'strftimedateshort'];
         $e = $this->get_generator()->create_element($pageid, 'date', $formdata);
         $this->assertNotEmpty($e->render_html());
 
