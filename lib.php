@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @param bool $forcedownload
  * @return bool|null false if file not found, does not return anything if found - just send the file
  */
-function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG;
 
     require_once($CFG->libdir . '/filelib.php');
@@ -55,6 +55,44 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
         }
 
         send_stored_file($file, 0, 0, $forcedownload);
+    }
+//
+//    if ($filearea === 'issue') {
+//        $issueid = array_shift($args);
+//        // TODO add access check.
+//
+//        $elementid = array_shift($args);
+//        $filename = array_pop($args);
+//        if (!$args) {
+//            $filepath = '/';
+//        } else {
+//            $filepath = '/' . implode('/', $args) . '/';
+//        }
+//        $fs = get_file_storage();
+//        $file = $fs->get_file($context->id, 'tool_certificate', 'elementimage', $elementid, $filepath, $filename);
+//        if (!$file) {
+//            return;
+//        }
+//        send_stored_file($file, null, 0, $forcedownload, $options);
+//    }
+
+    if ($filearea === 'element') {
+        $elementid = array_shift($args);
+        $template = \tool_certificate\template::find_by_element_id($elementid);
+        $template->require_manage();
+
+        $filename = array_pop($args);
+        if (!$args) {
+            $filepath = '/';
+        } else {
+            $filepath = '/' . implode('/', $args) . '/';
+        }
+        $fs = get_file_storage();
+        $file = $fs->get_file($context->id, 'tool_certificate', 'element', $elementid, $filepath, $filename);
+        if (!$file) {
+            return;
+        }
+        send_stored_file($file, null, 0, $forcedownload, $options);
     }
 }
 

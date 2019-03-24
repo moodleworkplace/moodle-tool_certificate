@@ -213,7 +213,7 @@ class element_helper {
         $mform->addFormRule(function($data, $files) use ($stringcomponent) {
             $errors = [];
             // Check if width is not set, or not numeric or less than 0.
-            if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
+            if (isset($data['width']) && (!is_numeric($data['width']) || $data['width'] < 0)) {
                 $errors['width'] = get_string('invalidwidth', $stringcomponent);
             }
             return $errors;
@@ -236,7 +236,7 @@ class element_helper {
         $mform->addFormRule(function($data, $files) use ($stringcomponent) {
             $errors = [];
             // Check if height is not set, or not numeric or less than 0.
-            if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
+            if (isset($data['height']) && (!is_numeric($data['height']) || $data['height'] < 0)) {
                 $errors['height'] = get_string('invalidheight', $stringcomponent);
             }
             return $errors;
@@ -285,11 +285,11 @@ class element_helper {
         $errors = array();
 
         // Check if posx is not set, or not numeric or less than 0.
-        if ((!isset($data['posx'])) || (!is_numeric($data['posx']))) {
+        if (isset($data['posx']) && !is_numeric($data['posx'])) {
             $errors['posx'] = get_string('invalidposition', 'tool_certificate', 'X');
         }
         // Check if posy is not set, or not numeric or less than 0.
-        if ((!isset($data['posy'])) || (!is_numeric($data['posy']))) {
+        if (isset($data['posy']) && !is_numeric($data['posy'])) {
             $errors['posy'] = get_string('invalidposition', 'tool_certificate', 'Y');
         }
 
