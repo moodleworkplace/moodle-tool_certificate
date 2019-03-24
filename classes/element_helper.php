@@ -53,6 +53,22 @@ class element_helper {
     const CUSTOMCERT_REF_POINT_TOPRIGHT = 2;
 
     /**
+     * Estimate width on the text in PDF document
+     *
+     * @param \pdf $pdf
+     * @param string $content
+     * @return int
+     */
+    protected static function estimate_content_width(\pdf $pdf, $content) {
+        $content = html_to_text($content, 75, false);
+        $maxwidth = 0;
+        foreach (preg_split('/[\n]/', $content) as $line) {
+            $maxwidth = max($maxwidth, $pdf->GetStringWidth($line));
+        }
+        return $maxwidth;
+    }
+
+    /**
      * Common behaviour for rendering specified content on the pdf.
      *
      * @param \pdf $pdf the pdf object
@@ -69,7 +85,7 @@ class element_helper {
         $y = $element->get_posy();
         $w = $element->get_width();
         $refpoint = $element->get_refpoint();
-        $actualwidth = $pdf->GetStringWidth($content);
+        $actualwidth = self::estimate_content_width($pdf, $content);
 
         if ($w and $w < $actualwidth) {
             $actualwidth = $w;
