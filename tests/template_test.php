@@ -240,12 +240,14 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_description());
 
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_pages'));
 
         // Second certificate with pages.
         $certname = 'Certificate 2';
         $certificate2 = $this->get_generator()->create_template((object)['name' => $certname]);
         $this->get_generator()->create_page($certificate2);
         $this->get_generator()->create_page($certificate2);
+        $certificate2 = \tool_certificate\template::instance($certificate2->get_id());
 
         $certificate2->delete();
 
@@ -285,6 +287,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
         $pageid1 = $this->get_generator()->create_page($certificate1)->get_id();
         $pageid2 = $this->get_generator()->create_page($certificate1)->get_id();
+        $certificate1 = \tool_certificate\template::instance($certificate1->get_id());
         $this->assertEquals(2, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
         $certificate1->delete_page($pageid1);
         $this->assertEquals(1, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));

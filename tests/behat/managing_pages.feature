@@ -29,8 +29,6 @@ Feature: Being able to manage pages in a certificate template
     And I should see "Page 2"
     And I click on "Delete" "link" in the "[data-region=\"page\"]" "css_element"
     And I click on "Delete" "button" in the "Confirm" "dialogue"
-    And I should see "Background image" in the "[data-region=\"elementlist\"]" "css_element"
-    And I should see "Student name" in the "[data-region=\"elementlist\"]" "css_element"
     And I should see "Page 1"
     And I should not see "Page 2"
     And I should not see "Background image"

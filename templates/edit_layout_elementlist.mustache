@@ -36,9 +36,9 @@
         ]
     }
 }}
-<div data-region="elementlist" data-id="{{id}}">
+<ul data-region="elementlist" data-id="{{id}}" class="unlist">
     {{#elements}}
-        <div data-region="pageelement" data-id="{{id}}" class="mb-2 mt-2 d-flex">
+        <li data-region="pageelement" data-id="{{id}}" class="mb-2 mt-2 d-flex">
             {{> core/drag_handle}}
             <span>{{{icon}}}</span>
             {{#editablename}}{{> core/inplace_editable}}{{/editablename}}
@@ -51,6 +51,6 @@
                     {{#pix}} a/wp-trash, theme {{/pix}}
                 </a>
             </span>
-        </div>
+        </li>
     {{/elements}}
-</div>
+</ul>
