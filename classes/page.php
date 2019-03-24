@@ -165,18 +165,19 @@ class page {
     /**
      * Duplicate page with all elements (used inside "duplicate template" task)
      *
-     * @param int $templateid target template id
+     * @param template $template target template
      * @return page
      */
-    public function duplicate(int $templateid) : page {
+    public function duplicate(template $template) : page {
         $record = $this->persistent->to_record();
         unset($record->id, $record->timemodified, $record->timecreated);
-        $record->templateid = $templateid;
+        $record->templateid = $template->get_id();
         $page = self::instance(0, $record);
+        $page->template = $template;
         $page->persistent->save();
 
         foreach ($this->get_elements() as $el) {
-            $el->duplicate($page->get_id());
+            $el->duplicate($page);
         }
 
         return $page;

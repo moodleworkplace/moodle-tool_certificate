@@ -308,15 +308,29 @@ abstract class element {
     /**
      * Duplicates element (used as part of "duplicate template" task)
      *
-     * @param \int $pageid
+     * @param page $page target page
      * @return element new element
      */
-    public function duplicate(int $pageid) : element {
+    public function duplicate(page $page) : element {
+        $id = $this->get_id();
         $record = $this->persistent->to_record();
         unset($record->id, $record->timemodified, $record->timecreated);
-        $record->pageid = $pageid;
+        $record->pageid = $page->get_id();
         $el = self::instance(0, $record);
+        $el->page = $page;
         $el->persistent->save();
+        $newid = $el->get_id();
+
+        // Duplicate files.
+        $contextid = $this->get_template()->get_context()->id;
+        $newcontextid = $page->get_template()->get_context()->id;
+        $drafitemid = 0;
+        file_prepare_draft_area($drafitemid, $contextid, 'tool_certificate', 'element', $id);
+        file_save_draft_area_files($drafitemid, $newcontextid, 'tool_certificate', 'element', $newid);
+        $drafitemid = 0;
+        file_prepare_draft_area($drafitemid, $contextid, 'tool_certificate', 'elementaux', $id);
+        file_save_draft_area_files($drafitemid, $newcontextid, 'tool_certificate', 'elementaux', $newid);
+
         return $el;
     }
 
@@ -361,7 +375,14 @@ abstract class element {
      * @return bool success return true if deletion success, false otherwise
      */
     public function delete() {
-        return $this->persistent->delete();
+        $id = $this->get_id();
+        $this->persistent->delete();
+        // Delete files.
+        $fs = get_file_storage();
+        $contextid = $this->get_template()->get_context()->id;
+        $fs->delete_area_files($contextid, 'tool_certificate', 'element', $id);
+        $fs->delete_area_files($contextid, 'tool_certificate', 'elementaux', $id);
+        return true;
     }
 
     /**

@@ -56,27 +56,9 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
         send_stored_file($file, 0, 0, $forcedownload);
     }
-//
-//    if ($filearea === 'issue') {
-//        $issueid = array_shift($args);
-//        // TODO add access check.
-//
-//        $elementid = array_shift($args);
-//        $filename = array_pop($args);
-//        if (!$args) {
-//            $filepath = '/';
-//        } else {
-//            $filepath = '/' . implode('/', $args) . '/';
-//        }
-//        $fs = get_file_storage();
-//        $file = $fs->get_file($context->id, 'tool_certificate', 'elementimage', $elementid, $filepath, $filename);
-//        if (!$file) {
-//            return;
-//        }
-//        send_stored_file($file, null, 0, $forcedownload, $options);
-//    }
 
-    if ($filearea === 'element') {
+    // Elements can use several fileareas defined in tool_certificate.
+    if ($filearea === 'element' || $filearea === 'elementaux') {
         $elementid = array_shift($args);
         $template = \tool_certificate\template::find_by_element_id($elementid);
         $template->require_manage();
@@ -88,7 +70,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
             $filepath = '/' . implode('/', $args) . '/';
         }
         $fs = get_file_storage();
-        $file = $fs->get_file($context->id, 'tool_certificate', 'element', $elementid, $filepath, $filename);
+        $file = $fs->get_file($context->id, 'tool_certificate', $filearea, $elementid, $filepath, $filename);
         if (!$file) {
             return;
         }

@@ -49,7 +49,8 @@ class element extends \tool_certificate\element {
         element_helper::render_form_element_width($mform, 'certificateelement_userpicture');
         element_helper::render_form_element_height($mform, 'certificateelement_userpicture');
 
-        parent::render_form_elements($mform);
+        element_helper::render_form_element_position($mform);
+        element_helper::render_form_element_refpoint($mform);
     }
 
     /**
@@ -75,36 +76,20 @@ class element extends \tool_certificate\element {
      */
     public function render($pdf, $preview, $user, $issue) {
         global $CFG;
-
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return;
-        }
-
-        $imageinfo = json_decode($this->get_data());
-
-        $context = \context_user::instance($user->id);
+        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
 
         // Get files in the user icon area.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'user', 'icon', 0);
-
-        // Get the file we want to display.
-        $file = null;
-        foreach ($files as $filefound) {
-            if (!$filefound->is_directory()) {
-                $file = $filefound;
-                break;
-            }
-        }
+        $context = \context_user::instance($user->id);
+        $files = get_file_storage()->get_area_files($context->id, 'user', 'icon', 0, 'filename', false);
+        $file = reset($files);
 
         // Show image if we found one.
         if ($file) {
-            element_helper::render_image($pdf, $this, $file, [], $imageinfo->width, $imageinfo->height);
+            element_helper::render_image($pdf, $this, $file, [], $imageinfo['width'], $imageinfo['height']);
         } else if ($preview) { // Can't find an image, but we are in preview mode then display default pic.
             $location = $CFG->dirroot . '/pix/u/f1.png';
             element_helper::render_image($pdf, $this, $location,
-                ['width' => 100, 'height' => 100], $imageinfo->width, $imageinfo->height);
+                ['width' => 100, 'height' => 100], $imageinfo['width'], $imageinfo['height']);
         }
     }
 
@@ -118,13 +103,7 @@ class element extends \tool_certificate\element {
      */
     public function render_html() {
         global $PAGE, $USER;
-
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return '';
-        }
-
-        $imageinfo = json_decode($this->get_data());
+        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
 
         // Get the image.
         $userpicture = new \user_picture($USER);
@@ -132,7 +111,7 @@ class element extends \tool_certificate\element {
         $url = $userpicture->get_url($PAGE)->out(false);
 
         return element_helper::render_image_html($url, ['width' => 100, 'height' => 100],
-            (float)$imageinfo->width, (float)$imageinfo->height);
+            $imageinfo['width'], $imageinfo['height']);
     }
 
     /**
