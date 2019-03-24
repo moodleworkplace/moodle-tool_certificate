@@ -55,8 +55,8 @@ class tool_certificate_element_factory_test_testcase extends advanced_testcase {
     public function test_get_element_instance_with_invalid_element() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $element = $this->get_generator()->new_element($pageid, 'invalidelement');
         try {
+            $element = (object)['pageid' => $pageid, 'element' => 'invalidelement'];
             \tool_certificate\element::instance(0, $element);
             $this->fail('Exception expected');
         } catch (moodle_exception $e) {

@@ -82,7 +82,6 @@ class tool_certificate_userpicture_element_test_testcase extends advanced_testca
         $element = (object)['name' => 'Test',
                             'data' => json_encode(['width' => 0, 'height' => 0])];
         $e = $this->get_generator()->new_element($pageid, 'userpicture', $element);
-        $this->assertFalse(strpos($e->render_html(), 'width'));
-        $this->assertFalse(strpos($e->render_html(), 'height'));
+        $this->assertEquals(0, strpos($e->render_html(), '<img'));
     }
 }
