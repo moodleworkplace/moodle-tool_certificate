@@ -13,8 +13,8 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Edit content" "link"
 
   Scenario: Add and edit elements in a certificate template
-    # Background image.
     When I change window size to "large"
+    # Background image.
     When I add the element "Background image" to page "1" of the "Certificate 1" certificate template
     And I press "Save" in the modal form dialogue
     And I should see "Background image" in the "[data-region='elementlist']" "css_element"
@@ -25,7 +25,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour | #045ECD |
     And I press "Save" in the modal form dialogue
     And I should see "Border" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Border" "list_item"
+    And I click on "Edit 'Border'" "link" in the "Border" "list_item"
     And the following fields match these values:
       | id_width | 2 |
       | Colour | #045ECD |
@@ -33,16 +33,16 @@ Feature: Being able to manage elements in a certificate template
     # Code.
     And I add the element "Code" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
     And I press "Save" in the modal form dialogue
     And I should see "Code" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Code" "list_item"
+    And I click on "Edit 'Code'" "link" in the "Code" "list_item"
     And the following fields match these values:
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
@@ -51,20 +51,20 @@ Feature: Being able to manage elements in a certificate template
     # Date.
     And I add the element "Date" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
-      | Date item                | Issued date |
-      | Date format              | 2                 |
-      | Font                     | Helvetica         |
+      | Date item                | Issued date       |
+      | Date format              | strftimedateshort |
+      | Font                     | Times - Italic         |
       | Size                     | 20                |
       | Colour                   | #045ECD           |
       | Width                    | 20                |
       | Reference point location | Top left          |
     And I press "Save" in the modal form dialogue
     And I should see "Date" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Date" "list_item"
+    And I click on "Edit 'Date'" "link" in the "Date" "list_item"
     And the following fields match these values:
       | Date item                | Issued date |
-      | Date format              | 2                 |
-      | Font                     | Helvetica         |
+      | Date format              | strftimedateshort |
+      | Font                     | Times - Italic         |
       | Size                     | 20                |
       | Colour                   | #045ECD           |
       | Width                    | 20                |
@@ -82,7 +82,7 @@ Feature: Being able to manage elements in a certificate template
       | Height                 | 15                         |
     And I press "Save" in the modal form dialogue
     And I should see "Digital signature" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Digital signature" "list_item"
+    And I click on "Edit 'Digital signature'" "link" in the "Digital signature" "list_item"
     And the following fields match these values:
       | Signature name         | This is the signature name |
       | Signature password     | Some awesome password      |
@@ -99,7 +99,7 @@ Feature: Being able to manage elements in a certificate template
       | Height | 15 |
     And I press "Save" in the modal form dialogue
     And I should see "Image" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Image" "list_item"
+    And I click on "Edit 'Image'" "link" in the "Image" "list_item"
     And the following fields match these values:
       | Width  | 25 |
       | Height | 15 |
@@ -107,16 +107,16 @@ Feature: Being able to manage elements in a certificate template
     # Student name.
     And I add the element "Student name" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
     And I press "Save" in the modal form dialogue
     And I should see "Student name" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Student name" "list_item"
+    And I click on "Edit 'Student name'" "link" in the "Student name" "list_item"
     And the following fields match these values:
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
@@ -126,17 +126,17 @@ Feature: Being able to manage elements in a certificate template
     And I add the element "Text" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | Text                     | Test this |
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
     And I press "Save" in the modal form dialogue
     And I should see "Text" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "Text" "list_item"
+    And I click on "Edit 'Text'" "link" in the "Text" "list_item"
     And the following fields match these values:
       | Text                     | Test this |
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
@@ -146,17 +146,17 @@ Feature: Being able to manage elements in a certificate template
     And I add the element "User field" to page "1" of the "Certificate 1" certificate template
     And I set the following fields to these values:
       | User field               | Country   |
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Reference point location | Top left  |
     And I press "Save" in the modal form dialogue
     And I should see "User field" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "User field" "list_item"
+    And I click on "Edit 'User field'" "link" in the "User field" "list_item"
     And the following fields match these values:
       | User field               | Country   |
-      | Font                     | Helvetica |
+      | Font                     | Times - Italic |
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
@@ -169,10 +169,22 @@ Feature: Being able to manage elements in a certificate template
       | Height | 10 |
     And I press "Save" in the modal form dialogue
     And I should see "User picture" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit" "link" in the "User picture" "list_item"
+    And I click on "Edit 'User picture'" "link" in the "User picture" "list_item"
     And the following fields match these values:
       | Width  | 10 |
       | Height | 10 |
+    And I press "Save" in the modal form dialogue
+    # Program.
+    And I add the element "Program" to page "1" of the "Certificate 1" certificate template
+    And I follow "Show more..."
+    And I set the following fields to these values:
+      | Field  | Completed courses |
+      | Position X | 100           |
+    And I press "Save" in the modal form dialogue
+    And I should see "Program" in the "[data-region='elementlist']" "css_element"
+    And I click on "Edit 'Program'" "link" in the "[data-region='elementlist']" "css_element"
+    And the following fields match these values:
+      | Field  | Completed courses |
     And I press "Save" in the modal form dialogue
     And I log out
 

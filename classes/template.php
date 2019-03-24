@@ -271,7 +271,12 @@ class template {
                     }
                 }
             }
-            $pdf->Output($filename);
+            if (defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
+                // For some reason phpunit on travis-ci.com do not return 'cli' on php_sapi_name().
+                echo $pdf->Output($filename, 'S');
+            } else {
+                $pdf->Output($filename);
+            }
         }
     }
 

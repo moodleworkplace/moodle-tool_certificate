@@ -21,7 +21,7 @@ Feature: Being able to set a site setting to determine whether or not to display
       | Position X | 5  |
       | Position Y | 10 |
     And I press "Save" in the modal form dialogue
-    And I click on "Edit" "link" in the "Code" "list_item"
+    And I click on "Edit 'Code'" "link" in the "Code" "list_item"
     And the following fields match these values:
       | Position X | 5  |
       | Position Y | 10 |
