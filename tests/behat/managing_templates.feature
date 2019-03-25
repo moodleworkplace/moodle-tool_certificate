@@ -114,7 +114,7 @@ Feature: Being able to manage site templates
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link" in the "Certificate 1" "table_row"
-    And I add the element "Student name" to page "1" of the "Certificate 1" site certificate template
+    And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Delete" "link" in the "Certificate 1" "table_row"
@@ -138,7 +138,7 @@ Feature: Being able to manage site templates
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link" in the "Certificate 1" "table_row"
     And I wait "2" seconds
-    And I add the element "Student name" to page "1" of the "Certificate 1" site certificate template
+    And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"

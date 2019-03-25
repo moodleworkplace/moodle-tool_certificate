@@ -50,8 +50,9 @@ class element extends \certificateelement_image\element {
 
         $this->signaturefilemanageroptions = [
             'maxbytes' => $COURSE->maxbytes,
-            'subdirs' => 1,
-            'accepted_types' => ['.crt']
+            'subdirs' => 0,
+            'accepted_types' => ['.crt'],
+            'maxfiles' => 1
         ];
 
         parent::__construct();
@@ -63,10 +64,36 @@ class element extends \certificateelement_image\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_shared_images_list());
+        $mform->addElement('filemanager', 'image', get_string('uploadimage', 'tool_certificate'), '',
+            $this->filemanageroptions);
 
-        $mform->addElement('select', 'signaturefileid', get_string('digitalsignature', 'certificateelement_digitalsignature'),
-            self::get_signatures());
+        if (element_helper::render_shared_image_picker_element($mform)) {
+            $mform->addFormRule(function($data) {
+                $draffiles = file_get_draft_area_info($data['image']);
+                if ($draffiles['filesize'] && $data['fileid']) {
+                    return ['image' => get_string('onlyoneimage', 'customcertelement_digitalsignature')];
+                }
+                return [];
+            });
+        }
+
+        element_helper::render_form_element_width($mform, 'certificateelement_image');
+        element_helper::render_form_element_height($mform, 'certificateelement_image');
+
+        $mform->addFormRule(function($data) {
+            $errors = [];
+            $noimage = !file_get_draft_area_info($data['image'])['filesize'] && empty($data['fileid']);
+            if ($noimage && empty($data['width'])) {
+                $errors['width'] = get_string('invalidwidthheight', 'customcertelement_digitalsignature');
+            }
+            if ($noimage && empty($data['height'])) {
+                $errors['height'] = get_string('invalidwidthheight', 'customcertelement_digitalsignature');
+            }
+            return $errors;
+        });
+
+        $mform->addElement('filemanager', 'signature', get_string('digitalsignature', 'certificateelement_digitalsignature'), '',
+            $this->signaturefilemanageroptions);
 
         $mform->addElement('text', 'signaturename', get_string('signaturename', 'certificateelement_digitalsignature'));
         $mform->setType('signaturename', PARAM_TEXT);
@@ -90,17 +117,35 @@ class element extends \certificateelement_image\element {
         $mform->setType('signaturecontactinfo', PARAM_TEXT);
         $mform->setDefault('signaturecontactinfo', '');
 
-        element_helper::render_form_element_width($mform, 'certificateelement_image');
-        element_helper::render_form_element_height($mform, 'certificateelement_image');
+        element_helper::render_form_element_position($mform);
+    }
 
-        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
-            $this->filemanageroptions);
+    /**
+     * Render the element in html.
+     *
+     * This function is used to render the element when we are using the
+     * drag and drop interface to position it.
+     *
+     * @return string the html
+     */
+    public function render_html() {
+        global $OUTPUT;
+        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
 
-        $mform->addElement('filemanager', 'digitalsignature',
-            get_string('uploaddigitalsignature', 'certificateelement_digitalsignature'), '',
-            $this->signaturefilemanageroptions);
+        if (!$file = $this->get_file()) {
+            // Outline of a box.
+            $size = element_helper::calculate_image_size('none', ['width' => 140, 'height' => 140],
+                (float)$imageinfo['width'], (float)$imageinfo['height']);
+            return \html_writer::div('&nbsp;', 'm-0 p-0', ['style' => 'border: 1px dotted black;',
+                'data-width' => $size['width'], 'data-height' => $size['height']]);
+        } else {
+            // Link to the file.
+            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+                $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            $fileimageinfo = $file->get_imageinfo();
+        }
 
-        \tool_certificate\element::render_form_elements($mform);
+        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height']);
     }
 
     /**
@@ -110,23 +155,25 @@ class element extends \certificateelement_image\element {
      * @param \stdClass $data the form data
      */
     public function save(\stdClass $data) {
-        // Handle file uploads.
-        if (property_exists($data, 'certificateimage')) {
-            \tool_certificate\certificate::upload_files($data->certificateimage,
-                $this->get_template()->get_context()->id);
-        }
-
-        // Handle file certificate uploads.
-        if (property_exists($data, 'digitalsignature')) {
-            \tool_certificate\certificate::upload_files($data->digitalsignature,
-                $this->get_template()->get_context()->id, 'signature');
-        }
 
         if (property_exists($data, 'signaturename')) {
             $data->data = $this->calculate_additional_data($data);
         }
 
         \tool_certificate\element::save($data);
+
+        // Handle file uploads.
+        if (property_exists($data, 'image')) {
+            file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
+                'tool_certificate', 'element', $this->get_id());
+        }
+
+        // Handle file uploads.
+        if (property_exists($data, 'signature')) {
+            file_save_draft_area_files($data->signature, $this->get_template()->get_context()->id,
+                'tool_certificate', 'elementaux', $this->get_id());
+        }
+
     }
 
     /**
@@ -186,29 +233,15 @@ class element extends \certificateelement_image\element {
      * @param \stdClass $issue the issue we are rendering
      */
     public function render($pdf, $preview, $user, $issue) {
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return;
-        }
 
         $imageinfo = json_decode($this->get_data());
-
-        // If there is no file, we have nothing to display.
-        if (empty($imageinfo->filename)) {
-            return;
-        }
-
-        // If there is no signature file, we have nothing to display.
-        if (empty($imageinfo->signaturefilename)) {
-            return;
-        }
 
         if ($file = $this->get_file()) {
             element_helper::render_image($pdf, $this, $file, [], $imageinfo->width, $imageinfo->height);
         }
 
         if ($signaturefile = $this->get_signature_file()) {
-            $location = make_request_directory() . '/target';
+            $location = make_request_directory() . '/target.crt';
             $signaturefile->copy_content_to($location);
             $info = [
                 'Name' => $imageinfo->signaturename,
@@ -217,106 +250,61 @@ class element extends \certificateelement_image\element {
                 'ContactInfo' => $imageinfo->signaturecontactinfo
             ];
             $pdf->setSignature('file://' . $location, '', $imageinfo->signaturepassword, '', 2, $info);
-            $pdf->setSignatureAppearance($this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
+            $size = element_helper::calculate_image_size($file, [], $imageinfo->width, $imageinfo->height);
+            $pdf->setSignatureAppearance($this->get_posx(), $this->get_posy(), $size['width'], $size['height']);
         }
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        global $COURSE, $SITE;
-
-        // Set the context.
-        if ($COURSE->id == $SITE->id) {
-            $context = \context_system::instance();
-        } else {
-            $context = \context_course::instance($COURSE->id);
-        }
-
+    public function parepare_data_for_form() {
+        $record = parent::parepare_data_for_form();
         if (!empty($this->get_data())) {
-            $imageinfo = json_decode($this->get_data());
-
-            $element = $mform->getElement('signaturename');
-            $element->setValue($imageinfo->signaturename);
-
-            $element = $mform->getElement('signaturepassword');
-            $element->setValue($imageinfo->signaturepassword);
-
-            $element = $mform->getElement('signaturelocation');
-            $element->setValue($imageinfo->signaturelocation);
-
-            $element = $mform->getElement('signaturereason');
-            $element->setValue($imageinfo->signaturereason);
-
-            $element = $mform->getElement('signaturecontactinfo');
-            $element->setValue($imageinfo->signaturecontactinfo);
-
-            if (!empty($imageinfo->signaturefilename)) {
-                if ($signaturefile = $this->get_signature_file()) {
-                    $element = $mform->getElement('signaturefileid');
-                    $element->setValue($signaturefile->get_id());
+            $dateinfo = json_decode($this->get_data());
+            $keys = ['signaturename', 'signaturepassword', 'signaturelocation', 'signaturereason', 'signaturecontactinfo'];
+            foreach ($keys as $key) {
+                if (isset($dateinfo->$key)) {
+                    $record->$key = $dateinfo->$key;
                 }
             }
         }
 
-        // Editing existing instance - copy existing files into draft area.
-        $draftitemid = file_get_submitted_draft_itemid('digitalsignature');
-        file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'signature', 0,
-            $this->signaturefilemanageroptions);
-        $element = $mform->getElement('digitalsignature');
-        $element->setValue($draftitemid);
-
-        parent::definition_after_data($mform);
-    }
-
-    /**
-     * Return the list of possible images to use.
-     *
-     * @return array the list of images that can be used
-     */
-    public static function get_signatures() {
-        global $COURSE;
-
-        // Create file storage object.
-        $fs = get_file_storage();
-
-        // The array used to store the digital signatures.
-        $arrfiles = array();
-        // Loop through the files uploaded in the system context.
-        if ($files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'signature', false,
-                'filename', false)) {
-            foreach ($files as $hash => $file) {
-                $arrfiles[$file->get_id()] = $file->get_filename();
-            }
+        if ($this->get_id()) {
+            // Load signature file.
+            $draftitemid = file_get_submitted_draft_itemid('signature');
+            $context = $this->get_template()->get_context();
+            file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'elementaux',
+                $this->get_id(), $this->signaturefilemanageroptions);
+            $record->signature = $draftitemid;
         }
-        // Loop through the files uploaded in the course context.
-        if ($files = $fs->get_area_files(\context_course::instance($COURSE->id)->id, 'tool_certificate', 'signature', false,
-                'filename', false)) {
-            foreach ($files as $hash => $file) {
-                $arrfiles[$file->get_id()] = $file->get_filename();
-            }
-        }
-
-        \core_collator::asort($arrfiles);
-        $arrfiles = array('0' => get_string('nosignature', 'certificateelement_digitalsignature')) + $arrfiles;
-
-        return $arrfiles;
+        return $record;
     }
 
     /**
      * Fetch stored file.
      *
-     * @return \stored_file|bool stored_file instance if exists, false if not
+     * @return \stored_file|bool stored_file instance if exists, null if not
      */
-    public function get_signature_file() {
-        $imageinfo = json_decode($this->get_data());
-
+    public function get_signature_file() :? \stored_file {
         $fs = get_file_storage();
 
-        return $fs->get_file($imageinfo->signaturecontextid, 'tool_certificate', $imageinfo->signaturefilearea,
-            $imageinfo->signatureitemid, $imageinfo->signaturefilepath, $imageinfo->signaturefilename);
+        $files = $fs->get_area_files($this->get_template()->get_context()->id,
+            'tool_certificate', 'elementaux', $this->get_id(), '', false);
+        if (count($files)) {
+            return reset($files);
+        }
+
+        return null;
+    }
+
+    /**
+     * Can be used as a background
+     * @return bool
+     */
+    public function can_be_used_as_a_background() {
+        return false;
     }
 }

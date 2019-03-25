@@ -107,16 +107,16 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        if (!empty($this->get_data())) {
-            $element = $mform->getElement('width');
-            $element->setValue($this->get_data());
+    public function parepare_data_for_form() {
+        $record = parent::parepare_data_for_form();
+        if ($this->get_data()) {
+            $record->width = $this->get_data();
         }
-        parent::definition_after_data($mform);
+        return $record;
     }
 
     /**

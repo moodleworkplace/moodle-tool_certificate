@@ -191,7 +191,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, SortableList) {
             // Refpoint=0 - no change, =1 - move left by half of the width, =2 - move left by the width.
             var left = mmToPx($(this).data('posx')),
                 refpoint = $(this).data('refpoint') ? parseInt($(this).data('refpoint')) : 0,
-                offset = parseInt($(this).width()) * refpoint / 2;
+                offset = refpoint ? parseInt($(this).width()) * refpoint / 2 : 0;
             $(this).css("left", (left - offset) + 'px');
         });
         page.addClass('recalculated');
@@ -231,7 +231,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, SortableList) {
                 var el = $(e.currentTarget),
                     page = el.closest('[data-region="pdf"]'),
                     refpoint = parseInt($(this).data('refpoint')),
-                    offset = parseInt($(this).width()) * refpoint / 2,
+                    offset = refpoint ? parseInt($(this).width()) * refpoint / 2 : 0,
                     left = pxToMm(el.offset().left - page.offset().left + offset),
                     top = pxToMm(el.offset().top - page.offset().top);
                 setTimeout(function() {

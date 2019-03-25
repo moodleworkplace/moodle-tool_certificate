@@ -125,23 +125,18 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        // Set the item and format for this element.
+    public function parepare_data_for_form() {
+        $record = parent::parepare_data_for_form();
         if (!empty($this->get_data())) {
             $dateinfo = json_decode($this->get_data());
-
-            $element = $mform->getElement('dateitem');
-            $element->setValue($dateinfo->dateitem);
-
-            $element = $mform->getElement('dateformat');
-            $element->setValue($dateinfo->dateformat);
+            $record->dateitem = $dateinfo->dateitem;
+            $record->dateformat = $dateinfo->dateformat;
         }
-
-        parent::definition_after_data($mform);
+        return $record;
     }
 
     /**

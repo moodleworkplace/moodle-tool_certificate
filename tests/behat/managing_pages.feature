@@ -19,9 +19,9 @@ Feature: Being able to manage pages in a certificate template
     And I should see "Page 2"
 
   Scenario: Deleting a page from a certificate template
-    When I add the element "Background image" to page "1" of the "Certificate 1" site certificate template
+    When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
-    And I add the element "Student name" to page "1" of the "Certificate 1" site certificate template
+    And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
     And I follow "Add page"
     And I press "Save" in the modal form dialogue
@@ -31,19 +31,19 @@ Feature: Being able to manage pages in a certificate template
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     And I should see "Page 1"
     And I should not see "Page 2"
-    And I should not see "Background image"
-    And I should not see "Student name"
+    And I should not see "User picture"
+    And I should not see "User field"
     And I log out
 
   Scenario: Rearrange pages in a certificate template
-    When I add the element "Background image" to page "1" of the "Certificate 1" site certificate template
+    When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
     And I follow "Add page"
     And I press "Save" in the modal form dialogue
-    And I add the element "Student name" to page "2" of the "Certificate 1" site certificate template
+    And I add the element "User field" to page "2" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
     And I click on "Move down" "link" in the "//*[@data-region='page'][1]" "xpath_element"
-    Then "Student name" "text" should appear before "Background image" "text"
+    Then "User field" "text" should appear before "User picture" "text"
     And I click on "Move up" "link" in the "//*[@data-region='page'][2]" "xpath_element"
-    Then "Student name" "text" should appear after "Background image" "text"
+    Then "User field" "text" should appear after "User picture" "text"
     And I log out

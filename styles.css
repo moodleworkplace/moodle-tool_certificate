@@ -31,9 +31,6 @@
     float: left;
     height: 9px;
     width: 100%;
-}
-
-#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint="0"]:before {
     background-position: left top;
     margin: -4px -5px -5px -4px;
 }
