@@ -13,7 +13,7 @@ Feature: Being able to set a site setting to determine whether or not to display
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link"
-    And I add the element "Code" to page "1" of the "Certificate 1" certificate template
+    And I add the element "Code" to page "1" of the "Certificate 1" site certificate template
     And I follow "Show more..."
     And I should see "Position X"
     And I should see "Position Y"
