@@ -69,5 +69,21 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019030708, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2019030710) {
+        // Change refpoint of all images.
+        $DB->execute("UPDATE {tool_certificate_elements} SET refpoint = null WHERE element IN (?, ?, ?)",
+            ['image', 'userpicture', 'digitalsignature']);
+
+        upgrade_plugin_savepoint(true, 2019030710, 'tool', 'certificate');
+    }
+
+    if ($oldversion < 2019030711) {
+        // Change refpoint of all images.
+        $DB->execute("DELETE FROM {config_plugins} WHERE name = ? AND plugin IN (?, ?)",
+            ['version', 'certificateelement_bgimage', 'certificateelement_studentname']);
+
+        upgrade_plugin_savepoint(true, 2019030711, 'tool', 'certificate');
+    }
+
     return true;
 }

@@ -244,22 +244,23 @@ abstract class element {
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
+     *
+     * @return \stdClass|array
+     */
+    public function parepare_data_for_form() {
+        $record = $this->persistent->to_record();
+        unset($record->timecreated, $record->timemodifed, $record->data);
+        return $record;
+    }
+
+    /**
+     * Called from form method definition_after_data
      * Can be overridden if more functionality is needed.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function definition_after_data($mform) {
-        // Loop through the properties of the element and set the values
-        // of the corresponding form element, if it exists.
-        $record = $this->persistent->to_record();
-        unset($record->timecreated, $record->timemodifed, $record->pageid);
-        foreach ($record as $property => $value) {
-            if (!is_null($value) && $mform->elementExists($property)) {
-                $element = $mform->getElement($property);
-                $element->setValue($value);
-            }
-        }
     }
 
     /**
@@ -325,6 +326,7 @@ abstract class element {
         $contextid = $this->get_template()->get_context()->id;
         $newcontextid = $page->get_template()->get_context()->id;
         $drafitemid = 0;
+        get_file_storage();
         file_prepare_draft_area($drafitemid, $contextid, 'tool_certificate', 'element', $id);
         file_save_draft_area_files($drafitemid, $newcontextid, 'tool_certificate', 'element', $newid);
         $drafitemid = 0;

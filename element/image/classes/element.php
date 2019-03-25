@@ -78,9 +78,7 @@ class element extends \tool_certificate\element {
         $mform->addElement('filemanager', 'image', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
 
-        $options = self::get_shared_images_list();
-        if ($options) {
-            $mform->addElement('select', 'fileid', get_string('selectsharedimage', 'certificateelement_image'), $options);
+        if (element_helper::render_shared_image_picker_element($mform)) {
             $mform->addFormRule(function($data) {
                 $draffiles = file_get_draft_area_info($data['image']);
                 if ((!$draffiles['filesize'] && !$data['fileid']) || ($draffiles['filesize'] && $data['fileid'])) {
@@ -100,14 +98,12 @@ class element extends \tool_certificate\element {
         element_helper::render_form_element_height($mform, 'certificateelement_image');
 
         element_helper::render_form_element_position($mform);
-        element_helper::render_form_element_refpoint($mform);
 
         if ($this->can_be_used_as_a_background()) {
             $mform->hideIf('width', 'isbackground', 'checked');
             $mform->hideIf('height', 'isbackground', 'checked');
             $mform->hideIf('posx', 'isbackground', 'checked');
             $mform->hideIf('posy', 'isbackground', 'checked');
-            $mform->hideIf('refpoint', 'isbackground', 'checked');
         }
 
     }
@@ -197,51 +193,43 @@ class element extends \tool_certificate\element {
      * @return string the html
      */
     public function render_html() {
-        if (!$file = $this->get_file()) {
-            return '';
-        }
-        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
+        global $OUTPUT;
         if ($this->is_background()) {
             $page = $this->get_page()->to_record();
             $imageinfo['width'] = $page->width;
             $imageinfo['height'] = $page->height;
+        } else {
+            $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
         }
 
-        $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-            $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        $fileimageinfo = $file->get_imageinfo();
+        if (!$file = $this->get_file()) {
+            // Broken file icon.
+            $url = $OUTPUT->image_url('brokenfile', 'tool_certificate')->out(false);
+            $fileimageinfo = ['width' => 140, 'height' => 140];
+        } else {
+            // Link to the file.
+            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+                $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            $fileimageinfo = $file->get_imageinfo();
+        }
+
         return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height']);
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        // Set the image, width and height for this element.
+    public function parepare_data_for_form() {
+        $record = parent::parepare_data_for_form();
         if (!empty($this->get_data())) {
-            $imageinfo = json_decode($this->get_data());
-            if (!empty($imageinfo->filename)) {
-                if ($file = $this->get_file()) {
-                    $element = $mform->getElement('fileid');
-                    $element->setValue($file->get_id());
+            $dateinfo = json_decode($this->get_data());
+            $keys = ['width', 'height', 'isbackground'];
+            foreach ($keys as $key) {
+                if (isset($dateinfo->$key)) {
+                    $record->$key = $dateinfo->$key;
                 }
-            }
-
-            if (isset($imageinfo->width) && $mform->elementExists('width')) {
-                $element = $mform->getElement('width');
-                $element->setValue($imageinfo->width);
-            }
-
-            if (isset($imageinfo->height) && $mform->elementExists('height')) {
-                $element = $mform->getElement('height');
-                $element->setValue($imageinfo->height);
-            }
-
-            if (isset($imageinfo->isbackground) && $mform->elementExists('isbackground')) {
-                $element = $mform->getElement('isbackground');
-                $element->setValue($imageinfo->isbackground);
             }
         }
 
@@ -251,11 +239,14 @@ class element extends \tool_certificate\element {
             $context = $this->get_template()->get_context();
             file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'element',
                 $this->get_id(), $this->filemanageroptions);
-            $element = $mform->getElement('image');
-            $element->setValue($draftitemid);
+            $record->image = $draftitemid;
         }
 
-        parent::definition_after_data($mform);
+        if ($file = $this->get_shared_file()) {
+            $record->fileid = $file->get_id();
+        }
+
+        return $record;
     }
 
     /**
@@ -263,47 +254,29 @@ class element extends \tool_certificate\element {
      *
      * @return \stored_file|bool stored_file instance if exists, false if not
      */
-    public function get_file() :? \stored_file {
+    public function get_file() : ?\stored_file {
 
-        $fs = get_file_storage();
-
-        $files = $fs->get_area_files($this->get_template()->get_context()->id,
+        $files = get_file_storage()->get_area_files($this->get_template()->get_context()->id,
             'tool_certificate', 'element', $this->get_id(), '', false);
         if (count($files)) {
             return reset($files);
         }
 
-        $imageinfo = json_decode($this->get_data());
-        if (!empty($imageinfo->filename)) {
-            return $fs->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
-                $imageinfo->filepath, $imageinfo->filename);
-        }
-        return null;
+        return $this->get_shared_file();
     }
 
     /**
-     * Return the list of possible images to use.
+     * Fetch shared file
      *
-     * @return array the list of images that can be used
+     * @return null|\stored_file
      */
-    public static function get_shared_images_list() {
-        // Create file storage object.
-        $fs = get_file_storage();
-
-        // The array used to store the images.
-        $arrfiles = array();
-        if ($files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
-            foreach ($files as $hash => $file) {
-                $arrfiles[$file->get_id()] = $file->get_filename();
-            }
+    public function get_shared_file() : ?\stored_file {
+        $imageinfo = json_decode($this->get_data());
+        if (!empty($imageinfo->filename)) {
+            return get_file_storage()->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
+                $imageinfo->filepath, $imageinfo->filename);
         }
-
-        if (count($arrfiles)) {
-            \core_collator::asort($arrfiles);
-            $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
-        }
-
-        return $arrfiles;
+        return null;
     }
 
     /**
@@ -326,15 +299,19 @@ class element extends \tool_certificate\element {
         return !$this->is_background();
     }
 
+    /**
+     * Override get posx
+     * @return int
+     */
     public function get_posx() {
         return $this->is_background() ? 0 : parent::get_posx();
     }
 
+    /**
+     * Override get posy
+     * @return int
+     */
     public function get_posy() {
         return $this->is_background() ? 0 : parent::get_posy();
-    }
-
-    public function get_refpoint() {
-        return $this->is_background() ? 0 : parent::get_refpoint();
     }
 }

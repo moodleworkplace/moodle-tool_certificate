@@ -108,14 +108,7 @@ class edit_element_form extends modal_form {
      * Fill in the current page data for this certificate.
      */
     public function definition_after_data() {
-        $this->element->definition_after_data($this->_form);
-
-        if (array_key_exists('posx', $this->_ajaxformdata) && $this->_form->elementExists('posx')) {
-            $this->_form->getElement('posx')->setValue($this->_ajaxformdata['posx']);
-        }
-        if (array_key_exists('posy', $this->_ajaxformdata) && $this->_form->elementExists('posy')) {
-            $this->_form->getElement('posy')->setValue($this->_ajaxformdata['posy']);
-        }
+        $this->get_element()->definition_after_data($this->_form);
     }
 
     /**
@@ -126,9 +119,7 @@ class edit_element_form extends modal_form {
      * @return array the errors that were found
      */
     public function validation($data, $files) {
-        $errors = array();
-        $errors += $this->element->validate_form_elements($data, $files);
-        return $errors;
+        return $this->get_element()->validate_form_elements($data, $files);
     }
 
     /**
@@ -152,6 +143,7 @@ class edit_element_form extends modal_form {
     public function process(\stdClass $data) {
         $this->get_element()->save($data);
         $data = $this->get_element()->to_record();
+        // TODO use exporter instead.
         $data->html = $this->get_element()->render_html();
         $data->name = format_string($data->name);
         return $data;
@@ -164,6 +156,6 @@ class edit_element_form extends modal_form {
      * to preprocess editor and filemanager elements
      */
     public function set_data_for_modal() {
-        $this->set_data($this->_ajaxformdata);
+        $this->set_data($this->get_element()->parepare_data_for_form());
     }
 }

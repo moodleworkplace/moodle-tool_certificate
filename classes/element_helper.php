@@ -545,6 +545,38 @@ class element_helper {
         return \html_writer::tag('img', '', array('src' => $url,
             'data-width' => $width, 'data-height' => $height));
     }
+    /**
+     * Calculates image size in mm
+     *
+     * @param \stored_file|string $file
+     * @param array $fileinfo necessary for string files - must contain actual image width and height in pixels,
+     *     ignored for stored_file instances (will be taken from the file itself)
+     * @param int $width user specified width, in mm
+     * @param int $height user specified height, in mm
+     */
+    public static function calculate_image_size($file, array $fileinfo, $width, $height) {
+        $rv = ['width' => $width, 'height' => $height];
+        if (!$file || ($width && $height)) {
+            return $rv;
+        }
+
+        if ($file instanceof \stored_file) {
+            $fileinfo = $file->get_imageinfo();
+        }
+
+        if (!$width && !$height) {
+            // Width and height are not set, convert px to mm.
+            // 1 px = 1/96 inch = 0.264583 mm .
+            $rv['width'] = (float)$fileinfo['width'] * 0.264583;
+            $rv['height'] = (float)$fileinfo['height'] * 0.264583;
+        } else {
+            $whratio = (float)$fileinfo['width'] / (float)$fileinfo['height'];
+            $rv['width'] = $width ?: $height * $whratio;
+            $rv['height'] = $height ?: $width / $whratio;
+        }
+
+        return $rv;
+    }
 
     /**
      * Helps to render an image element in PDF
@@ -552,39 +584,77 @@ class element_helper {
      * @param \pdf $pdf
      * @param element $element
      * @param \stored_file|string $file
-     * @param array $imageinfo
-     * @param int $width
-     * @param int $height
+     * @param array $fileinfo necessary for string files - must contain actual image width and height in pixels,
+     *     ignored for stored_file instances (will be taken from the file itself)
+     * @param int $width user specified width, in mm
+     * @param int $height user specified height, in mm
      */
-    public static function render_image(\pdf $pdf, element $element, $file, array $imageinfo, $width, $height) {
+    public static function render_image(\pdf $pdf, element $element, $file, array $fileinfo, $width, $height) {
+        list($width, $height) = array_values(self::calculate_image_size($file, $fileinfo, $width, $height));
+
         if ($file instanceof \stored_file) {
             $location = make_request_directory() . '/target';
             $file->copy_content_to($location);
 
             $mimetype = $file->get_mimetype();
-            $imageinfo = $file->get_imageinfo();
         } else {
             $location = $file;
             $mimetype = 'image/jpg';
         }
 
-        if (!$width && !$height) {
-            // Width and height are not set, convert px to mm.
-            // 1 px = 1/96 inch = 0.264583 mm .
-            $width = (float)$imageinfo['width'] * 0.264583;
-            $height = (float)$imageinfo['height'] * 0.264583;
-        } else if (!$width || !$height) {
-            $whratio = (float)$imageinfo['width'] / (float)$imageinfo['height'];
-            $width = $width ?: $height * $whratio;
-            $height = $height ?: $width / $whratio;
-        }
-
-        $x = $element->get_posx() - $width * $element->get_refpoint() / 2;
-
         if ($mimetype == 'image/svg+xml') {
-            $pdf->ImageSVG($location, $x, $element->get_posy(), $width, $height);
+            $pdf->ImageSVG($location, $element->get_posx(), $element->get_posy(), $width, $height);
         } else {
-            $pdf->Image($location, $x, $element->get_posy(), $width, $height);
+            $pdf->Image($location, $element->get_posx(), $element->get_posy(), $width, $height);
         }
+    }
+
+    /**
+     * Return the list of possible shared images to use.
+     *
+     * @return array the list of images that can be used
+     */
+    public static function get_shared_images_list() {
+        // Create file storage object.
+        $fs = get_file_storage();
+
+        // The array used to store the images.
+        $arrfiles = array();
+        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
+            foreach ($files as $hash => $file) {
+                $arrfiles[$file->get_id()] = $file->get_filename();
+            }
+        }
+
+        if (count($arrfiles)) {
+            \core_collator::asort($arrfiles);
+            $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+        }
+
+        return $arrfiles;
+    }
+
+    /**
+     * Helper function to render the width element (the width limiter for the text, advanced element)
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     * @return bool whether the element was added (it would not be added if there are no shared images)
+     */
+    public static function render_shared_image_picker_element($mform) {
+        $arrfiles = array();
+        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
+            foreach ($files as $hash => $file) {
+                $arrfiles[$file->get_id()] = $file->get_filename();
+            }
+        }
+
+        if (!$arrfiles) {
+            return false;
+        }
+
+        \core_collator::asort($arrfiles);
+        $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+        $mform->addElement('select', 'fileid', get_string('selectsharedimage', 'certificateelement_image'), $arrfiles);
+        return true;
     }
 }
