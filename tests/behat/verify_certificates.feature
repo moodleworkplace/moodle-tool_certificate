@@ -23,7 +23,7 @@ Feature: Being able to verify that a certificate is valid or not
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     Then I should see "Not verified"
-    And I verify the "Certificate 1" certificate for the user "student1"
+    And I verify the "Certificate 1" site certificate for the user "student1"
 
   Scenario: Verify a certificate as an admin
     When the following certificate issues exist:
@@ -31,12 +31,12 @@ Feature: Being able to verify that a certificate is valid or not
       | Certificate 1 | student1 |
       | Certificate 2 | student1 |
     And I log in as "admin"
-    And I visit the verification url for the site
+    And I visit the sites certificates verification url
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     Then I should see "Not verified"
-    And I verify the "Certificate 1" certificate for the user "student1"
-    And I verify the "Certificate 2" certificate for the user "student1"
+    And I verify the "Certificate 1" site certificate for the user "student1"
+    And I verify the "Certificate 2" site certificate for the user "student1"
 
   Scenario: Verify a certificate as a guest using the site-wide URL
     When I log in as "admin"
@@ -49,9 +49,9 @@ Feature: Being able to verify that a certificate is valid or not
       | Certificate 2 | student1 |
     And I log out
     And I log in as "guest"
-    And I visit the verification url for the site
+    And I visit the sites certificates verification url
     And I set the field "Code" to "NOTAVALIDCODE"
     And I press "Verify"
     Then I should see "Not verified"
-    And I verify the "Certificate 1" certificate for the user "student1"
-    And I verify the "Certificate 2" certificate for the user "student1"
+    And I verify the "Certificate 1" site certificate for the user "student1"
+    And I verify the "Certificate 2" site certificate for the user "student1"
