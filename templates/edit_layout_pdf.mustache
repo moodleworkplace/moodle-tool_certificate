@@ -46,7 +46,7 @@
     {{#elements}}
         <a href="#" data-region="pdfelement" id="element-{{id}}" data-action="editelement" data-id="{{id}}" data-name="{{name}}"
             data-fontsize="{{fontsize}}" {{#width}}data-width="{{width}}"{{/width}}
-            {{#draggable}}data-drag-type="move" data-refpoint="{{refpoint}}" data-posx="{{posx}}" data-posy="{{posy}}"{{/draggable}}>
+            {{#draggable}}data-drag-type="move" {{#showrefpoint}}data-refpoint="{{refpoint}}"{{/showrefpoint}} data-posx="{{posx}}" data-posy="{{posy}}"{{/draggable}}>
         {{{html}}}
         </a>
     {{/elements}}

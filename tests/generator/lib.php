@@ -86,7 +86,11 @@ class tool_certificate_generator extends component_generator_base {
      */
     public function create_element(int $pageid, string $elementtype, $data = []) {
         $el = $this->new_element($pageid, $elementtype);
-        $el->save((object)$data);
+        if ($data) {
+            $el->save_form_data((object)$data);
+        } else {
+            $el->save((object)[]);
+        }
         return $el;
     }
 

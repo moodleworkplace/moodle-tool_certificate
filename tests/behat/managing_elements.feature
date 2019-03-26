@@ -33,7 +33,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
-      | Reference point location | Top left  |
+      | Text alignment           | Left      |
     And I press "Save" in the modal form dialogue
     And I should see "Code" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Code'" "link" in the "Code" "list_item"
@@ -42,7 +42,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
-      | Reference point location | Top left  |
+      | Text alignment           | Left      |
     And I press "Save" in the modal form dialogue
     # Date.
     And I add the element "Date" to page "1" of the "Certificate 1" site certificate template
@@ -53,7 +53,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20                |
       | Colour                   | #045ECD           |
       | Width                    | 20                |
-      | Reference point location | Top left          |
+      | Text alignment           | Left              |
     And I press "Save" in the modal form dialogue
     And I should see "Date" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Date'" "link" in the "Date" "list_item"
@@ -64,7 +64,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20                |
       | Colour                   | #045ECD           |
       | Width                    | 20                |
-      | Reference point location | Top left          |
+      | Text alignment           | Left              |
     And I press "Save" in the modal form dialogue
     # Digital signature.
     And I add the element "Digital signature" to page "1" of the "Certificate 1" site certificate template
@@ -110,7 +110,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
-      | Reference point location | Top left  |
+      | Text alignment           | Left      |
     And I press "Save" in the modal form dialogue
     And I should see "Text" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Text'" "link" in the "Text" "list_item"
@@ -120,7 +120,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
-      | Reference point location | Top left  |
+      | Text alignment           | Left      |
     And I press "Save" in the modal form dialogue
     # User field.
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
@@ -130,7 +130,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
-      | Reference point location | Top left  |
+      | Text alignment           | Left      |
     And I press "Save" in the modal form dialogue
     And I should see "User field" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'User field'" "link" in the "User field" "list_item"
@@ -140,7 +140,7 @@ Feature: Being able to manage elements in a certificate template
       | Size                     | 20        |
       | Colour                   | #045ECD   |
       | Width                    | 20        |
-      | Reference point location | Top left  |
+      | Text alignment           | Left      |
     And I press "Save" in the modal form dialogue
     # User picture.
     And I add the element "User picture" to page "1" of the "Certificate 1" site certificate template

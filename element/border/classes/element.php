@@ -37,12 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class element extends \tool_certificate\element {
 
-    /** @var bool $hasposition Element can be positioned (has x, y, refpoint) */
-    protected $hasposition = false;
-
-    /** @var bool $istext This is a text element, it has font, color and width limiter */
-    protected $istext = false;
-
     /**
      * This function renders the form elements when adding a certificate element.
      *
@@ -55,8 +49,6 @@ class element extends \tool_certificate\element {
 
         // The only other thing to define is the colour we want the border to be.
         element_helper::render_form_element_colour($mform);
-
-        parent::render_form_elements($mform);
     }
 
     /**
@@ -125,10 +117,16 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'width')) {
-            $data->data = $data->width;
-        }
-        parent::save($data);
+    public function save_form_data(\stdClass $data) {
+        $data->data = $data->width;
+        parent::save_form_data($data);
+    }
+
+    /**
+     * Can element be dragged.
+     * @return bool
+     */
+    public function is_draggable(): bool {
+        return false;
     }
 }

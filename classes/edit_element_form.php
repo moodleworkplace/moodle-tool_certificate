@@ -96,6 +96,11 @@ class edit_element_form extends modal_form {
         $mform->addElement('hidden', 'element');
         $mform->setType('element', PARAM_ALPHANUMEXT);
 
+        // Add the field for the name of the element, needed for all elements.
+        $mform->addElement('text', 'name', get_string('elementname', 'tool_certificate'), 'maxlength="255"');
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addHelpButton('name', 'elementname', 'tool_certificate');
+
         $mform->addElement('static', 'type', get_string('type', 'tool_certificate'),
             $this->get_element()->get_element_type_name());
 
@@ -141,7 +146,7 @@ class edit_element_form extends modal_form {
      * @return \stdClass
      */
     public function process(\stdClass $data) {
-        $this->get_element()->save($data);
+        $this->get_element()->save_form_data($data);
         $data = $this->get_element()->to_record();
         // TODO use exporter instead.
         $data->html = $this->get_element()->render_html();

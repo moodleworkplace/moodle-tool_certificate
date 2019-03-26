@@ -53,22 +53,6 @@ class element_helper {
     const CUSTOMCERT_REF_POINT_TOPRIGHT = 2;
 
     /**
-     * Estimate width on the text in PDF document
-     *
-     * @param \pdf $pdf
-     * @param string $content
-     * @return int
-     */
-    protected static function estimate_content_width(\pdf $pdf, $content) {
-        $content = html_to_text($content, 75, false);
-        $maxwidth = 0;
-        foreach (preg_split('/[\n]/', $content) as $line) {
-            $maxwidth = max($maxwidth, $pdf->GetStringWidth($line));
-        }
-        return $maxwidth;
-    }
-
-    /**
      * Common behaviour for rendering specified content on the pdf.
      *
      * @param \pdf $pdf the pdf object
@@ -86,17 +70,29 @@ class element_helper {
         $w = $element->get_width();
         $refpoint = $element->get_refpoint();
         $actualwidth = self::estimate_content_width($pdf, $content);
+        $page = $element->get_page()->to_record();
 
-        if ($w and $w < $actualwidth) {
-            $actualwidth = $w;
+        $align = 'L';
+        if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $align = 'R';
+            $w = $w ?: ($x - $page->leftmargin);
+            $x = $x - $w;
+        } else if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $align = 'C';
+            if (!$w) {
+                $w = min($x - $page->leftmargin, $page->width - $page->rightmargin - $x) * 2;
+            }
+            $x = $x - $w / 2;
+        } else {
+            if (!$w) {
+                $w = max(0, $page->width - $page->rightmargin - $x);
+            }
         }
-        $x -= ((int)$refpoint) * $actualwidth / 2;
-
         if ($w) {
             $w += 0.0001;
         }
         $pdf->setCellPaddings(0, 0, 0, 0);
-        $pdf->writeHTMLCell($w, 0, $x, $y, $content, 0, 0, false, true);
+        $pdf->writeHTMLCell($w, 0, $x, $y, $content, 0, 0, false, true, $align);
     }
 
     /**
@@ -117,6 +113,11 @@ class element_helper {
         }
 
         $style = $fontstyle . '; color: ' . $element->get_colour() . ';';
+        if ($element->get_refpoint() == self::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $style .= ' text-align: right;';
+        } else if ($element->get_refpoint() == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $style .= ' text-align: center;';
+        }
         return \html_writer::div($content, '', array('style' => $style));
     }
 
@@ -159,20 +160,46 @@ class element_helper {
      */
     public static function render_form_element_position($mform) {
         $mform->addElement('text', 'posx', get_string('posx', 'tool_certificate'), array('size' => 10));
-        $mform->setType('posx', PARAM_INT);
-        $mform->setDefault('posx', 0);
+        $mform->setType('posx', PARAM_RAW_TRIMMED); // We need to track empty string.
         $mform->addHelpButton('posx', 'posx', 'tool_certificate');
         $mform->setAdvanced('posx');
 
         $mform->addElement('text', 'posy', get_string('posy', 'tool_certificate'), array('size' => 10));
         $mform->setType('posy', PARAM_INT);
-        $mform->setDefault('posy', 0);
         $mform->addHelpButton('posy', 'posy', 'tool_certificate');
         $mform->setAdvanced('posy');
 
         $mform->addFormRule(function($data, $files) {
             return element_helper::validate_form_element_position($data);
         });
+    }
+
+    /**
+     * If position was not entered in the form, suggest it automatically
+     *
+     * @param \stdClass $data
+     * @param element $element
+     */
+    public static function suggest_position(\stdClass $data, element $element) {
+        if (!property_exists($data, 'posx')) {
+            // Position is not relevant for this element type.
+            return;
+        }
+        if ($element->get_id() || strlen($data->posx)) {
+            $data->posx = clean_param($data->posx, PARAM_INT);
+            return;
+        }
+
+        // Only suggest posx if this element is being created, no posx is specified in the form.
+        $refpoint = !empty($data->refpoint) ? $data->refpoint : self::CUSTOMCERT_REF_POINT_TOPLEFT;
+        $pagerecord = $element->get_page()->to_record();
+        if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $data->posx = $pagerecord->width - $pagerecord->rightmargin;
+        } else if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $data->posx = round(($pagerecord->width - $pagerecord->rightmargin + $pagerecord->leftmargin) / 2);
+        } else {
+            $data->posx = $pagerecord->leftmargin;
+        }
     }
 
     /**
@@ -244,20 +271,19 @@ class element_helper {
     }
 
     /**
-     * Helper function to render reference point element.
+     * Helper function to render reference point element that also serves as the text alignment
      *
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_refpoint($mform) {
         $refpointoptions = array();
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('topleft', 'tool_certificate');
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('topcenter', 'tool_certificate');
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('topright', 'tool_certificate');
-        $mform->addElement('select', 'refpoint', get_string('refpoint', 'tool_certificate'), $refpointoptions);
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('alignleft', 'tool_certificate');
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('aligncentre', 'tool_certificate');
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('alignright', 'tool_certificate');
+        $mform->addElement('select', 'refpoint', get_string('alignment', 'tool_certificate'), $refpointoptions);
         $mform->setType('refpoint', PARAM_INT);
         $mform->setDefault('refpoint', self::CUSTOMCERT_REF_POINT_TOPCENTER);
-        $mform->addHelpButton('refpoint', 'refpoint', 'tool_certificate');
-        $mform->setAdvanced('refpoint');
+        $mform->addHelpButton('refpoint', 'alignment', 'tool_certificate');
     }
 
     /**
@@ -285,11 +311,11 @@ class element_helper {
         $errors = array();
 
         // Check if posx is not set, or not numeric or less than 0.
-        if (isset($data['posx']) && !is_numeric($data['posx'])) {
+        if (!empty($data['posx']) && !is_numeric($data['posx'])) {
             $errors['posx'] = get_string('invalidposition', 'tool_certificate', 'X');
         }
         // Check if posy is not set, or not numeric or less than 0.
-        if (isset($data['posy']) && !is_numeric($data['posy'])) {
+        if (!empty($data['posy']) && !is_numeric($data['posy'])) {
             $errors['posy'] = get_string('invalidposition', 'tool_certificate', 'Y');
         }
 
@@ -620,7 +646,8 @@ class element_helper {
 
         // The array used to store the images.
         $arrfiles = array();
-        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
+        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
+            'image', false, 'filename', false)) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
             }
@@ -642,7 +669,8 @@ class element_helper {
      */
     public static function render_shared_image_picker_element($mform) {
         $arrfiles = array();
-        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
+        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
+            'image', false, 'filename', false)) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
             }

@@ -85,18 +85,15 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'userfield')) {
-            $data->data = $data->userfield;
-        }
-        parent::save($data);
+    public function save_form_data(\stdClass $data) {
+        $data->data = $data->userfield;
+        parent::save_form_data($data);
     }
 
     /**
      * Returns a field value
      *
      * @param \stdClass $user the user we are rendering this for
-     * @param \stdClass $issue the issue we are rendering
      */
     protected function get_user_field_value($user) {
         global $CFG, $DB;

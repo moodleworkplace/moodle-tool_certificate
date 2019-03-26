@@ -58,9 +58,9 @@ class tool_certificate_userpicture_element_test_testcase extends advanced_testca
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
 
-        $element = ['name' => 'Test'];
+        $element = ['name' => 'Test', 'width' => 0, 'height' => 0];
         $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);
-        $this->assertTrue(empty($e->render_html()));
+        $this->assertNotEmpty($e->render_html());
 
         $element = ['name' => 'Test', 'width' => 100, 'height' => 200];
         $e = $this->get_generator()->create_element($pageid, 'userpicture', $element);

@@ -74,11 +74,9 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'dateitem') || property_exists($data, 'dateformat')) {
-            $data->data = json_encode(['dateitem' => $data->dateitem, 'dateformat' => $data->dateformat]);
-        }
-        parent::save($data);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['dateitem' => $data->dateitem, 'dateformat' => $data->dateformat]);
+        parent::save_form_data($data);
     }
 
     /**

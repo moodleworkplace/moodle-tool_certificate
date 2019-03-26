@@ -89,7 +89,7 @@ class tool_certificate_date_element_test_testcase extends advanced_testcase {
         $newdata = (object)['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
                             'dateformat' => 'strftimedate'];
         $expected = json_encode($newdata);
-        $e->save($newdata);
+        $e->save_form_data($newdata);
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
         $this->assertEquals($expected, $el->data);
     }

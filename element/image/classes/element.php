@@ -42,9 +42,6 @@ class element extends \tool_certificate\element {
      */
     protected $filemanageroptions = array();
 
-    /** @var bool $istext This is a text element, it has font, color and width limiter */
-    protected $istext = false;
-
     /**
      * Constructor.
      */
@@ -114,19 +111,14 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'image')) {
-            // This is a full form submission, calculate additional data.
-            $data->data = $this->calculate_additional_data($data);
-        }
+    public function save_form_data(\stdClass $data) {
+        $data->data = $this->calculate_additional_data($data);
 
-        parent::save($data);
+        parent::save_form_data($data);
 
         // Handle file uploads.
-        if (property_exists($data, 'image')) {
-            file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
-                'tool_certificate', 'element', $this->get_id());
-        }
+        file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
+            'tool_certificate', 'element', $this->get_id());
     }
 
     /**
@@ -199,7 +191,8 @@ class element extends \tool_certificate\element {
             $imageinfo['width'] = $page->width;
             $imageinfo['height'] = $page->height;
         } else {
-            $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
+            $imageinfo = ($this->get_data() ? json_decode($this->get_data(), true) : [])
+                + ['width' => 0, 'height' => 0];
         }
 
         if (!$file = $this->get_file()) {

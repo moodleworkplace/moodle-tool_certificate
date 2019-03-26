@@ -80,7 +80,7 @@ class tool_certificate_border_element_test_testcase extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'border');
         $newdata = (object)['width' => 300];
-        $e->save($newdata);
+        $e->save_form_data($newdata);
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
         $this->assertEquals($newdata->width, $el->data);
     }
