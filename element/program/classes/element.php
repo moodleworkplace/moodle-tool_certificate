@@ -54,6 +54,8 @@ class element extends \tool_certificate\element {
         $mform->addHelpButton('display', 'fieldoptions', 'certificateelement_program');
 
         parent::render_form_elements($mform);
+
+        $mform->hideIf('refpoint', 'display', 'eq', 'completedcourses');
     }
 
     /**
@@ -62,11 +64,12 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'display')) {
-            $data->data = json_encode(['display' => $data->display]);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['display' => $data->display]);
+        if ($data->display === 'completedcourses') {
+            $data->refpoint = 0;
         }
-        parent::save($data);
+        parent::save_form_data($data);
     }
 
     /**

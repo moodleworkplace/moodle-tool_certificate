@@ -59,7 +59,7 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
         $e = $this->get_generator()->new_element($pageid, 'text');
         $formdata = (object)['name' => 'Text element', 'text' => 'Here is <script>XSS</script>the text',
             'element' => 'text', 'pageid' => $pageid];
-        $e->save($formdata);
+        $e->save_form_data($formdata);
         $html = $e->render_html();
         $this->assertContains('Here is the text', $html);
 
@@ -84,7 +84,7 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'text');
         $newdata = (object)['text' => 'New text'];
-        $e->save($newdata);
+        $e->save_form_data($newdata);
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
         $this->assertEquals($newdata->text, $el->data);
     }

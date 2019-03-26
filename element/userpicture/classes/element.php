@@ -37,9 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class element extends \tool_certificate\element {
 
-    /** @var bool $istext This is a text element, it has font, color and width limiter */
-    protected $istext = false;
-
     /**
      * This function renders the form elements when adding a certificate element.
      *
@@ -58,11 +55,9 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'height')) {
-            $data->data = json_encode(['width' => (int) $data->width, 'height' => (int) $data->height]);
-        }
-        parent::save($data);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['width' => (int) $data->width, 'height' => (int) $data->height]);
+        parent::save_form_data($data);
     }
 
     /**

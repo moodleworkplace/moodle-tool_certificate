@@ -24,6 +24,8 @@
 
 namespace certificateelement_text;
 
+use tool_certificate\element_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -54,11 +56,9 @@ class element extends \tool_certificate\element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
-        if (property_exists($data, 'text')) {
-            $data->data = $data->text;
-        }
-        parent::save($data);
+    public function save_form_data(\stdClass $data) {
+        $data->data = $data->text;
+        parent::save_form_data($data);
     }
 
     /**

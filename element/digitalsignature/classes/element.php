@@ -130,7 +130,8 @@ class element extends \certificateelement_image\element {
      */
     public function render_html() {
         global $OUTPUT;
-        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
+        $imageinfo = ($this->get_data() ? json_decode($this->get_data(), true) : [])
+            + ['width' => 0, 'height' => 0];
 
         if (!$file = $this->get_file()) {
             // Outline of a box.
@@ -154,26 +155,18 @@ class element extends \certificateelement_image\element {
      *
      * @param \stdClass $data the form data
      */
-    public function save(\stdClass $data) {
+    public function save_form_data(\stdClass $data) {
 
-        if (property_exists($data, 'signaturename')) {
-            $data->data = $this->calculate_additional_data($data);
-        }
+        $data->data = $this->calculate_additional_data($data);
 
-        \tool_certificate\element::save($data);
+        \tool_certificate\element::save_form_data($data);
 
         // Handle file uploads.
-        if (property_exists($data, 'image')) {
-            file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
-                'tool_certificate', 'element', $this->get_id());
-        }
+        file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
+            'tool_certificate', 'element', $this->get_id());
 
-        // Handle file uploads.
-        if (property_exists($data, 'signature')) {
-            file_save_draft_area_files($data->signature, $this->get_template()->get_context()->id,
-                'tool_certificate', 'elementaux', $this->get_id());
-        }
-
+        file_save_draft_area_files($data->signature, $this->get_template()->get_context()->id,
+            'tool_certificate', 'elementaux', $this->get_id());
     }
 
     /**

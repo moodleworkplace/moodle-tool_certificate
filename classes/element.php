@@ -42,12 +42,6 @@ abstract class element {
     /** @var persistent\element  */
     protected $persistent;
 
-    /** @var bool $hasposition Element can be positioned (has x, y, refpoint) */
-    protected $hasposition = true;
-
-    /** @var bool $istext This is a text element, it has font, color and width limiter */
-    protected $istext = true;
-
     /** @var page */
     protected $page = null;
 
@@ -224,23 +218,21 @@ abstract class element {
      * This function renders the form elements when adding a certificate element.
      * Can be overridden if more functionality is needed.
      *
+     * Default implementation is a typical implementation for a text element
+     *
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public function render_form_elements($mform) {
-        // Render the common elements.
-        if ($this->istext) {
-            element_helper::render_form_element_font($mform);
-            element_helper::render_form_element_colour($mform);
-        }
-        if ($this->hasposition) {
-            element_helper::render_form_element_position($mform);
-        }
-        if ($this->istext) {
-            element_helper::render_form_element_text_width($mform);
-        }
-        if ($this->hasposition) {
-            element_helper::render_form_element_refpoint($mform);
-        }
+        // Common elements for the text.
+        element_helper::render_form_element_font($mform);
+        element_helper::render_form_element_colour($mform);
+        element_helper::render_form_element_refpoint($mform);
+
+        // Advanced elements for the text.
+        $pagerecord = $this->get_page()->to_record();
+        $defaultposx = ($pagerecord->width - $pagerecord->rightmargin + $pagerecord->leftmargin) / 2;
+        element_helper::render_form_element_position($mform, (int)$defaultposx);
+        element_helper::render_form_element_text_width($mform);
     }
 
     /**
@@ -252,6 +244,15 @@ abstract class element {
         $record = $this->persistent->to_record();
         unset($record->timecreated, $record->timemodifed, $record->data);
         return $record;
+    }
+
+    /**
+     * Allows to process form data before calling save() and/or save files after saving
+     * @param \stdClass $data
+     */
+    public function save_form_data(\stdClass $data) {
+        element_helper::suggest_position($data, $this);
+        $this->save($data);
     }
 
     /**
@@ -281,7 +282,7 @@ abstract class element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save(\stdClass $data) {
+    public final function save(\stdClass $data) {
         unset($data->id);
         if (!empty($this->persistent->get('id'))) {
             unset($data->pageid, $data->element);
@@ -293,12 +294,6 @@ abstract class element {
         }
 
         if (!$this->persistent->get('id')) {
-
-            // TODO this should not be here.
-            if (empty($data->name) && empty($this->persistent->get('name'))) {
-                $this->persistent->set('name', get_string('pluginname',
-                    'certificateelement_' . $this->persistent->get('element')));
-            }
             $this->persistent->set('sequence',
                 \tool_certificate\element_helper::get_element_sequence($this->persistent->get('pageid')));
         }
@@ -437,11 +432,25 @@ abstract class element {
     }
 
     /**
+     * Get element display name
+     *
+     * @return string
+     */
+    public function get_display_name() : string {
+        $name = $this->persistent->get('name');
+        if (strlen($name)) {
+            return format_string($this->get_name(), true, ['escape' => false]);
+        } else {
+            return $this->get_element_type_name();
+        }
+    }
+
+    /**
      * Inplace editable name
      * @return inplace_editable
      */
     public function get_inplace_editable() : inplace_editable {
-        $formattedname = format_string($this->get_name(), true, ['escape' => false]);
+        $formattedname = $this->get_display_name();
         return new \core\output\inplace_editable('tool_certificate', 'elementname',
             $this->get_id(), true,
             $formattedname, $this->get_name(),
@@ -480,6 +489,6 @@ abstract class element {
      * @return bool
      */
     public function is_draggable() : bool {
-        return $this->hasposition;
+        return true;
     }
 }

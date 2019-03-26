@@ -62,9 +62,10 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $element = $this->get_generator()->create_element($pageid, 'userfield');
+        $element = $this->get_generator()->create_element($pageid, 'userfield',
+            ['userfield' => 'fullname']);
 
-        $formdata = (object)['name' => 'User email element', 'data' => 'email'];
+        $formdata = (object)['name' => 'User email element', 'userfield' => 'email'];
         $e = $this->get_generator()->create_element($pageid, 'userfield', $formdata);
 
         $this->assertTrue(strpos($e->render_html(), '@') !== false);
@@ -74,7 +75,7 @@ class tool_certificate_userfield_element_test_testcase extends advanced_testcase
                 'shortname' => 'frogdesc', 'name' => 'Description of frog', 'categoryid' => 1,
                 'datatype' => 'textarea'));
 
-        $formdata = (object)['name' => 'User custom field element', 'data' => $id1];
+        $formdata = (object)['name' => 'User custom field element', 'userfield' => $id1];
         $e = $this->get_generator()->create_element($pageid, 'userfield', $formdata);
 
         profile_save_data((object)['id' => $USER->id, 'profile_field_frogdesc' => 'Gryffindor']);

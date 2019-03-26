@@ -72,12 +72,14 @@ class element extends persistent_exporter {
      */
     protected static function define_other_properties(): array {
         return [
+            'displayname' => ['type' => PARAM_NOTAGS],
             'editablename' => ['type' => inplace_editable::class],
             'elementtype' => ['type' => PARAM_NOTAGS],
             'movetitle' => ['type' => PARAM_NOTAGS],
             'icon' => ['type' => PARAM_RAW],
             'html' => ['type' => PARAM_RAW],
             'draggable' => ['type' => PARAM_BOOL],
+            'showrefpoint' => ['type' => PARAM_BOOL],
         ];
     }
 
@@ -91,12 +93,14 @@ class element extends persistent_exporter {
         $element = $this->get_element();
         $pluginname = 'certificateelement_' . $this->persistent->get('element');
         return [
+            'displayname' => $element->get_display_name(),
             'editablename' => $element->get_inplace_editable()->export_for_template($output),
             'elementtype' => get_string('pluginname', $pluginname),
             'movetitle' => get_string('changeelementsequence', 'tool_certificate'),
             'icon' => $output->render($this->get_element()->get_element_type_image(true)),
             'html' => $this->get_element()->render_html(),
             'draggable' => $this->get_element()->is_draggable(),
+            'showrefpoint' => $this->persistent->get('refpoint') !== null
         ];
     }
 

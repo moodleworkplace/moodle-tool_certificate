@@ -127,7 +127,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $e = $this->get_generator()->new_element($pageid, 'program');
         $newdata = (object)['display' => 'certificationname'];
         $expected = json_encode($newdata);
-        $e->save($newdata);
+        $e->save_form_data($newdata);
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
         $this->assertEquals($expected, $el->data);
     }

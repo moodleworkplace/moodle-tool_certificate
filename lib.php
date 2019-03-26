@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
+ * @param array $options
  * @return bool|null false if file not found, does not return anything if found - just send the file
  */
 function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {

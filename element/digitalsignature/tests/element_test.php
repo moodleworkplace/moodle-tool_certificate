@@ -55,7 +55,7 @@ class tool_certificate_digitalsignature_element_test_testcase extends advanced_t
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->create_element($pageid, 'digitalsignature');
         // TODO: make a better test.
-        $this->assertEmpty($e->render_html());
+        $this->assertNotEmpty($e->render_html());
 
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
