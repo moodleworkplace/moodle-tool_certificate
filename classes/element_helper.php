@@ -685,4 +685,20 @@ class element_helper {
         $mform->addElement('select', 'fileid', get_string('selectsharedimage', 'certificateelement_image'), $arrfiles);
         return true;
     }
+
+    /**
+     * Estimate width on the text in PDF document
+     *
+     * @param \pdf $pdf
+     * @param string $content
+     * @return int
+     */
+    protected static function estimate_content_width(\pdf $pdf, $content) {
+        $content = html_to_text($content, 75, false);
+        $maxwidth = 0;
+        foreach (preg_split('/[\n]/', $content) as $line) {
+            $maxwidth = max($maxwidth, $pdf->GetStringWidth($line));
+        }
+        return $maxwidth;
+    }
 }
