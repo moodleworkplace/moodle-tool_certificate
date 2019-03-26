@@ -161,6 +161,6 @@ class edit_element_form extends modal_form {
      * to preprocess editor and filemanager elements
      */
     public function set_data_for_modal() {
-        $this->set_data($this->get_element()->parepare_data_for_form());
+        $this->set_data($this->get_element()->prepare_data_for_form());
     }
 }

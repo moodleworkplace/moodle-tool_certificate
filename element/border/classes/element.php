@@ -103,8 +103,8 @@ class element extends \tool_certificate\element {
      *
      * @return \stdClass|array
      */
-    public function parepare_data_for_form() {
-        $record = parent::parepare_data_for_form();
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
         if ($this->get_data()) {
             $record->width = $this->get_data();
         }
