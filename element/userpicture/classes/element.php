@@ -113,8 +113,8 @@ class element extends \tool_certificate\element {
      *
      * @return \stdClass|array
      */
-    public function parepare_data_for_form() {
-        $record = parent::parepare_data_for_form();
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
         if (!empty($this->get_data())) {
             $dateinfo = json_decode($this->get_data());
             $record->width = $dateinfo->width;

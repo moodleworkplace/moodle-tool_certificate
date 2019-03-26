@@ -240,7 +240,7 @@ abstract class element {
      *
      * @return \stdClass|array
      */
-    public function parepare_data_for_form() {
+    public function prepare_data_for_form() {
         $record = $this->persistent->to_record();
         unset($record->timecreated, $record->timemodifed, $record->data);
         return $record;
