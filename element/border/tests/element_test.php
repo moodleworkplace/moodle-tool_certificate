@@ -55,22 +55,33 @@ class tool_certificate_border_element_test_testcase extends advanced_testcase {
      */
     public function test_render_html() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'border');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
-        // The border is not printed in html when positioning elements.
-        $this->assertTrue(empty($e->render_html()));
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
+        $e = $this->get_generator()->create_element($pageid, 'border');
+        $this->assertNotEmpty($e->render_html());
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 
     /**
      * Test save_unique_data
      */
     public function test_save_unique_data() {
+        global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'border');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
+        $e = $this->get_generator()->new_element($pageid, 'border');
         $newdata = (object)['width' => 300];
-        $this->assertEquals($newdata->width, $e->save_unique_data($newdata));
+        $e->save_form_data($newdata);
+        $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
+        $this->assertEquals($newdata->width, $el->data);
     }
 }

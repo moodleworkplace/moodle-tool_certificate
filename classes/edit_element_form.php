@@ -57,14 +57,7 @@ class edit_element_form extends modal_form {
      * @return template
      */
     protected function get_template() : template {
-        if ($this->template === null) {
-            if (!empty($this->_ajaxformdata['id'])) {
-                $this->template = template::find_by_element_id($this->_ajaxformdata['id']);
-            } else {
-                $this->template = template::find_by_page_id($this->_ajaxformdata['pageid']);
-            }
-        }
-        return $this->template;
+        return $this->get_element()->get_template();
     }
 
     /**
@@ -75,12 +68,11 @@ class edit_element_form extends modal_form {
     protected function get_element() : element {
         if ($this->element === null) {
             if (!empty($this->_ajaxformdata['id'])) {
-                $element = $this->get_template()->find_element_by_id($this->_ajaxformdata['id']);
+                $this->element = element::instance($this->_ajaxformdata['id']);
             } else {
-                $element = $this->get_template()->new_element_for_page_id($this->_ajaxformdata['pageid'],
-                    $this->_ajaxformdata['element']);
+                $this->element = element::instance(0, (object)['pageid' => $this->_ajaxformdata['pageid'],
+                    'element' => $this->_ajaxformdata['element']]);
             }
-            $this->element = \tool_certificate\element_factory::get_element_instance($element);
         }
         return $this->element;
     }
@@ -102,16 +94,15 @@ class edit_element_form extends modal_form {
         $mform->setType('pageid', PARAM_INT);
 
         $mform->addElement('hidden', 'element');
-        $mform->setType('element', PARAM_COMPONENT);
+        $mform->setType('element', PARAM_ALPHANUMEXT);
 
-        $element = $this->get_element()->get_element();
-
-        // Add the field for the name of the element, this is required for all elements.
+        // Add the field for the name of the element, needed for all elements.
         $mform->addElement('text', 'name', get_string('elementname', 'tool_certificate'), 'maxlength="255"');
         $mform->setType('name', PARAM_TEXT);
-        $mform->setDefault('name', get_string('pluginname', 'certificateelement_' . $element));
-        $mform->addRule('name', get_string('required'), 'required', null, 'client');
         $mform->addHelpButton('name', 'elementname', 'tool_certificate');
+
+        $mform->addElement('static', 'type', get_string('type', 'tool_certificate'),
+            $this->get_element()->get_element_type_name());
 
         $this->get_element()->render_form_elements($mform);
 
@@ -122,14 +113,7 @@ class edit_element_form extends modal_form {
      * Fill in the current page data for this certificate.
      */
     public function definition_after_data() {
-        $this->element->definition_after_data($this->_form);
-
-        if (array_key_exists('posx', $this->_ajaxformdata) && $this->_form->elementExists('posx')) {
-            $this->_form->getElement('posx')->setValue($this->_ajaxformdata['posx']);
-        }
-        if (array_key_exists('posy', $this->_ajaxformdata) && $this->_form->elementExists('posy')) {
-            $this->_form->getElement('posy')->setValue($this->_ajaxformdata['posy']);
-        }
+        $this->get_element()->definition_after_data($this->_form);
     }
 
     /**
@@ -140,15 +124,7 @@ class edit_element_form extends modal_form {
      * @return array the errors that were found
      */
     public function validation($data, $files) {
-        $errors = array();
-
-        if (\core_text::strlen($data['name']) > 255) {
-            $errors['name'] = get_string('nametoolong', 'tool_certificate');
-        }
-
-        $errors += $this->element->validate_form_elements($data, $files);
-
-        return $errors;
+        return $this->get_element()->validate_form_elements($data, $files);
     }
 
     /**
@@ -170,8 +146,9 @@ class edit_element_form extends modal_form {
      * @return \stdClass
      */
     public function process(\stdClass $data) {
-        $this->get_element()->save_form_elements($data);
+        $this->get_element()->save_form_data($data);
         $data = $this->get_element()->to_record();
+        // TODO use exporter instead.
         $data->html = $this->get_element()->render_html();
         $data->name = format_string($data->name);
         return $data;
@@ -184,6 +161,6 @@ class edit_element_form extends modal_form {
      * to preprocess editor and filemanager elements
      */
     public function set_data_for_modal() {
-        $this->set_data($this->_ajaxformdata);
+        $this->set_data($this->get_element()->prepare_data_for_form());
     }
 }

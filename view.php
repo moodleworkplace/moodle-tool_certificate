@@ -34,7 +34,7 @@ if ($preview) {
 
     $templateid = required_param('templateid', PARAM_INT);
     require_login();
-    $template = \tool_certificate\template::find_by_id($templateid);
+    $template = \tool_certificate\template::instance($templateid);
     if ($template->can_manage()) {
         $template->generate_pdf(true);
     }
@@ -42,7 +42,7 @@ if ($preview) {
 } else {
 
     $issue = \tool_certificate\template::get_issue_from_code($issuecode);
-    $template = \tool_certificate\template::find_by_id($issue->templateid);
+    $template = \tool_certificate\template::instance($issue->templateid);
     if ($template->can_view_issue($issue)) {
         $template->generate_pdf(false, $issue);
     } else {

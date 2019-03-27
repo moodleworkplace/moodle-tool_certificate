@@ -47,7 +47,7 @@ class details extends modal_form {
      */
     protected function get_template() : ?template {
         if ($this->template === null && !empty($this->_ajaxformdata['id'])) {
-            $this->template = template::find_by_id($this->_ajaxformdata['id']);
+            $this->template = template::instance($this->_ajaxformdata['id']);
         }
         return $this->template;
     }
@@ -77,6 +77,10 @@ class details extends modal_form {
             if ($this->get_template()) {
                 $mform->freeze('tenantid');
             }
+        }
+
+        if (!$this->get_template()) {
+            page::add_page_elements($mform);
         }
     }
 
@@ -123,11 +127,11 @@ class details extends modal_form {
     public function process(\stdClass $data) {
         if (!$this->get_template()) {
             $this->template = template::create($data);
-            $this->template->add_page();
+            $this->template->new_page()->save($data);
         } else {
             $this->template->save($data);
         }
-        $url = new \moodle_url('/admin/tool/certificate/edit.php', ['tid' => $this->template->get_id()]);
+        $url = new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->template->get_id()]);
         return $url->out(false);
     }
 
@@ -143,6 +147,10 @@ class details extends modal_form {
                 'id' => $this->template->get_id(),
                 'name' => $this->template->get_name(),
                 'tenantid' => $this->template->get_tenant_id()]);
+        } else {
+            $data = template::instance()->new_page()->to_record();
+            unset($data->id, $data->templateid);
+            $this->set_data($data);
         }
     }
 }

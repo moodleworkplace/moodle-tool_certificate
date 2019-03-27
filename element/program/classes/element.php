@@ -54,40 +54,36 @@ class element extends \tool_certificate\element {
         $mform->addHelpButton('display', 'fieldoptions', 'certificateelement_program');
 
         parent::render_form_elements($mform);
+
+        $mform->hideIf('refpoint', 'display', 'eq', 'completedcourses');
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        // Array of data we will be storing in the database.
-        $arrtostore = array(
-            'display' => $data->display,
-        );
-
-        // Encode these variables before saving into the DB.
-        return json_encode($arrtostore);
-    }
-
-    /**
-     * Sets the data on the form when editing an element.
-     *
-     * @param \MoodleQuickForm $mform the edit_form instance
-     */
-    public function definition_after_data($mform) {
-        // Set the item and format for this element.
-        if (!empty($this->get_data())) {
-            $data = json_decode($this->get_data());
-
-            $element = $mform->getElement('display');
-            $element->setValue($data->display);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['display' => $data->display]);
+        if ($data->display === 'completedcourses') {
+            $data->refpoint = 0;
         }
+        parent::save_form_data($data);
+    }
 
-        parent::definition_after_data($mform);
+    /**
+     * Prepare data to pass to moodleform::set_data()
+     *
+     * @return \stdClass|array
+     */
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
+        if (!empty($this->get_data())) {
+            $dateinfo = json_decode($this->get_data());
+            $record->display = $dateinfo->display;
+        }
+        return $record;
     }
 
     /**
@@ -101,7 +97,7 @@ class element extends \tool_certificate\element {
     public function render($pdf, $preview, $user, $issue) {
         global $DB;
         if ($preview) {
-            $display = 'Dummy content for program element';
+            $display = $this->format_preview_data();
         } else if (($issue->component == 'tool_program') || ($issue->component == 'tool_certification')) {
             $display = $this->format_issue_data($issue->data);
         } else {
@@ -126,6 +122,7 @@ class element extends \tool_certificate\element {
                 $display = format_string($data['programname']);
                 break;
             case 'completiondate':
+                // TODO see element "Date" for format options, take from there.
                 $display = userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false);
                 break;
             case 'completedcourses':
@@ -143,7 +140,7 @@ class element extends \tool_certificate\element {
      * @return string The formated field to be displayed
      */
     public function format_preview_data() {
-        $data = json_decode($this->data, true);
+        $data = json_decode($this->get_data(), true);
         switch ($data['display']) {
             case 'certificationname':
                 $display = get_string('previewcertificationname', 'certificateelement_program');
@@ -152,7 +149,7 @@ class element extends \tool_certificate\element {
                 $display = get_string('previewprogramname', 'certificateelement_program');
                 break;
             case 'completiondate':
-                $display = userdate(time(), get_string('strftimedatefullshort', 'langconfig'), 99, false);
+                $display = userdate(time(), get_string('strftimedate', 'langconfig'), 99, false);
                 break;
             case 'completedcourses':
                 $courses = ['A course example', 'Second course example', 'Yet another course completed'];

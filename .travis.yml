@@ -44,7 +44,7 @@ script:
   - moodle-plugin-ci phplint
   # - moodle-plugin-ci phpcpd
   # - moodle-plugin-ci phpmd # too much noise from this check, maybe, some day...
-  - moodle-plugin-ci codechecker --files all --max-warnings 0
+  - moodle-plugin-ci codechecker --files all --max-warnings 1 # Long behat step
   - moodle-plugin-ci phpdoc
   - moodle-plugin-ci validate
   - moodle-plugin-ci savepoints

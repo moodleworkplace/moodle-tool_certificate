@@ -1,34 +1,29 @@
-#page-admin-tool-certificate-edit .deletebutton {
-    text-align: right;
+
+/* Template editor */
+
+#page-admin-tool-certificate-template [data-region="pdf"] {
+    clear: both;
+    position: relative;
 }
 
-#page-admin-tool-certificate-edit .addpage {
-    border-top: 1px solid #f4f4f4;
-    text-align: right;
-}
-
-#page-admin-tool-certificate-edit #id_replace {
-    margin-left: 10px;
-}
-
-#page-admin-tool-certificate-report .centre {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-#page-admin-tool-certificate-rearrange .savepositionsbtn,
-#page-admin-tool-certificate-rearrange .applypositionsbtn,
-#page-admin-tool-certificate-rearrange .cancelbtn {
-    float: left;
-}
-
-#page-admin-tool-certificate-rearrange .element {
-    display: inline-block;
+#page-admin-tool-certificate-template [data-region="pdf"] > * {
     position: absolute;
-    word-wrap: break-word;
 }
 
-#page-admin-tool-certificate-rearrange .element:before {
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"] {
+    display: inline-block;
+    word-wrap: break-word;
+    text-decoration: none;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"]:not(.recalculated) [data-region="pdfelement"],
+#page-admin-tool-certificate-template [data-region="pdf"]:not(.recalculated) * {
+    opacity: 0;
+}
+
+/* Elements refpoint */
+
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint]:before {
     background-image: url([[pix:tool_certificate|target]]);
     background-repeat: no-repeat;
     content: "";
@@ -36,45 +31,36 @@
     float: left;
     height: 9px;
     width: 100%;
-}
-
-#page-admin-tool-certificate-rearrange .element:hover {
-    cursor: move;
-}
-
-#page-admin-tool-certificate-rearrange .element.refpoint-left:before {
     background-position: left top;
     margin: -4px -5px -5px -4px;
 }
 
-#page-admin-tool-certificate-rearrange .element.refpoint-center:before {
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint="1"]:before {
     background-position: center top;
     margin: -4px 0 -5px 0;
 }
 
-#page-admin-tool-certificate-rearrange .element.refpoint-right:before {
+#page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint="2"]:before {
     background-position: right top;
     margin: -4px -5px -5px 4px;
 }
 
-#page-admin-tool-certificate-rearrange #pdf {
-    border-style: solid;
-    border-width: 1px;
-    clear: both;
+/* Page margins */
+
+#page-admin-tool-certificate-template [data-region="pdf"] .verticalline {
+    width: 1px;
 }
 
-#page-admin-tool-certificate-rearrange div#leftmargin {
+#page-admin-tool-certificate-template [data-region="pdf"] .horizontalline {
+    height: 1px;
+}
+
+#page-admin-tool-certificate-template [data-region="pdf"] .dottedline {
     border-left: 1px dotted black;
 }
 
-#page-admin-tool-certificate-rearrange div#rightmargin {
-    border-right: 1px dotted black;
-}
-
-/*
-    This is a hack - the fieldset being returned by the edit_element_form class contains
-    the CSS class 'hidden' which when shown in a dialogue hides the fieldset.
-*/
-.moodle-dialogue #editelementform fieldset.hidden {
-    display: block;
+#page-admin-tool-certificate-template [data-region="pdf"] .solidline {
+    border-left: 1px solid black;
+    border-top: 1px solid black;
+    line-height: normal;
 }

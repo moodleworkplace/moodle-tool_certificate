@@ -69,38 +69,30 @@ class element_helper {
         $y = $element->get_posy();
         $w = $element->get_width();
         $refpoint = $element->get_refpoint();
-        $actualwidth = $pdf->GetStringWidth($content);
+        $actualwidth = self::estimate_content_width($pdf, $content);
+        $page = $element->get_page()->to_record();
 
-        if ($w and $w < $actualwidth) {
-            $actualwidth = $w;
+        $align = 'L';
+        if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $align = 'R';
+            $w = $w ?: ($x - $page->leftmargin);
+            $x = $x - $w;
+        } else if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $align = 'C';
+            if (!$w) {
+                $w = min($x - $page->leftmargin, $page->width - $page->rightmargin - $x) * 2;
+            }
+            $x = $x - $w / 2;
+        } else {
+            if (!$w) {
+                $w = max(0, $page->width - $page->rightmargin - $x);
+            }
         }
-
-        switch ($refpoint) {
-            case self::CUSTOMCERT_REF_POINT_TOPRIGHT:
-                $x = $element->get_posx() - $actualwidth;
-                if ($x < 0) {
-                    $x = 0;
-                    $w = $element->get_posx();
-                } else {
-                    $w = $actualwidth;
-                }
-                break;
-            case self::CUSTOMCERT_REF_POINT_TOPCENTER:
-                $x = $element->get_posx() - $actualwidth / 2;
-                if ($x < 0) {
-                    $x = 0;
-                    $w = $element->get_posx() * 2;
-                } else {
-                    $w = $actualwidth;
-                }
-                break;
-        }
-
         if ($w) {
             $w += 0.0001;
         }
         $pdf->setCellPaddings(0, 0, 0, 0);
-        $pdf->writeHTMLCell($w, 0, $x, $y, $content, 0, 0, false, true);
+        $pdf->writeHTMLCell($w, 0, $x, $y, $content, 0, 0, false, true, $align);
     }
 
     /**
@@ -120,9 +112,11 @@ class element_helper {
             $fontstyle .= '; font-style: italic';
         }
 
-        $style = $fontstyle . '; color: ' . $element->get_colour() . '; font-size: ' . $element->get_fontsize() . 'pt;';
-        if ($element->get_width()) {
-            $style .= ' width: ' . $element->get_width() . 'mm';
+        $style = $fontstyle . '; color: ' . $element->get_colour() . ';';
+        if ($element->get_refpoint() == self::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $style .= ' text-align: right;';
+        } else if ($element->get_refpoint() == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $style .= ' text-align: center;';
         }
         return \html_writer::div($content, '', array('style' => $style));
     }
@@ -135,7 +129,7 @@ class element_helper {
     public static function render_form_element_font($mform) {
         $mform->addElement('select', 'font', get_string('font', 'tool_certificate'), self::get_fonts());
         $mform->setType('font', PARAM_TEXT);
-        $mform->setDefault('font', 'times');
+        $mform->setDefault('font', 'helvetica');
         $mform->addHelpButton('font', 'font', 'tool_certificate');
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'), self::get_font_sizes());
         $mform->setType('fontsize', PARAM_INT);
@@ -153,6 +147,10 @@ class element_helper {
         $mform->setType('colour', PARAM_RAW); // Need to validate that this is a valid colour.
         $mform->setDefault('colour', '#000000');
         $mform->addHelpButton('colour', 'fontcolour', 'tool_certificate');
+
+        $mform->addFormRule(function($data, $files) {
+            return element_helper::validate_form_element_colour($data);
+        });
     }
 
     /**
@@ -162,46 +160,130 @@ class element_helper {
      */
     public static function render_form_element_position($mform) {
         $mform->addElement('text', 'posx', get_string('posx', 'tool_certificate'), array('size' => 10));
-        $mform->setType('posx', PARAM_INT);
-        $mform->setDefault('posx', 0);
+        $mform->setType('posx', PARAM_RAW_TRIMMED); // We need to track empty string.
         $mform->addHelpButton('posx', 'posx', 'tool_certificate');
         $mform->setAdvanced('posx');
 
         $mform->addElement('text', 'posy', get_string('posy', 'tool_certificate'), array('size' => 10));
         $mform->setType('posy', PARAM_INT);
-        $mform->setDefault('posy', 0);
         $mform->addHelpButton('posy', 'posy', 'tool_certificate');
         $mform->setAdvanced('posy');
+
+        $mform->addFormRule(function($data, $files) {
+            return element_helper::validate_form_element_position($data);
+        });
     }
 
     /**
-     * Helper function to render the width element.
+     * If position was not entered in the form, suggest it automatically
+     *
+     * @param \stdClass $data
+     * @param element $element
+     */
+    public static function suggest_position(\stdClass $data, element $element) {
+        if (!property_exists($data, 'posx')) {
+            // Position is not relevant for this element type.
+            return;
+        }
+        if ($element->get_id() || strlen($data->posx)) {
+            $data->posx = clean_param($data->posx, PARAM_INT);
+            return;
+        }
+
+        // Only suggest posx if this element is being created, no posx is specified in the form.
+        $refpoint = !empty($data->refpoint) ? $data->refpoint : self::CUSTOMCERT_REF_POINT_TOPLEFT;
+        $pagerecord = $element->get_page()->to_record();
+        if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $data->posx = $pagerecord->width - $pagerecord->rightmargin;
+        } else if ($refpoint == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $data->posx = round(($pagerecord->width - $pagerecord->rightmargin + $pagerecord->leftmargin) / 2);
+        } else {
+            $data->posx = $pagerecord->leftmargin;
+        }
+    }
+
+    /**
+     * Helper function to render the width element (the width limiter for the text, advanced element)
      *
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
-    public static function render_form_element_width($mform) {
+    public static function render_form_element_text_width($mform) {
         $mform->addElement('text', 'width', get_string('elementwidth', 'tool_certificate'), array('size' => 10));
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
         $mform->addHelpButton('width', 'elementwidth', 'tool_certificate');
         $mform->setAdvanced('width');
+
+        $mform->addFormRule(function($data, $files) {
+            $errors = [];
+            // Check if width is less than 0.
+            if (isset($data['width']) && $data['width'] < 0) {
+                $errors['width'] = get_string('invalidelementwidth', 'tool_certificate');
+            }
+            return $errors;
+        });
     }
 
     /**
-     * Helper function to render reference point element.
+     * Helper function to render the width of an element (an image)
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     * @param string $stringcomponent component for the strings:
+     *     'width', 'width_help', 'invalidwidth'
+     */
+    public static function render_form_element_width($mform, $stringcomponent = 'certificateelement_image') {
+        $mform->addElement('text', 'width', get_string('width', $stringcomponent), array('size' => 10));
+        $mform->setType('width', PARAM_INT);
+        $mform->setDefault('width', 0);
+        $mform->addHelpButton('width', 'width', $stringcomponent);
+
+        $mform->addFormRule(function($data, $files) use ($stringcomponent) {
+            $errors = [];
+            // Check if width is not set, or not numeric or less than 0.
+            if (isset($data['width']) && (!is_numeric($data['width']) || $data['width'] < 0)) {
+                $errors['width'] = get_string('invalidwidth', $stringcomponent);
+            }
+            return $errors;
+        });
+    }
+
+    /**
+     * Helper function to render the height of an element (an image)
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     * @param string $stringcomponent component for the strings:
+     *     'height', 'height_help', 'invalidheight'
+     */
+    public static function render_form_element_height($mform, $stringcomponent = 'certificateelement_image') {
+        $mform->addElement('text', 'height', get_string('height', $stringcomponent), array('size' => 10));
+        $mform->setType('height', PARAM_INT);
+        $mform->setDefault('height', 0);
+        $mform->addHelpButton('height', 'height', $stringcomponent);
+
+        $mform->addFormRule(function($data, $files) use ($stringcomponent) {
+            $errors = [];
+            // Check if height is not set, or not numeric or less than 0.
+            if (isset($data['height']) && (!is_numeric($data['height']) || $data['height'] < 0)) {
+                $errors['height'] = get_string('invalidheight', $stringcomponent);
+            }
+            return $errors;
+        });
+    }
+
+    /**
+     * Helper function to render reference point element that also serves as the text alignment
      *
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_refpoint($mform) {
         $refpointoptions = array();
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('topleft', 'tool_certificate');
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('topcenter', 'tool_certificate');
-        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('topright', 'tool_certificate');
-        $mform->addElement('select', 'refpoint', get_string('refpoint', 'tool_certificate'), $refpointoptions);
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('alignleft', 'tool_certificate');
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('aligncentre', 'tool_certificate');
+        $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('alignright', 'tool_certificate');
+        $mform->addElement('select', 'refpoint', get_string('alignment', 'tool_certificate'), $refpointoptions);
         $mform->setType('refpoint', PARAM_INT);
         $mform->setDefault('refpoint', self::CUSTOMCERT_REF_POINT_TOPCENTER);
-        $mform->addHelpButton('refpoint', 'refpoint', 'tool_certificate');
-        $mform->setAdvanced('refpoint');
+        $mform->addHelpButton('refpoint', 'alignment', 'tool_certificate');
     }
 
     /**
@@ -229,29 +311,12 @@ class element_helper {
         $errors = array();
 
         // Check if posx is not set, or not numeric or less than 0.
-        if ((!isset($data['posx'])) || (!is_numeric($data['posx'])) || ($data['posx'] < 0)) {
+        if (!empty($data['posx']) && !is_numeric($data['posx'])) {
             $errors['posx'] = get_string('invalidposition', 'tool_certificate', 'X');
         }
         // Check if posy is not set, or not numeric or less than 0.
-        if ((!isset($data['posy'])) || (!is_numeric($data['posy'])) || ($data['posy'] < 0)) {
+        if (!empty($data['posy']) && !is_numeric($data['posy'])) {
             $errors['posy'] = get_string('invalidposition', 'tool_certificate', 'Y');
-        }
-
-        return $errors;
-    }
-
-    /**
-     * Helper function to perform validation on the width element.
-     *
-     * @param array $data the submitted data
-     * @return array the validation errors
-     */
-    public static function validate_form_element_width($data) {
-        $errors = array();
-
-        // Check if width is less than 0.
-        if (isset($data['width']) && $data['width'] < 0) {
-            $errors['width'] = get_string('invalidelementwidth', 'tool_certificate');
         }
 
         return $errors;
@@ -381,13 +446,13 @@ class element_helper {
 
         // Loop through the enabled plugins.
         foreach ($plugins as $plugin) {
+            /** @var element $classname */
             $classname = '\\certificateelement_' . $plugin. '\\element';
             // Ensure the necessary class exists.
-            if (class_exists($classname)) {
+            if (class_exists($classname) && is_subclass_of($classname, element::class)) {
                 // Additionally, check if the user is allowed to add the element at all.
                 if ($classname::can_add()) {
-                    $component = "certificateelement_{$plugin}";
-                    $options[$plugin] = get_string('pluginname', $component);
+                    $options[$plugin] = $classname::get_element_type_name();
                 }
             }
         }
@@ -480,5 +545,160 @@ class element_helper {
         }
 
         return $sizes;
+    }
+
+    /**
+     * Helps to render an image element and calculate width and height
+     *
+     * @param string $url
+     * @param array $imageinfo array with 'width' and 'height' attributes for width and height of image in px
+     * @param float $width display width in mm, 0 for automatic
+     * @param float $height display height in mm, 0 for automatic
+     * @return string
+     */
+    public static function render_image_html(string $url, array $imageinfo, float $width, float $height) {
+        if (!$width && !$height) {
+            // Width and height are not set, convert px to mm.
+            // 1 px = 1/96 inch = 0.264583 mm .
+            $width = (float)$imageinfo['width'] * 0.264583;
+            $height = (float)$imageinfo['height'] * 0.264583;
+        } else if (!$width || !$height) {
+            $whratio = (float)$imageinfo['width'] / (float)$imageinfo['height'];
+            $width = $width ?: $height * $whratio;
+            $height = $height ?: $width / $whratio;
+        }
+
+        return \html_writer::tag('img', '', array('src' => $url,
+            'data-width' => $width, 'data-height' => $height));
+    }
+    /**
+     * Calculates image size in mm
+     *
+     * @param \stored_file|string $file
+     * @param array $fileinfo necessary for string files - must contain actual image width and height in pixels,
+     *     ignored for stored_file instances (will be taken from the file itself)
+     * @param int $width user specified width, in mm
+     * @param int $height user specified height, in mm
+     */
+    public static function calculate_image_size($file, array $fileinfo, $width, $height) {
+        $rv = ['width' => $width, 'height' => $height];
+        if (!$file || ($width && $height)) {
+            return $rv;
+        }
+
+        if ($file instanceof \stored_file) {
+            $fileinfo = $file->get_imageinfo();
+        }
+
+        if (!$width && !$height) {
+            // Width and height are not set, convert px to mm.
+            // 1 px = 1/96 inch = 0.264583 mm .
+            $rv['width'] = (float)$fileinfo['width'] * 0.264583;
+            $rv['height'] = (float)$fileinfo['height'] * 0.264583;
+        } else {
+            $whratio = (float)$fileinfo['width'] / (float)$fileinfo['height'];
+            $rv['width'] = $width ?: $height * $whratio;
+            $rv['height'] = $height ?: $width / $whratio;
+        }
+
+        return $rv;
+    }
+
+    /**
+     * Helps to render an image element in PDF
+     *
+     * @param \pdf $pdf
+     * @param element $element
+     * @param \stored_file|string $file
+     * @param array $fileinfo necessary for string files - must contain actual image width and height in pixels,
+     *     ignored for stored_file instances (will be taken from the file itself)
+     * @param int $width user specified width, in mm
+     * @param int $height user specified height, in mm
+     */
+    public static function render_image(\pdf $pdf, element $element, $file, array $fileinfo, $width, $height) {
+        list($width, $height) = array_values(self::calculate_image_size($file, $fileinfo, $width, $height));
+
+        if ($file instanceof \stored_file) {
+            $location = make_request_directory() . '/target';
+            $file->copy_content_to($location);
+
+            $mimetype = $file->get_mimetype();
+        } else {
+            $location = $file;
+            $mimetype = 'image/jpg';
+        }
+
+        if ($mimetype == 'image/svg+xml') {
+            $pdf->ImageSVG($location, $element->get_posx(), $element->get_posy(), $width, $height);
+        } else {
+            $pdf->Image($location, $element->get_posx(), $element->get_posy(), $width, $height);
+        }
+    }
+
+    /**
+     * Return the list of possible shared images to use.
+     *
+     * @return array the list of images that can be used
+     */
+    public static function get_shared_images_list() {
+        // Create file storage object.
+        $fs = get_file_storage();
+
+        // The array used to store the images.
+        $arrfiles = array();
+        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
+            'image', false, 'filename', false)) {
+            foreach ($files as $hash => $file) {
+                $arrfiles[$file->get_id()] = $file->get_filename();
+            }
+        }
+
+        if (count($arrfiles)) {
+            \core_collator::asort($arrfiles);
+            $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+        }
+
+        return $arrfiles;
+    }
+
+    /**
+     * Helper function to render the width element (the width limiter for the text, advanced element)
+     *
+     * @param \MoodleQuickForm $mform the edit_form instance.
+     * @return bool whether the element was added (it would not be added if there are no shared images)
+     */
+    public static function render_shared_image_picker_element($mform) {
+        $arrfiles = array();
+        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
+            'image', false, 'filename', false)) {
+            foreach ($files as $hash => $file) {
+                $arrfiles[$file->get_id()] = $file->get_filename();
+            }
+        }
+
+        if (!$arrfiles) {
+            return false;
+        }
+
+        \core_collator::asort($arrfiles);
+        $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+        $mform->addElement('select', 'fileid', get_string('selectsharedimage', 'certificateelement_image'), $arrfiles);
+        return true;
+    }
+
+    /**
+     * Estimate width on the text in PDF document
+     *
+     * @param \pdf $pdf
+     * @param string $content
+     * @return int
+     */
+    protected static function estimate_content_width(\pdf $pdf, $content) {
+        $content = html_to_text($content, 75, false);
+        $maxwidth = 0;
+        foreach (preg_split('/[\n]/', $content) as $line) {
+            $maxwidth = max($maxwidth, $pdf->GetStringWidth($line));
+        }
+        return $maxwidth;
     }
 }

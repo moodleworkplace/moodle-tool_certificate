@@ -16,9 +16,9 @@ Feature: Being able to view the certificates you have been issued
       | template | user |
       | Certificate 1 | student1 |
 
-  Scenario: View your issued certificates on the my certificates page
+  Scenario: View your issued site certificates on the my certificates page
     When I log in as "student1"
     And I follow "Profile" in the user menu
-    And I follow "My certificates"
+    And I click on "//a[contains(.,'My certificates') and contains(@href,'tool/certificate')]" "xpath_element"
     Then I should see "Certificate 1"
     And I should not see "Custom certificate 2"

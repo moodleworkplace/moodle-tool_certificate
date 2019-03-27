@@ -197,7 +197,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
     public function test_find_by_id() {
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $this->assertEquals($certname, \tool_certificate\template::find_by_id($certificate1->get_id())->get_name());
+        $this->assertEquals($certname, \tool_certificate\template::instance($certificate1->get_id())->get_name());
     }
 
     /**
@@ -234,18 +234,20 @@ class tool_certificate_template_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\tool_certificate\event\template_deleted', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $this->assertEquals($certificate1->edit_url(), $event->get_url());
+        $this->assertEquals(\tool_certificate\template::manage_url(), $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
         $this->assertNotEmpty($event->get_description());
 
         $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_pages'));
 
         // Second certificate with pages.
         $certname = 'Certificate 2';
         $certificate2 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $certificate2->add_page();
-        $certificate2->add_page();
+        $this->get_generator()->create_page($certificate2);
+        $this->get_generator()->create_page($certificate2);
+        $certificate2 = \tool_certificate\template::instance($certificate2->get_id());
 
         $certificate2->delete();
 
@@ -272,7 +274,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $certificate1->add_page();
+        $this->get_generator()->create_page($certificate1);
         $this->assertEquals(1, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
     }
 
@@ -283,8 +285,9 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $pageid1 = $certificate1->add_page();
-        $pageid2 = $certificate1->add_page();
+        $pageid1 = $this->get_generator()->create_page($certificate1)->get_id();
+        $pageid2 = $this->get_generator()->create_page($certificate1)->get_id();
+        $certificate1 = \tool_certificate\template::instance($certificate1->get_id());
         $this->assertEquals(2, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
         $certificate1->delete_page($pageid1);
         $this->assertEquals(1, $DB->count_records('tool_certificate_pages', ['templateid' => $certificate1->get_id()]));
@@ -299,7 +302,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
-        $pageid = $certificate1->add_page();
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $pagedata = (object)['tid' => $certificate1->get_id(),
                              'pagewidth_'.$pageid => 333, 'pageheight_'.$pageid => 444,
                              'pageleftmargin_'.$pageid => 333, 'pagerightmargin_'.$pageid => 444];

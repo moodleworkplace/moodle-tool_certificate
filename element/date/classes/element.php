@@ -69,21 +69,14 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        // Array of data we will be storing in the database.
-        $arrtostore = array(
-            'dateitem' => $data->dateitem,
-            'dateformat' => $data->dateformat
-        );
-
-        // Encode these variables before saving into the DB.
-        return json_encode($arrtostore);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['dateitem' => $data->dateitem, 'dateformat' => $data->dateformat]);
+        parent::save_form_data($data);
     }
 
     /**
@@ -95,34 +88,22 @@ class element extends \tool_certificate\element {
      * @param \stdClass $issue the issue we are rendering
      */
     public function render($pdf, $preview, $user, $issue) {
-        global $DB;
-
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return;
-        }
-
         // Decode the information stored in the database.
-        $dateinfo = json_decode($this->get_data());
-        $dateitem = $dateinfo->dateitem;
-        $dateformat = $dateinfo->dateformat;
+        $dateinfo = @json_decode($this->get_data(), true) + ['dateitem' => '', 'dateformat' => ''];
 
         // If we are previewing this certificate then just show a demonstration date.
         if ($preview) {
             $date = time();
+        } else if ($dateinfo['dateitem'] == self::CUSTOMCERT_DATE_EXPIRY) {
+            $date = $issue->expires;
         } else {
-            if ($dateitem == self::CUSTOMCERT_DATE_ISSUE) {
-                $date = $issue->timecreated;
-            } else if ($dateitem == self::CUSTOMCERT_DATE_EXPIRY) {
-                $date = $issue->expires;
-            } else {
-                $date = '';
-            }
+            $date = $issue->timecreated;
         }
 
         // Ensure that a date has been set.
         if (!empty($date)) {
-            \tool_certificate\element_helper::render_content($pdf, $this, $this->get_date_format_string($date, $dateformat));
+            \tool_certificate\element_helper::render_content($pdf, $this,
+                $this->get_date_format_string($date, $dateinfo['dateformat']));
         }
     }
 
@@ -135,54 +116,25 @@ class element extends \tool_certificate\element {
      * @return string the html
      */
     public function render_html() {
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return;
-        }
-
         // Decode the information stored in the database.
-        $dateinfo = json_decode($this->get_data());
-        $dateformat = $dateinfo->dateformat;
-
-        return \tool_certificate\element_helper::render_html_content($this, $this->get_date_format_string(time(), $dateformat));
+        $dateinfo = @json_decode($this->get_data(), true) + ['dateformat' => ''];
+        return \tool_certificate\element_helper::render_html_content($this,
+            $this->get_date_format_string(time(), $dateinfo['dateformat']));
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        // Set the item and format for this element.
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
         if (!empty($this->get_data())) {
             $dateinfo = json_decode($this->get_data());
-
-            $element = $mform->getElement('dateitem');
-            $element->setValue($dateinfo->dateitem);
-
-            $element = $mform->getElement('dateformat');
-            $element->setValue($dateinfo->dateformat);
+            $record->dateitem = $dateinfo->dateitem;
+            $record->dateformat = $dateinfo->dateformat;
         }
-
-        parent::definition_after_data($mform);
-    }
-
-    /**
-     * This function is responsible for handling the restoration process of the element.
-     *
-     * We will want to update the course module the date element is pointing to as it will
-     * have changed in the course restore.
-     *
-     * @param \restore_certificate_activity_task $restore
-     */
-    public function after_restore($restore) {
-        global $DB;
-
-        $dateinfo = json_decode($this->get_data());
-        if ($newitem = \restore_dbops::get_backup_ids_record($restore->get_restoreid(), 'course_module', $dateinfo->dateitem)) {
-            $dateinfo->dateitem = $newitem->newitemid;
-            $DB->set_field('tool_certificate_elements', 'data', $this->save_unique_data($dateinfo), array('id' => $this->get_id()));
-        }
+        return $record;
     }
 
     /**
@@ -195,39 +147,20 @@ class element extends \tool_certificate\element {
         // Eg. 06/07/18 vs 6/07/18.
         $date = 1530849658;
 
-        $suffix = self::get_ordinal_number_suffix(userdate($date, '%d'));
-
-        $dateformats = [
-            1 => userdate($date, '%B %d, %Y'),
-            2 => userdate($date, '%B %d' . $suffix . ', %Y')
-        ];
+        $dateformats = [];
 
         $strdateformats = [
             'strftimedate',
             'strftimedatefullshort',
             'strftimedatefullshortwleadingzero',
             'strftimedateshort',
-            'strftimedatetime',
-            'strftimedatetimeshort',
-            'strftimedatetimeshortwleadingzero',
             'strftimedaydate',
-            'strftimedaydatetime',
             'strftimedayshort',
-            'strftimedaytime',
             'strftimemonthyear',
-            'strftimerecent',
-            'strftimerecentfull',
-            'strftimetime'
         ];
 
         foreach ($strdateformats as $strdateformat) {
-            if ($strdateformat == 'strftimedatefullshortwleadingzero') {
-                $dateformats[$strdateformat] = userdate($date, get_string('strftimedatefullshort', 'langconfig'), 99, false);
-            } else if ($strdateformat == 'strftimedatetimeshortwleadingzero') {
-                $dateformats[$strdateformat] = userdate($date, get_string('strftimedatetimeshort', 'langconfig'), 99, false);
-            } else {
-                $dateformats[$strdateformat] = userdate($date, get_string($strdateformat, 'langconfig'));
-            }
+            $dateformats[$strdateformat] = self::get_date_format_string($date, $strdateformat);
         }
 
         return $dateformats;
@@ -240,61 +173,14 @@ class element extends \tool_certificate\element {
      * @param string $dateformat
      * @return string
      */
-    protected function get_date_format_string($date, $dateformat) {
-        // Keeping for backwards compatibility.
-        if (is_number($dateformat)) {
-            switch ($dateformat) {
-                case 1:
-                    $certificatedate = userdate($date, '%B %d, %Y');
-                    break;
-                case 2:
-                    $suffix = self::get_ordinal_number_suffix(userdate($date, '%d'));
-                    $certificatedate = userdate($date, '%B %d' . $suffix . ', %Y');
-                    break;
-                case 3:
-                    $certificatedate = userdate($date, '%d %B %Y');
-                    break;
-                case 4:
-                    $certificatedate = userdate($date, '%B %Y');
-                    break;
-                default:
-                    $certificatedate = userdate($date, get_string('strftimedate', 'langconfig'));
-            }
+    protected static function get_date_format_string($date, $dateformat) {
+        if ($dateformat == 'strftimedatefullshortwleadingzero') {
+            $certificatedate = userdate($date, get_string('strftimedatefullshort', 'langconfig'), 99, false);
+        } else if (get_string_manager()->string_exists($dateformat, 'langconfig')) {
+            $certificatedate = userdate($date, get_string($dateformat, 'langconfig'));
+        } else {
+            $certificatedate = userdate($date, get_string('strftimedate', 'langconfig'));
         }
-
-        // Ok, so we must have been passed the actual format in the lang file.
-        if (!isset($certificatedate)) {
-            if ($dateformat == 'strftimedatefullshortwleadingzero') {
-                $certificatedate = userdate($date, get_string('strftimedatefullshort', 'langconfig'), 99, false);
-            } else if ($dateformat == 'strftimedatetimeshortwleadingzero') {
-                $certificatedate = userdate($date, get_string('strftimedatetimeshort', 'langconfig'), 99, false);
-            } else {
-                $certificatedate = userdate($date, get_string($dateformat, 'langconfig'));
-            }
-        }
-
         return $certificatedate;
-    }
-
-    /**
-     * Helper function to return the suffix of the day of
-     * the month, eg 'st' if it is the 1st of the month.
-     *
-     * @param int $day the day of the month
-     * @return string the suffix.
-     */
-    protected static function get_ordinal_number_suffix($day) {
-        if (!in_array(($day % 100), array(11, 12, 13))) {
-            switch ($day % 10) {
-                // Handle 1st, 2nd, 3rd.
-                case 1:
-                    return get_string('numbersuffix_st_as_in_first', 'certificateelement_date');
-                case 2:
-                    return get_string('numbersuffix_nd_as_in_second', 'certificateelement_date');
-                case 3:
-                    return get_string('numbersuffix_rd_as_in_third', 'certificateelement_date');
-            }
-        }
-        return 'th';
     }
 }
