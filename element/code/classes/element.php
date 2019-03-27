@@ -70,20 +70,14 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        // Array of data we will be storing in the database.
-        $arrtostore = array(
-            'display' => $data->display,
-        );
-
-        // Encode these variables before saving into the DB.
-        return json_encode($arrtostore);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['display' => $data->display]);
+        parent::save_form_data($data);
     }
 
     /**
@@ -137,19 +131,16 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        // Set the item and format for this element.
-        if (!empty($this->get_data())) {
-            $data = json_decode($this->get_data());
-
-            $element = $mform->getElement('display');
-            $element->setValue($data->display);
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
+        if ($this->get_data()) {
+            $dateinfo = json_decode($this->get_data());
+            $record->display = $dateinfo->display;
         }
-
-        parent::definition_after_data($mform);
+        return $record;
     }
 }

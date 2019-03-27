@@ -43,66 +43,21 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('text', 'width', get_string('width', 'certificateelement_userpicture'), array('size' => 10));
-        $mform->setType('width', PARAM_INT);
-        $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'certificateelement_userpicture');
+        element_helper::render_form_element_width($mform, 'certificateelement_userpicture');
+        element_helper::render_form_element_height($mform, 'certificateelement_userpicture');
 
-        $mform->addElement('text', 'height', get_string('height', 'certificateelement_userpicture'), array('size' => 10));
-        $mform->setType('height', PARAM_INT);
-        $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'certificateelement_userpicture');
-
-        if ($this->showposxy) {
-            \tool_certificate\element_helper::render_form_element_position($mform);
-            element_helper::render_form_element_refpoint($mform);
-        }
+        element_helper::render_form_element_position($mform);
     }
 
     /**
-     * Performs validation on the element values.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param array $data the submitted data
-     * @param array $files the submitted files
-     * @return array the validation errors
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        $errors = array();
-
-        // Check if width is not set, or not numeric or less than 0.
-        if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
-            $errors['width'] = get_string('invalidwidth', 'certificateelement_userpicture');
-        }
-
-        // Check if height is not set, or not numeric or less than 0.
-        if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
-            $errors['height'] = get_string('invalidheight', 'certificateelement_userpicture');
-        }
-
-        // Validate the position.
-        if ($this->showposxy) {
-            $errors += \tool_certificate\element_helper::validate_form_element_position($data);
-        }
-
-        return $errors;
-    }
-
-    /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
-     *
-     * @param \stdClass $data the form data
-     * @return string the json encoded array
-     */
-    public function save_unique_data($data) {
-        // Array of data we will be storing in the database.
-        $arrtostore = array(
-            'width' => (int) $data->width,
-            'height' => (int) $data->height
-        );
-
-        return json_encode($arrtostore);
+    public function save_form_data(\stdClass $data) {
+        $data->data = json_encode(['width' => (int) $data->width, 'height' => (int) $data->height]);
+        parent::save_form_data($data);
     }
 
     /**
@@ -115,37 +70,20 @@ class element extends \tool_certificate\element {
      */
     public function render($pdf, $preview, $user, $issue) {
         global $CFG;
-
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return;
-        }
-
-        $imageinfo = json_decode($this->get_data());
-
-        $context = \context_user::instance($user->id);
+        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
 
         // Get files in the user icon area.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'user', 'icon', 0);
-
-        // Get the file we want to display.
-        $file = null;
-        foreach ($files as $filefound) {
-            if (!$filefound->is_directory()) {
-                $file = $filefound;
-                break;
-            }
-        }
+        $context = \context_user::instance($user->id);
+        $files = get_file_storage()->get_area_files($context->id, 'user', 'icon', 0, 'filename', false);
+        $file = reset($files);
 
         // Show image if we found one.
         if ($file) {
-            $location = make_request_directory() . '/target';
-            $file->copy_content_to($location);
-            $pdf->Image($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
+            element_helper::render_image($pdf, $this, $file, [], $imageinfo['width'], $imageinfo['height']);
         } else if ($preview) { // Can't find an image, but we are in preview mode then display default pic.
             $location = $CFG->dirroot . '/pix/u/f1.png';
-            $pdf->Image($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
+            element_helper::render_image($pdf, $this, $location,
+                ['width' => 100, 'height' => 100], $imageinfo['width'], $imageinfo['height']);
         }
     }
 
@@ -159,55 +97,29 @@ class element extends \tool_certificate\element {
      */
     public function render_html() {
         global $PAGE, $USER;
-
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return '';
-        }
-
-        $imageinfo = json_decode($this->get_data());
+        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
 
         // Get the image.
         $userpicture = new \user_picture($USER);
         $userpicture->size = 1;
         $url = $userpicture->get_url($PAGE)->out(false);
 
-        // The size of the images to use in the CSS style.
-        $style = '';
-        if ($imageinfo->width === 0 && $imageinfo->height === 0) {
-            // Put this in so code checker doesn't complain.
-            $style .= '';
-        } else if ($imageinfo->width === 0) { // Then the height must be set.
-            $style .= 'width: ' . $imageinfo->height . 'mm; ';
-            $style .= 'height: ' . $imageinfo->height . 'mm';
-        } else if ($imageinfo->height === 0) { // Then the width must be set.
-            $style .= 'width: ' . $imageinfo->width . 'mm; ';
-            $style .= 'height: ' . $imageinfo->width . 'mm';
-        } else { // Must both be set.
-            $style .= 'width: ' . $imageinfo->width . 'mm; ';
-            $style .= 'height: ' . $imageinfo->height . 'mm';
-        }
-
-        return \html_writer::tag('img', '', array('src' => $url, 'style' => $style));
+        return element_helper::render_image_html($url, ['width' => 100, 'height' => 100],
+            $imageinfo['width'], $imageinfo['height']);
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        // Set the image, width and height for this element.
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
         if (!empty($this->get_data())) {
-            $imageinfo = json_decode($this->get_data());
-
-            $element = $mform->getElement('width');
-            $element->setValue($imageinfo->width);
-
-            $element = $mform->getElement('height');
-            $element->setValue($imageinfo->height);
+            $dateinfo = json_decode($this->get_data());
+            $record->width = $dateinfo->width;
+            $record->height = $dateinfo->height;
         }
-
-        parent::definition_after_data($mform);
+        return $record;
     }
 }

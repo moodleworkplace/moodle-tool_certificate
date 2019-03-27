@@ -33,9 +33,10 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @param string $filearea
  * @param array $args
  * @param bool $forcedownload
+ * @param array $options
  * @return bool|null false if file not found, does not return anything if found - just send the file
  */
-function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG;
 
     require_once($CFG->libdir . '/filelib.php');
@@ -55,6 +56,26 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
         }
 
         send_stored_file($file, 0, 0, $forcedownload);
+    }
+
+    // Elements can use several fileareas defined in tool_certificate.
+    if ($filearea === 'element' || $filearea === 'elementaux') {
+        $elementid = array_shift($args);
+        $template = \tool_certificate\template::find_by_element_id($elementid);
+        $template->require_manage();
+
+        $filename = array_pop($args);
+        if (!$args) {
+            $filepath = '/';
+        } else {
+            $filepath = '/' . implode('/', $args) . '/';
+        }
+        $fs = get_file_storage();
+        $file = $fs->get_file($context->id, 'tool_certificate', $filearea, $elementid, $filepath, $filename);
+        if (!$file) {
+            return;
+        }
+        send_stored_file($file, null, 0, $forcedownload, $options);
     }
 }
 
@@ -87,20 +108,16 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
 
     if ($itemtype === 'elementname') {
         // Validate access.
-        $template = \tool_certificate\template::find_by_element_id($itemid);
         external_api::validate_context(context_system::instance());
-        $template->require_manage();
+        $element = \tool_certificate\element::instance($itemid);
+        $element->get_template()->require_manage();
 
-        // Clean input and update the record.
-        $newvalue = clean_param($newvalue, PARAM_TEXT);
-        $DB->update_record('tool_certificate_elements', (object)['id' => $itemid, 'name' => $newvalue]);
-
-        return new \core\output\inplace_editable('tool_certificate', 'elementname', $itemid, true,
-            format_string($newvalue), $newvalue);
+        $element->save((object)['name' => $newvalue]);
+        return $element->get_inplace_editable();
     }
 
     if ($itemtype === 'templatename') {
-        $template = \tool_certificate\template::find_by_id($itemid);
+        $template = \tool_certificate\template::instance($itemid);
         $template->require_manage();
         external_api::validate_context(context_system::instance());
         $template->require_manage();
@@ -129,7 +146,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
         return null;
     }
 
-    $template = \tool_certificate\template::find_by_id($itemid);
+    $template = \tool_certificate\template::instance($itemid);
 
     if ($template->get_tenant_id() == 0 && \tool_certificate\template::can_issue_or_manage_all_tenants()) {
         $join = '';
@@ -139,7 +156,7 @@ function tool_certificate_potential_users_selector($area, $itemid) {
         list($join, $where, $params) = \tool_tenant\tenancy::get_users_sql('u', $template->get_tenant_id());
         $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
     } else {
-        throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions');
+        throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions', 'error');
     }
 
     $join .= ' LEFT JOIN {tool_certificate_issues} ci ON u.id = ci.userid AND ci.templateid = :templateid';

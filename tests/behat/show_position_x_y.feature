@@ -13,15 +13,15 @@ Feature: Being able to set a site setting to determine whether or not to display
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link"
-    And I add the element "Code" to page "1" of the "Certificate 1" certificate template
+    And I add the element "Code" to page "1" of the "Certificate 1" site certificate template
     And I follow "Show more..."
     And I should see "Position X"
     And I should see "Position Y"
     And I set the following fields to these values:
       | Position X | 5  |
       | Position Y | 10 |
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And I click on "Edit" "link" in the "Code" "table_row"
+    And I press "Save" in the modal form dialogue
+    And I click on "Edit 'Code'" "link" in the "Code" "list_item"
     And the following fields match these values:
       | Position X | 5  |
       | Position Y | 10 |

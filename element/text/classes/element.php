@@ -24,6 +24,8 @@
 
 namespace certificateelement_text;
 
+use tool_certificate\element_helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -49,14 +51,14 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
+     * Handles saving the form elements created by this element.
+     * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return string the text
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_unique_data($data) {
-        return $data->text;
+    public function save_form_data(\stdClass $data) {
+        $data->data = $data->text;
+        parent::save_form_data($data);
     }
 
     /**
@@ -86,15 +88,15 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
         if (!empty($this->get_data())) {
-            $element = $mform->getElement('text');
-            $element->setValue($this->get_data());
+            $record->text = $this->get_data();
         }
-        parent::definition_after_data($mform);
+        return $record;
     }
 }

@@ -24,6 +24,8 @@
 
 namespace tool_certificate;
 
+use core\output\inplace_editable;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -37,91 +39,54 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class element {
 
-    /**
-     * @var \stdClass $element The data for the element we are adding - do not use, kept for legacy reasons.
-     */
-    protected $element;
+    /** @var persistent\element  */
+    protected $persistent;
 
-    /**
-     * @var int The id.
-     */
-    protected $id;
-
-    /**
-     * @var int The page id.
-     */
-    protected $pageid;
-
-    /**
-     * @var string The name.
-     */
-    protected $name;
-
-    /**
-     * @var mixed The data.
-     */
-    protected $data;
-
-    /**
-     * @var string The font name.
-     */
-    protected $font;
-
-    /**
-     * @var int The font size.
-     */
-    protected $fontsize;
-
-    /**
-     * @var string The font colour.
-     */
-    protected $colour;
-
-    /**
-     * @var int The position x.
-     */
-    protected $posx;
-
-    /**
-     * @var int The position y.
-     */
-    protected $posy;
-
-    /**
-     * @var int The width.
-     */
-    protected $width;
-
-    /**
-     * @var int The refpoint.
-     */
-    protected $refpoint;
-
-    /**
-     * @var bool $showposxy Show position XY form elements?
-     */
-    protected $showposxy = true;
+    /** @var page */
+    protected $page = null;
 
     /**
      * Constructor.
-     *
-     * @param \stdClass $element the element data
      */
-    public function __construct($element) {
-        // Keeping this for legacy reasons so we do not break third-party elements.
-        $this->element = clone($element);
+    protected function __construct() {
+    }
 
-        $this->id = $element->id;
-        $this->pageid = $element->pageid;
-        $this->name = $element->name;
-        $this->data = $element->data;
-        $this->font = $element->font;
-        $this->fontsize = $element->fontsize;
-        $this->colour = $element->colour;
-        $this->posx = $element->posx;
-        $this->posy = $element->posy;
-        $this->width = $element->width;
-        $this->refpoint = $element->refpoint;
+    /**
+     * Create instance of an element
+     *
+     * @param int $id
+     * @param null|\stdClass $obj
+     * @return element
+     * @throws \moodle_exception
+     */
+    public static function instance(int $id = 0, ?\stdClass $obj = null) : element {
+        $element = self::instance_from_persistent(new \tool_certificate\persistent\element($id, $obj));
+        if (!$element) {
+            throw new \moodle_exception('not found'); // TODO string.
+        }
+        return $element;
+    }
+
+    /**
+     * Helper method to create an instance from persistent
+     *
+     * @param \tool_certificate\persistent\element $persistent
+     * @return element
+     */
+    protected static function instance_from_persistent(\tool_certificate\persistent\element $persistent) :? element {
+        // Get the class name.
+        /** @var element $classname */
+        $classname = '\\certificateelement_' . $persistent->get('element') . '\\element';
+
+        // Ensure the necessary class exists.
+        if (!class_exists($classname) || !is_subclass_of($classname, self::class)) {
+            return null;
+        }
+
+        /** @var self $el */
+        $el = new $classname($persistent);
+        $el->persistent = $persistent;
+        return $el;
     }
 
     /**
@@ -130,7 +95,7 @@ abstract class element {
      * @return int
      */
     public function get_id() {
-        return $this->id;
+        return $this->persistent->get('id');
     }
 
     /**
@@ -139,7 +104,7 @@ abstract class element {
      * @return int
      */
     public function get_element() {
-        return $this->element->element;
+        return $this->persistent->get('element');
     }
 
     /**
@@ -148,7 +113,7 @@ abstract class element {
      * @return int
      */
     public function get_pageid() {
-        return $this->pageid;
+        return $this->persistent->get('pageid');
     }
 
     /**
@@ -157,7 +122,7 @@ abstract class element {
      * @return int
      */
     public function get_name() {
-        return $this->name;
+        return $this->persistent->get('name');
     }
 
     /**
@@ -166,7 +131,7 @@ abstract class element {
      * @return mixed
      */
     public function get_data() {
-        return $this->data;
+        return $this->persistent->get('data');
     }
 
     /**
@@ -175,7 +140,7 @@ abstract class element {
      * @return string
      */
     public function get_font() {
-        return $this->font;
+        return $this->persistent->get('font');
     }
 
     /**
@@ -184,7 +149,7 @@ abstract class element {
      * @return int
      */
     public function get_fontsize() {
-        return $this->fontsize;
+        return $this->persistent->get('fontsize');
     }
 
     /**
@@ -193,7 +158,7 @@ abstract class element {
      * @return string
      */
     public function get_colour() {
-        return $this->colour;
+        return $this->persistent->get('colour');
     }
 
     /**
@@ -202,7 +167,7 @@ abstract class element {
      * @return int
      */
     public function get_posx() {
-        return $this->posx;
+        return $this->persistent->get('posx');
     }
 
     /**
@@ -211,7 +176,7 @@ abstract class element {
      * @return int
      */
     public function get_posy() {
-        return $this->posy;
+        return $this->persistent->get('posy');
     }
 
     /**
@@ -220,7 +185,7 @@ abstract class element {
      * @return int
      */
     public function get_width() {
-        return $this->width;
+        return $this->persistent->get('width');
     }
 
     /**
@@ -229,7 +194,16 @@ abstract class element {
      * @return int
      */
     public function get_refpoint() {
-        return $this->refpoint;
+        return $this->persistent->get('refpoint');
+    }
+
+    /**
+     * Get sequence
+     *
+     * @return int
+     */
+    public function get_sequence() : int {
+        return $this->persistent->get('sequence');
     }
 
     /**
@@ -237,62 +211,57 @@ abstract class element {
      * @return \stdClass
      */
     public function to_record() : \stdClass {
-        return (object)[
-            'id' => $this->id,
-            'element' => $this->element->element,
-            'name' => $this->name,
-            'font' => $this->font,
-            'fontsize' => $this->fontsize,
-            'colour' => $this->colour,
-            'posx' => $this->posx,
-            'posy' => $this->posy,
-            'width' => $this->width,
-            'refpoint' => $this->refpoint
-        ];
+        return $this->persistent->to_record();
     }
 
     /**
      * This function renders the form elements when adding a certificate element.
      * Can be overridden if more functionality is needed.
      *
+     * Default implementation is a typical implementation for a text element
+     *
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public function render_form_elements($mform) {
-        // Render the common elements.
+        // Common elements for the text.
         element_helper::render_form_element_font($mform);
         element_helper::render_form_element_colour($mform);
-        if ($this->showposxy) {
-            element_helper::render_form_element_position($mform);
-        }
-        element_helper::render_form_element_width($mform);
         element_helper::render_form_element_refpoint($mform);
+
+        // Advanced elements for the text.
+        $pagerecord = $this->get_page()->to_record();
+        $defaultposx = ($pagerecord->width - $pagerecord->rightmargin + $pagerecord->leftmargin) / 2;
+        element_helper::render_form_element_position($mform, (int)$defaultposx);
+        element_helper::render_form_element_text_width($mform);
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
+     *
+     * @return \stdClass|array
+     */
+    public function prepare_data_for_form() {
+        $record = $this->persistent->to_record();
+        unset($record->timecreated, $record->timemodifed, $record->data);
+        return $record;
+    }
+
+    /**
+     * Allows to process form data before calling save() and/or save files after saving
+     * @param \stdClass $data
+     */
+    public function save_form_data(\stdClass $data) {
+        element_helper::suggest_position($data, $this);
+        $this->save($data);
+    }
+
+    /**
+     * Called from form method definition_after_data
      * Can be overridden if more functionality is needed.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function definition_after_data($mform) {
-        // Loop through the properties of the element and set the values
-        // of the corresponding form element, if it exists.
-        $properties = [
-            'name' => $this->name,
-            'font' => $this->font,
-            'fontsize' => $this->fontsize,
-            'colour' => $this->colour,
-            'posx' => $this->posx,
-            'posy' => $this->posy,
-            'width' => $this->width,
-            'refpoint' => $this->refpoint
-        ];
-        foreach ($properties as $property => $value) {
-            if (!is_null($value) && $mform->elementExists($property)) {
-                $element = $mform->getElement($property);
-                $element->setValue($value);
-            }
-        }
     }
 
     /**
@@ -304,85 +273,62 @@ abstract class element {
      * @return array the validation errors
      */
     public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        $errors = array();
-
-        // Common validation methods.
-        $errors += element_helper::validate_form_element_colour($data);
-        if ($this->showposxy) {
-            $errors += element_helper::validate_form_element_position($data);
-        }
-        $errors += element_helper::validate_form_element_width($data);
-
-        return $errors;
+        return [];
     }
 
     /**
      * Handles saving the form elements created by this element.
      * Can be overridden if more functionality is needed.
      *
-     * @param \stdClass $data the form data
-     * @return bool true of success, false otherwise.
+     * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public function save_form_elements($data) {
-        global $DB;
-
-        // Get the data from the form.
-        $element = new \stdClass();
-        $element->name = $data->name;
-        $element->data = $this->save_unique_data($data);
-        $element->font = (isset($data->font)) ? $data->font : null;
-        $element->fontsize = (isset($data->fontsize)) ? $data->fontsize : null;
-        $element->colour = (isset($data->colour)) ? $data->colour : null;
-        if ($this->showposxy) {
-            $element->posx = (isset($data->posx)) ? $data->posx : null;
-            $element->posy = (isset($data->posy)) ? $data->posy : null;
+    public final function save(\stdClass $data) {
+        unset($data->id);
+        if (!empty($this->persistent->get('id'))) {
+            unset($data->pageid, $data->element);
         }
-        $element->width = (isset($data->width)) ? $data->width : null;
-        $element->refpoint = (isset($data->refpoint)) ? $data->refpoint : null;
-        $element->timemodified = time();
-
-        // Check if we are updating, or inserting a new element.
-        if (!empty($this->id)) { // Must be updating a record in the database.
-            $element->id = $this->id;
-            $DB->update_record('tool_certificate_elements', $element);
-        } else { // Must be adding a new one.
-            $element->element = $data->element;
-            $element->pageid = $data->pageid;
-            $element->sequence = \tool_certificate\element_helper::get_element_sequence($element->pageid);
-            $element->timecreated = time();
-            $id = $DB->insert_record('tool_certificate_elements', $element);
-            $this->id = $id;
-        }
-        foreach ($element as $key => $value) {
-            if (property_exists($this, $key) && $key !== 'element') {
-                $this->$key = $value;
+        foreach (array_keys(\tool_certificate\persistent\element::properties_definition()) as $key) {
+            if (property_exists($data, $key)) {
+                $this->persistent->set($key, $data->$key);
             }
         }
-        return true;
+
+        if (!$this->persistent->get('id')) {
+            $this->persistent->set('sequence',
+                \tool_certificate\element_helper::get_element_sequence($this->persistent->get('pageid')));
+        }
+
+        $this->persistent->save();
     }
 
     /**
-     * This will handle how form data will be saved into the data column in the
-     * tool_certificate_elements table.
-     * Can be overridden if more functionality is needed.
+     * Duplicates element (used as part of "duplicate template" task)
      *
-     * @param \stdClass $data the form data
-     * @return string the unique data to save
+     * @param page $page target page
+     * @return element new element
      */
-    public function save_unique_data($data) {
-        return '';
-    }
+    public function duplicate(page $page) : element {
+        $id = $this->get_id();
+        $record = $this->persistent->to_record();
+        unset($record->id, $record->timemodified, $record->timecreated);
+        $record->pageid = $page->get_id();
+        $el = self::instance(0, $record);
+        $el->page = $page;
+        $el->persistent->save();
+        $newid = $el->get_id();
 
-    /**
-     * This handles copying data from another element of the same type.
-     * Can be overridden if more functionality is needed.
-     *
-     * @param \stdClass $data the form data
-     * @return bool returns true if the data was copied successfully, false otherwise
-     */
-    public function copy_element($data) {
-        return true;
+        // Duplicate files.
+        $contextid = $this->get_template()->get_context()->id;
+        $newcontextid = $page->get_template()->get_context()->id;
+        $drafitemid = 0;
+        get_file_storage();
+        file_prepare_draft_area($drafitemid, $contextid, 'tool_certificate', 'element', $id);
+        file_save_draft_area_files($drafitemid, $newcontextid, 'tool_certificate', 'element', $newid);
+        $drafitemid = 0;
+        file_prepare_draft_area($drafitemid, $contextid, 'tool_certificate', 'elementaux', $id);
+        file_save_draft_area_files($drafitemid, $newcontextid, 'tool_certificate', 'elementaux', $newid);
+
+        return $el;
     }
 
     /**
@@ -426,33 +372,123 @@ abstract class element {
      * @return bool success return true if deletion success, false otherwise
      */
     public function delete() {
-        global $DB;
-
-        return $DB->delete_records('tool_certificate_elements', array('id' => $this->id));
+        $id = $this->get_id();
+        $this->persistent->delete();
+        // Delete files.
+        $fs = get_file_storage();
+        $contextid = $this->get_template()->get_context()->id;
+        $fs->delete_area_files($contextid, 'tool_certificate', 'element', $id);
+        $fs->delete_area_files($contextid, 'tool_certificate', 'elementaux', $id);
+        return true;
     }
 
     /**
-     * This function is responsible for handling the restoration process of the element.
+     * Load a list of records.
      *
-     * For example, the function may save data that is related to another course module, this
-     * data will need to be updated if we are restoring the course as the course module id will
-     * be different in the new course.
+     * @param page $page
      *
-     * @param \restore_certificate_activity_task $restore
+     * @return \tool_certificate\element[]
      */
-    public function after_restore($restore) {
-
-    }
-
-    /**
-     * Magic getter for read only access.
-     *
-     * @param string $name
-     */
-    public function __get($name) {
-        debugging('Please call the appropriate get_* function instead of relying on magic getters', DEBUG_DEVELOPER);
-        if (property_exists($this->element, $name)) {
-            return $this->element->$name;
+    public static function get_elements_in_page(page $page) {
+        /** @var \tool_certificate\persistent\element[] $instances */
+        $instances = \tool_certificate\persistent\element::get_records(
+            ['pageid' => $page->get_id()], 'sequence', 'ASC');
+        $els = [];
+        foreach ($instances as $instance) {
+            if ($element = self::instance_from_persistent($instance)) {
+                $element->page = $page;
+                $els[$element->get_id()] = $element;
+            }
         }
+        return $els;
+    }
+
+    /**
+     * Get page
+     * @return page
+     */
+    public function get_page() : page {
+        if ($this->page === null) {
+            $this->page = page::instance($this->persistent->get('pageid'));
+        }
+        return $this->page;
+    }
+
+    /**
+     * Get template
+     * @return template
+     */
+    public function get_template() : template {
+        return $this->get_page()->get_template();
+    }
+
+    /**
+     * Export
+     *
+     * @return output\element
+     */
+    public function get_exporter() : \tool_certificate\output\element {
+        return new \tool_certificate\output\element($this->persistent, ['element' => $this]);
+    }
+
+    /**
+     * Get element display name
+     *
+     * @return string
+     */
+    public function get_display_name() : string {
+        $name = $this->persistent->get('name');
+        if (strlen($name)) {
+            return format_string($this->get_name(), true, ['escape' => false]);
+        } else {
+            return $this->get_element_type_name();
+        }
+    }
+
+    /**
+     * Inplace editable name
+     * @return inplace_editable
+     */
+    public function get_inplace_editable() : inplace_editable {
+        $formattedname = $this->get_display_name();
+        return new \core\output\inplace_editable('tool_certificate', 'elementname',
+            $this->get_id(), true,
+            $formattedname, $this->get_name(),
+            get_string('editelementname', 'tool_certificate'),
+            get_string('newvaluefor', 'form', $formattedname));
+    }
+
+    /**
+     * Name of the type of the element
+     * @return string
+     */
+    public static function get_element_type_name() {
+        $parts = preg_split('/\\\\/', static::class);
+        return get_string('pluginname', $parts[0]);
+    }
+
+    /**
+     * Element type icon or spacer if there is no icon
+     * @param bool $withtitle
+     * @return \pix_icon
+     */
+    public static function get_element_type_image(bool $withtitle = false) : \pix_icon {
+        global $PAGE;
+        $parts = preg_split('/\\\\/', static::class);
+        $pluginname = $parts[0];
+        $title = $withtitle ? self::get_element_type_name() : '';
+        if ($PAGE->theme->resolve_image_location('icon', $pluginname, false)) {
+            return new \pix_icon('icon', $title, $pluginname, ['class' => 'icon pluginicon']);
+        } else {
+            return new \pix_icon('spacer', $title, 'moodle', ['class' => 'icon pluginicon noicon']);
+        }
+    }
+
+    /**
+     * Can element be dragged?
+     * @return bool
+     */
+    public function is_draggable() : bool {
+        return true;
     }
 }

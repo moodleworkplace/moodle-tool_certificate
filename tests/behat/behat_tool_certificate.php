@@ -43,54 +43,33 @@ class behat_tool_certificate extends behat_base {
      * Adds an element to the specified page of a template.
      *
      * @codingStandardsIgnoreLine
-     * @Given /^I add the element "(?P<element_name>(?:[^"]|\\")*)" to page "(?P<page_number>\d+)" of the "(?P<template_name>(?:[^"]|\\")*)" certificate template$/
+     * @Given /^I add the element "(?P<element_name>(?:[^"]|\\")*)" to page "(?P<page_number>\d+)" of the "(?P<template_name>(?:[^"]|\\")*)" site certificate template$/
      * @param string $elementname
      * @param int $pagenum
      * @param string $templatename
      */
-    public function i_add_the_element_to_the_certificate_template_page($elementname, $pagenum, $templatename) {
-        global $DB;
-
+    public function i_add_the_element_to_the_site_certificate_template_page($elementname, $pagenum, $templatename) {
         if (!$this->running_javascript()) {
             throw new coding_exception('You can only add element using the selenium driver.');
         }
 
-        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
-            '*', MUST_EXIST);
+        $this->execute('behat_general::i_click_on_in_the',
+            array(get_string('addelement', 'tool_certificate'), "button",
+                "//*[@data-region='page'][{$pagenum}]", "xpath_element"));
 
-        $this->execute('behat_forms::i_set_the_field_to', array($this->escape('element_' . $page->id),
-            $this->escape($elementname)));
-        $this->execute('behat_forms::press_button', get_string('addelement', 'tool_certificate'));
-    }
-
-    /**
-     * Deletes an element from a specified page of a template.
-     *
-     * @Given /^I delete page "(?P<page_number>\d+)" of the "(?P<template_name>(?:[^"]|\\")*)" certificate template$/
-     * @param int $pagenum
-     * @param string $templatename
-     */
-    public function i_delete_the_certificate_page($pagenum, $templatename) {
-        global $DB;
-
-        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', array('templateid' => $template->id, 'sequence' => $pagenum),
-            '*', MUST_EXIST);
-
-        $this->execute('behat_general::i_click_on_in_the', array('Delete page', 'link',
-            $this->escape('#id_page_' . $page->id), 'css_element'));
-        $this->execute('behat_forms::press_button', get_string('continue'));
+        $this->execute('behat_general::i_click_on_in_the',
+            array($elementname, "link",
+                "//*[@data-region='page'][{$pagenum}]//*[@data-region='elementtypeslist']", "xpath_element"));
     }
 
     /**
      * Verifies the certificate code for a user.
      *
-     * @Given /^I verify the "(?P<certificate_name>(?:[^"]|\\")*)" certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
+     * @Given /^I verify the "(?P<certificate_name>(?:[^"]|\\")*)" site certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
      * @param string $templatename
      * @param string $username
      */
-    public function i_verify_the_certificate_for_user($templatename, $username) {
+    public function i_verify_the_site_certificate_for_user($templatename, $username) {
         global $DB;
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
@@ -107,11 +86,11 @@ class behat_tool_certificate extends behat_base {
     /**
      * Verifies the certificate code for a user.
      *
-     * @Given /^I can not verify the "(?P<certificate_name>(?:[^"]|\\")*)" certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
+     * @Given /^I can not verify the "(?P<certificate_name>(?:[^"]|\\")*)" site certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
      * @param string $templatename
      * @param string $username
      */
-    public function i_can_not_verify_the_certificate_for_user($templatename, $username) {
+    public function i_can_not_verify_the_site_certificate_for_user($templatename, $username) {
         global $DB;
 
         $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
@@ -126,29 +105,11 @@ class behat_tool_certificate extends behat_base {
     }
 
     /**
-     * Directs the user to the URL for verifying a certificate.
-     *
-     * This has been created as we allow non-users to verify certificates and they can not navigate to
-     * the page like a conventional user.
-     *
-     * @Given /^I visit the verification url for the "(?P<certificate_name>(?:[^"]|\\")*)" certificate$/
-     * @param string $templatename
-     */
-    public function i_visit_the_verification_url_for_certificate($templatename) {
-        global $DB;
-
-        $template = $DB->get_record('tool_certificate_templates', array('name' => $templatename), '*', MUST_EXIST);
-
-        $url = new moodle_url('/admin/tool/certificate/index.php');
-        $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
-    }
-
-    /**
      * Directs the user to the URL for verifying all certificates on the site.
      *
-     * @Given /^I visit the verification url for the site$/
+     * @Given /^I visit the sites certificates verification url/
      */
-    public function i_visit_the_verification_url_for_the_site() {
+    public function i_visit_the_sites_certificates_verification_url() {
         $url = new moodle_url('/admin/tool/certificate/index.php');
         $this->getSession()->visit($this->locate_path($url->out_as_local_url()));
     }
@@ -193,7 +154,7 @@ class behat_tool_certificate extends behat_base {
             $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
-                    $template->add_page();
+                    $template->new_page()->save((object)[]);
                 }
             }
         }

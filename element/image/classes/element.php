@@ -44,19 +44,26 @@ class element extends \tool_certificate\element {
 
     /**
      * Constructor.
-     *
-     * @param \stdClass $element the element data
      */
-    public function __construct($element) {
+    protected function __construct() {
         global $COURSE;
 
         $this->filemanageroptions = array(
             'maxbytes' => $COURSE->maxbytes,
-            'subdirs' => 1,
-            'accepted_types' => 'image'
+            'subdirs' => 0,
+            'accepted_types' => 'web_image',
+            'maxfiles' => 1
         );
 
-        parent::__construct($element);
+        parent::__construct();
+    }
+
+    /**
+     * Add option to use the image as a background
+     * @return bool
+     */
+    protected function can_be_used_as_a_background() {
+        return true;
     }
 
     /**
@@ -65,54 +72,37 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('select', 'fileid', get_string('image', 'certificateelement_image'), self::get_images());
-
-        $mform->addElement('text', 'width', get_string('width', 'certificateelement_image'), array('size' => 10));
-        $mform->setType('width', PARAM_INT);
-        $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', 'certificateelement_image');
-
-        $mform->addElement('text', 'height', get_string('height', 'certificateelement_image'), array('size' => 10));
-        $mform->setType('height', PARAM_INT);
-        $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', 'certificateelement_image');
-
-        if ($this->showposxy) {
-            \tool_certificate\element_helper::render_form_element_position($mform);
-            element_helper::render_form_element_refpoint($mform);
-        }
-
-        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
+        $mform->addElement('filemanager', 'image', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
-    }
 
-    /**
-     * Performs validation on the element values.
-     *
-     * @param array $data the submitted data
-     * @param array $files the submitted files
-     * @return array the validation errors
-     */
-    public function validate_form_elements($data, $files) {
-        // Array to return the errors.
-        $errors = array();
-
-        // Check if width is not set, or not numeric or less than 0.
-        if ((!isset($data['width'])) || (!is_numeric($data['width'])) || ($data['width'] < 0)) {
-            $errors['width'] = get_string('invalidwidth', 'certificateelement_image');
+        if (element_helper::render_shared_image_picker_element($mform)) {
+            $mform->addFormRule(function($data) {
+                $draffiles = file_get_draft_area_info($data['image']);
+                if ((!$draffiles['filesize'] && !$data['fileid']) || ($draffiles['filesize'] && $data['fileid'])) {
+                    return ['image' => get_string('imagerequired', 'certificateelement_image')];
+                }
+                return [];
+            });
+        } else {
+            $mform->addRule('image', get_string('required'), 'required', null, 'client');
         }
 
-        // Check if height is not set, or not numeric or less than 0.
-        if ((!isset($data['height'])) || (!is_numeric($data['height'])) || ($data['height'] < 0)) {
-            $errors['height'] = get_string('invalidheight', 'certificateelement_image');
+        if ($this->can_be_used_as_a_background()) {
+            $mform->addElement('advcheckbox', 'isbackground', '', get_string('isbackground', 'certificateelement_image'));
         }
 
-        // Validate the position.
-        if ($this->showposxy) {
-            $errors += \tool_certificate\element_helper::validate_form_element_position($data);
+        element_helper::render_form_element_width($mform, 'certificateelement_image');
+        element_helper::render_form_element_height($mform, 'certificateelement_image');
+
+        element_helper::render_form_element_position($mform);
+
+        if ($this->can_be_used_as_a_background()) {
+            $mform->hideIf('width', 'isbackground', 'checked');
+            $mform->hideIf('height', 'isbackground', 'checked');
+            $mform->hideIf('posx', 'isbackground', 'checked');
+            $mform->hideIf('posy', 'isbackground', 'checked');
         }
 
-        return $errors;
     }
 
     /**
@@ -120,22 +110,15 @@ class element extends \tool_certificate\element {
      * Can be overridden if more functionality is needed.
      *
      * @param \stdClass $data the form data
-     * @return bool true of success, false otherwise.
      */
-    public function save_form_elements($data) {
-        global $COURSE, $SITE;
+    public function save_form_data(\stdClass $data) {
+        $data->data = $this->calculate_additional_data($data);
 
-        // Set the context.
-        if ($COURSE->id == $SITE->id) {
-            $context = \context_system::instance();
-        } else {
-            $context = \context_course::instance($COURSE->id);
-        }
+        parent::save_form_data($data);
 
         // Handle file uploads.
-        \tool_certificate\certificate::upload_files($data->certificateimage, $context->id);
-
-        return parent::save_form_elements($data);
+        file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
+            'tool_certificate', 'element', $this->get_id());
     }
 
     /**
@@ -145,11 +128,14 @@ class element extends \tool_certificate\element {
      * @param \stdClass $data the form data
      * @return string the json encoded array
      */
-    public function save_unique_data($data) {
+    private function calculate_additional_data($data) {
         $arrtostore = [
             'width' => !empty($data->width) ? (int) $data->width : 0,
             'height' => !empty($data->height) ? (int) $data->height : 0
         ];
+        if ($this->can_be_used_as_a_background()) {
+            $arrtostore['isbackground'] = !empty($data->isbackground);
+        }
 
         if (!empty($data->fileid)) {
             // Array of data we will be storing in the database.
@@ -177,29 +163,17 @@ class element extends \tool_certificate\element {
      * @param \stdClass $issue the issue we are rendering
      */
     public function render($pdf, $preview, $user, $issue) {
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
+        if (!$file = $this->get_file()) {
             return;
         }
-
-        $imageinfo = json_decode($this->get_data());
-
-        // If there is no file, we have nothing to display.
-        if (empty($imageinfo->filename)) {
-            return;
+        $imageinfo = @json_decode($this->get_data(), true) + ['width' => 0, 'height' => 0];
+        if ($this->is_background()) {
+            $page = $this->get_page()->to_record();
+            $imageinfo['width'] = $page->width;
+            $imageinfo['height'] = $page->height;
         }
 
-        if ($file = $this->get_file()) {
-            $location = make_request_directory() . '/target';
-            $file->copy_content_to($location);
-
-            $mimetype = $file->get_mimetype();
-            if ($mimetype == 'image/svg+xml') {
-                $pdf->ImageSVG($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
-            } else {
-                $pdf->Image($location, $this->get_posx(), $this->get_posy(), $imageinfo->width, $imageinfo->height);
-            }
-        }
+        element_helper::render_image($pdf, $this, $file, [], $imageinfo['width'], $imageinfo['height']);
     }
 
     /**
@@ -211,114 +185,61 @@ class element extends \tool_certificate\element {
      * @return string the html
      */
     public function render_html() {
-        // If there is no element data, we have nothing to display.
-        if (empty($this->get_data())) {
-            return '';
+        global $OUTPUT;
+        if ($this->is_background()) {
+            $page = $this->get_page()->to_record();
+            $imageinfo['width'] = $page->width;
+            $imageinfo['height'] = $page->height;
+        } else {
+            $imageinfo = ($this->get_data() ? json_decode($this->get_data(), true) : [])
+                + ['width' => 0, 'height' => 0];
         }
 
-        $imageinfo = json_decode($this->get_data());
-
-        // If there is no file, we have nothing to display.
-        if (empty($imageinfo->filename)) {
-            return '';
-        }
-
-        // Get the image.
-        $fs = get_file_storage();
-        if ($file = $fs->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
-                $imageinfo->filepath, $imageinfo->filename)) {
-            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), 'tool_certificate', 'image', $file->get_itemid(),
-                $file->get_filepath(), $file->get_filename());
+        if (!$file = $this->get_file()) {
+            // Broken file icon.
+            $url = $OUTPUT->image_url('brokenfile', 'tool_certificate')->out(false);
+            $fileimageinfo = ['width' => 140, 'height' => 140];
+        } else {
+            // Link to the file.
+            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+                $file->get_itemid(), $file->get_filepath(), $file->get_filename());
             $fileimageinfo = $file->get_imageinfo();
-            $whratio = $fileimageinfo['width'] / $fileimageinfo['height'];
-            // The size of the images to use in the CSS style.
-            $style = '';
-            if ($imageinfo->width === 0 && $imageinfo->height === 0) {
-                $style .= 'width: ' . $fileimageinfo['width'] . 'px; ';
-                $style .= 'height: ' . $fileimageinfo['height'] . 'px';
-            } else if ($imageinfo->width === 0) { // Then the height must be set.
-                // We must get the width based on the height to keep the ratio.
-                $style .= 'width: ' . ($imageinfo->height * $whratio) . 'mm; ';
-                $style .= 'height: ' . $imageinfo->height . 'mm';
-            } else if ($imageinfo->height === 0) { // Then the width must be set.
-                $style .= 'width: ' . $imageinfo->width . 'mm; ';
-                // We must get the height based on the width to keep the ratio.
-                $style .= 'height: ' . ($imageinfo->width / $whratio) . 'mm';
-            } else { // Must both be set.
-                $style .= 'width: ' . $imageinfo->width . 'mm; ';
-                $style .= 'height: ' . $imageinfo->height . 'mm';
-            }
-
-            return \html_writer::tag('img', '', array('src' => $url, 'style' => $style));
         }
+
+        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height']);
     }
 
     /**
-     * Sets the data on the form when editing an element.
+     * Prepare data to pass to moodleform::set_data()
      *
-     * @param \MoodleQuickForm $mform the edit_form instance
+     * @return \stdClass|array
      */
-    public function definition_after_data($mform) {
-        global $COURSE, $SITE;
-
-        // Set the image, width and height for this element.
+    public function prepare_data_for_form() {
+        $record = parent::prepare_data_for_form();
         if (!empty($this->get_data())) {
-            $imageinfo = json_decode($this->get_data());
-            if (!empty($imageinfo->filename)) {
-                if ($file = $this->get_file()) {
-                    $element = $mform->getElement('fileid');
-                    $element->setValue($file->get_id());
+            $dateinfo = json_decode($this->get_data());
+            $keys = ['width', 'height', 'isbackground'];
+            foreach ($keys as $key) {
+                if (isset($dateinfo->$key)) {
+                    $record->$key = $dateinfo->$key;
                 }
             }
-
-            if (isset($imageinfo->width) && $mform->elementExists('width')) {
-                $element = $mform->getElement('width');
-                $element->setValue($imageinfo->width);
-            }
-
-            if (isset($imageinfo->height) && $mform->elementExists('height')) {
-                $element = $mform->getElement('height');
-                $element->setValue($imageinfo->height);
-            }
         }
 
-        // Set the context.
-        if ($COURSE->id == $SITE->id) {
-            $context = \context_system::instance();
-        } else {
-            $context = \context_course::instance($COURSE->id);
+        if ($this->get_id()) {
+            // Load element image.
+            $draftitemid = file_get_submitted_draft_itemid('image');
+            $context = $this->get_template()->get_context();
+            file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'element',
+                $this->get_id(), $this->filemanageroptions);
+            $record->image = $draftitemid;
         }
 
-        // Editing existing instance - copy existing files into draft area.
-        $draftitemid = file_get_submitted_draft_itemid('certificateimage');
-        file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'image', 0, $this->filemanageroptions);
-        $element = $mform->getElement('certificateimage');
-        $element->setValue($draftitemid);
+        if ($file = $this->get_shared_file()) {
+            $record->fileid = $file->get_id();
+        }
 
-        parent::definition_after_data($mform);
-    }
-
-    /**
-     * This function is responsible for handling the restoration process of the element.
-     *
-     * We will want to update the file's pathname hash.
-     *
-     * @param \restore_certificate_activity_task $restore
-     */
-    public function after_restore($restore) {
-        global $DB;
-
-        // Get the current data we have stored for this element.
-        $elementinfo = json_decode($this->get_data());
-
-        // Update the context.
-        $elementinfo->contextid = \context_system::instance()->id;
-
-        // Encode again before saving.
-        $elementinfo = json_encode($elementinfo);
-
-        // Perform the update.
-        $DB->set_field('tool_certificate_elements', 'data', $elementinfo, array('id' => $this->get_id()));
+        return $record;
     }
 
     /**
@@ -326,45 +247,64 @@ class element extends \tool_certificate\element {
      *
      * @return \stored_file|bool stored_file instance if exists, false if not
      */
-    public function get_file() {
-        $imageinfo = json_decode($this->get_data());
+    public function get_file() : ?\stored_file {
 
-        $fs = get_file_storage();
+        $files = get_file_storage()->get_area_files($this->get_template()->get_context()->id,
+            'tool_certificate', 'element', $this->get_id(), '', false);
+        if (count($files)) {
+            return reset($files);
+        }
 
-        return $fs->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
-            $imageinfo->filepath, $imageinfo->filename);
+        return $this->get_shared_file();
     }
 
     /**
-     * Return the list of possible images to use.
+     * Fetch shared file
      *
-     * @return array the list of images that can be used
+     * @return null|\stored_file
      */
-    public static function get_images() {
-        global $COURSE;
-
-        // Create file storage object.
-        $fs = get_file_storage();
-
-        // The array used to store the images.
-        $arrfiles = array();
-        // Loop through the files uploaded in the system context.
-        if ($files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'image', false, 'filename', false)) {
-            foreach ($files as $hash => $file) {
-                $arrfiles[$file->get_id()] = $file->get_filename();
-            }
+    public function get_shared_file() : ?\stored_file {
+        $imageinfo = json_decode($this->get_data());
+        if (!empty($imageinfo->filename)) {
+            return get_file_storage()->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea, $imageinfo->itemid,
+                $imageinfo->filepath, $imageinfo->filename);
         }
-        // Loop through the files uploaded in the course context.
-        if ($files = $fs->get_area_files(\context_course::instance($COURSE->id)->id, 'tool_certificate', 'image', false,
-            'filename', false)) {
-            foreach ($files as $hash => $file) {
-                $arrfiles[$file->get_id()] = $file->get_filename();
-            }
+        return null;
+    }
+
+    /**
+     * Is element draggable
+     * @return bool
+     */
+    public function is_background(): bool {
+        if ($this->can_be_used_as_a_background()) {
+            $imageinfo = @json_decode($this->get_data(), true);
+            return !empty($imageinfo['isbackground']);
         }
+        return false;
+    }
 
-        \core_collator::asort($arrfiles);
-        $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+    /**
+     * Is element draggable
+     * @return bool
+     */
+    public function is_draggable(): bool {
+        return !$this->is_background();
+    }
 
-        return $arrfiles;
+    /**
+     * Override get posx
+     * @return int
+     */
+    public function get_posx() {
+        return $this->is_background() ? 0 : parent::get_posx();
+    }
+
+    /**
+     * Override get posy
+     * @return int
+     */
+    public function get_posy() {
+        return $this->is_background() ? 0 : parent::get_posy();
     }
 }

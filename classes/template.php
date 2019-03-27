@@ -38,63 +38,36 @@ defined('MOODLE_INTERNAL') || die();
  */
 class template {
 
-    /**
-     * @var int $id The id of the template.
-     */
-    protected $id;
+    /** @var persistent\template */
+    protected $persistent;
 
-    /**
-     * @var int $tenantid The tenantid of the template.
-     */
-    protected $tenantid;
-
-    /**
-     * @var string $name The name of this template
-     */
-    protected $name;
-
-    /**
-     * @var int $contextid The context id of this template
-     */
-    protected $contextid;
-
-    /**
-     * @var \context $context The context of this template
-     */
-    protected $context;
-
-    /**
-     * @var int $timecreated The creation time of this template
-     */
-    protected $timecreated;
-
-    /** @var int $timemodified */
-    protected $timemodified;
-
-    /** @var array */
+    /** @var page[] */
     protected $pages;
 
     /**
      * The constructor.
-     *
-     * @param \stdClass $template
      */
-    public function __construct($template) {
-        $this->id = $template->id;
-        $this->tenantid = $template->tenantid;
-        $this->name = $template->name;
-        if (isset($template->contextid)) {
-            $this->contextid = $template->contextid;
-            $this->context = \context::instance_by_id($this->contextid);
-        } else {
-            $this->context = \context_system::instance();
-            $this->contextid = $this->context->id;
+    protected function __construct() {
+    }
+
+    /**
+     * Instance of a template
+     *
+     * @param int $id
+     * @param null|\stdClass $obj
+     * @return template
+     */
+    public static function instance(int $id = 0, ?\stdClass $obj = null) : template {
+        $data = new \stdClass();
+        if ($obj !== null) {
+            $data = (object)array_intersect_key((array)$obj, \tool_certificate\persistent\template::properties_definition());
+            if (empty($data->contextid)) {
+                $data->contextid = \context_system::instance()->id;
+            }
         }
-        if (isset($template->timecreated)) {
-            $this->timecreated = $template->timecreated;
-        } else {
-            $this->timecreated = time();
-        }
+        $t = new self();
+        $t->persistent = new \tool_certificate\persistent\template($id, $data);
+        return $t;
     }
 
     /**
@@ -104,61 +77,40 @@ class template {
      */
     public function save($data) {
         global $DB;
-
-        $savedata = new \stdClass();
-        $savedata->id = $this->id;
-        $savedata->name = clean_param($data->name, PARAM_TEXT);
-        $savedata->timemodified = time();
-
-        $DB->update_record('tool_certificate_templates', $savedata);
-        $this->name = $savedata->name;
-
+        $this->persistent->set('name', $data->name);
+        $this->persistent->save();
         \tool_certificate\event\template_updated::create_from_template($this)->trigger();
     }
 
     /**
-     * Template pages.
-     * @return \stdClass[]
+     * Template pages
+     *
+     * @return \tool_certificate\page[]
      */
     public function get_pages() {
-        global $DB;
         if ($this->pages === null) {
-            $this->pages = $DB->get_records('tool_certificate_pages',
-                ['templateid' => $this->id], 'sequence ASC');
+            $this->pages = \tool_certificate\page::get_pages_in_template($this);
         }
         return $this->pages;
     }
 
     /**
-     * Handles adding another page to the template.
+     * New page (not saved)
      *
-     * @return int the id of the page
+     * @return page
      */
-    public function add_page() {
-        global $DB;
+    public function new_page() {
+        $pages = $this->get_pages();
 
-        // Set the page number to 1 to begin with.
-        $sequence = 1;
-        // Get the max page number.
-        $sql = "SELECT MAX(sequence) as maxpage
-                  FROM {tool_certificate_pages} cp
-                 WHERE cp.templateid = :templateid";
-        if ($maxpage = $DB->get_record_sql($sql, array('templateid' => $this->id))) {
-            $sequence = $maxpage->maxpage + 1;
+        if ($pages) {
+            $lastpage = array_pop($pages);
+            $data = $lastpage->to_record();
+            unset($data->id, $data->timecreated, $data->timemodified);
+            $data->sequence++;
+        } else {
+            $data = (object)['templateid' => $this->get_id()];
         }
-
-        // New page creation.
-        $page = new \stdClass();
-        $page->templateid = $this->id;
-        $page->width = '210';
-        $page->height = '297';
-        $page->sequence = $sequence;
-        $page->timecreated = time();
-        $page->timemodified = $page->timecreated;
-
-        // Insert the page.
-        $this->pages = null;
-        return $DB->insert_record('tool_certificate_pages', $page);
+        return page::instance(0, $data);
     }
 
     /**
@@ -168,6 +120,8 @@ class template {
      */
     public function save_page($data) {
         global $DB;
+
+        // TODO will be split into one form per page.
 
         // Set the time to a variable.
         $time = time();
@@ -200,34 +154,15 @@ class template {
      * Handles deleting the template.
      */
     public function delete() {
-        global $DB;
-
-        // Delete the elements.
-        $sql = "SELECT e.*
-                  FROM {tool_certificate_elements} e
-            INNER JOIN {tool_certificate_pages} p
-                    ON e.pageid = p.id
-                 WHERE p.templateid = :templateid";
-        if ($elements = $DB->get_records_sql($sql, array('templateid' => $this->id))) {
-            foreach ($elements as $element) {
-                // Get an instance of the element class.
-                if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
-                    $e->delete();
-                } else {
-                    // The plugin files are missing, so just remove the entry from the DB.
-                    $DB->delete_records('tool_certificate_elements', array('id' => $element->id));
-                }
-            }
+        foreach ($this->get_pages() as $page) {
+            $page->delete();
         }
-
-        // Delete the pages.
-        $DB->delete_records('tool_certificate_pages', array('templateid' => $this->id));
 
         // Revoke certificate issues.
         $this->revoke_issues();
 
         // Now, finally delete the actual template.
-        $DB->delete_records('tool_certificate_templates', array('id' => $this->id));
+        $this->persistent->delete();
 
         \tool_certificate\event\template_deleted::create_from_template($this)->trigger();
     }
@@ -240,24 +175,12 @@ class template {
     public function delete_page($pageid) {
         global $DB;
 
-        // Get the page.
-        $page = $DB->get_record('tool_certificate_pages', array('id' => $pageid), '*', MUST_EXIST);
-
-        // Delete this page.
-        $DB->delete_records('tool_certificate_pages', array('id' => $page->id));
-
-        // The element may have some extra tasks it needs to complete to completely delete itself.
-        if ($elements = $DB->get_records('tool_certificate_elements', array('pageid' => $page->id))) {
-            foreach ($elements as $element) {
-                // Get an instance of the element class.
-                if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
-                    $e->delete();
-                } else {
-                    // The plugin files are missing, so just remove the entry from the DB.
-                    $DB->delete_records('tool_certificate_elements', array('id' => $element->id));
-                }
-            }
+        $pages = $this->get_pages();
+        if (!array_key_exists($pageid, $pages)) {
+            return;
         }
+        $sequence = $pages[$pageid]->to_record()->sequence;
+        $pages[$pageid]->delete();
 
         // Now we want to decrease the page number values of
         // the pages that are greater than the page we deleted.
@@ -265,7 +188,7 @@ class template {
                    SET sequence = sequence - 1
                  WHERE templateid = :templateid
                    AND sequence > :sequence";
-        $DB->execute($sql, array('templateid' => $this->id, 'sequence' => $page->sequence));
+        $DB->execute($sql, array('templateid' => $this->get_id(), 'sequence' => $sequence));
         $this->pages = null;
     }
 
@@ -279,11 +202,14 @@ class template {
 
         // Ensure element exists and delete it.
         $element = $DB->get_record('tool_certificate_elements', array('id' => $elementid), '*', MUST_EXIST);
+        if (!array_key_exists($element->pageid, $this->get_pages())) {
+            return;
+        }
 
         // Get an instance of the element class.
-        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
-            $e->delete();
-        } else {
+        try {
+            \tool_certificate\element::instance(0, $element)->delete();
+        } catch (\moodle_exception $e) {
             // The plugin files are missing, so just remove the entry from the DB.
             $DB->delete_records('tool_certificate_elements', array('id' => $elementid));
         }
@@ -301,10 +227,10 @@ class template {
      * Generate the PDF for the template.
      *
      * @param bool $preview True if it is a preview, false otherwise
-     * @param int $issue The issued certificate we want to view
+     * @param \stdClass $issue The issued certificate we want to view
      */
     public function generate_pdf($preview = false, $issue = null) {
-        global $CFG, $DB, $USER;
+        global $CFG, $USER;
 
         if (is_null($issue)) {
             $user = $USER;
@@ -321,72 +247,35 @@ class template {
 
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
-            $pdf->SetTitle($this->name);
+            $pdf->SetTitle($this->get_formatted_name());
             $pdf->SetAutoPageBreak(true, 0);
             // Remove full-stop at the end, if it exists, to avoid "..pdf" being created and being filtered by clean_filename.
-            $filename = rtrim($this->name, '.');
+            $filename = rtrim($this->get_formatted_name(), '.');
             $filename = clean_filename($filename . '.pdf');
             // Loop through the pages and display their content.
             foreach ($pages as $page) {
+                $pagerecord = $page->to_record();
                 // Add the page to the PDF.
-                if ($page->width > $page->height) {
+                if ($pagerecord->width > $pagerecord->height) {
                     $orientation = 'L';
                 } else {
                     $orientation = 'P';
                 }
-                $pdf->AddPage($orientation, array($page->width, $page->height));
-                $pdf->SetMargins($page->leftmargin, 0, $page->rightmargin);
+                $pdf->AddPage($orientation, array($pagerecord->width, $pagerecord->height));
+                $pdf->SetMargins($pagerecord->leftmargin, 0, $pagerecord->rightmargin);
                 // Get the elements for the page.
-                if ($elements = $DB->get_records('tool_certificate_elements', array('pageid' => $page->id), 'sequence ASC')) {
+                if ($elements = $page->get_elements()) {
                     // Loop through and display.
                     foreach ($elements as $element) {
-                        // Get an instance of the element class.
-                        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
-                            $e->render($pdf, $preview, $user, $issue);
-                        }
+                        $element->render($pdf, $preview, $user, $issue);
                     }
                 }
             }
-            $pdf->Output($filename);
-        }
-    }
-
-    /**
-     * Handles copying this template into another.
-     *
-     * @param int $copytotemplateid The template id to copy to
-     */
-    public function copy_to_template($copytotemplateid) {
-        global $DB;
-
-        // Get the pages for the template, there should always be at least one page for each template.
-        if ($templatepages = $this->get_pages()) {
-            // Loop through the pages.
-            foreach ($templatepages as $templatepage) {
-                $page = clone($templatepage);
-                $page->templateid = $copytotemplateid;
-                $page->timecreated = time();
-                $page->timemodified = $page->timecreated;
-                // Insert into the database.
-                $page->id = $DB->insert_record('tool_certificate_pages', $page);
-                // Now go through the elements we want to load.
-                if ($templateelements = $DB->get_records('tool_certificate_elements', array('pageid' => $templatepage->id))) {
-                    foreach ($templateelements as $templateelement) {
-                        $element = clone($templateelement);
-                        $element->pageid = $page->id;
-                        $element->timecreated = time();
-                        $element->timemodified = $element->timecreated;
-                        // Ok, now we want to insert this into the database.
-                        $element->id = $DB->insert_record('tool_certificate_elements', $element);
-                        // Load any other information the element may need to for the template.
-                        if ($e = \tool_certificate\element_factory::get_element_instance($element)) {
-                            if (!$e->copy_element($templateelement)) {
-                                // Failed to copy - delete the element.
-                                $e->delete();
-                            }
-                        }
-                    }
-                }
+            if (defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
+                // For some reason phpunit on travis-ci.com do not return 'cli' on php_sapi_name().
+                echo $pdf->Output($filename, 'S');
+            } else {
+                $pdf->Output($filename);
             }
         }
     }
@@ -410,51 +299,68 @@ class template {
         $newtemplate = self::create($data);
 
         // Copy the data to the new template.
-        $this->copy_to_template($newtemplate->get_id());
+        foreach ($this->get_pages() as $page) {
+            $page->duplicate($newtemplate);
+        }
 
         return $newtemplate;
     }
 
     /**
-     * Handles moving an item on a template.
+     * Move page up or down one
      *
-     * @param string $itemname the item we are moving
-     * @param int $itemid the id of the item
-     * @param string $direction the direction
+     * @param int $pageid
+     * @param int $direction
      */
-    public function move_item($itemname, $itemid, $direction) {
-        global $DB;
-
-        $table = 'tool_certificate_';
-        if ($itemname == 'page') {
-            $table .= 'pages';
-        } else { // Must be an element.
-            $table .= 'elements';
+    public function move_page(int $pageid, int $direction) {
+        $pages = $this->get_pages();
+        $ids = array_keys($pages);
+        if (($idx = array_search($pageid, $ids)) === false) {
+            return;
         }
+        if ($idx + $direction < 0 || $idx + $direction >= count($pages)) {
+            return;
+        }
+        $t = $ids[$idx + $direction];
+        $ids[$idx + $direction] = $ids[$idx];
+        $ids[$idx] = $t;
+        foreach ($ids as $sequence => $id) {
+            $pages[$id]->save((object)['sequence' => $sequence]);
+        }
+        $this->pages = null;
+    }
 
-        if ($moveitem = $DB->get_record($table, array('id' => $itemid))) {
-            // Check which direction we are going.
-            if ($direction == 'up') {
-                $sequence = $moveitem->sequence - 1;
-            } else { // Must be down.
-                $sequence = $moveitem->sequence + 1;
+    /**
+     * Update element sequence
+     *
+     * @param int $elementid
+     * @param int $sequence
+     * @return bool
+     */
+    public function update_element_sequence(int $elementid, int $sequence) {
+        if ($sequence < 1) {
+            return false;
+        }
+        foreach ($this->get_pages() as $page) {
+            $elementids = array_keys($page->get_elements());
+            if (!in_array($elementid, $elementids)) {
+                continue;
             }
-
-            // Get the item we will be swapping with. Make sure it is related to the same template (if it's
-            // a page) or the same page (if it's an element).
-            if ($itemname == 'page') {
-                $params = array('templateid' => $moveitem->templateid);
-            } else { // Must be an element.
-                $params = array('pageid' => $moveitem->pageid);
+            if ($sequence > count($elementids)) {
+                return false;
             }
-            $swapitem = $DB->get_record($table, $params + array('sequence' => $sequence));
+            $elementids = array_diff($elementids, [$elementid]);
+            array_splice($elementids, $sequence - 1, 0, [$elementid]);
+            $idx = 1;
+            foreach ($elementids as $id) {
+                if ($page->get_elements()[$id]->get_sequence() != $idx) {
+                    $page->get_elements()[$id]->save((object)['sequence' => $idx]);
+                }
+                $idx++;
+            }
+            return true;
         }
-
-        // Check that there is an item to move, and an item to swap it with.
-        if ($moveitem && !empty($swapitem)) {
-            $DB->set_field($table, 'sequence', $swapitem->sequence, array('id' => $moveitem->id));
-            $DB->set_field($table, 'sequence', $moveitem->sequence, array('id' => $swapitem->id));
-        }
+        return false;
     }
 
     /**
@@ -463,7 +369,7 @@ class template {
      * @return int the id of the template
      */
     public function get_id() {
-        return $this->id;
+        return $this->persistent->get('id');
     }
 
     /**
@@ -472,7 +378,7 @@ class template {
      * @return int the id of the template
      */
     public function get_tenant_id() {
-        return $this->tenantid;
+        return $this->persistent->get('tenantid');
     }
 
     /**
@@ -481,7 +387,7 @@ class template {
      * @return string the name of the template
      */
     public function get_name() {
-        return $this->name;
+        return $this->persistent->get('name');
     }
 
     /**
@@ -490,7 +396,7 @@ class template {
      * @return string the name of the template
      */
     public function get_formatted_name() {
-        return format_string($this->name, true, ['escape' => false]);
+        return format_string($this->get_name(), true, ['escape' => false]);
     }
 
     /**
@@ -517,7 +423,7 @@ class template {
      * @return \context the context
      */
     public function get_context() {
-        return $this->context;
+        return \context::instance_by_id($this->persistent->get('contextid'));
     }
 
     /**
@@ -526,14 +432,7 @@ class template {
      * @return object
      */
     public function to_record() {
-        return (object)[
-            'id' => $this->id,
-            'name' => $this->name,
-            'contextid' => $this->contextid,
-            'timecreated' => $this->timecreated,
-            'timemodified' => $this->timemodified,
-            'tenantid' => $this->tenantid,
-        ];
+        return $this->persistent->to_record();
     }
 
     /**
@@ -548,16 +447,6 @@ class template {
     }
 
     /**
-     * The URL to preview a template
-     *
-     * @return \moodle_url
-     */
-    public function preview_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/view.php',
-            ['preview' => 1, 'templateid' => $this->get_id(), 'code' => 'previewing']);
-    }
-
-    /**
      * The URL to view an issued certificate
      *
      * @param string $code
@@ -568,21 +457,12 @@ class template {
     }
 
     /**
-     * The URL to issue a new certificate from this template
-     *
-     * @return \moodle_url
-     */
-    public function new_issue_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/issue.php', ['templateid' => $this->id]);
-    }
-
-    /**
      * The URL to edit certificate template
      *
      * @return \moodle_url
      */
     public function edit_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/edit.php', ['tid' => $this->id]);
+        return new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->get_id()]);
     }
 
     /**
@@ -605,43 +485,6 @@ class template {
     }
 
     /**
-     * The URL to create a new certificate template
-     *
-     * @return \moodle_url
-     */
-    public static function new_template_url(): \moodle_url {
-        return new \moodle_url('/admin/tool/certificate/edit.php');
-    }
-
-    /**
-     * Returns a new template from it's id
-     *
-     * @param int $id
-     * @return \tool_certificate\template
-     */
-    public static function find_by_id($id): template {
-        global $DB;
-        $template = $DB->get_record('tool_certificate_templates', ['id' => $id], '*', MUST_EXIST);
-        return new \tool_certificate\template($template);
-    }
-
-    /**
-     * Returns an element if it belongs to this template, false otherwise.
-     *
-     * @param int $id
-     * @return bool|\stdClass
-     */
-    public function find_element_by_id($id) {
-        global $DB;
-        $element = $DB->get_record('tool_certificate_elements', ['id' => $id], '*', MUST_EXIST);
-        $page = $DB->get_record('tool_certificate_pages', ['id' => $element->pageid], '*', MUST_EXIST);
-        if ($page->templateid != $this->id) {
-            return false;
-        }
-        return $element;
-    }
-
-    /**
      * Returns a template an element belongs to
      *
      * @param int $id
@@ -653,40 +496,7 @@ class template {
             JOIN {tool_certificate_pages} p ON p.templateid = t.id
             JOIN {tool_certificate_elements} e ON e.pageid = p.id
             WHERE e.id = :id', ['id' => $id], MUST_EXIST);
-        return new self($template);
-    }
-
-    /**
-     * Returns a template a page belongs to
-     *
-     * @param int $id
-     * @return template
-     */
-    public static function find_by_page_id($id) : template {
-        global $DB;
-        $template = $DB->get_record_sql('SELECT t.* FROM {tool_certificate_templates} t
-            JOIN {tool_certificate_pages} p ON p.templateid = t.id
-            WHERE p.id = :id', ['id' => $id], MUST_EXIST);
-        return new self($template);
-    }
-
-    /**
-     * Returns a new element if pageid belongs to this template, false otherwise.
-     *
-     * @param int $pageid
-     * @param string $elementtype
-     * @return bool|\stdClass
-     */
-    public function new_element_for_page_id($pageid, $elementtype) {
-        global $DB;
-        $pagetemplate = $DB->get_field('tool_certificate_pages', 'templateid', ['id' => $pageid], MUST_EXIST);
-        if ($pagetemplate != $this->id) {
-            return false;
-        }
-        $element = new \stdClass();
-        $element->element = $elementtype;
-        $element->pageid = $pageid;
-        return $element;
+        return self::instance(0, $template);
     }
 
     /**
@@ -696,7 +506,8 @@ class template {
      */
     public function can_manage(): bool {
         return has_capability('tool/certificate:manageforalltenants', $this->get_context()) ||
-               (has_capability('tool/certificate:manage', $this->get_context()) && $this->tenantid == tenancy::get_tenant_id());
+               (has_capability('tool/certificate:manage', $this->get_context()) &&
+                   $this->get_tenant_id() == tenancy::get_tenant_id());
     }
 
     /**
@@ -707,7 +518,7 @@ class template {
     public function can_duplicate(): bool {
         return has_capability('tool/certificate:manageforalltenants', $this->get_context()) ||
                (has_capability('tool/certificate:manage', $this->get_context()) &&
-                 ($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
+                 ($this->get_tenant_id() == 0) || ($this->get_tenant_id() == tenancy::get_tenant_id()));
     }
 
     /**
@@ -721,11 +532,11 @@ class template {
             return true;
         }
         $generalcap = (has_capability('tool/certificate:issue', $this->get_context()) &&
-                   (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id())));
+                   (($this->get_tenant_id() == 0) || ($this->get_tenant_id() == tenancy::get_tenant_id())));
         if ($issuetouserid == 0) {
             return $generalcap;
         }
-        return $generalcap && (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id($issuetouserid)));
+        return $generalcap && (($this->get_tenant_id() == 0) || ($this->get_tenant_id() == tenancy::get_tenant_id($issuetouserid)));
     }
 
     /**
@@ -846,7 +657,7 @@ class template {
         }
         return has_any_capability(['tool/certificate:verify', 'tool/certificate:issue', 'tool/certificate:viewallcertificates',
                                    'tool/certificate:manage'] , \context_system::instance()) &&
-                   (($this->tenantid == 0) || ($this->tenantid == tenancy::get_tenant_id()));
+                   (($this->get_tenant_id() == 0) || ($this->get_tenant_id() == tenancy::get_tenant_id()));
     }
 
     /**
@@ -877,24 +688,22 @@ class template {
      * @return \tool_certificate\template the template object
      */
     public static function create($formdata) {
-        global $DB;
-
         $template = new \stdClass();
         $template->name = $formdata->name;
         $template->contextid = \context_system::instance()->id;
-        $template->timecreated = time();
-        $template->timemodified = $template->timecreated;
         if (isset($formdata->tenantid)) {
             $template->tenantid = $formdata->tenantid;
         } else {
             $template->tenantid = tenancy::get_default_tenant_id();
         }
-        $template->id = $DB->insert_record('tool_certificate_templates', $template);
-        $template = new \tool_certificate\template($template);
 
-        \tool_certificate\event\template_created::create_from_template($template)->trigger();
+        $t = new self();
+        $t->persistent = new \tool_certificate\persistent\template(0, $template);
+        $t->persistent->save();
 
-        return $template;
+        \tool_certificate\event\template_created::create_from_template($t)->trigger();
+
+        return $t;
     }
 
     /**
@@ -906,7 +715,7 @@ class template {
     public static function find_by_name($name) {
         global $DB;
         if ($template = $DB->get_record('tool_certificate_templates', ['name' => $name])) {
-            return new \tool_certificate\template($template);
+            return self::instance(0, $template);
         }
         return false;
     }
@@ -918,12 +727,13 @@ class template {
      * @return array
      */
     public static function get_all_by_tenantid(int $tenantid): array {
+        // TODO only used in tests.
         global $DB;
 
         $certificates = [];
         if ($templates = $DB->get_records('tool_certificate_templates', ['tenantid' => $tenantid])) {
             foreach ($templates as $t) {
-                $certificates[] = new \tool_certificate\template($t);
+                $certificates[] = self::instance(0, $t);
             }
         }
         return $certificates;
@@ -945,7 +755,7 @@ class template {
                     OR tenantid = :tenantid";
         if ($templates = $DB->get_records_sql($sql, ['tenantid' => \tool_tenant\tenancy::get_tenant_id()])) {
             foreach ($templates as $t) {
-                $certificates[] = new \tool_certificate\template($t);
+                $certificates[] = self::instance(0, $t);
             }
         }
         return $certificates;
@@ -1003,5 +813,14 @@ class template {
         foreach ($issues as $issue) {
             \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
         }
+    }
+
+    /**
+     * Export
+     *
+     * @return output\template
+     */
+    public function get_exporter() : \tool_certificate\output\template {
+        return new \tool_certificate\output\template($this->persistent, ['template' => $this]);
     }
 }

@@ -19,8 +19,8 @@ Feature: Being able to download valid certificates
 
   Scenario: Download a certificate as admin
     When I log in as "admin"
-    And I visit the verification url for the site
-    And I verify the "Certificate 1" certificate for the user "student1"
+    And I visit the sites certificates verification url
+    And I verify the "Certificate 1" site certificate for the user "student1"
     And I click on "View certificate" "link"
 
   Scenario: Verify a certificate as a guest using the site-wide URL
@@ -30,6 +30,6 @@ Feature: Being able to download valid certificates
       | tool/certificate:verifyforalltenants | Allow |
     And I log out
     And I log in as "guest"
-    And I visit the verification url for the site
-    And I verify the "Certificate 1" certificate for the user "student1"
+    And I visit the sites certificates verification url
+    And I verify the "Certificate 1" site certificate for the user "student1"
     And I click on "View certificate" "link"

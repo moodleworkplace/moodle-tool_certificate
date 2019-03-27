@@ -52,10 +52,20 @@ class tool_certificate_image_element_test_testcase extends advanced_testcase {
 
     public function test_render_html_content() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $pageid = $certificate1->add_page();
-        $element = $certificate1->new_element_for_page_id($pageid, 'image');
-        $e = \tool_certificate\element_factory::get_element_instance($element);
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
+        $e = $this->get_generator()->create_element($pageid, 'image');
         // TODO: make a better test.
-        $this->assertTrue(empty($e->render_html()));
+        $this->assertNotEmpty($e->render_html());
+
+        // Generate PDF for preview.
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+
+        // Generate PDF for issue.
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(), time() + YEARSECS);
+        $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
+        $filesize = core_text::strlen($filecontents);
+        $this->assertTrue($filesize > 30000 && $filesize < 70000);
     }
 }
