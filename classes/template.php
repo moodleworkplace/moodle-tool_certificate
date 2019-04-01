@@ -694,7 +694,7 @@ class template {
         if (isset($formdata->tenantid)) {
             $template->tenantid = $formdata->tenantid;
         } else {
-            $template->tenantid = tenancy::get_default_tenant_id();
+            $template->tenantid = tenancy::get_tenant_id();
         }
 
         $t = new self();

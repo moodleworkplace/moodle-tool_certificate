@@ -165,11 +165,11 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
         $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
 
-        $this->assertEquals(false, $certificate1->can_issue());
+        $this->assertEquals(true, $certificate1->can_issue());
         $this->assertEquals(true, $certificate2->can_issue());
         $this->assertEquals(true, $certificate3->can_issue());
 
-        $this->assertEquals(false, $certificate1->can_revoke());
+        $this->assertEquals(true, $certificate1->can_revoke());
         $this->assertEquals(true, $certificate2->can_revoke());
         $this->assertEquals(true, $certificate3->can_revoke());
 
@@ -237,7 +237,7 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
         $certificate2 = \tool_certificate\template::create((object)['name' => 'Certificate 2', 'tenantid' => $tenant->id]);
         $certificate3 = \tool_certificate\template::create((object)['name' => 'Certificate 3', 'tenantid' => 0]);
 
-        $this->assertEquals(false, $certificate1->can_verify());
+        $this->assertEquals(true, $certificate1->can_verify());
         $this->assertEquals(true, $certificate2->can_verify());
         $this->assertEquals(true, $certificate3->can_verify());
 
