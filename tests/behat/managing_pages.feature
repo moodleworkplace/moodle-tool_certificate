@@ -1,4 +1,4 @@
-@tool @tool_certificate @javascript
+@tool @tool_certificate @moodleworkplace @javascript
 Feature: Being able to manage pages in a certificate template
   In order to ensure managing pages in a certificate template works as expected
   As an admin

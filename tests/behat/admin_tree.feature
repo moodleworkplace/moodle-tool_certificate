@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @moodleworkplace
 Feature: View links on admin tree
   In order to manage certificate
   As a manager
