@@ -1,4 +1,4 @@
-@tool @tool_certificate @javascript
+@tool @tool_certificate @moodleworkplace @javascript
 Feature: Being able to manually issue a certificate to a user
   In order to manually issue a new certificate to a user
   As an admin
