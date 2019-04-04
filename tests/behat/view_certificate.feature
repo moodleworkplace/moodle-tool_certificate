@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @moodleworkplace
 Feature: Being able to download valid certificates
   In order to ensure that a user can download a valid certificate
   As an admin and non-user
