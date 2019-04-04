@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @moodleworkplace
 Feature: Manage certificate elements plugins
   In order to manage certificate elements plugins
   As a manager

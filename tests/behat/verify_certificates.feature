@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @moodleworkplace
 Feature: Being able to verify that a certificate is valid or not
   In order to ensure that a user can verify a certificate is valid
   As an admin and non-user

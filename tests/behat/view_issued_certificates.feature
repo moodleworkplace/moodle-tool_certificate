@@ -1,4 +1,4 @@
-@tool @tool_certificate
+@tool @tool_certificate @moodleworkplace
 Feature: Being able to view the certificates that have been issued
   In order to ensure that a user can view the certificates that have been issued
   As an admin
