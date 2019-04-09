@@ -138,7 +138,7 @@ class certificates_list extends system_report {
 
         // Edit content.
         $editlink = new \moodle_url('/admin/tool/certificate/template.php', array('id' => ':id'));
-        $icon = new \pix_icon('a/wp-arrow-right', get_string('editcontent', 'tool_certificate'), 'theme');
+        $icon = new \pix_icon('t/right', get_string('editcontent', 'tool_certificate'), 'core');
         $this->add_action((new report_action($editlink, $icon, []))
             ->add_callback(function($row) {
                 return template::instance(0, $row)->can_manage();
@@ -147,7 +147,7 @@ class certificates_list extends system_report {
 
         // Edit details.
         $editlink = new \moodle_url('#');
-        $icon = new \pix_icon('a/wp-cog', get_string('editdetails', 'tool_certificate'), 'theme');
+        $icon = new \pix_icon('i/settings', get_string('editdetails', 'tool_certificate'), 'core');
         $this->add_action(
             (new report_action($editlink, $icon, ['data-action' => 'editdetails', 'data-id' => ':id', 'data-name' => ':name']))
                 ->add_callback(function($row) {
@@ -160,7 +160,7 @@ class certificates_list extends system_report {
         // Preview.
         $previewlink = new \moodle_url('/admin/tool/certificate/view.php',
             ['preview' => 1, 'templateid' => ':id', 'code' => 'previewing']);
-        $icon = new \pix_icon('a/wp-search', get_string('preview'), 'theme');
+        $icon = new \pix_icon('i/search', get_string('preview'), 'core');
         $this->add_action((new report_action($previewlink, $icon, []))
             ->add_callback(function($row) {
                 return template::instance(0, $row)->can_manage();
@@ -170,7 +170,7 @@ class certificates_list extends system_report {
         // View issue.
         $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => ':id'));
         $issuesstr  = get_string('certificatesissued', 'tool_certificate');
-        $icon = new \pix_icon('a/wp-list', $issuesstr, 'theme');
+        $icon = new \pix_icon('a/view_list_active', $issuesstr, 'core');
         $this->add_action((new report_action($issueslink, $icon, []))
             ->add_callback(function($row) {
                 return template::instance(0, $row)->can_view_issues();
@@ -180,7 +180,7 @@ class certificates_list extends system_report {
         // Issue.
         $newissuelink = new \moodle_url('#');
         $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
-        $icon = new \pix_icon('a/wp-plus', $newissuestr, 'theme');
+        $icon = new \pix_icon('t/add', $newissuestr, 'core');
         $this->add_action((new report_action($newissuelink, $icon, ['data-action' => 'issue', 'data-tid' => ':id']))
             ->add_callback(function($row) {
                 return template::instance(0, $row)->can_issue();
@@ -189,7 +189,7 @@ class certificates_list extends system_report {
 
         // Duplicate.
         $selecttenant = has_capability('tool/certificate:manageforalltenants', \context_system::instance());
-        $icon = new \pix_icon('a/wp-duplicate', get_string('duplicate'), 'theme');
+        $icon = new \pix_icon('e/manage_files', get_string('duplicate'), 'core');
         $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'duplicate',
                 'data-id' => ':id', 'data-selecttenant' => (int)$selecttenant, 'data-name' => ':name']))
             ->add_callback(function($row) {
@@ -200,7 +200,7 @@ class certificates_list extends system_report {
         );
 
         // Delete.
-        $icon = new \pix_icon('a/wp-trash', get_string('delete'), 'theme');
+        $icon = new \pix_icon('i/trash', get_string('delete'), 'core');
         $this->add_action((new report_action(new \moodle_url('#'), $icon,
                 ['data-action' => 'delete', 'data-id' => ':id', 'data-name' => ':name']))
             ->add_callback(function($row) {
