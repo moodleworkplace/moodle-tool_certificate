@@ -136,13 +136,13 @@ class issues_list extends system_report {
      */
     protected function set_actions() {
         // File.
-        $icon = new \pix_icon('a/wp-search', get_string('view'), 'theme');
+        $icon = new \pix_icon('i/search', get_string('view'), 'core');
         $link = template::view_url(':code');
         $this->add_action((new report_action($link, $icon, [])));
 
         // Revoke.
         if ($this->template && $this->template->can_revoke()) {
-            $icon = new \pix_icon('a/wp-trash', get_string('revoke', 'tool_certificate'), 'theme');
+            $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
             $this->add_action((new report_action(new \moodle_url('#'), $icon,
                 ['data-action' => 'revoke', 'data-id' => ':id'])));
         }
