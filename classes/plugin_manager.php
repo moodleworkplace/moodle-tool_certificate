@@ -111,9 +111,9 @@ class plugin_manager {
             $visible = !get_config('certificateelement_' . $plugin, 'disabled');
 
             if ($visible) {
-                $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
+                $row[] = $this->format_icon_link('hide', $plugin, 'i/hide', get_string('disable'));
             } else {
-                $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
+                $row[] = $this->format_icon_link('show', $plugin, 'i/show', get_string('enable'));
                 $class = 'dimmed_text';
             }
 
@@ -136,7 +136,7 @@ class plugin_manager {
                 $row[] = '&nbsp;';
             }
 
-            $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('uninstallplugin', 'core_admin'));
+            $row[] = $this->format_icon_link('delete', $plugin, 'i/trash', get_string('uninstallplugin', 'core_admin'));
 
             $table->add_data($row, $class);
         }
