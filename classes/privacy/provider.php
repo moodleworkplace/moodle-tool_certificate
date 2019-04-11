@@ -111,7 +111,7 @@ class provider implements \core_privacy\local\metadata\provider,
                   JOIN {tool_certificate_templates} t
                     ON (t.id = i.templateid)
                  WHERE i.userid = :userid
-              ORDER BY  timecreated, id ASC';
+              ORDER BY i.timecreated, i.id ASC';
 
         $recordset = $DB->get_recordset_sql($sql, ['userid' => $user->id]);
 
