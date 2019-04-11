@@ -38,6 +38,7 @@ install:
   - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_tenant
   - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_wp
   - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_reportbuilder
+  - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_dynamicrule
   - moodle-plugin-ci install
 
 script:
