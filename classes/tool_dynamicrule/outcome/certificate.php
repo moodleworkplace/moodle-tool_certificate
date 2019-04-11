@@ -108,7 +108,7 @@ class certificate extends \tool_dynamicrule\outcome_base {
                 return format_string($c->name, true, $options);
             }
         }
-        return print_r($this->get_configdata(), true);
+        return '';
     }
 
     /**
