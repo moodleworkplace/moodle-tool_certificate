@@ -98,7 +98,7 @@ class element extends \tool_certificate\element {
         global $DB;
         if ($preview) {
             $display = $this->format_preview_data();
-        } else if (($issue->component == 'tool_program') || ($issue->component == 'tool_certification')) {
+        } else if (($issue->component == 'tool_dynamicrule')) {
             $display = $this->format_issue_data($issue->data);
         } else {
             $display = '';
@@ -123,7 +123,9 @@ class element extends \tool_certificate\element {
                 break;
             case 'completiondate':
                 // TODO see element "Date" for format options, take from there.
-                $display = userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false);
+                $display = $data['completiondate'] ?
+                    userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false) :
+                    '';
                 break;
             case 'completedcourses':
                 $display = \html_writer::start_tag('ul');
