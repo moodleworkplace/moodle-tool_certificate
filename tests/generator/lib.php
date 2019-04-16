@@ -39,7 +39,7 @@ class tool_certificate_generator extends component_generator_base {
      * Creates new certificate template
      *
      * @param array|stdClass $record
-     * @return stdClass
+     * @return \tool_certificate\template
      */
     public function create_template($record = null): \tool_certificate\template {
         return \tool_certificate\template::create($record);
