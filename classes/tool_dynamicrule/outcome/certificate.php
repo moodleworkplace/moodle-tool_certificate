@@ -56,9 +56,10 @@ class certificate extends \tool_dynamicrule\outcome_base {
             'ajax' => 'tool_certificate/form_certificate_selector',
             'multiple' => false,
             'class' => 'select_certificate',
-            'valuehtmlcallback' => [$this, 'fetch_certificate_name']
+            'valuehtmlcallback' => [$this, 'get_certificate_name']
         ];
-        $mform->addElement('autocomplete', 'certificate', get_string('selectcertificate', 'tool_certificate'), [], $options);
+        $selected = $this->get_selected();
+        $mform->addElement('autocomplete', 'certificate', get_string('selectcertificate', 'tool_certificate'), $selected, $options);
         $mform->addRule('certificate', get_string('required'), 'required', null, 'client');
     }
 
@@ -117,20 +118,10 @@ class certificate extends \tool_dynamicrule\outcome_base {
      *
      * @return string
      */
-    private function get_certificate_name(): string {
-        return self::fetch_certificate_name((int)$this->get_configdata()['certificate']);
-    }
-
-    /**
-     * Return subject formatted.
-     *
-     * @return string
-     */
-    public static function fetch_certificate_name($cid): string {
+    public function get_certificate_name(): string {
         global $DB;
-        if ($cid) {
-            $c = $DB->get_field_sql("SELECT name FROM {tool_certificate_templates} WHERE id = ?", [$cid]);
-            if ($c) {
+        if ($cid = $this->get_certificateid()) {
+            if ($c = $DB->get_field_sql("SELECT name FROM {tool_certificate_templates} WHERE id = ?", [$cid])) {
                 $options = ['context' => \context_system::instance(), 'escape' => false];
                 return format_string($c, true, $options);
             }
@@ -145,5 +136,33 @@ class certificate extends \tool_dynamicrule\outcome_base {
      */
     public function is_configuration_valid(): bool {
         return !empty($this->get_configdata()['certificate']);
+    }
+
+    /**
+     * Return configured certificate id.
+     *
+     * @return int
+     */
+    public function get_certificateid() {
+        if (isset($this->get_configdata()['certificate'])) {
+            $b = (int)$this->get_configdata()['certificate'];
+        } else {
+            $b = null;
+        }
+        return $b;
+    }
+
+    /**
+     * Return id and name of selected certificates.
+     *
+     * @return array
+     */
+    private function get_selected(): array {
+        if ($id = $this->get_certificateid()) {
+            $selected = [$id => $this->get_certificate_name()];
+        } else {
+            $selected = [];
+        }
+        return $selected;
     }
 }
