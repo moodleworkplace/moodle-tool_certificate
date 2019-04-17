@@ -236,4 +236,38 @@ class certificate {
         }
         return $result;
     }
+
+    /**
+     * Certificates selector.
+     *
+     * @param string $search
+     * @return array
+     */
+    public static function get_potential_certificates(string $search): array {
+        global $DB;
+
+        $query = "SELECT *
+                    FROM {tool_certificate_templates}
+                   WHERE (tenantid = :tenant OR tenantid = 0) ";
+
+        $i = 0;
+        $params = ['tenant' => tenancy::get_tenant_id()];
+        foreach (preg_split('/ +/', trim($search), -1, PREG_SPLIT_NO_EMPTY) as $word) {
+            $i++;
+            $query .= ' AND (' . $DB->sql_like('name', ":search{$i}1", false, false) . ')';
+            $params += ["search{$i}1" => '%' . $word . '%'];
+        }
+
+        $result = $DB->get_records_sql($query, $params);
+
+        // We apply format string to the name.
+        if (!empty($result)) {
+            foreach ($result as $res) {
+                $res->name = format_string($res->name, true,
+                    ['context' => \context_system::instance(), 'escape' => false]);
+            }
+        }
+
+        return $result;
+    }
 }

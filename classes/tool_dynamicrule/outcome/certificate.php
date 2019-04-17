@@ -24,6 +24,8 @@
 
 namespace tool_certificate\tool_dynamicrule\outcome;
 
+use tool_dynamicrule\api;
+
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -50,14 +52,14 @@ class certificate extends \tool_dynamicrule\outcome_base {
      * @param \MoodleQuickForm $mform The form to add elements to
      */
     public function get_config_form(\MoodleQuickForm $mform) {
-        // TODO SP-611 move WS into this plugin.
         $options = [
-            'ajax' => 'tool_program/form_certificate_selector',
+            'ajax' => 'tool_certificate/form_certificate_selector',
             'multiple' => false,
             'class' => 'select_certificate',
+            'valuehtmlcallback' => [$this, 'get_certificate_name']
         ];
-        $mform->addElement('autocomplete', 'certificate', get_string('selectcertificate', 'tool_program'), [], $options);
-        $mform->addHelpButton('certificate', 'selectcertificate', 'tool_program');
+        $selected = $this->get_selected();
+        $mform->addElement('autocomplete', 'certificate', get_string('selectcertificate', 'tool_certificate'), $selected, $options);
         $mform->addRule('certificate', get_string('required'), 'required', null, 'client');
     }
 
@@ -75,12 +77,31 @@ class certificate extends \tool_dynamicrule\outcome_base {
     /**
      * Apply this outcome on a given list of users
      *
-     * @param array $userids The userids to apply the outcome to
+     * @param array $users The users objects to apply the outcome to
      */
-    public function apply_to_users(array $userids) {
+    public function apply_to_users(array $users) {
         global $DB;
 
         // TODO SP-611 implement.
+        // There is a challenge here because we need to know information about the program or course
+        // that was completed in the conditions for this certificate to be issued.
+
+        // TODO add tests.
+        $defaultdata = [
+            'certificationname' => '',
+            'programname' => '',
+            'completiondate' => '',
+            'completedcourses' => []
+        ];
+        $issuedataall = $this->get_data_from_conditions(array_keys($defaultdata), $users);
+
+        $certificateid = (int)$this->get_configdata()['certificate'];
+        $template = \tool_certificate\template::instance($certificateid);
+
+        foreach ($users as $user) {
+            $issuedata = $issuedataall[$user->id] + $defaultdata;
+            $template->issue_certificate($user->id, '', $issuedata, 'tool_dynamicrule');
+        }
     }
 
     /**
@@ -97,15 +118,12 @@ class certificate extends \tool_dynamicrule\outcome_base {
      *
      * @return string
      */
-    private function get_certificate_name(): string {
-        // TODO SP-611 cache.
+    public function get_certificate_name(): string {
         global $DB;
-        $cid = (int)$this->get_configdata()['certificate'];
-        if ($cid) {
-            $c = $DB->get_record_sql("SELECT * FROM {tool_certificate_templates} WHERE id=?", [$cid]);
-            if ($c) {
+        if ($cid = $this->get_certificateid()) {
+            if ($c = $DB->get_field_sql("SELECT name FROM {tool_certificate_templates} WHERE id = ?", [$cid])) {
                 $options = ['context' => \context_system::instance(), 'escape' => false];
-                return format_string($c->name, true, $options);
+                return format_string($c, true, $options);
             }
         }
         return '';
@@ -118,5 +136,33 @@ class certificate extends \tool_dynamicrule\outcome_base {
      */
     public function is_configuration_valid(): bool {
         return !empty($this->get_configdata()['certificate']);
+    }
+
+    /**
+     * Return configured certificate id.
+     *
+     * @return int
+     */
+    public function get_certificateid() {
+        if (isset($this->get_configdata()['certificate'])) {
+            $b = (int)$this->get_configdata()['certificate'];
+        } else {
+            $b = null;
+        }
+        return $b;
+    }
+
+    /**
+     * Return id and name of selected certificates.
+     *
+     * @return array
+     */
+    private function get_selected(): array {
+        if ($id = $this->get_certificateid()) {
+            $selected = [$id => $this->get_certificate_name()];
+        } else {
+            $selected = [];
+        }
+        return $selected;
     }
 }
