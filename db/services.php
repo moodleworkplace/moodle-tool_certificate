@@ -62,4 +62,11 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
     ),
+    'tool_certificate_potential_certificate_selector' => [
+        'classname'   => \tool_certificate\external\templates::class,
+        'methodname'  => 'potential_certificate_selector',
+        'description' => 'get list of certificates',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
 );
