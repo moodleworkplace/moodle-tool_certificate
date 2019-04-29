@@ -51,7 +51,6 @@ script:
 - moodle-plugin-ci mustache
 - moodle-plugin-ci eslint --max-warnings 0
 - moodle-plugin-ci grunt
-- moodle-plugin-ci phpunit
 - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v admin/tool/dataprivacy/tests/metadata_registry_test.php
 - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v lib/tests/externallib_test.php
 - cd moodle; vendor/bin/phpunit --fail-on-risky --disallow-test-output -v privacy/tests/provider_test.php
