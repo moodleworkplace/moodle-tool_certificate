@@ -23,7 +23,7 @@ Feature: Being able to manage elements in a certificate template
     And I should see "Border" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Border'" "link" in the "Border" "list_item"
     And the following fields match these values:
-      | id_width | 2 |
+      | Width | 2 |
       | Colour | #045ECD |
     And I press "Save" in the modal form dialogue
     # Code.
