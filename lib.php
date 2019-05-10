@@ -166,19 +166,3 @@ function tool_certificate_potential_users_selector($area, $itemid) {
 
     return [$join, $where, $params];
 }
-
-/**
- * Implementation of callback 'wp_registration_stats' called from 'tool_wp_registration_stats'
- *
- * @param bool $usestrings return data in human readable form to be displayed on the "Registration" page
- * @return array
- */
-function tool_certificate_wp_registration_stats($usestrings = false) {
-    global $DB;
-    $count = $DB->count_records('tool_certificate_templates', []);
-    $issues = $DB->count_records('tool_certificate_issues', []);
-    return [
-        'wpcertificates' => $count,
-        'wpcertificatesissues' => $issues,
-    ];
-}
