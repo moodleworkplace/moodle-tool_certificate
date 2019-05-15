@@ -36,6 +36,7 @@ class tool_certificate_lib_testcase extends advanced_testcase {
 
     /**
      * Test for callback 'wp_registration_stats'
+     * @uses \tool_wp\registration::site_info
      */
     public function test_registration_get_site_info() {
         global $CFG;
