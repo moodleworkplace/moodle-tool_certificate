@@ -72,7 +72,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertEquals(\context_system::instance(), $certificate1->get_context());
 
         $events = $sink->get_events();
-        $this->assertCount(2, $events); // There will be a tenant_created event.
+        $this->assertCount(1, $events);
         $event = array_pop($events);
 
         // Checking that the event contains the expected values.
