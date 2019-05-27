@@ -75,9 +75,7 @@ class tool_certificate_outcome_certificate_testcase extends advanced_testcase {
         global $DB;
 
         $rule0 = $this->get_generator()->create_rule();
-
-        $configdata = ['currentdate' => time(), 'operator' => 'after'];
-        \tool_dynamicrule\tool_dynamicrule\condition\current_date::create($rule0->id, $configdata);
+        $this->get_generator()->create_condition_alwaystrue($rule0->id);
 
         $certificate = $this->certgenerator->create_template((object)['name' => 'Test template']);
 
