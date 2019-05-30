@@ -40,12 +40,6 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
             saveButtonText: Str.get_string('save'),
             triggerElement: triggerElement,
         });
-        // Override onInit() function to change the text for the save button.
-        var oldInit = modal.onInit;
-        modal.onInit = function() {
-            this.modal.setSaveButtonText(Str.get_string('save'));
-            oldInit.bind(this)();
-        };
         return modal;
     };
 
