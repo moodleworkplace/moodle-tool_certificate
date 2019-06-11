@@ -180,7 +180,7 @@ class certificates_list extends system_report {
         // Issue.
         $newissuelink = new \moodle_url('#');
         $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
-        $icon = new \pix_icon('t/add', $newissuestr, 'core');
+        $icon = new \pix_icon('i/enrolusers', $newissuestr, 'core');
         $this->add_action((new report_action($newissuelink, $icon, ['data-action' => 'issue', 'data-tid' => ':id']))
             ->add_callback(function($row) {
                 return template::instance(0, $row)->can_issue();
