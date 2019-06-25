@@ -24,15 +24,15 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-$plugin->version   = 2019030712;
-$plugin->requires  = 2019012401;
+$plugin->version = 2019062500;
+$plugin->requires = 2019052000.04;
 $plugin->cron      = 0; // Period for cron to check this module (secs).
 $plugin->component = 'tool_certificate';
 
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release = '0.2.0';
+$plugin->maturity  = MATURITY_STABLE;
+$plugin->release = '3.7';
 
 $plugin->dependencies   = array(
-    'tool_tenant' => '2019030700',
-    'tool_wp' => '2019030700',
+    'tool_tenant' => '2019062500',
+    'tool_wp' => '2019062500',
 );

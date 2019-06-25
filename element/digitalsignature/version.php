@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-$plugin->version   = 2019030700;
-$plugin->requires  = 2019012401;
+$plugin->version   = 2019062500;
+$plugin->requires  = 2019052000.04;
 $plugin->component = 'certificateelement_digitalsignature';
 $plugin->dependencies = array(
     'certificateelement_image' => ANY_VERSION
