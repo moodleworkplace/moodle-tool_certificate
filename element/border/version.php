@@ -22,8 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
+defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2019062500;
-$plugin->requires  = 2019052000.04;
-$plugin->component = 'certificateelement_border';
+// This plugin is part of Moodle Workplace product.
+$plugin->component    = 'certificateelement_border';
+$plugin->release      = '3.7.1';
+$plugin->version      = 2019070700;
+$plugin->requires     = 2019052001;
+$plugin->maturity     = MATURITY_STABLE;
