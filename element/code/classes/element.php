@@ -81,22 +81,12 @@ class element extends \tool_certificate\element {
     }
 
     /**
-     * Handles rendering the element on the pdf.
+     * Formats a code according to current display value
      *
-     * @param \pdf $pdf the pdf object
-     * @param bool $preview true if it is a preview, false otherwise
-     * @param \stdClass $user the user we are rendering this for
-     * @param \stdClass $issue the issue we are rendering
+     * @param string $code
+     * @return string
      */
-    public function render($pdf, $preview, $user, $issue) {
-        global $DB;
-
-        if ($preview) {
-            $code = \tool_certificate\certificate::generate_code();
-        } else {
-            $code = $issue->code;
-        }
-
+    protected function format_code($code) {
         $data = json_decode($this->get_data());
         switch ($data->display) {
             case self::DISPLAY_CODE:
@@ -112,7 +102,25 @@ class element extends \tool_certificate\element {
                 $display = $code;
         }
 
-        \tool_certificate\element_helper::render_content($pdf, $this, $display);
+        return $display;
+    }
+
+    /**
+     * Handles rendering the element on the pdf.
+     *
+     * @param \pdf $pdf the pdf object
+     * @param bool $preview true if it is a preview, false otherwise
+     * @param \stdClass $user the user we are rendering this for
+     * @param \stdClass $issue the issue we are rendering
+     */
+    public function render($pdf, $preview, $user, $issue) {
+        if ($preview) {
+            $code = \tool_certificate\certificate::generate_code();
+        } else {
+            $code = $issue->code;
+        }
+
+        \tool_certificate\element_helper::render_content($pdf, $this, $this->format_code($code));
     }
 
     /**
@@ -126,8 +134,7 @@ class element extends \tool_certificate\element {
     public function render_html() {
         $code = \tool_certificate\certificate::generate_code();
 
-        // TODO this is different from render() !
-        return \tool_certificate\element_helper::render_html_content($this, $code);
+        return \tool_certificate\element_helper::render_html_content($this, $this->format_code($code));
     }
 
     /**
