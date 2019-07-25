@@ -103,9 +103,10 @@ class element extends \tool_certificate\element {
         $userpicture = new \user_picture($USER);
         $userpicture->size = 1;
         $url = $userpicture->get_url($PAGE)->out(false);
+        $strpictureof = get_string('pictureof', '', fullname($userpicture->user, true));
 
         return element_helper::render_image_html($url, ['width' => 100, 'height' => 100],
-            $imageinfo['width'], $imageinfo['height']);
+            $imageinfo['width'], $imageinfo['height'], $strpictureof);
     }
 
     /**
