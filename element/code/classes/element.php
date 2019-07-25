@@ -63,7 +63,7 @@ class element extends \tool_certificate\element {
         $options[self::DISPLAY_CODELINK] = get_string('displaycodelink', 'certificateelement_code');
         $options[self::DISPLAY_URL] = get_string('displayurl', 'certificateelement_code');
 
-        $mform->addElement('select', 'display', get_string('dateitem', 'certificateelement_date'), $options);
+        $mform->addElement('select', 'display', get_string('display', 'certificateelement_code'), $options);
         $mform->addHelpButton('display', 'display', 'certificateelement_code');
 
         parent::render_form_elements($mform);
