@@ -206,7 +206,8 @@ class element extends \tool_certificate\element {
             $fileimageinfo = $file->get_imageinfo();
         }
 
-        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height']);
+        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height'],
+            $this->get_display_name());
     }
 
     /**
