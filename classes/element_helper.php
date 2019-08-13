@@ -553,9 +553,10 @@ class element_helper {
      * @param array $imageinfo array with 'width' and 'height' attributes for width and height of image in px
      * @param float $width display width in mm, 0 for automatic
      * @param float $height display height in mm, 0 for automatic
+     * @param string $alt image alt text
      * @return string
      */
-    public static function render_image_html(string $url, array $imageinfo, float $width, float $height) {
+    public static function render_image_html(string $url, array $imageinfo, float $width, float $height, string $alt) {
         if (!$width && !$height) {
             // Width and height are not set, convert px to mm.
             // 1 px = 1/96 inch = 0.264583 mm .
@@ -567,8 +568,7 @@ class element_helper {
             $height = $height ?: $width / $whratio;
         }
 
-        return \html_writer::tag('img', '', array('src' => $url,
-            'data-width' => $width, 'data-height' => $height));
+        return \html_writer::img($url, $alt, ['data-width' => $width, 'data-height' => $height]);
     }
     /**
      * Calculates image size in mm
