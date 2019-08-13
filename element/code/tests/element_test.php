@@ -62,9 +62,23 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
             ['display' => \certificateelement_code\element::DISPLAY_CODELINK]);
         $e3 = $this->get_generator()->create_element($pageid, 'code',
             ['display' => \certificateelement_code\element::DISPLAY_URL]);
-        $this->assertNotEmpty($e1->render_html());
-        $this->assertNotEmpty($e2->render_html());
-        $this->assertNotEmpty($e3->render_html());
+
+        // We don't know what the generated code will be, so match it's pattern.
+        $coderegex = '([A-Za-z0-9]{10})';
+        $urlregex = preg_quote(new moodle_url('/admin/tool/certificate/index.php')) .
+            '\?code=' . $coderegex;
+
+        // Display is DISPLAY_CODE.
+        $e1output = strip_tags($e1->render_html(), '<a>');
+        $this->assertRegExp('|^' . $coderegex  . '$|', $e1output);
+
+        // Display is DISPLAY_CODELINK.
+        $e2output = strip_tags($e2->render_html(), '<a>');
+        $this->assertRegExp('|^\<a href="' . $urlregex . '"\>' . $coderegex  . '\</a\>$|', $e2output);
+
+        // Display is DISPLAY_URL.
+        $e3output = strip_tags($e3->render_html(), '<a>');
+        $this->assertRegExp('|^' . $urlregex . '$|', $e3output);
 
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
