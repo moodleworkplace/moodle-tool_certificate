@@ -288,7 +288,7 @@ class template {
      */
     public function duplicate($tenantid = null) {
         $data = new \stdClass();
-        $data->name = $this->get_name() . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
+        $data->name = get_string('certificatecopy', 'tool_certificate', $this->get_name());
         if (isset($tenantid)
                 && has_capability('tool/certificate:manageforalltenants', $this->get_context())
                 && ($tenantid == 0 || array_key_exists($tenantid, tenancy::get_tenants()))) {
@@ -518,7 +518,7 @@ class template {
     public function can_duplicate(): bool {
         return has_capability('tool/certificate:manageforalltenants', $this->get_context()) ||
                (has_capability('tool/certificate:manage', $this->get_context()) &&
-                 ($this->get_tenant_id() == 0) || ($this->get_tenant_id() == tenancy::get_tenant_id()));
+                 ($this->get_tenant_id() == 0 || $this->get_tenant_id() == tenancy::get_tenant_id()));
     }
 
     /**
