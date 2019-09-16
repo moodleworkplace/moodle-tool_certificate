@@ -144,11 +144,11 @@ Feature: Being able to manage site templates
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
-    And I should not see "Certificate 1 (duplicate)"
+    And I should not see "Certificate 1 (copy)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 1"
-    And I should see "Certificate 1 (duplicate)"
+    And I should see "Certificate 1 (copy)"
     And I log out
 
   Scenario: Duplicating a shared site template without manageforalltenants
@@ -174,12 +174,12 @@ Feature: Being able to manage site templates
     And I click on "Duplicate" "link" in the "Certificate 0" "table_row"
     And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 0"
-    And I should see "Certificate 0 (duplicate)"
+    And I should see "Certificate 0 (copy)"
     And I log out
     # Now make sure the duplicate was created for Tenant 1.
     And I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Tenant 1" "text" should exist in the "Certificate 0 (duplicate)" "table_row"
+    And "Tenant 1" "text" should exist in the "Certificate 0 (copy)" "table_row"
     And I log out
 
   Scenario: Duplicating a site template to another tenant
@@ -197,14 +197,14 @@ Feature: Being able to manage site templates
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I press "Cancel" in the modal form dialogue
     And I should see "Certificate 1"
-    And I should not see "Certificate 1 (duplicate)"
+    And I should not see "Certificate 1 (copy)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
       |  Select tenant | Tenant 2 |
     And I press "Duplicate" in the modal form dialogue
     Then I should see "Certificate 1"
-    And I should see "Certificate 1 (duplicate)"
-    And I should see "Tenant 2" in the "Certificate 1 (duplicate)" "table_row"
+    And I should see "Certificate 1 (copy)"
+    And I should see "Tenant 2" in the "Certificate 1 (copy)" "table_row"
     And I log out
 
   Scenario: Edit name of certificate template
