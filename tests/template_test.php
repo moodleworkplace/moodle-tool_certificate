@@ -207,7 +207,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
         $certificate2 = $certificate1->duplicate();
-        $expectedname = $certname . ' (' . strtolower(get_string('duplicate', 'tool_certificate')) . ')';
+        $expectedname = $certname . ' (copy)';
         $this->assertEquals($expectedname, $certificate2->get_name());
         $this->assertFalse($certificate1->get_id() == $certificate2->get_id());
     }
