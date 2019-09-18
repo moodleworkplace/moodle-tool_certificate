@@ -3,7 +3,7 @@ image: moodlehq/moodle-workplace-plugin-ci:7.1
 services:
 - postgres:9.6
 #- mysql:5.7.26
-- name: selenium/standalone-chrome:3.141.59-mercury
+- name: selenium/standalone-chrome:3
   alias: selenium-standalone-chrome
 
 variables:
