@@ -113,27 +113,25 @@ class provider implements \core_privacy\local\metadata\provider,
                  WHERE i.userid = :userid
               ORDER BY i.timecreated, i.id ASC';
 
+        $context = \context_user::instance($user->id);
+        $contextpath = [get_string('certificates', 'tool_certificate')];
+
         $recordset = $DB->get_recordset_sql($sql, ['userid' => $user->id]);
-
-        self::recordset_loop_and_export($recordset, 'templateid', [], function($carry, $record) {
-
-            $carry[] = [
-                'certificatename' => format_string($record->certificatename),
+        foreach ($recordset as $record) {
+            $data = (object) [
+                'name' => format_string($record->certificatename),
                 'code' => $record->code,
                 'data' => self::export_issue_data($record->data),
+                'timecreated' => transform::datetime($record->timecreated),
                 'expires' => $record->expires ? transform::datetime($record->expires) : null,
-                'timecreated' => transform::datetime($record->timecreated)
             ];
-            return $carry;
 
-        }, function($templateid, $data) use ($user) {
+            writer::with_context($context)->export_data(array_merge($contextpath, [
+                clean_param($record->certificatename, PARAM_FILE)
+            ]), $data);
+        }
 
-            $context = \context_system::instance();
-            $contextdata = helper::get_context_data($context, $user);
-            $finaldata = (object) array_merge((array) $contextdata, ['issues' => $data]);
-            helper::export_context_files($context, $user);
-            writer::with_context($context)->export_data([], $finaldata);
-        });
+        $recordset->close();
     }
 
     /**
@@ -200,36 +198,5 @@ class provider implements \core_privacy\local\metadata\provider,
         }
         list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
         $DB->delete_records_select('tool_certificate_issues', ' userid ' . $userinsql, $userinparams);
-    }
-
-    /**
-     * Loop and export from a recordset.
-     *
-     * @param \moodle_recordset $recordset The recordset.
-     * @param string $splitkey The record key to determine when to export.
-     * @param mixed $initial The initial data to reduce from.
-     * @param callable $reducer The function to return the dataset, receives current dataset, and the current record.
-     * @param callable $export The function to export the dataset, receives the last value from $splitkey and the dataset.
-     * @return void
-     */
-    protected static function recordset_loop_and_export(\moodle_recordset $recordset, $splitkey, $initial,
-            callable $reducer, callable $export) {
-
-        $data = $initial;
-        $lastid = null;
-
-        foreach ($recordset as $record) {
-            if ($lastid && $record->{$splitkey} != $lastid) {
-                $export($lastid, $data);
-                $data = $initial;
-            }
-            $data = $reducer($data, $record);
-            $lastid = $record->{$splitkey};
-        }
-        $recordset->close();
-
-        if (!empty($lastid)) {
-            $export($lastid, $data);
-        }
     }
 }
