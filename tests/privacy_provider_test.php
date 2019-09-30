@@ -24,7 +24,8 @@
 
 use tool_certificate\privacy\provider;
 use core_privacy\local\metadata\collection;
-use \core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\approved_userlist;
+use core_privacy\local\request\writer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -99,8 +100,6 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
      * Test that only users within a context are fetched.
      */
     public function test_get_users_in_context() {
-        global $DB;
-
         $component = 'tool_certificate';
 
         $this->setAdminUser();
@@ -130,35 +129,49 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
      * Test for provider::export_user_data().
      */
     public function test_export_user_data() {
-
-        // Add a template to the site.
-        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
+        /** @var \tool_certificate\template[] $templates */
+        $templates = [
+            \tool_certificate\template::create((object) ['name' => 'Site template']),
+            \tool_certificate\template::create((object) ['name' => 'Another one']),
+        ];
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $template->issue_certificate($user1->id, null, ['a' => 'b', 'c' => ['d' => 'e']]);
-        $template->issue_certificate($user2->id);
+        $templates[0]->issue_certificate($user1->id, null, ['a' => 'b', 'c' => ['d' => 'e']]);
+        $templates[0]->issue_certificate($user2->id);
+
+        // Issue a second certificate to our test user.
+        $templates[1]->issue_certificate($user1->id);
 
         // Export all of the data for the context for user 1.
-        $context = \context_system::instance();
+        $context = \context_user::instance($user1->id);
         $this->export_context_data_for_user($user1->id, $context, 'tool_certificate');
-        $writer = \core_privacy\local\request\writer::with_context($context);
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
+        $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
 
-        $data = $writer->get_data();
-        $this->assertCount(1, $data->issues);
+        // First certificate.
+        $contextpath = [get_string('certificates', 'tool_certificate'), $templates[0]->get_name()];
+        $data = $writer->get_data($contextpath);
 
-        $issues = $data->issues;
-        foreach ($issues as $issue) {
-            $this->assertArrayHasKey('certificatename', $issue);
-            $this->assertArrayHasKey('code', $issue);
-            $this->assertArrayHasKey('data', $issue);
-            $this->assertArrayHasKey('expires', $issue);
-            $this->assertArrayHasKey('timecreated', $issue);
-        }
+        $this->assertEquals($data->name, $templates[0]->get_name());
+        $this->assertObjectHasAttribute('code', $data);
+        $this->assertObjectHasAttribute('timecreated', $data);
+        $this->assertEquals(['a' => 'b', 'c' => ['d' => 'e']], $data->data);
+        $this->assertNull($data->expires);
+
+        // Second certificate.
+        $contextpath = [get_string('certificates', 'tool_certificate'), $templates[1]->get_name()];
+        $data = $writer->get_data($contextpath);
+
+        $this->assertEquals($data->name, $templates[1]->get_name());
+        $this->assertObjectHasAttribute('code', $data);
+        $this->assertObjectHasAttribute('timecreated', $data);
+        $this->assertEmpty($data->data);
+        $this->assertNull($data->expires);
     }
 
     /**
