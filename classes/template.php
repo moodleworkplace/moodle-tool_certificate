@@ -626,8 +626,13 @@ class template {
         if (has_capability('tool/certificate:issueforalltenants', $context)) {
             return true;
         }
-        return (has_any_capability(['tool/certificate:viewallcertificates', 'tool/certificate:issue'],
-                                   $context) &&
+        if (class_exists('\\tool_organisation\\organisation')) {
+            $user = \tool_organisation\organisation::get_user_with_jobs();
+            if ($user && $user->is_manager_over_user($userid)) {
+                return true;
+            }
+        }
+        return (has_any_capability(['tool/certificate:viewallcertificates', 'tool/certificate:issue'], $context) &&
                 (tenancy::get_tenant_id() == tenancy::get_tenant_id($userid)));
     }
 
