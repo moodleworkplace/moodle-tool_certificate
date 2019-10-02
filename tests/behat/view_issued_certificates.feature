@@ -283,7 +283,7 @@ Feature: Being able to view the certificates that have been issued
     And I verify the "Certificate 0" site certificate for the user "user12"
     And I log out
 
-  Scenario: Verify certificates for a current tenant with verity capability
+  Scenario: Verify certificates for a current tenant with verify capability
     When I log in as "admin"
     And I set the following system permissions of "Authenticated user" role:
       | capability | permission |

@@ -89,10 +89,17 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
  * @return bool
  */
 function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    $url = new moodle_url('/admin/tool/certificate/my_certificates.php', array('userid' => $user->id));
-    $node = new core_user\output\myprofile\node('miscellaneous', 'toolcertificatemy',
-        get_string('mycertificates', 'tool_certificate'), null, $url);
-    $tree->add_node($node);
+    global $USER;
+    if (\tool_certificate\template::can_view_list($user->id)) {
+        if ($USER->id == $user->id) {
+            $link = get_string('mycertificates', 'tool_certificate');
+        } else {
+            $link = get_string('certificates', 'tool_certificate');
+        }
+        $url = new moodle_url('/admin/tool/certificate/my_certificates.php', array('userid' => $user->id));
+        $node = new core_user\output\myprofile\node('miscellaneous', 'toolcertificatemy', $link, null, $url);
+        $tree->add_node($node);
+    }
 }
 
 /**
