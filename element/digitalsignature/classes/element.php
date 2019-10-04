@@ -67,27 +67,30 @@ class element extends \certificateelement_image\element {
         $mform->addElement('filemanager', 'image', get_string('uploadimage', 'tool_certificate'), '',
             $this->filemanageroptions);
 
+        // Ensure that user hasn't uploaded a file and selected a shared image (should be neither or just one).
         if (element_helper::render_shared_image_picker_element($mform)) {
             $mform->addFormRule(function($data) {
                 $draffiles = file_get_draft_area_info($data['image']);
                 if ($draffiles['filesize'] && $data['fileid']) {
-                    return ['image' => get_string('onlyoneimage', 'customcertelement_digitalsignature')];
+                    return ['image' => get_string('errormultipleimages', 'certificateelement_digitalsignature')];
                 }
                 return [];
             });
         }
 
-        element_helper::render_form_element_width($mform, 'certificateelement_image');
-        element_helper::render_form_element_height($mform, 'certificateelement_image');
+        element_helper::render_form_element_width($mform, 'certificateelement_digitalsignature');
+        element_helper::render_form_element_height($mform, 'certificateelement_digitalsignature');
 
+        // If user isn't uploading a file or selecting a shared image, they must specify height and width.
         $mform->addFormRule(function($data) {
             $errors = [];
-            $noimage = !file_get_draft_area_info($data['image'])['filesize'] && empty($data['fileid']);
+            $draftfiles = file_get_draft_area_info($data['image']);
+            $noimage = !$draftfiles['filesize'] && empty($data['fileid']);
             if ($noimage && empty($data['width'])) {
-                $errors['width'] = get_string('invalidwidthheight', 'customcertelement_digitalsignature');
+                $errors['width'] = get_string('invalidwidth', 'tool_certificate');
             }
             if ($noimage && empty($data['height'])) {
-                $errors['height'] = get_string('invalidwidthheight', 'customcertelement_digitalsignature');
+                $errors['height'] = get_string('invalidheight', 'tool_certificate');
             }
             return $errors;
         });
