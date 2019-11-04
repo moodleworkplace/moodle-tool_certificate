@@ -12,6 +12,7 @@ Feature: Being able to manage elements in a certificate template
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link"
 
+  @_file_upload
   Scenario: Add and edit elements in a certificate template
     When I change window size to "large"
     # Border.
