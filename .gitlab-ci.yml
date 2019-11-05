@@ -32,6 +32,8 @@ before_script:
 jobtest:
   script:
   - . check-start
+  - . check version_number
+  - . check language_file_sorting
   - . check moodle-plugin-ci phplint
   #- . check moodle-plugin-ci phpcpd
   #- . check moodle-plugin-ci phpmd
