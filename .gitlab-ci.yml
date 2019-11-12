@@ -25,12 +25,12 @@ before_script:
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
-- moodle-plugin-ci install --db-host="$DB_HOST" -vvv
-- php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
+- moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
 - cd moodle
 
-jobtest:
+codecheck:
   script:
+  - php admin/tool/phpunit/cli/init.php
   - . check-start
   - . check version_number
   - . check language_file_sorting
@@ -48,5 +48,14 @@ jobtest:
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output -v lib/tests/externallib_test.php
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output -v privacy/tests/provider_test.php
   - . check moodle-plugin-ci phpunit --coverage-text
+  - . check-finish
+
+behat:
+  script:
+  - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
+  - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@tool_certificate
+  - . check-start
   - . check moodle-plugin-ci behat --suite workplace --profile chrome
   - . check-finish
+  except:
+  - master
