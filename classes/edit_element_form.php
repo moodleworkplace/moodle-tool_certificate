@@ -134,7 +134,7 @@ class edit_element_form extends modal_form {
      * If necessary, form data is available in $this->_ajaxformdata
      */
     public function require_access() {
-        $this->get_template()->require_manage();
+        $this->get_template()->require_can_manage();
     }
 
     /**

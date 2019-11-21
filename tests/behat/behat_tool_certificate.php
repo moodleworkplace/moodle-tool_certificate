@@ -115,25 +115,20 @@ class behat_tool_certificate extends behat_base {
     }
 
     /**
-     * Looks up tenant id
+     * Looks up category id
      *
      * @param array $elementdata
      */
-    protected function lookup_tenant(array &$elementdata) {
+    protected function lookup_category(array &$elementdata) {
         global $DB;
-        if (array_key_exists('tenant', $elementdata)) {
-            if (empty($elementdata['tenant'])) {
-                // Shared for all tenants.
-                $elementdata['tenantid'] = 0;
-            } else {
-                // Lookup tenant id by tenant name.
-                $elementdata['tenantid'] = $DB->get_field('tool_tenant', 'id',
-                    ['name' => $elementdata['tenant']], MUST_EXIST);
+        if (array_key_exists('category', $elementdata)) {
+            if (!empty($elementdata['category'])) {
+                // Lookup category id by category name.
+                $categoryid = $DB->get_field('course_categories', 'id',
+                    ['name' => $elementdata['category']], MUST_EXIST);
+                $elementdata['contextid'] = context_coursecat::instance($categoryid)->id;
             }
-            unset($elementdata['tenant']);
-        } else {
-            // Otherwise assume default tenant.
-            $elementdata['tenantid'] = \tool_tenant\tenancy::get_default_tenant_id();
+            unset($elementdata['category']);
         }
     }
 
@@ -150,7 +145,7 @@ class behat_tool_certificate extends behat_base {
      */
     public function the_following_certificate_templates_exist(TableNode $data) {
         foreach ($data->getHash() as $elementdata) {
-            $this->lookup_tenant($elementdata);
+            $this->lookup_category($elementdata);
             $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {

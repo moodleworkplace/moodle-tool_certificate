@@ -35,6 +35,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_certificate_outcome_certificate_testcase extends advanced_testcase {
 
+    /** @var tool_certificate_generator */
+    protected $certgenerator;
+
     /**
      * Set up
      */
@@ -79,7 +82,9 @@ class tool_certificate_outcome_certificate_testcase extends advanced_testcase {
 
         $certificate = $this->certgenerator->create_template((object)['name' => 'Test template']);
 
-        $configdata = ['certificate' => $certificate->get_id()];
+        $configdata = ['certificate' => $certificate->get_id(),
+            'contextid' => context_system::instance()->id];
+        /** @var tool_certificate\tool_dynamicrule\outcome\certificate $outcome */
         $outcome = \tool_certificate\tool_dynamicrule\outcome\certificate::create($rule0->id, $configdata);
 
         $userids = [$this->getDataGenerator()->create_user(), $this->getDataGenerator()->create_user()];

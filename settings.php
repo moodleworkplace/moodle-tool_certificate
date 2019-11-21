@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
-if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
+if ($hassiteconfig || \tool_certificate\permission::can_view_admin_tree()) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')),
         'location');
@@ -34,25 +34,33 @@ if ($hassiteconfig || \tool_certificate\template::can_view_admin_tree()) {
     $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/managetemplates',
                 get_string('managetemplates', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/manage_templates.php'), function() {
-                    return \tool_certificate\template::can_view_admin_tree();
+                    return \tool_certificate\permission::can_view_admin_tree();
                 }
         ));
 
     $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/verify',
                 get_string('verifycertificates', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/index.php'), function() {
-                    return \tool_certificate\template::can_verify_loose();
+                    return \tool_certificate\permission::can_verify();
                 }
         ));
 
     $ADMIN->add('certificates', new \tool_wp\admin_externalpage('tool_certificate/images',
                 get_string('certificateimages', 'tool_certificate'),
                 new moodle_url('/admin/tool/certificate/upload_image.php'), function() {
-                    return \tool_certificate\template::can_manage_images();
+                    return \tool_certificate\permission::can_manage_images();
                 }
             ));
 }
 
 if ($hassiteconfig) {
     $ADMIN->add('tools', new tool_certificate_admin_page_manage_element_plugins());
+    $ADMIN->add('certificates',
+        new admin_externalpage('tool_certificate_customfield',
+            new lang_string('certificate_customfield', 'tool_certificate'),
+            new moodle_url('/admin/tool/certificate/customfield.php'),
+            'moodle/site:config',
+            true // This item is hidden.
+        )
+    );
 }

@@ -43,8 +43,8 @@ class tool_certificate_digitalsignature_element_test_testcase extends advanced_t
     }
 
     /**
-     * Get tenant generator
-     * @return tool_tenant_generator
+     * Get certificate generator
+     * @return tool_certificate_generator
      */
     protected function get_generator() : tool_certificate_generator {
         return $this->getDataGenerator()->get_plugin_generator('tool_certificate');

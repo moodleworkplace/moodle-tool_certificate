@@ -29,44 +29,38 @@ $capabilities = array(
     'tool/certificate:manage' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
         )
     ),
 
-    'tool/certificate:manageforalltenants' => array(
+    'tool/certificate:image' => array(
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-    ),
-
-    'tool/certificate:imageforalltenants' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'tool/certificate:imageforalltenants'
     ),
 
     'tool/certificate:issue' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
         )
-    ),
-
-    'tool/certificate:issueforalltenants' => array(
-
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
     ),
 
     'tool/certificate:viewallcertificates' => array(
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COURSE,
         'archetypes' => array(
-            'manager' => CAP_ALLOW
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
         )
     ),
 
@@ -76,10 +70,5 @@ $capabilities = array(
         'archetypes' => array(
             'manager' => CAP_ALLOW
         )
-    ),
-
-    'tool/certificate:verifyforalltenants' => array(
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
     ),
 );

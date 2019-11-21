@@ -29,13 +29,13 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
      *
      * @param {jQuery} triggerElement
      * @param {String} title
-     * @param {Number} id
+     * @param {Object} args
      * @return {ModalForm}
      */
-    var displayModal = function(triggerElement, title, id) {
+    var displayModal = function(triggerElement, title, args) {
         var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\details',
-            args: {id: id},
+            args: args,
             modalConfig: {title: title},
             saveButtonText: Str.get_string('save'),
             triggerElement: triggerElement,
@@ -48,8 +48,10 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
      * @param {Event} e
      */
     var displayAddTemplate = function(e) {
+        var contextid = $(e.currentTarget).data('contextid');
         e.preventDefault();
-        var modal = displayModal($(e.currentTarget), Str.get_string('createtemplate', 'tool_certificate'), 0);
+        var modal = displayModal($(e.currentTarget), Str.get_string('createtemplate', 'tool_certificate'),
+            {id: 0, contextid: contextid});
         modal.onSubmitSuccess = function(url) {
             window.location.href = url;
         };
@@ -64,7 +66,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
         var el = $(e.currentTarget),
             id = el.attr('data-id'),
             name = el.attr('data-name');
-        var modal = displayModal(el, Str.get_string('editcertificate', 'tool_certificate', name), id);
+        var modal = displayModal(el, Str.get_string('editcertificate', 'tool_certificate', name), {id: id});
         modal.onSubmitSuccess = function() {
             window.location.reload();
         };
@@ -86,10 +88,10 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
         // No action on submit.
     };
 
-    var duplicateMultitenant = function(e) {
+    var duplicateMulticategory = function(e) {
         e.preventDefault();
         var modal = new ModalForm({
-            formClass: 'tool_certificate\\form\\tenant_selector',
+            formClass: 'tool_certificate\\form\\category_selector',
             args: {id: $(e.currentTarget).attr('data-id')},
             modalConfig: {title: Str.get_string('confirm')},
             saveButtonText: Str.get_string('duplicate', 'tool_certificate'),
@@ -100,7 +102,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
         };
     };
 
-    var duplicateSingletenant = function(e) {
+    var duplicateSinglecategory = function(e) {
         e.preventDefault();
         Str.get_strings([
             {key: 'confirm'},
@@ -146,11 +148,11 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
          */
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
-            $('[data-tabs-element="addbutton"]').on('click', displayAddTemplate);
+            $('body').on('click', '[data-tabs-element="addbutton"]', displayAddTemplate);
             $('[data-action="editdetails"]').on('click', displayEditTemplate);
             $('[data-action="issue"]').on('click', displayIssue);
-            $('[data-action="duplicate"][data-selecttenant="1"]').on('click', duplicateMultitenant);
-            $('[data-action="duplicate"][data-selecttenant="0"]').on('click', duplicateSingletenant);
+            $('[data-action="duplicate"][data-selectcategory="1"]').on('click', duplicateMulticategory);
+            $('[data-action="duplicate"][data-selectcategory="0"]').on('click', duplicateSinglecategory);
             $('[data-action="delete"]').on('click', deleteTemplate);
         }
     };
