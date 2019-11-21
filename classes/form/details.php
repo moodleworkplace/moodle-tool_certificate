@@ -24,6 +24,7 @@
 
 namespace tool_certificate\form;
 
+use tool_certificate\permission;
 use tool_certificate\template;
 use tool_wp\modal_form;
 
@@ -45,9 +46,15 @@ class details extends modal_form {
      * Template getter
      * @return template
      */
-    protected function get_template() : ?template {
-        if ($this->template === null && !empty($this->_ajaxformdata['id'])) {
-            $this->template = template::instance($this->_ajaxformdata['id']);
+    protected function get_template() : template {
+        $id = $this->optional_param('id', 0, PARAM_INT);
+        $contextid = $this->optional_param('contextid', \context_system::instance()->id, PARAM_INT);
+        if ($this->template === null) {
+            $obj = null;
+            if (!$id) {
+                $obj = (object)['contextid' => $contextid];
+            }
+            $this->template = template::instance($id, $obj);
         }
         return $this->template;
     }
@@ -66,22 +73,36 @@ class details extends modal_form {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required');
 
-        if (template::can_issue_or_manage_all_tenants()) {
-            $tenants = \tool_tenant\tenancy::get_tenants();
-            $options = [0 => get_string('shared', 'tool_certificate')];
-            foreach ($tenants as $tenant) {
-                $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
-            }
-            $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
-
-            if ($this->get_template()) {
-                $mform->freeze('tenantid');
-            }
+        if ($categoryoptions = $this->get_category_options()) {
+            $mform->addElement('select', 'categoryid', get_string('coursecategory', ''), $categoryoptions);
+            $mform->setType('categoryid', PARAM_INT);
+        } else {
+            $mform->addElement('hidden', 'contextid');
         }
 
-        if (!$this->get_template()) {
+        if (!$this->get_template()->get_id()) {
             page::add_page_elements($mform);
         }
+    }
+
+    /**
+     * Get list of categories where user can manage templates
+     *
+     * @return array
+     */
+    protected function get_category_options() {
+        $template = $this->get_template();
+        if (!in_array($template->get_context()->contextlevel, [CONTEXT_COURSECAT, CONTEXT_SYSTEM])) {
+            // Not possible to edit category of a template that is defined on any other level.
+            return [];
+        }
+
+        $options = \core_course_category::make_categories_list('tool/certificate:manage');
+        $systemcontext = \context_system::instance();
+        if (has_capability('tool/certificate:manage', $systemcontext)) {
+            $options = [0 => '-'] + $options;
+        }
+        return $options;
     }
 
     /**
@@ -107,12 +128,10 @@ class details extends modal_form {
      * If necessary, form data is available in $this->_ajaxformdata
      */
     public function require_access() {
-        if ($template = $this->get_template()) {
-            $template->require_manage();
+        if ($this->get_template()->get_id()) {
+            $this->get_template()->require_can_manage();
         } else {
-            if (!template::can_create()) {
-                print_error('createnotallowed', 'tool_certificate');
-            }
+            permission::require_can_create();
         }
     }
 
@@ -125,7 +144,14 @@ class details extends modal_form {
      * @return mixed
      */
     public function process(\stdClass $data) {
-        if (!$this->get_template()) {
+        global $CFG;
+        require_once($CFG->dirroot.'/course/lib.php');
+
+        if (isset($data->categoryid)) {
+            $data->contextid = get_category_or_system_context($data->categoryid)->id;
+        }
+        unset($data->categoryid);
+        if (!$this->get_template()->get_id()) {
             $this->template = template::create($data);
             $this->template->new_page()->save($data);
         } else {
@@ -142,14 +168,16 @@ class details extends modal_form {
      * to preprocess editor and filemanager elements
      */
     public function set_data_for_modal() {
-        if ($template = $this->get_template()) {
+        $template = $this->get_template();
+        if ($template->get_id()) {
             $this->set_data([
                 'id' => $this->template->get_id(),
                 'name' => $this->template->get_name(),
-                'tenantid' => $this->template->get_tenant_id()]);
+                'categoryid' => $this->template->get_category_id()]);
         } else {
             $data = template::instance()->new_page()->to_record();
             unset($data->id, $data->templateid);
+            $data->contextid = $this->optional_param('contextid', null, PARAM_INT);
             $this->set_data($data);
         }
     }

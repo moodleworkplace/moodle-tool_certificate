@@ -36,11 +36,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_certificate_external_test_testcase extends advanced_testcase {
 
+    /** @var tool_certificate_generator */
+    protected $certgenerator;
+
     /**
      * Test set up.
      */
     public function setUp() {
         $this->resetAfterTest();
+        $this->certgenerator = self::getDataGenerator()->get_plugin_generator('tool_certificate');
     }
 
     /**
@@ -55,7 +59,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $template = $this->certgenerator->create_template((object)['name' => 'Certificate 1']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -90,7 +94,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $template = $this->certgenerator->create_template((object)['name' => 'Certificate 1']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();
@@ -121,7 +125,7 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         // Create a certificate template.
-        $template = \tool_certificate\template::create((object)['name' => 'Certificate 1']);
+        $template = $this->certgenerator->create_template((object)['name' => 'Certificate 1']);
 
         // Create two users.
         $student1 = $this->getDataGenerator()->create_user();

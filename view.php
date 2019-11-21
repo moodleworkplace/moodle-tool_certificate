@@ -42,8 +42,9 @@ if ($preview) {
 } else {
 
     $issue = \tool_certificate\template::get_issue_from_code($issuecode);
-    $template = \tool_certificate\template::instance($issue->templateid);
-    if ($template->can_view_issue($issue)) {
+    $template = $issue ? \tool_certificate\template::instance($issue->templateid) : null;
+    if ($template && (\tool_certificate\permission::can_verify() ||
+            \tool_certificate\permission::can_view_issue($template, $issue))) {
         $template->generate_pdf(false, $issue);
     } else {
         print_error('notfound');

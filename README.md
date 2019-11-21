@@ -17,10 +17,6 @@ Issue a new certificate for a user from an existing template and saving custom d
 
     $template->issue_certificate($userid, $expires, $issuedata, $component);
 
-Get a list of certificate templates for the current user (templates shared or on current user's tenant)
+Get a list of certificate templates for the current user (shared templates or templates on current user toplevel category)
 
     $certificates = \tool_certificate\template::get_all();
-
-Get a list of certificate templates given a tenantid. For templates shared between tenants, use tenantid = 0.
-
-    $certificates = \tool_certificate\template::get_all_by_tenantid($tenantid);

@@ -34,9 +34,13 @@ $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
 
 $pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
-admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
-
+$PAGE->set_url($pageurl);
 $template = \tool_certificate\template::instance($templateid);
+if ($coursecontext = $template->get_context()->get_course_context(false)) {
+    require_login($coursecontext->instanceid);
+} else {
+    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+}
 
 if (!$template->can_view_issues()) {
     print_error('issueormanagenotallowed', 'tool_certificate');
@@ -44,13 +48,14 @@ if (!$template->can_view_issues()) {
 
 $heading = get_string('certificates', 'tool_certificate');
 
+$PAGE->set_title("$SITE->shortname: " . $heading);
 $PAGE->navbar->add($heading);
 $PAGE->set_heading($heading);
 
 $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\issues_list::class,
     ['templateid' => $template->get_id()]);
 $r = new \tool_wp\output\content_with_heading($report->output(), format_string($template->get_name()));
-if ($template->can_issue()) {
+if ($template->can_issue_to_anybody()) {
     $r->add_button(get_string('issuenewcertificates', 'tool_certificate'), null,
         ['data-tid' => $template->get_id()]);
 }

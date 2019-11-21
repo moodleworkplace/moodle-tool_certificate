@@ -28,7 +28,7 @@ require_once('../../../config.php');
 
 $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certificate we are verifying.
 
-if (!\tool_certificate\template::can_verify_loose()) {
+if (!\tool_certificate\permission::can_verify()) {
     print_error('verifynotallowed', 'tool_certificate');
 }
 
@@ -53,9 +53,9 @@ if ($code) {
     $form->set_data(['code' => $code]);
 }
 
-echo $PAGE->set_heading($heading);
+$PAGE->set_heading($heading);
 echo $OUTPUT->header();
-echo $form->display();
+$form->display();
 if ($form->get_data()) {
     $result = \tool_certificate\certificate::verify($code);
     $results = new \tool_certificate\output\verify_certificate_results($result);

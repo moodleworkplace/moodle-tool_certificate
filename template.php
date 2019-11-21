@@ -36,9 +36,17 @@ if ($pageid && $action) {
 }
 
 $pageurl = new moodle_url('/admin/tool/certificate/template.php', array('id' => $template->get_id()));
-admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+if ($template->get_context()->contextlevel == CONTEXT_COURSE) {
+    $courseid = $template->get_context()->instanceid;
+    require_login($courseid);
+    $manageurl = new moodle_url('/admin/tool/certificate/manage_templates.php', array('courseid' => $courseid));
+    $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'), $manageurl);
+    $PAGE->set_url($pageurl);
+} else {
+    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+}
 
-$template->require_manage();
+$template->require_can_manage();
 
 if ($action && $pageid) {
     require_sesskey();

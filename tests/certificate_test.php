@@ -43,8 +43,8 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
     }
 
     /**
-     * Get tenant generator
-     * @return tool_tenant_generator
+     * Get certificate generator
+     * @return tool_certificate_generator
      */
     protected function get_generator() : tool_certificate_generator {
         return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
@@ -82,10 +82,11 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         // Create certificate in another tenant.
         /** @var tool_tenant_generator $tenantgenerator */
         $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
-        $tenant = $tenantgenerator->create_tenant();
+        $cat3 = $this->getDataGenerator()->create_category();
+        $tenant = $tenantgenerator->create_tenant(['categoryid' => $cat3->id]);
 
         $cert3name = 'Certificate 3';
-        $certificate3 = \tool_certificate\template::create((object)['name' => $cert3name, 'tenantid' => $tenant->id]);
+        $certificate3 = $this->get_generator()->create_template((object)['name' => $cert3name, 'categoryid' => $cat3->id]);
 
         $tenantgenerator->allocate_user($user3->id, $tenant->id);
         $tenantgenerator->allocate_user($user4->id, $tenant->id);

@@ -48,7 +48,7 @@ class templates extends \external_api {
         return new \external_function_parameters(
             array(
                 'id' => new \external_value(PARAM_INT, 'Template id'),
-                'tenantid' => new \external_value(PARAM_INT, 'Tenant id', VALUE_DEFAULT, 0)
+                'categoryid' => new \external_value(PARAM_INT, 'Category id', VALUE_DEFAULT, 0)
             )
         );
     }
@@ -57,19 +57,17 @@ class templates extends \external_api {
      * Handles duplicate template
      *
      * @param int $templateid
-     * @param int $tenantid
+     * @param int $categoryid
      */
-    public static function duplicate_template($templateid, $tenantid) {
+    public static function duplicate_template($templateid, $categoryid) {
         $params = self::validate_parameters(self::duplicate_template_parameters(),
-            ['id' => $templateid, 'tenantid' => $tenantid]);
+            ['id' => $templateid, 'categoryid' => $categoryid]);
         self::validate_context(\context_system::instance());
         $template = \tool_certificate\template::instance($params['id']);
-        if (!$template->can_duplicate()) {
-            throw new \required_capability_exception($template->get_context(), 'tool/certificate:manage',
-                'nopermissions', 'error');
-        }
+        $context = $params['categoryid'] ? \context_coursecat::instance($params['categoryid']) : $template->get_context();
+        $template->require_can_duplicate($context);
 
-        $template->duplicate($params['tenantid']);
+        $template->duplicate($context);
     }
 
     /**
@@ -104,7 +102,7 @@ class templates extends \external_api {
             ['id' => $templateid]);
         self::validate_context(\context_system::instance());
         $template = \tool_certificate\template::instance($params['id']);
-        $template->require_manage();
+        $template->require_can_manage();
 
         $template->delete();
     }
@@ -136,15 +134,13 @@ class templates extends \external_api {
      * @return array
      */
     public static function potential_certificate_selector(string $search): array {
-        $params = self::validate_parameters(self::potential_certificate_selector_parameters(),
-            ['search' => $search]);
-        $search = $params['search'];
+        $params = self::validate_parameters(self::potential_certificate_selector_parameters(), ['search' => $search]);
 
         // We always must call validate_context in a webservice.
         $context = \context_system::instance();
         self::validate_context($context);
 
-        return certificate::get_potential_certificates($search);
+        return certificate::get_potential_certificates($params['search']);
     }
 
     /**

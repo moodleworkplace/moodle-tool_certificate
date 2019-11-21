@@ -61,7 +61,7 @@ class elements extends \external_api {
         $params = self::validate_parameters(self::delete_element_parameters(), ['id' => $elementid]);
         self::validate_context(\context_system::instance());
         $template = template::find_by_element_id($params['id']);
-        $template->require_manage();
+        $template->require_can_manage();
         $template->delete_element($elementid);
     }
 
@@ -103,7 +103,7 @@ class elements extends \external_api {
             ['id' => $elementid, 'sequence' => $sequence, 'posx' => $posx, 'posy' => $posy]);
         self::validate_context(\context_system::instance());
         $template = template::find_by_element_id($params['id']);
-        $template->require_manage();
+        $template->require_can_manage();
         if (isset($params['sequence'])) {
             return $template->update_element_sequence($params['id'], $params['sequence']);
         }
