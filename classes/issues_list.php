@@ -54,15 +54,8 @@ class issues_list extends system_report {
         $this->set_main_table('tool_certificate_issues', 'i');
         $this->add_base_condition_simple('i.templateid', $templateid);
         $this->add_base_join('INNER JOIN {user} u ON u.id = i.userid');
-        if (!template::can_issue_or_manage_all_tenants()) {
-            // View only issues from the same tenant.
-            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
-            $this->add_base_join($tenantjoin);
-            $this->add_base_condition_sql($tenantwhere, $tenantparams);
-        } else {
-            $this->add_base_condition_simple('u.deleted', 0);
-        }
-        $this->add_base_fields('i.id, i.expires, i.code'); // Necessary for row class and actions.
+        $this->add_base_condition_sql(certificate::get_users_subquery());
+        $this->add_base_fields('i.id, i.expires, i.code, i.userid'); // Necessary for row class and actions.
         $this->set_actions();
     }
 
@@ -89,6 +82,7 @@ class issues_list extends system_report {
             'user'
         ))
             ->add_fields(user_entity::get_all_user_name_fields(true, 'u'))
+            ->add_field('u.id')
             ->set_is_default(true, 1)
             ->set_is_sortable(true, true);
         $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'fullname']);
@@ -128,6 +122,7 @@ class issues_list extends system_report {
             ->set_is_default(true, 4)
             ->set_is_sortable(true);
         $newcolumn->add_callback([$this, 'col_code']);
+        $newcolumn->set_is_available(permission::can_verify());
         $this->add_column($newcolumn);
     }
 
@@ -141,11 +136,13 @@ class issues_list extends system_report {
         $this->add_action((new report_action($link, $icon, [])));
 
         // Revoke.
-        if ($this->template && $this->template->can_revoke()) {
-            $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
-            $this->add_action((new report_action(new \moodle_url('#'), $icon,
-                ['data-action' => 'revoke', 'data-id' => ':id'])));
-        }
+        $template = $this->template;
+        $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
+        $this->add_action(
+            (new report_action(new \moodle_url('#'), $icon, ['data-action' => 'revoke', 'data-id' => ':id']))
+                ->add_callback(function($row) use ($template) {
+                    return $template && $template->can_revoke($row->userid);
+                }));
     }
 
     /**

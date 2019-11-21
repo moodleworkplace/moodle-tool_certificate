@@ -62,7 +62,7 @@ class my_certificates_table extends \table_sql {
             get_string('expires', 'tool_certificate'),
         );
 
-        if (template::can_verify_loose()) {
+        if (permission::can_verify()) {
             $columns[] = 'code';
             $headers[] = get_string('code', 'tool_certificate');
         }

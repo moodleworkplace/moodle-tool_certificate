@@ -42,7 +42,7 @@ Feature: Being able to verify that a certificate is valid or not
     When I log in as "admin"
     And I set the following system permissions of "Guest" role:
       | capability | permission |
-      | tool/certificate:verifyforalltenants | Allow |
+      | tool/certificate:verify | Allow |
     And the following certificate issues exist:
       | template | user |
       | Certificate 1 | student1 |
@@ -55,3 +55,31 @@ Feature: Being able to verify that a certificate is valid or not
     Then I should see "Not verified"
     And I verify the "Certificate 1" site certificate for the user "student1"
     And I verify the "Certificate 2" site certificate for the user "student1"
+
+  Scenario: User with capability to verify certificates can verify certificates in all tenants
+    Given "2" tenants exist with "4" users and "0" courses in each
+    And the following certificate templates exist:
+      | name          | category  |
+      | Certificate 00 |           |
+      | Certificate 11 | Category1 |
+      | Certificate 22 | Category2 |
+    And the following certificate issues exist:
+      | template      | user   |
+      | Certificate 11 | user11 |
+      | Certificate 11 | user12 |
+      | Certificate 22 | user21 |
+      | Certificate 00 | user22 |
+      | Certificate 00 | user12 |
+    When I log in as "admin"
+    And I set the following system permissions of "Authenticated user" role:
+      | capability | permission |
+      | tool/certificate:verify | Allow |
+    And I log out
+    And I log in as "user23"
+    And I visit the sites certificates verification url
+    And I verify the "Certificate 11" site certificate for the user "user11"
+    And I verify the "Certificate 11" site certificate for the user "user12"
+    And I verify the "Certificate 22" site certificate for the user "user21"
+    And I verify the "Certificate 00" site certificate for the user "user22"
+    And I verify the "Certificate 00" site certificate for the user "user12"
+    And I log out

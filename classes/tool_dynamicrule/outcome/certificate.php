@@ -24,6 +24,7 @@
 
 namespace tool_certificate\tool_dynamicrule\outcome;
 
+use tool_certificate\customfield\issue_handler;
 use tool_dynamicrule\api;
 
 defined('MOODLE_INTERNAL') || die;
@@ -87,19 +88,13 @@ class certificate extends \tool_dynamicrule\outcome_base {
         // that was completed in the conditions for this certificate to be issued.
 
         // TODO add tests.
-        $defaultdata = [
-            'certificationname' => '',
-            'programname' => '',
-            'completiondate' => '',
-            'completedcourses' => []
-        ];
-        $issuedataall = $this->get_data_from_conditions(array_keys($defaultdata), $users);
+        $issuedataall = $this->get_data_from_conditions(issue_handler::create()->get_all_fields_shortnames(), $users);
 
         $certificateid = (int)$this->get_configdata()['certificate'];
         $template = \tool_certificate\template::instance($certificateid);
 
         foreach ($users as $user) {
-            $issuedata = $issuedataall[$user->id] + $defaultdata;
+            $issuedata = $issuedataall[$user->id];
             $template->issue_certificate($user->id, '', $issuedata, 'tool_dynamicrule');
         }
     }

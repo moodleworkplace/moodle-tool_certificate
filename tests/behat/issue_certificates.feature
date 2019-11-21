@@ -5,53 +5,40 @@ Feature: Being able to manually issue a certificate to a user
   I need to be able to issue a certificate from a list of users
 
   Background:
-    Given the following tenants exist:
-      | name    |
-      | Tenant1 |
-      | Tenant2 |
+    Given "2" tenants exist with "5" users and "0" courses in each
     Given the following "users" exist:
       | username | firstname | lastname | email                |
-      | student1 | Student   | 1        | student1@example.com |
-      | user11   | User      | 11       | user11@example.com   |
-      | user12   | User      | 12       | user12@example.com   |
-      | user13   | User      | 13       | user13@example.com   |
-      | user21   | User      | 21       | user21@example.com   |
-      | user22   | User      | 22       | user22@example.com   |
       | issuer0  | Issuer    | A        | issuer0@example.com  |
-      | issuer1  | Issuer    | 1        | issuer1@example.com  |
-      | issuer2  | Issuer    | 2        | issuer2@example.com  |
-    And the following users allocations to tenants exist:
-      | user     | tenant  |
-      | user11   | Tenant1 |
-      | user12   | Tenant1 |
-      | user13   | Tenant1 |
-      | user21   | Tenant2 |
-      | user22   | Tenant2 |
-      | issuer1  | Tenant1 |
-      | issuer2  | Tenant2 |
     And the following certificate templates exist:
-      | name          | tenant  |
-      | Certificate 0 |         |
-      | Certificate 1 | Tenant1 |
-      | Certificate 2 | Tenant2 |
+      | name          | category  |
+      | Certificate 0 |           |
+      | Certificate 1 | Category1 |
+      | Certificate 2 | Category2 |
     And the following "roles" exist:
       | shortname            | name                       | archetype |
       | certificateissuer    | Certificate issuer         |           |
       | certificateissuerall | Certificate issuer for all |           |
+      | configviewer         | Config viewer              |           |
     And the following "role assigns" exist:
       | user    | role                 | contextlevel | reference |
-      | issuer1 | certificateissuer    | System       |           |
-      | issuer2 | certificateissuer    | System       |           |
+      | user14  | certificateissuer    | System       |           |
+      | user14  | configviewer         | System       |           |
+      | user24  | certificateissuer    | Category     | CAT2      |
+      | user24  | configviewer         | System       |           |
       | issuer0 | certificateissuerall | System       |           |
     And I log in as "admin"
+    And I set the following system permissions of "Config viewer" role:
+      | capability             | permission |
+      | moodle/site:configview | Allow      |
     And I set the following system permissions of "Certificate issuer" role:
       | capability             | permission |
       | tool/certificate:issue | Allow      |
-      | moodle/site:configview | Allow      |
     And I set the following system permissions of "Certificate issuer for all" role:
-      | capability                          | permission |
-      | tool/certificate:issueforalltenants | Allow      |
-      | moodle/site:configview              | Allow      |
+      | capability                     | permission |
+      | tool/certificate:issue         | Allow      |
+      | tool/tenant:allocate           | Allow      |
+      | moodle/category:viewcourselist | Allow      |
+      | moodle/site:configview         | Allow      |
     And I log out
 
   Scenario: Issue a certificate as admin, from the list of templates
@@ -60,11 +47,11 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
     And I wait "3" seconds
     And I open the autocomplete suggestions list
-    And I click on "Student 1" item in the autocomplete list
+    And I click on "User 11" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    Then "Student 1" "text" should exist in the "report-table" "table"
+    Then "User 11" "text" should exist in the "report-table" "table"
     And I log out
 
   Scenario: Issue a certificate as admin, from the list of issues
@@ -73,10 +60,10 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I click on "Issue new certificates" "link"
     And I open the autocomplete suggestions list
-    And I click on "Student 1" item in the autocomplete list
+    And I click on "User 11" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
     And I press "Save" in the modal form dialogue
-    Then "Student 1" "text" should exist in the "report-table" "table"
+    Then "User 11" "text" should exist in the "report-table" "table"
     And I log out
 
   Scenario: Issue certificate as a tenant issuer
@@ -86,13 +73,13 @@ Feature: Being able to manually issue a certificate to a user
       | Certificate 2 | user21 |
       | Certificate 0 | user12 |
       | Certificate 0 | user22 |
-    When I log in as "issuer1"
+    When I log in as "user14"
     And I am on site homepage
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
-    And I should see "Verify certificates"
+#    And I should see "Verify certificates"
     And I should not see "Add certificate template"
-    And I should not see "Certificate images"
+#    And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # The templates from other tenants should not be visible.
     And I should not see "Certificate 2"
@@ -139,9 +126,9 @@ Feature: Being able to manually issue a certificate to a user
     And I am on site homepage
     And I follow "Site administration"
     Then I should see "Manage certificate templates"
-    And I should see "Verify certificates"
+#    And I should see "Verify certificates"
     And I should not see "Add certificate template"
-    And I should not see "Certificate images"
+#    And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should see "User 12"
@@ -196,9 +183,9 @@ Feature: Being able to manually issue a certificate to a user
     And I open the autocomplete suggestions list
     And I should see "User 12"
     And I should see "User 13"
-    And I should not see "User 2"
+    And I should see "User 2"
     And I should not see "User 11"
-    And I should not see "Admin User"
+    And I should see "Admin User"
     And I click on "User 12" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate for"
     And I press "Save" in the modal form dialogue
@@ -214,7 +201,7 @@ Feature: Being able to manually issue a certificate to a user
       | template      | user   |
       | Certificate 1 | user11 |
       | Certificate 1 | user12 |
-    When I log in as "issuer1"
+    When I log in as "user14"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
@@ -223,4 +210,43 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Revoke" "button" in the "Confirm" "dialogue"
     And I should not see "User 11"
     And I should see "User 12"
+    And I log out
+
+  Scenario: Issue certificates within a tenant without capability to issue in system context
+    When I log in as "user24"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I should not see "Certificate 0"
+    And I should not see "Certificate 1"
+    And I click on "Issue new certificate from this template" "link" in the "Certificate 2" "table_row"
+    And I open the autocomplete suggestions list
+    And I should see "User 21"
+    And I should not see "User 1"
+    And I click on "User 22" item in the autocomplete list
+    And I press key "27" in the field "Select users to issue certificate for"
+    And I press "Save" in the modal form dialogue
+    And I click on "Certificates issued" "link" in the "Certificate 2" "table_row"
+    And I should see "User 22"
+    And I should not see "User 21"
+    And I log out
+
+  Scenario: Issue certificates within a tenant with capability to issue in system context
+    When I log in as "admin"
+    And I set the following system permissions of "Tenant administrator" role:
+      | tool/certificate:issue | Inherit |
+    And I log out
+    Given the following certificate issues exist:
+      | template      | user   |
+      | Certificate 1 | user11 |
+      | Certificate 2 | user21 |
+      | Certificate 0 | user12 |
+      | Certificate 0 | user22 |
+    And I log in as "tenantadmin2"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I should see "Certificate 0"
+    And I should not see "Certificate 1"
+    And "Issue new certificate from this template" "link" should not exist in the "Certificate 0" "table_row"
+    And "Issue new certificate from this template" "link" should exist in the "Certificate 2" "table_row"
+    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
+    And I should see "User 22"
+    And I should not see "User 1"
     And I log out

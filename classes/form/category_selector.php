@@ -30,13 +30,13 @@ use tool_certificate\template;
 use tool_wp\modal_form;
 
 /**
- * Select tenant when duplicating a template.
+ * Select category when duplicating a template.
  *
  * @package    tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tenant_selector extends modal_form {
+class category_selector extends modal_form {
 
     /** @var template */
     protected $template;
@@ -63,13 +63,9 @@ class tenant_selector extends modal_form {
             get_string('duplicatetemplateconfirm', 'tool_certificate',
                 $this->get_template()->get_formatted_name()));
 
-        if (has_capability('tool/certificate:manageforalltenants', \context_system::instance())) {
-            $tenants = \tool_tenant\tenancy::get_tenants();
-            $options = [0 => get_string('shared', 'tool_certificate')];
-            foreach ($tenants as $tenant) {
-                $options[$tenant->id] = format_string($tenant->name, true, ['context' => \context_system::instance()]);
-            }
-            $mform->addElement('select', 'tenantid', get_string('selecttenant', 'tool_certificate'), $options);
+        if ($categoryoptions = $this->get_category_options()) {
+            $mform->addElement('select', 'categoryid', get_string('coursecategory', ''), $categoryoptions);
+            $mform->setType('categoryid', PARAM_INT);
         }
 
         $mform->addElement('hidden', 'id');
@@ -79,16 +75,33 @@ class tenant_selector extends modal_form {
     }
 
     /**
+     * Get list of categories where user can manage templates
+     *
+     * @return array
+     */
+    protected function get_category_options() {
+        $template = $this->get_template();
+        if (!in_array($template->get_context()->contextlevel, [CONTEXT_COURSECAT, CONTEXT_SYSTEM])) {
+            // Not possible to edit category of a template that is defined on any other level.
+            return [];
+        }
+
+        $options = \core_course_category::make_categories_list('tool/certificate:manage');
+        $systemcontext = \context_system::instance();
+        if (has_capability('tool/certificate:manage', $systemcontext)) {
+            $options = [0 => '-'] + $options;
+        }
+        return $options;
+    }
+
+    /**
      * Check if current user has access to this form, otherwise throw exception
      *
      * Sometimes permission check may depend on the action and/or id of the entity.
      * If necessary, form data is available in $this->_ajaxformdata
      */
     public function require_access() {
-        if (!$this->get_template()->can_duplicate()) {
-            throw new \required_capability_exception(\context_system::instance(), 'tool/certificate:manage',
-                'nopermissions', 'error');
-        }
+        $this->get_template()->require_can_manage();
     }
 
     /**
@@ -99,7 +112,8 @@ class tenant_selector extends modal_form {
      * @param \stdClass $data
      */
     public function process(\stdClass $data) {
-        $this->get_template()->duplicate($data->tenantid);
+        $context = !empty($data->categoryid) ? \context_coursecat::instance($data->categoryid) : null;
+        $this->get_template()->duplicate($context);
     }
 
     /**
@@ -109,6 +123,10 @@ class tenant_selector extends modal_form {
      * to preprocess editor and filemanager elements
      */
     public function set_data_for_modal() {
-        $this->set_data($this->get_template()->to_record());
+        $data = $this->get_template()->to_record();
+        if ($this->get_template()->get_context()->contextlevel == CONTEXT_COURSECAT) {
+            $data->categoryid = $this->get_template()->get_context()->instanceid;
+        }
+        $this->set_data($data);
     }
 }

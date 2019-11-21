@@ -40,6 +40,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
      */
     public function setUp() {
         $this->resetAfterTest();
+        \tool_certificate\customfield\issue_handler::reset_caches();
     }
 
     /**
@@ -58,13 +59,14 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
         $element->data = json_encode(['display' => 'certificationname']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $certificationstr = get_string('previewcertificationname', 'certificateelement_program');
+        $certificationstr = get_string('previewcertificationname', 'tool_certification');
         $this->assertTrue(strpos($e->format_preview_data(), $certificationstr) >= 0);
 
         $element->data = json_encode(['display' => 'programname']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $this->assertTrue(strpos($e->format_preview_data(), get_string('previewprogramname', 'certificateelement_program')) >= 0);
+        $this->assertTrue(strpos($e->format_preview_data(), get_string('previewprogramname', 'tool_program')) >= 0);
 
         $element->data = json_encode(['display' => 'completiondate']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
@@ -83,38 +85,32 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
         $element->data = json_encode(['display' => 'certificationname']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
 
         $user1 = $this->getDataGenerator()->create_user();
-        $course1 = $this->getDataGenerator()->create_course();
-        $course2 = $this->getDataGenerator()->create_course();
 
-        $data = ['certificationname' => 'Certification 1', 'programname' => 'Program 1', 'completiondate' => time(),
-                 'completedcourses' => [
-                   $course1->id => $course1->fullname,
-                   $course2->id => $course2->fullname,
-                 ]];
+        $data = ['certificationname' => 'Certification 1', 'programname' => 'Program 1', 'programcompletiondate' => '1/2/12',
+                 'programcompletedcourses' => '<p>Course1,<br>Course2</p>'];
         $issueid = $certificate1->issue_certificate($user1->id, null, $data, 'tool_program');
-
-        $encodeddata = json_encode($data);
+        $issue = (object)['id' => $issueid];
 
         $element->data = json_encode(['display' => 'certificationname']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $this->assertEquals($data['certificationname'], $e->format_issue_data($encodeddata));
+        $this->assertEquals($data['certificationname'], $e->format_issue_data($issue));
 
         $element->data = json_encode(['display' => 'programname']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $this->assertEquals($data['programname'], $e->format_issue_data($encodeddata));
+        $this->assertEquals($data['programname'], $e->format_issue_data($issue));
 
-        $element->data = json_encode(['display' => 'completiondate']);
+        $element->data = json_encode(['display' => 'programcompletiondate']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $this->assertEquals(userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false),
-                            $e->format_issue_data($encodeddata));
+        $this->assertEquals('1/2/12', $e->format_issue_data($issue));
 
-        $element->data = json_encode(['display' => 'completedcourses']);
+        $element->data = json_encode(['display' => 'programcompletedcourses']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $this->assertTrue(strpos($data['completedcourses'][$course1->id], $e->format_issue_data($encodeddata)) >= 0);
-        $this->assertTrue(strpos($data['completedcourses'][$course2->id], $e->format_issue_data($encodeddata)) >= 0);
+        $this->assertEquals('<p>Course1,<br />Course2</p>', $e->format_issue_data($issue));
     }
 
     /**
@@ -138,7 +134,7 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
     public function test_render_content() {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        foreach (['programname', 'certificationname', 'completiondate', 'completedcourses'] as $displaytype) {
+        foreach (['programname', 'certificationname', 'completiondate', 'programcompletedcourses'] as $displaytype) {
             $formdata = ['display' => $displaytype];
             $e = $this->get_generator()->create_element($pageid, 'program', $formdata);
             $this->assertNotEmpty($e->render_html());
@@ -151,8 +147,8 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
 
         // Generate PDF for issue.
         $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(),
-            null, ['programname' => 'P', 'certificationname' => 'C', 'completiondate' => time(),
-                'completedcourses' => []], 'tool_certification');
+            null, ['programname' => 'P', 'certificationname' => 'C', 'programcompletiondate' => '1/1/11',
+                'programcompletedcourses' => 'list'], 'tool_certification');
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
         $filesize = core_text::strlen($filecontents);
         $this->assertTrue($filesize > 30000 && $filesize < 70000);

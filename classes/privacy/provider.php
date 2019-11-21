@@ -31,6 +31,7 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\helper;
 use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
+use tool_certificate\customfield\issue_handler;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -121,7 +122,7 @@ class provider implements \core_privacy\local\metadata\provider,
             $data = (object) [
                 'name' => format_string($record->certificatename),
                 'code' => $record->code,
-                'data' => self::export_issue_data($record->data),
+                'data' => self::export_issue_data($record->id),
                 'timecreated' => transform::datetime($record->timecreated),
                 'expires' => $record->expires ? transform::datetime($record->expires) : null,
             ];
@@ -137,16 +138,18 @@ class provider implements \core_privacy\local\metadata\provider,
     /**
      * Export json-encoded issue data
      *
-     * @param string $data
+     * @param int $id
      * @return mixed|null
      */
-    protected static function export_issue_data($data) {
-        if (!strlen($data)) {
-            return null;
+    protected static function export_issue_data($id) {
+        $handler = issue_handler::create();
+        $data = [];
+        foreach ($handler->export_instance_data_object($id, true) as $key => $value) {
+            if (strlen('' . $value)) {
+                $data[$key] = $value;
+            }
         }
-        $data = json_decode($data, true);
-        array_walk_recursive($data, 'format_string');
-        return $data;
+        return $data ?: null;
     }
 
     /**
