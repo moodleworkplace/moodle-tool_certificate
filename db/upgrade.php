@@ -31,7 +31,8 @@ defined('MOODLE_INTERNAL') || die;
  * @return bool always true
  */
 function xmldb_tool_certificate_upgrade($oldversion) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
 
     $dbman = $DB->get_manager();
 
@@ -83,6 +84,32 @@ function xmldb_tool_certificate_upgrade($oldversion) {
             ['version', 'certificateelement_bgimage', 'certificateelement_studentname']);
 
         upgrade_plugin_savepoint(true, 2019030711, 'tool', 'certificate');
+    }
+
+    if ($oldversion < 2019111501) {
+
+        // Define field tenantid to be dropped from tool_certificate_templates.
+        $table = new xmldb_table('tool_certificate_templates');
+        $field = new xmldb_field('tenantid');
+
+        // Conditionally launch drop field tenantid.
+        if ($dbman->field_exists($table, $field)) {
+            // For templates that belonged to the tenants use the course category context instead.
+            tool_certificate_upgrade_remove_tenant_field();
+
+            $dbman->drop_field($table, $field);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2019111501, 'tool', 'certificate');
+    }
+
+    if ($oldversion < 2019111502) {
+
+        tool_certificate_upgrade_move_data_to_customfields();
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2019111502, 'tool', 'certificate');
     }
 
     return true;

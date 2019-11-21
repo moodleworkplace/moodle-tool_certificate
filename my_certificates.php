@@ -24,7 +24,7 @@
 
 require_once('../../../config.php');
 
-$userid = optional_param('userid', $USER->id, PARAM_INT);
+$userid = optional_param('userid', 0, PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
@@ -35,14 +35,13 @@ $pageurl = $url = new moodle_url('/admin/tool/certificate/my_certificates.php', 
 require_login();
 
 // Check that we have a valid user.
-if ($userid > 0) {
-    $user = \core_user::get_user($userid, '*', MUST_EXIST);
-    if (!\tool_certificate\template::can_view_list($userid)) {
-        print_error('You are not allowed to view these certificates');
-    }
+$user = \core_user::get_user($userid ?: $USER->id, '*', MUST_EXIST);
+if (!\tool_certificate\permission::can_view_list($user->id)) {
+    throw new \required_capability_exception(context_system::instance(), 'tool/certificate:viewallcertificates',
+        'nopermission', 'error');
 }
 
-$table = new \tool_certificate\my_certificates_table($userid, $download);
+$table = new \tool_certificate\my_certificates_table($user->id, $download);
 $table->define_baseurl($pageurl);
 
 if ($table->is_downloading()) {
@@ -51,13 +50,13 @@ if ($table->is_downloading()) {
 }
 
 $PAGE->set_url($pageurl);
-$PAGE->set_context(context_user::instance($userid));
+$PAGE->set_context(context_user::instance($user->id));
 $PAGE->navigation->extend_for_user($user);
 $PAGE->set_title(get_string('mycertificates', 'tool_certificate'));
 
 $PAGE->set_pagelayout('standard');
 
-$PAGE->navbar->add(get_string('profile'), new moodle_url('/user/profile.php', array('id' => $userid)));
+$PAGE->navbar->add(get_string('profile'), new moodle_url('/user/profile.php', array('id' => $user->id)));
 $PAGE->navbar->add(get_string('mycertificates', 'tool_certificate'));
 
 echo $OUTPUT->header();

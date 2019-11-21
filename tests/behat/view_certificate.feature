@@ -27,7 +27,7 @@ Feature: Being able to download valid certificates
     When I log in as "admin"
     And I set the following system permissions of "Guest" role:
       | capability | permission |
-      | tool/certificate:verifyforalltenants | Allow |
+      | tool/certificate:verify | Allow |
     And I log out
     And I log in as "guest"
     And I visit the sites certificates verification url

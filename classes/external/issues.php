@@ -66,7 +66,7 @@ class issues extends \external_api {
         $context = \context_system::instance();
         self::validate_context($context);
         $template = \tool_certificate\template::instance($issue->templateid);
-        if (!$template->can_issue()) {
+        if (!$template->can_revoke($issue->userid)) {
             throw new \required_capability_exception($template->get_context(), 'tool/certificate:issue', 'nopermissions', 'error');
         }
 

@@ -39,11 +39,16 @@ defined('MOODLE_INTERNAL') || die();
  */
 class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
 
+    /** @var tool_certificate_generator */
+    protected $certgenerator;
+
     /**
      * Test set up.
      */
     public function setUp() {
         $this->resetAfterTest();
+        \tool_certificate\customfield\issue_handler::reset_caches();
+        $this->certgenerator = self::getDataGenerator()->get_plugin_generator('tool_certificate');
     }
 
     /**
@@ -73,10 +78,10 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
     public function test_get_contexts_for_userid() {
 
         // Add a template to the site.
-        $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
+        $template1 = $this->certgenerator->create_template((object)['name' => 'Site template']);
 
         // Another template that has no issued certificates.
-        $template2 = \tool_certificate\template::create((object)['name' => 'No issues template']);
+        $template2 = $this->certgenerator->create_template((object)['name' => 'No issues template']);
 
         // Create a user who will be issued a certificate.
         $user = $this->getDataGenerator()->create_user();
@@ -109,7 +114,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $usercontext1 = \context_user::instance($user1->id);
 
         // Add a template to the site.
-        $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
+        $template1 = $this->certgenerator->create_template((object)['name' => 'Site template']);
 
         // Issue the certificate.
         $template1->issue_certificate($user1->id);
@@ -131,15 +136,15 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
     public function test_export_user_data() {
         /** @var \tool_certificate\template[] $templates */
         $templates = [
-            \tool_certificate\template::create((object) ['name' => 'Site template']),
-            \tool_certificate\template::create((object) ['name' => 'Another one']),
+            $this->certgenerator->create_template((object) ['name' => 'Site template']),
+            $this->certgenerator->create_template((object) ['name' => 'Another one']),
         ];
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
-        $templates[0]->issue_certificate($user1->id, null, ['a' => 'b', 'c' => ['d' => 'e']]);
+        $templates[0]->issue_certificate($user1->id, null, ['courseid' => SITEID]);
         $templates[0]->issue_certificate($user2->id);
 
         // Issue a second certificate to our test user.
@@ -160,7 +165,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $this->assertEquals($data->name, $templates[0]->get_name());
         $this->assertObjectHasAttribute('code', $data);
         $this->assertObjectHasAttribute('timecreated', $data);
-        $this->assertEquals(['a' => 'b', 'c' => ['d' => 'e']], $data->data);
+        $this->assertEquals(['courseid' => SITEID], $data->data);
         $this->assertNull($data->expires);
 
         // Second certificate.
@@ -174,6 +179,8 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         $this->assertNull($data->expires);
     }
 
+    // TODO WP-667 change test.
+
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
@@ -181,8 +188,8 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         global $DB;
 
         // Add a template to the site.
-        $template1 = \tool_certificate\template::create((object)['name' => 'Site template']);
-        $template2 = \tool_certificate\template::create((object)['name' => 'Second template']);
+        $template1 = $this->certgenerator->create_template((object)['name' => 'Site template']);
+        $template2 = $this->certgenerator->create_template((object)['name' => 'Second template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -220,7 +227,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
     public function test_delete_data_for_user() {
         global $DB;
 
-        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
+        $template = $this->certgenerator->create_template((object)['name' => 'Site template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
@@ -270,7 +277,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         $component = 'tool_certificate';
 
-        $template = \tool_certificate\template::create((object)['name' => 'Site template']);
+        $template = $this->certgenerator->create_template((object)['name' => 'Site template']);
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();

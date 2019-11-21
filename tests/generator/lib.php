@@ -42,6 +42,18 @@ class tool_certificate_generator extends component_generator_base {
      * @return \tool_certificate\template
      */
     public function create_template($record = null): \tool_certificate\template {
+        $record = (object)$record;
+        if (isset($record->tenantid)) {
+            debugging('Tenantid is no longer supported', DEBUG_DEVELOPER);
+        }
+        if (empty($record->contextid)) {
+            if (!empty($record->categoryid)) {
+                $record->contextid = context_coursecat::instance($record->categoryid)->id;
+                unset($record->categoryid);
+            } else {
+                $record->contextid = context_system::instance()->id;
+            }
+        }
         return \tool_certificate\template::create($record);
     }
 

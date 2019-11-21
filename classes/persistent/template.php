@@ -50,9 +50,6 @@ class template extends persistent {
             'name' => array(
                 'type' => PARAM_TEXT
             ),
-            'tenantid' => array(
-                'type' => PARAM_INT
-            ),
             'contextid' => array(
                 'type' => PARAM_INT
             ),

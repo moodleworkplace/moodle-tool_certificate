@@ -24,7 +24,7 @@
 
 namespace tool_certificate;
 
-use tool_tenant\tenancy;
+use tool_wp\db;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -94,13 +94,7 @@ class certificate {
 
         $conditions = ['templateid' => $templateid];
 
-        if (\tool_certificate\template::can_issue_or_manage_all_tenants()) {
-            $tenantjoin = '';
-            $tenantwhere = ' u.deleted = 0';
-        } else {
-            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
-            $conditions = array_merge($conditions, $tenantparams);
-        }
+        $usersquery = self::get_users_subquery();
 
         $sql = "SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
                        t.name, " .
@@ -110,9 +104,8 @@ class certificate {
                     ON (ci.templateid = t.id)
                   JOIN {user} u
                     ON (u.id = ci.userid)
-                       {$tenantjoin}
                  WHERE t.id = :templateid
-                   AND {$tenantwhere}
+                   AND {$usersquery}
               ORDER BY {$sort}";
 
         return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
@@ -196,18 +189,12 @@ class certificate {
     public static function verify($code) {
         global $DB;
 
-        $result = new \stdClass();
+        $result = (object)['success' => false];
+        if (!$code) {
+            return $result;
+        }
 
         $conditions = ['code' => $code];
-
-        if (\tool_certificate\template::can_issue_or_manage_all_tenants() ||
-                \tool_certificate\template::can_verify_for_all_tenants()) {
-            $tenantjoin = '';
-            $tenantwhere = ' u.deleted = 0';
-        } else {
-            list($tenantjoin, $tenantwhere, $tenantparams) = \tool_tenant\tenancy::get_users_sql();
-            $conditions = array_merge($conditions, $tenantparams);
-        }
 
         $userfields = get_all_user_name_fields(true, 'u');
 
@@ -221,18 +208,13 @@ class certificate {
                     ON t.id = ci.templateid
                   JOIN {user} u
                     ON ci.userid = u.id
-                       {$tenantjoin}
                  WHERE ci.code = :code
-                   AND {$tenantwhere}";
+                   AND u.deleted = 0";
 
-        $result->success = false;
         if ($issue = $DB->get_record_sql($sql, $conditions)) {
-            $template = \tool_certificate\template::instance($issue->templateid);
-            if ($template->can_verify()) {
-                $result->success = true;
-                $result->issue = $issue;
-                \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
-            }
+            $result->success = true;
+            $result->issue = $issue;
+            \tool_certificate\event\certificate_verified::create_from_issue($issue)->trigger();
         }
         return $result;
     }
@@ -244,14 +226,19 @@ class certificate {
      * @return array
      */
     public static function get_potential_certificates(string $search): array {
+        // TODO WP-1212 add tests that teanantadmins can only see their own certificates in the DR outcome.
         global $DB;
+        $ids = permission::get_visible_categories_contexts();
+        if (!$ids) {
+            return [];
+        }
+        list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, db::generate_param_name());
 
         $query = "SELECT *
                     FROM {tool_certificate_templates}
-                   WHERE (tenantid = :tenant OR tenantid = 0) ";
+                   WHERE contextid " . $sql;
 
         $i = 0;
-        $params = ['tenant' => tenancy::get_tenant_id()];
         foreach (preg_split('/ +/', trim($search), -1, PREG_SPLIT_NO_EMPTY) as $word) {
             $i++;
             $query .= ' AND (' . $DB->sql_like('name', ":search{$i}1", false, false) . ')';
@@ -269,5 +256,20 @@ class certificate {
         }
 
         return $result;
+    }
+
+    /**
+     * Helps to build SQL to retrieve users that can be displayed to the current user
+     *
+     * If tool_tenant is installed - adds a tenant filter
+     *
+     * @uses \tool_tenant\tenancy::get_users_subquery
+     *
+     * @param string $usertablealias
+     * @return string
+     */
+    public static function get_users_subquery(string $usertablealias = 'u') : string {
+        return component_class_callback('tool_tenant\\tenancy', 'get_users_subquery',
+            [true, false, $usertablealias.'.id'], $usertablealias.'.deleted=0');
     }
 }

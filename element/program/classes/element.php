@@ -24,6 +24,10 @@
 
 namespace certificateelement_program;
 
+use core_customfield\data_controller;
+use core_customfield\field_controller;
+use tool_certificate\customfield\issue_handler;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -41,21 +45,30 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
+        $handler = issue_handler::create();
+        $handler->create_custom_fields_if_not_exist();
 
-        // Get the possible date options.
-        $options = [
-            'certificationname' => get_string('displaycertificationname', 'certificateelement_program'),
-            'completedcourses' => get_string('displaycompletedcourses', 'certificateelement_program'),
-            'completiondate' => get_string('displaycompletiondate', 'certificateelement_program'),
-            'programname' => get_string('displayprogramname', 'certificateelement_program')
-        ];
+        $fields = $handler->get_fields();
+        $options = ['' => ''];
+        $textareas = [];
+        foreach ($fields as $field) {
+            if ($handler->can_view($field, 0)) {
+                $options[$field->get('shortname')] = $field->get_formatted_name();
+                if ($field->get('type') === 'textarea') {
+                    $textareas[] = $field->get('shortname');
+                }
+            }
+        }
 
         $mform->addElement('select', 'display', get_string('fieldoptions', 'certificateelement_program'), $options);
         $mform->addHelpButton('display', 'fieldoptions', 'certificateelement_program');
+        $mform->addRule('display', null, 'required');
 
         parent::render_form_elements($mform);
 
-        $mform->hideIf('refpoint', 'display', 'eq', 'completedcourses');
+        foreach ($textareas as $key) {
+            $mform->hideIf('refpoint', 'display', 'eq', $key);
+        }
     }
 
     /**
@@ -66,7 +79,8 @@ class element extends \tool_certificate\element {
      */
     public function save_form_data(\stdClass $data) {
         $data->data = json_encode(['display' => $data->display]);
-        if ($data->display === 'completedcourses') {
+        $field = issue_handler::create()->find_field_by_shortname($data->display);
+        if ($field && $field->get('type') === 'textarea') {
             $data->refpoint = 0;
         }
         parent::save_form_data($data);
@@ -98,43 +112,26 @@ class element extends \tool_certificate\element {
         global $DB;
         if ($preview) {
             $display = $this->format_preview_data();
-        } else if (($issue->component == 'tool_dynamicrule')) {
-            $display = $this->format_issue_data($issue->data);
         } else {
-            $display = '';
+            $display = $this->format_issue_data($issue);
         }
         \tool_certificate\element_helper::render_content($pdf, $this, $display);
     }
 
     /**
      * This function selects the field from issue data and formats it to be displayed.
-     * @param string $issuedata The data field of an issue, as json encoded string
+     * @param \stdClass $issue
      * @return string The formated field to be displayed
      */
-    public function format_issue_data($issuedata) {
-        $data = json_decode($issuedata, true);
+    public function format_issue_data($issue) {
         $thisdata = json_decode($this->get_data(), true);
-        switch ($thisdata['display']) {
-            case 'certificationname':
-                $display = format_string($data['certificationname']);
-                break;
-            case 'programname':
-                $display = format_string($data['programname']);
-                break;
-            case 'completiondate':
-                // TODO see element "Date" for format options, take from there.
-                $display = $data['completiondate'] ?
-                    userdate($data['completiondate'], get_string('strftimedate', 'langconfig'), 99, false) :
-                    '';
-                break;
-            case 'completedcourses':
-                $display = \html_writer::start_tag('ul');
-                foreach ($data['completedcourses'] as $c) {
-                    $display .= \html_writer::tag('li', format_string($c));
-                }
-                $display .= \html_writer::end_tag('ul');
+        $customfields = issue_handler::create()->get_instance_data($issue->id, true);
+        foreach ($customfields as $data) {
+            if ($data->get_field()->get('shortname') === $thisdata['display']) {
+                return $data->export_value();
+            }
         }
-        return $display;
+        return '';
     }
 
     /**
@@ -143,26 +140,16 @@ class element extends \tool_certificate\element {
      */
     public function format_preview_data() {
         $data = json_decode($this->get_data(), true);
-        switch ($data['display']) {
-            case 'certificationname':
-                $display = get_string('previewcertificationname', 'certificateelement_program');
-                break;
-            case 'programname':
-                $display = get_string('previewprogramname', 'certificateelement_program');
-                break;
-            case 'completiondate':
-                $display = userdate(time(), get_string('strftimedate', 'langconfig'), 99, false);
-                break;
-            case 'completedcourses':
-                $courses = ['A course example', 'Second course example', 'Yet another course completed'];
-                $display = \html_writer::start_tag('ul');
-                foreach ($courses as $c) {
-                    $display .= \html_writer::tag('li', $c);
-                }
-                $display .= \html_writer::end_tag('ul');
-                break;
+        if ($field = issue_handler::create()->find_field_by_shortname($data['display'])) {
+            $value = $field->get_configdata_property('previewvalue');
+            $fielddata = data_controller::create(0, null, $field);
+            $fielddata->set($fielddata->datafield(), $value);
+            $fielddata->set('id', -1);
+            if ($expvalue = $fielddata->export_value()) {
+                return $fielddata->export_value();
+            }
         }
-        return $display;
+        return $data['display'];
     }
 
     /**
