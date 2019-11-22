@@ -39,15 +39,13 @@ Feature: Being able to verify that a certificate is valid or not
     And I verify the "Certificate 2" site certificate for the user "student1"
 
   Scenario: Verify a certificate as a guest using the site-wide URL
-    When I log in as "admin"
-    And I set the following system permissions of "Guest" role:
-      | capability | permission |
-      | tool/certificate:verify | Allow |
+    And the following "permission overrides" exist:
+      | capability              | permission | role  | contextlevel | reference |
+      | tool/certificate:verify | Allow      | guest | System       |           |
     And the following certificate issues exist:
       | template | user |
       | Certificate 1 | student1 |
       | Certificate 2 | student1 |
-    And I log out
     And I log in as "guest"
     And I visit the sites certificates verification url
     And I set the field "Code" to "NOTAVALIDCODE"
@@ -70,11 +68,9 @@ Feature: Being able to verify that a certificate is valid or not
       | Certificate 22 | user21 |
       | Certificate 00 | user22 |
       | Certificate 00 | user12 |
-    When I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | capability | permission |
-      | tool/certificate:verify | Allow |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability              | permission | role | contextlevel | reference |
+      | tool/certificate:verify | Allow      | user | System       |           |
     And I log in as "user23"
     And I visit the sites certificates verification url
     And I verify the "Certificate 11" site certificate for the user "user11"

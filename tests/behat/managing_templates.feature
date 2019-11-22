@@ -6,20 +6,16 @@ Feature: Being able to manage site templates
 
   Background:
     Given "3" tenants exist with "5" users and "0" courses in each
-    Given I log in as "admin"
     And the following "roles" exist:
       | shortname             | name                        | archetype |
       | certificatemanager    | Certificate manager         |           |
       | configviewer          | Config viewer               |           |
-    And I set the following system permissions of "Config viewer" role:
-      | capability                           | permission |
-      | moodle/site:configview               | Allow      |
-    And I set the following system permissions of "Certificate manager" role:
-      | capability | permission |
-      | tool/certificate:manage | Allow |
-      | moodle/category:viewcourselist | Allow |
-      | moodle/site:configview  | Allow |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability                     | permission | role               | contextlevel | reference |
+      | moodle/site:configview         | Allow      | configviewer       | System       |           |
+      | moodle/site:configview         | Allow      | certificatemanager | System       |           |
+      | moodle/category:viewcourselist | Allow      | certificatemanager | System       |           |
+      | tool/certificate:manage        | Allow      | certificatemanager | System       |           |
 
   Scenario: Adding a site template
     When I log in as "admin"

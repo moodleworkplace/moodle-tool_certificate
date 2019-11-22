@@ -57,7 +57,8 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
                     {key: 'oneissuewascreated', component: 'tool_certificate'},
                     {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
                 ]).done(function(s) {
-                    WpNotification.addNotification({message: data > 1 ? s[1] : s[0], type: 'success'});
+                    var str = data > 1 ? s[1] : s[0];
+                    WpNotification.addNotification({message: str, type: 'success'});
                 });
                 refreshReport();
             } else {

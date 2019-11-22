@@ -35,32 +35,20 @@ Feature: Being able to view the certificates that have been issued
       | certificateissuerall  | Certificate issuer for all  |           |
       | certificateviewer     | Certificate viewer          |           |
       | configviewer          | Config viewer               |           |
-    And I log in as "admin"
-    And I set the following system permissions of "Certificate manager for all" role:
-      | capability                     | permission |
-      | tool/certificate:manage        | Allow      |
-      | moodle/category:viewcourselist | Allow      |
-      | moodle/site:configview         | Allow      |
-    And I set the following system permissions of "Certificate manager" role:
-      | capability              | permission |
-      | tool/certificate:manage | Allow      |
-    And I set the following system permissions of "Certificate issuer" role:
-      | capability             | permission |
-      | tool/certificate:issue | Allow      |
-    And I set the following system permissions of "Certificate issuer for all" role:
-      | capability                     | permission |
-      | tool/certificate:issue         | Allow      |
-      | tool/tenant:allocate           | Allow      |
-      | moodle/category:viewcourselist | Allow      |
-      | moodle/site:configview         | Allow      |
-    And I set the following system permissions of "Certificate viewer" role:
-      | capability                           | permission |
-      | tool/certificate:viewallcertificates | Allow      |
-      | moodle/site:configview               | Allow      |
-    And I set the following system permissions of "Config viewer" role:
-      | capability                           | permission |
-      | moodle/site:configview               | Allow      |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability                           | permission | role                  | contextlevel | reference |
+      | tool/certificate:manage              | Allow      | certificatemanagerall | System       |           |
+      | moodle/category:viewcourselist       | Allow      | certificatemanagerall | System       |           |
+      | moodle/site:configview               | Allow      | certificatemanagerall | System       |           |
+      | tool/certificate:manage              | Allow      | certificatemanager    | System       |           |
+      | tool/certificate:issue               | Allow      | certificateissuer     | System       |           |
+      | tool/certificate:issue               | Allow      | certificateissuerall  | System       |           |
+      | tool/tenant:allocate                 | Allow      | certificateissuerall  | System       |           |
+      | moodle/category:viewcourselist       | Allow      | certificateissuerall  | System       |           |
+      | moodle/site:configview               | Allow      | certificateissuerall  | System       |           |
+      | tool/certificate:viewallcertificates | Allow      | certificateviewer     | System       |           |
+      | moodle/site:configview               | Allow      | certificateviewer     | System       |           |
+      | moodle/site:configview               | Allow      | configviewer          | System       |           |
 
   Scenario: View the issued certificates as admin
     When I log in as "admin"
@@ -198,11 +186,9 @@ Feature: Being able to view the certificates that have been issued
     And I log out
 
   Scenario: Verify any certificate for any tenant as a guest using the site-wide URL
-    When I log in as "admin"
-    And I set the following system permissions of "Guest" role:
-      | capability              | permission |
-      | tool/certificate:verify | Allow      |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability              | permission | role  | contextlevel | reference |
+      | tool/certificate:verify | Allow      | guest | System       |           |
     And I visit the sites certificates verification url
     And I verify the "Certificate 1" site certificate for the user "user11"
     And I verify the "Certificate 1" site certificate for the user "user12"
@@ -211,12 +197,10 @@ Feature: Being able to view the certificates that have been issued
     And I verify the "Certificate 0" site certificate for the user "user12"
 
   Scenario: User who can verify certificates but can not manage or issue should not see it in site administration
-    Given I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | capability              | permission |
-      | tool/certificate:verify | Allow      |
-      | moodle/site:configview  | Allow      |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability              | permission | role | contextlevel | reference |
+      | tool/certificate:verify | Allow      | user | System       |           |
+      | moodle/site:configview  | Allow      | user | System       |           |
     When I log in as "manager1"
     And I follow "Site administration"
     Then "Certificates" "text" should not exist in the "region-main" "region"
