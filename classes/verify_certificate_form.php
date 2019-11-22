@@ -45,24 +45,8 @@ class verify_certificate_form extends \moodleform {
 
         $mform->addElement('text', 'code', get_string('code', 'tool_certificate'));
         $mform->setType('code', PARAM_ALPHANUM);
+        $mform->addRule('code', null, 'required', null, 'client');
 
         $mform->addElement('submit', 'verify', get_string('verify', 'tool_certificate'));
-    }
-
-    /**
-     * Validation.
-     *
-     * @param array $data
-     * @param array $files
-     * @return array the errors that were found
-     */
-    public function validation($data, $files) {
-        $errors = array();
-
-        if ($data['code'] === '') {
-            $errors['code'] = get_string('invalidcode', 'tool_certificate');
-        }
-
-        return $errors;
     }
 }

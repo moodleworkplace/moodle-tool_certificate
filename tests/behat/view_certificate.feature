@@ -24,11 +24,9 @@ Feature: Being able to download valid certificates
     And I click on "View certificate" "link"
 
   Scenario: Verify a certificate as a guest using the site-wide URL
-    When I log in as "admin"
-    And I set the following system permissions of "Guest" role:
-      | capability | permission |
-      | tool/certificate:verify | Allow |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability              | permission | role  | contextlevel | reference |
+      | tool/certificate:verify | Allow      | guest | System       |           |
     And I log in as "guest"
     And I visit the sites certificates verification url
     And I verify the "Certificate 1" site certificate for the user "student1"

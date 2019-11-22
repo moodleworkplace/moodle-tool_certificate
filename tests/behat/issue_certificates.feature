@@ -26,20 +26,14 @@ Feature: Being able to manually issue a certificate to a user
       | user24  | certificateissuer    | Category     | CAT2      |
       | user24  | configviewer         | System       |           |
       | issuer0 | certificateissuerall | System       |           |
-    And I log in as "admin"
-    And I set the following system permissions of "Config viewer" role:
-      | capability             | permission |
-      | moodle/site:configview | Allow      |
-    And I set the following system permissions of "Certificate issuer" role:
-      | capability             | permission |
-      | tool/certificate:issue | Allow      |
-    And I set the following system permissions of "Certificate issuer for all" role:
-      | capability                     | permission |
-      | tool/certificate:issue         | Allow      |
-      | tool/tenant:allocate           | Allow      |
-      | moodle/category:viewcourselist | Allow      |
-      | moodle/site:configview         | Allow      |
-    And I log out
+    And the following "permission overrides" exist:
+      | capability                     | permission | role                 | contextlevel | reference |
+      | moodle/site:configview         | Allow      | configviewer         | System       |           |
+      | tool/certificate:issue         | Allow      | certificateissuer    | System       |           |
+      | tool/certificate:issue         | Allow      | certificateissuerall | System       |           |
+      | tool/tenant:allocate           | Allow      | certificateissuerall | System       |           |
+      | moodle/site:configview         | Allow      | certificateissuerall | System       |           |
+      | moodle/category:viewcourselist | Allow      | certificateissuerall | System       |           |
 
   Scenario: Issue a certificate as admin, from the list of templates
     When I log in as "admin"

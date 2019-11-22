@@ -95,6 +95,7 @@ class certificate_issues extends modal_form {
      * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
      *
      * @param \stdClass $data
+     * @return int number of issues created
      */
     public function process(\stdClass $data) {
         $i = 0;
@@ -106,14 +107,7 @@ class certificate_issues extends modal_form {
                 }
             }
         }
-        if ($i == 0) {
-            $notification = get_string('noissueswerecreated', 'tool_certificate');
-        } else if ($i == 1) {
-            $notification = get_string('oneissuewascreated', 'tool_certificate');
-        } else {
-            $notification = get_string('aissueswerecreated', 'tool_certificate', $i);
-        }
-        // TODO SP-444 there is no nice way to show these notifications at the moment.
+        return $i;
     }
 
     /**

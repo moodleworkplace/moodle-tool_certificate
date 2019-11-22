@@ -24,7 +24,6 @@
 
 $string['height'] = 'Height';
 $string['height_help'] = 'Height of the image in mm. If equal to zero, it is automatically calculated.';
-$string['image'] = 'Image';
 $string['imagerequired'] = 'You must either upload an image or select a shared image';
 $string['invalidheight'] = 'The height has to be a valid number greater than or equal to 0.';
 $string['invalidwidth'] = 'The width has to be a valid number greater than or equal to 0.';
