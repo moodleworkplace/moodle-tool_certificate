@@ -96,11 +96,10 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
                     WpNotification.addNotification({message: str, type: 'success'});
                 });
             } else {
-                Str.get_strings([
-                    {key: 'noissueswerecreated', component: 'tool_certificate'}
-                ]).done(function(s) {
-                    WpNotification.addNotification({message: s[0], type: 'warning'});
-                });
+                Str.get_string('noissueswerecreated', 'tool_certificate')
+                    .done(function(s) {
+                        WpNotification.addNotification({message: s, type: 'warning'});
+                    });
             }
         };
     };
