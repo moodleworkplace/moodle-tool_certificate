@@ -185,21 +185,6 @@ class permission {
     }
 
     /**
-     * Get issue record from database base on it's code.
-     *
-     * @param string $issuecode
-     * @return \stdClass
-     */
-    public static function get_issue_from_code($issuecode): ?\stdClass {
-        global $DB;
-        $record = $DB->get_record('tool_certificate_issues', ['code' => $issuecode]);
-        if ($record) {
-            $record->customfields = issue_handler::create()->get_instance_data($record->id, true);
-        }
-        return $record ?: null;
-    }
-
-    /**
      * If current user can view list of certificates
      * @param int $userid The id of user which certificates were issued for.
      */
