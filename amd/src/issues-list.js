@@ -21,8 +21,21 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax'],
-function($, ModalForm, Tabs, Notification, Str, Ajax) {
+define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
+function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
+
+    /**
+     * Refresh the report without reloading page
+     */
+    var refreshReport = function() {
+        var report = $("[data-region='system-report'] [data-region='data-report']");
+        if (report) {
+            // TODO use RELOADTABLEWITHOUTPAGINATION constant from tool_reportbuilder/reportbuilder_events.
+            report.trigger('reportbuilder:reloadtablewithoutpagination');
+        } else {
+            window.location.reload();
+        }
+    };
 
     /**
      * Add issue dialogue
@@ -37,8 +50,23 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
             saveButtonText: Str.get_string('save'),
             triggerElement: $(e.currentTarget),
         });
-        modal.onSubmitSuccess = function() {
-            window.location.reload();
+        modal.onSubmitSuccess = function(data) {
+            data = parseInt(data, 10);
+            if (data) {
+                Str.get_strings([
+                    {key: 'oneissuewascreated', component: 'tool_certificate'},
+                    {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
+                ]).done(function(s) {
+                    WpNotification.addNotification({message: data > 1 ? s[1] : s[0], type: 'success'});
+                });
+                refreshReport();
+            } else {
+                Str.get_strings([
+                    {key: 'noissueswerecreated', component: 'tool_certificate'}
+                ]).done(function(s) {
+                    WpNotification.addNotification({message: s[0], type: 'warning'});
+                });
+            }
         };
     };
 
@@ -60,7 +88,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
                         args: {id: $(e.currentTarget).attr('data-id')}}
                 ]);
                 promises[0].done(function() {
-                    window.location.reload();
+                    refreshReport();
                 }).fail(Notification.exception);
             });
         }).fail(Notification.exception);

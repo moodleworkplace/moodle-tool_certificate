@@ -21,8 +21,8 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax'],
-function($, ModalForm, Tabs, Notification, Str, Ajax) {
+define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
+function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
 
     /**
      * Display modal form
@@ -78,14 +78,30 @@ function($, ModalForm, Tabs, Notification, Str, Ajax) {
      */
     var displayIssue = function(e) {
         e.preventDefault();
-        new ModalForm({
+        var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\certificate_issues',
             args: {tid: $(e.currentTarget).attr('data-tid')},
             modalConfig: {title: Str.get_string('issuenewcertificates', 'tool_certificate')},
             saveButtonText: Str.get_string('save'),
             triggerElement: $(e.currentTarget),
         });
-        // No action on submit.
+        modal.onSubmitSuccess = function(data) {
+            data = parseInt(data, 10);
+            if (data) {
+                Str.get_strings([
+                    {key: 'oneissuewascreated', component: 'tool_certificate'},
+                    {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
+                ]).done(function(s) {
+                    WpNotification.addNotification({message: data > 1 ? s[1] : s[0], type: 'success'});
+                });
+            } else {
+                Str.get_strings([
+                    {key: 'noissueswerecreated', component: 'tool_certificate'}
+                ]).done(function(s) {
+                    WpNotification.addNotification({message: s[0], type: 'warning'});
+                });
+            }
+        };
     };
 
     var duplicateMulticategory = function(e) {
