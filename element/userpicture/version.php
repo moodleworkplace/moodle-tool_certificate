@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // This plugin is part of Moodle Workplace product.
 $plugin->component    = 'certificateelement_userpicture';
-$plugin->release      = '3.8-dev';
-$plugin->version      = 2019111300;
-$plugin->requires     = 2019110500.00;
+$plugin->release      = '3.8';
+$plugin->version      = 2019112600;
+$plugin->requires     = 2019111800.00;
 $plugin->maturity     = MATURITY_STABLE;
