@@ -35,14 +35,15 @@ function tool_certificate_upgrade_remove_tenant_field($tablename = 'tool_certifi
 
     $params = ['coursecat' => CONTEXT_COURSECAT, 'syscontext' => context_system::instance()->id];
     if ($dbman->table_exists(new xmldb_table('tool_tenant'))) {
-        $contextids = $DB->get_records_sql_menu('SELECT DISTINCT ct.tenantid, COALESCE(ctx.id, :syscontext) AS contextid
+        $contextids = $DB->get_records_sql_menu('SELECT DISTINCT ct.tenantid, ctx.id AS contextid
             FROM {' . $tablename . '} ct
             LEFT JOIN {tool_tenant} t ON ct.tenantid = t.id
             LEFT JOIN {context} ctx ON t.categoryid = ctx.instanceid AND ctx.contextlevel = :coursecat',
             $params);
 
         foreach ($contextids as $tenantid => $contextid) {
-            $DB->execute('UPDATE {' . $tablename . '} SET contextid = ? WHERE tenantid = ?', [$contextid, $tenantid]);
+            $DB->execute('UPDATE {' . $tablename . '} SET contextid = ? WHERE tenantid = ?',
+                [$contextid ?: $params['syscontext'], $tenantid]);
         }
     } else {
         $sql = 'UPDATE {' . $tablename . '} SET contextid = :syscontext';
