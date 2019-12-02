@@ -73,8 +73,6 @@ class certificate_issues extends modal_form {
 
         $mform->addElement('date_time_selector', 'expires', get_string('expires', 'tool_certificate'),
             ['optional' => true]);
-        $mform->addElement('submit', 'submit', get_string('issuecertificates', 'tool_certificate'));
-        $mform->addElement('cancel');
     }
 
     /**
