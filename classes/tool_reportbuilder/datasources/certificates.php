@@ -76,14 +76,19 @@ class certificates extends datasource {
             $column->set_is_default(true, 1);
             $column->set_is_sortable(true, true);
         }
-        if ($column = $this->get_column('tool_certificate_template:timecreated')) {
+        if ($column = $this->get_column('tool_certificate_template:coursecatnamewithlink')) {
             $column->set_is_default(true, 2);
+            $column->set_is_sortable(true, true);
+        }
+        if ($column = $this->get_column('tool_certificate_template:timecreated')) {
+            $column->set_is_default(true, 3);
             $column->set_is_sortable(true, true);
         }
 
         // Add default filters.
         $filters = $this->get_filters();
         $filters['tool_certificate_template:name']->set_is_default(true, [1]);
+        $filters['tool_certificate_template:coursecategory']->set_is_default(true);
         $filters['tool_certificate_template:timecreated']->set_is_default(true);
     }
 
