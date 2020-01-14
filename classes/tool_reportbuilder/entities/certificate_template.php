@@ -214,6 +214,16 @@ class certificate_template extends entity_base {
             ->set_field_sql("$tablealias.id")
             ->set_options(\tool_certificate\template::get_visible_templates_list());
 
+        $filters[] = (new report_filter(
+            select::class,
+            'coursecategory',
+            new \lang_string('coursecategory', ''),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_field_sql("coursecat.id")
+            ->set_options(\core_course_category::make_categories_list());
+
         return $filters;
     }
 
