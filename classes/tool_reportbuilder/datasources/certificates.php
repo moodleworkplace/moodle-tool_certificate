@@ -52,8 +52,6 @@ class certificates extends datasource {
         // Set main table. For certificates we want a custom tenant filter, so disable automatic one.
         $this->set_main_table('tool_certificate_templates', 'tct', false);
         list($sql, $params) = $this->get_visible_categories_contexts_sql();
-        $targetcategories = \core_course_category::make_categories_list('tool/certificate:manage');
-        $this->canchangecategory = count($targetcategories) > 1;
         $this->add_base_join("JOIN {context} ctx
             ON ctx.id = tct.contextid AND " . $sql, $params);
         $p3 = \tool_wp\db::generate_param_name();
@@ -98,7 +96,7 @@ class certificates extends datasource {
      * @return string
      */
     public static function get_name(): string {
-        return get_string('certificates', 'tool_certificate');
+        return get_string('certificatetemplates', 'tool_certificate');
     }
 
     /**

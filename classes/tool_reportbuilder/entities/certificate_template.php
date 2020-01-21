@@ -197,7 +197,7 @@ class certificate_template extends entity_base {
         $filters[] = (new report_filter(
             text::class,
             'name',
-            new \lang_string('certificatetemplate', 'tool_certificate'),
+            new \lang_string('certificatetemplatename', 'tool_certificate'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
