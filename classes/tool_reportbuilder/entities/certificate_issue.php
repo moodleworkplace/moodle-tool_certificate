@@ -108,20 +108,27 @@ class certificate_issue extends entity_base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(constants::DB_TYPE_TEXT)
-            ->add_field("$tablealias.code")
-            ->add_callback([format::class, 'format_string']);
+            ->add_field("{$tablealias}.code")
+            ->add_aggregation_fields('count', "{$tablealias}.id")
+            ->set_groupby_sql("{$tablealias}.id")
+            ->set_is_available(\tool_certificate\permission::can_verify());
         $columns[] = $newcolumn;
 
+        $str = '<span>{{code}}</span>';
+        list($sql, $params) = \tool_reportbuilder\db::sql_string_with_placeholders($str, ['{{code}}' => "{$tablealias}.code"]);
+        $fieldname = 'codewithlink';
         $newcolumn = (new report_column(
-            'codewithlink',
-            new \lang_string('codewithlink', 'tool_certificate'),
+            $fieldname,
+            new \lang_string($fieldname, 'tool_certificate'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_type(constants::DB_TYPE_TEXT)
-            ->add_field("$tablealias.code")
-            ->add_callback([$this, 'col_code'])
+            ->add_field($sql, $fieldname, $params)
+            ->add_aggregation_fields('count', "{$tablealias}.id")
+            ->add_callback([$this, 'code_replace_all'])
+            ->add_aggregation_callback('groupconcat', [$this, 'code_replace_all'])
+            ->add_aggregation_callback('groupconcatdistinct', [$this, 'code_replace_all'])
+            ->set_groupby_sql("{$tablealias}.id")
             ->set_is_available(\tool_certificate\permission::can_verify());
         $columns[] = $newcolumn;
 
@@ -187,13 +194,28 @@ class certificate_issue extends entity_base {
     }
 
     /**
-     * Generate the code column.
+     * Formats a category name or a list of comma-separated names to add links
+     *
+     * @param string $value
+     * @param \stdClass $row
+     * @return null|string|string[]
+     */
+    public static function code_replace_all($value, $row) {
+        return preg_replace_callback('#<span>([^<]*?)</span>#',
+            function($matches) {
+                return self::code_replace_one($matches[1]);
+            }, $value);
+    }
+
+    /**
+     * Formats a code to add link
      *
      * @param string $code
      * @return string
      */
-    public function col_code($code) {
-        return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]),
-            $code, ['title' => get_string('verify', 'tool_certificate')]);
+    protected static function code_replace_one($code) {
+        $url = new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]);
+        $name = format_string($code, false, ['context' => \context_system::instance(), 'escape' => false]);
+        return \html_writer::link($url, $name, ['title' => get_string('verify', 'tool_certificate')]);
     }
 }

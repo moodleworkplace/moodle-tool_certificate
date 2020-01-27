@@ -166,11 +166,11 @@ class certificate_template extends entity_base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_field($sql, 'coursecatnamewithlink', $params)
+            ->add_field($sql, $fieldname, $params)
             ->add_aggregation_fields('count', 'coursecat.id')
-            ->add_callback([$this, 'categoryname_replace_all'], $fieldname)
-            ->add_aggregation_callback('groupconcat', [$this, 'categoryname_replace_all'], $fieldname)
-            ->add_aggregation_callback('groupconcatdistinct', [$this, 'categoryname_replace_all'], $fieldname)
+            ->add_callback([$this, 'categoryname_replace_all'])
+            ->add_aggregation_callback('groupconcat', [$this, 'categoryname_replace_all'])
+            ->add_aggregation_callback('groupconcatdistinct', [$this, 'categoryname_replace_all'])
             ->set_groupby_sql('coursecat.id');
 
         $columns[] = $newcolumn;
@@ -237,12 +237,11 @@ class certificate_template extends entity_base {
      *
      * @param string $value
      * @param \stdClass $row
-     * @param string $type one of: fullnamewithpicture, fullnamewithpicturelink, fullnamewithlink, picture
      * @return null|string|string[]
      */
-    public static function categoryname_replace_all($value, $row, $type) {
+    public static function categoryname_replace_all($value, $row) {
         return preg_replace_callback('#<span>([^<]*?)</span data-category="(\d*)">#',
-            function($matches) use ($type) {
+            function($matches) {
                 return self::categoryname_replace_one($matches[1], $matches[2]);
             }, $value);
     }
