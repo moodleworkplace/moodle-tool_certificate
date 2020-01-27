@@ -149,25 +149,30 @@ class certificate_template extends entity_base {
             new \lang_string('coursecategory', ''),
             $this->get_entity_name()
         ))
-            ->add_callback([$this, 'col_coursecat_name']);
-        $catcolumns = \context_helper::get_preload_record_columns('ctx');
-        foreach ($catcolumns as $fieldname => $alias) {
-            $newcolumn->add_field($fieldname, $alias);
-        }
-        $newcolumn->add_field('coursecat.name', 'categoryname');
+            ->add_joins($this->get_joins())
+            ->add_field('coursecat.name', 'categoryname')
+            ->add_aggregation_fields('count', 'coursecat.id')
+            ->set_groupby_sql('coursecat.id');
         $columns[] = $newcolumn;
 
+        $str = '<span>{{name}}</span data-category="{{id}}">';
+        list($sql, $params) = \tool_reportbuilder\db::sql_string_with_placeholders($str,
+            ['{{id}}' => 'coursecat.id', '{{name}}' => 'coursecat.name']);
+
+        $fieldname = 'coursecatnamewithlink';
         $newcolumn = (new report_column(
-            'coursecatnamewithlink',
+            $fieldname,
             new \lang_string('coursecategorywithlink', 'tool_certificate'),
             $this->get_entity_name()
         ))
-            ->add_callback([$this, 'col_coursecat_name_with_link']);
-        $catcolumns = \context_helper::get_preload_record_columns('ctx');
-        foreach ($catcolumns as $fieldname => $alias) {
-            $newcolumn->add_field($fieldname, $alias);
-        }
-        $newcolumn->add_field('coursecat.name', 'categoryname');
+            ->add_joins($this->get_joins())
+            ->add_field($sql, 'coursecatnamewithlink', $params)
+            ->add_aggregation_fields('count', 'coursecat.id')
+            ->add_callback([$this, 'categoryname_replace_all'], $fieldname)
+            ->add_aggregation_callback('groupconcat', [$this, 'categoryname_replace_all'], $fieldname)
+            ->add_aggregation_callback('groupconcatdistinct', [$this, 'categoryname_replace_all'], $fieldname)
+            ->set_groupby_sql('coursecat.id');
+
         $columns[] = $newcolumn;
 
         return $columns;
@@ -222,44 +227,36 @@ class certificate_template extends entity_base {
         ))
             ->add_joins($this->get_joins())
             ->set_field_sql("coursecat.id")
-            ->set_options(\core_course_category::make_categories_list());
+            ->set_options(['' => '-'] + \core_course_category::make_categories_list());
 
         return $filters;
     }
 
     /**
-     * Formatter for the course category name
+     * Formats a category name or a list of comma-separated names to add links
      *
-     * @param mixed $value
-     * @param \stdClass $template
-     * @return string
+     * @param string $value
+     * @param \stdClass $row
+     * @param string $type one of: fullnamewithpicture, fullnamewithpicturelink, fullnamewithlink, picture
+     * @return null|string|string[]
      */
-    public function col_coursecat_name_with_link($value, \stdClass $template) {
-        \context_helper::preload_from_record($template);
-        $context = \context::instance_by_id($value);
-        if ($context instanceof \context_system) {
-            return '-';
-        } else {
-            $url = new \moodle_url('/course/index.php', ['categoryid' => $context->instanceid]);
-            $name = format_string($template->categoryname, false, ['context' => $context, 'escape' => false]);
-            return \html_writer::link($url, $name);
-        }
+    public static function categoryname_replace_all($value, $row, $type) {
+        return preg_replace_callback('#<span>([^<]*?)</span data-category="(\d*)">#',
+            function($matches) use ($type) {
+                return self::categoryname_replace_one($matches[1], $matches[2]);
+            }, $value);
     }
 
     /**
-     * Formatter for the course category name
+     * Formats a category name to add link
      *
-     * @param mixed $value
-     * @param \stdClass $template
+     * @param string $name
+     * @param int $id
      * @return string
      */
-    public function col_coursecat_name($value, \stdClass $template) {
-        \context_helper::preload_from_record($template);
-        $context = \context::instance_by_id($value);
-        if ($context instanceof \context_system) {
-            return '-';
-        } else {
-            return format_string($template->categoryname, false, ['context' => $context, 'escape' => false]);
-        }
+    protected static function categoryname_replace_one($name, $id) {
+        $url = new \moodle_url('/course/index.php', ['categoryid' => $id]);
+        $name = format_string($name, false, ['context' => \context_system::instance(), 'escape' => false]);
+        return \html_writer::link($url, $name);
     }
 }
