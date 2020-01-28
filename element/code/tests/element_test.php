@@ -62,6 +62,8 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
             ['display' => \certificateelement_code\element::DISPLAY_CODELINK]);
         $e3 = $this->get_generator()->create_element($pageid, 'code',
             ['display' => \certificateelement_code\element::DISPLAY_URL]);
+        $e4 = $this->get_generator()->create_element($pageid, 'code',
+            ['display' => \certificateelement_code\element::DISPLAY_QRCODE]);
 
         // We don't know what the generated code will be, so match it's pattern.
         $coderegex = '([A-Za-z0-9]{10})';
@@ -79,6 +81,9 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
         // Display is DISPLAY_URL.
         $e3output = strip_tags($e3->render_html(), '<a>');
         $this->assertRegExp('|^' . $urlregex . '$|', $e3output);
+
+        // Display is DISPLAY_QRCODE.
+        $this->assertTrue(strpos('<img>', $e4->render_html()) >= 0);
 
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
