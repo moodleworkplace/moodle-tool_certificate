@@ -171,7 +171,7 @@ class element extends \tool_certificate\element {
     protected function render_qrcode($pdf, $code) {
 
         $style = [
-            'border' => 2,
+            'border' => 0,
             'vpadding' => 'auto',
             'hpadding' => 'auto',
             'fgcolor' => array(0, 0, 0),

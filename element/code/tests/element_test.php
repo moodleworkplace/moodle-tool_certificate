@@ -83,7 +83,7 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
         $this->assertRegExp('|^' . $urlregex . '$|', $e3output);
 
         // Display is DISPLAY_QRCODE.
-        $this->assertTrue(strpos('<img>', $e4->render_html()) >= 0);
+        $this->assertTrue(strpos('<img', $e4->render_html()) !== false);
 
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
