@@ -27,6 +27,7 @@ namespace tool_certificate\tool_reportbuilder\entities;
 
 use tool_reportbuilder\constants;
 use tool_reportbuilder\entity_base;
+use tool_reportbuilder\local\helpers\columns;
 use tool_reportbuilder\report_column;
 use tool_reportbuilder\report_filter;
 use tool_reportbuilder\local\filter\date_condition;
@@ -53,7 +54,8 @@ class certificate_template extends entity_base {
      * @return array
      */
     protected function get_default_table_aliases(): array {
-        return ['tool_certificate_templates' => 'tct'];
+        return ['tool_certificate_templates' => 'tct',
+            'course_categories' => 'coursecat'];
     }
 
     /**
@@ -103,6 +105,7 @@ class certificate_template extends entity_base {
         global $DB;
         $columns = [];
         $tablealias = $this->get_table_alias('tool_certificate_templates');
+        $coursecatalias = $this->get_table_alias('course_categories');
 
         $newcolumn = (new report_column(
             'name',
@@ -150,14 +153,14 @@ class certificate_template extends entity_base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_field('coursecat.name', 'categoryname')
-            ->add_aggregation_fields('count', 'coursecat.id')
-            ->set_groupby_sql('coursecat.id');
+            ->add_field("COALESCE($coursecatalias.name, '-')", 'categoryname')
+            ->add_aggregation_fields('count', "$coursecatalias.id")
+            ->set_groupby_sql("$coursecatalias.id");
         $columns[] = $newcolumn;
 
         $str = '<span>{{name}}</span data-category="{{id}}">';
         list($sql, $params) = \tool_reportbuilder\db::sql_string_with_placeholders($str,
-            ['{{id}}' => 'coursecat.id', '{{name}}' => 'coursecat.name']);
+            ['{{id}}' => "COALESCE($coursecatalias.id, 0)", '{{name}}' => "COALESCE($coursecatalias.name, '-')"]);
 
         $fieldname = 'coursecatnamewithlink';
         $newcolumn = (new report_column(
@@ -167,11 +170,11 @@ class certificate_template extends entity_base {
         ))
             ->add_joins($this->get_joins())
             ->add_field($sql, $fieldname, $params)
-            ->add_aggregation_fields('count', 'coursecat.id')
+            ->add_aggregation_fields('count', "$coursecatalias.id")
             ->add_callback([$this, 'categoryname_replace_all'])
             ->add_aggregation_callback('groupconcat', [$this, 'categoryname_replace_all'])
             ->add_aggregation_callback('groupconcatdistinct', [$this, 'categoryname_replace_all'])
-            ->set_groupby_sql('coursecat.id');
+            ->set_groupby_sql("$coursecatalias.id");
 
         $columns[] = $newcolumn;
 
@@ -219,6 +222,8 @@ class certificate_template extends entity_base {
             ->set_field_sql("$tablealias.id")
             ->set_options(\tool_certificate\template::get_visible_templates_list());
 
+        // Filter Category selector.
+        $coursecatalias = $this->get_table_alias('course_categories');
         $filters[] = (new report_filter(
             select::class,
             'coursecategory',
@@ -226,8 +231,8 @@ class certificate_template extends entity_base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->set_field_sql("coursecat.id")
-            ->set_options(['' => '-'] + \core_course_category::make_categories_list());
+            ->set_field_sql("COALESCE($coursecatalias.id, 0)")
+            ->set_options([0 => '-'] + \core_course_category::make_categories_list());
 
         return $filters;
     }
@@ -254,6 +259,9 @@ class certificate_template extends entity_base {
      * @return string
      */
     protected static function categoryname_replace_one($name, $id) {
+        if (!$id) {
+            return '-';
+        }
         $url = new \moodle_url('/course/index.php', ['categoryid' => $id]);
         $name = format_string($name, false, ['context' => \context_system::instance(), 'escape' => false]);
         return \html_writer::link($url, $name);
