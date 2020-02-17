@@ -30,6 +30,7 @@ $string['display_help'] = 'How to display the code:
 * URL: will display the verification URL as text (usually for printed certificates where it is not possible to click a link)';
 $string['displaycode'] = 'Code only';
 $string['displaycodelink'] = 'Code with link';
+$string['displayqrcode'] = 'QR Code';
 $string['displayurl'] = 'Verification URL';
 $string['pluginname'] = 'Code';
 $string['privacy:metadata'] = 'The Code plugin does not store any personal data.';

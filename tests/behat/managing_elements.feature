@@ -29,6 +29,8 @@ Feature: Being able to manage elements in a certificate template
     And I press "Save" in the modal form dialogue
     # Code.
     And I add the element "Code" to page "1" of the "Certificate 1" site certificate template
+    And the following fields match these values:
+      | Display | QR Code |
     And I set the following fields to these values:
       | Font                     | Times - Italic |
       | Size                     | 20        |
