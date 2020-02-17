@@ -685,4 +685,44 @@ class template {
     public function get_exporter() : \tool_certificate\output\template {
         return new \tool_certificate\output\template($this->persistent, ['template' => $this]);
     }
+
+    /**
+     * Get a mapped list of templates ids and names, sorted by template name.
+     *
+     * @return array
+     */
+    public static function get_visible_templates_list(): array {
+        global $DB;
+
+        list($sql, $params) = self::get_visible_categories_contexts_sql();
+        $sql = "SELECT tct.id, tct.name
+                  FROM {tool_certificate_templates} tct
+                  JOIN {context} ctx
+                    ON ctx.id = tct.contextid AND " . $sql .
+            " ORDER BY tct.name";
+
+        $templates = $DB->get_records_sql($sql, $params);
+
+        $list = [];
+        foreach ($templates as $t) {
+            $list[$t->id] = format_string($t->name);
+        }
+        return $list;
+    }
+
+    /**
+     * Subquery for visible contexts for a category/system
+     *
+     * @return array
+     */
+    protected static function get_visible_categories_contexts_sql() {
+        global $DB;
+        $contextids = \tool_certificate\permission::get_visible_categories_contexts(false);
+        if ($contextids) {
+            list($sql, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, \tool_wp\db::generate_param_name());
+            return ['ctx.id '.$sql, $params];
+        } else {
+            return ['1=0', []];
+        }
+    }
 }
