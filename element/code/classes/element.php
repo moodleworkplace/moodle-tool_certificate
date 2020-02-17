@@ -51,6 +51,11 @@ class element extends \tool_certificate\element {
     const DISPLAY_URL = 3;
 
     /**
+     * @var int Option to display QR Code with verification URL
+     */
+    const DISPLAY_QRCODE = 4;
+
+    /**
      * This function renders the form elements when adding a certificate element.
      *
      * @param \MoodleQuickForm $mform the edit_form instance
@@ -62,9 +67,11 @@ class element extends \tool_certificate\element {
         $options[self::DISPLAY_CODE] = get_string('displaycode', 'certificateelement_code');
         $options[self::DISPLAY_CODELINK] = get_string('displaycodelink', 'certificateelement_code');
         $options[self::DISPLAY_URL] = get_string('displayurl', 'certificateelement_code');
+        $options[self::DISPLAY_QRCODE] = get_string('displayqrcode', 'certificateelement_code');
 
         $mform->addElement('select', 'display', get_string('display', 'certificateelement_code'), $options);
         $mform->addHelpButton('display', 'display', 'certificateelement_code');
+        $mform->setDefault('display', self::DISPLAY_QRCODE);
 
         parent::render_form_elements($mform);
     }
@@ -120,7 +127,11 @@ class element extends \tool_certificate\element {
             $code = $issue->code;
         }
 
-        \tool_certificate\element_helper::render_content($pdf, $this, $this->format_code($code));
+        if (json_decode($this->get_data())->display == self::DISPLAY_QRCODE) {
+            $this->render_qrcode($pdf, $code);
+        } else {
+            \tool_certificate\element_helper::render_content($pdf, $this, $this->format_code($code));
+        }
     }
 
     /**
@@ -132,10 +143,78 @@ class element extends \tool_certificate\element {
      * @return string the html
      */
     public function render_html() {
-        $code = \tool_certificate\certificate::generate_code();
+        global $OUTPUT;
 
-        return \tool_certificate\element_helper::render_html_content($this, $this->format_code($code));
+        $data = json_decode($this->get_data(), true);
+
+        if ($data['display'] == self::DISPLAY_QRCODE) {
+            $url = $OUTPUT->image_url('qrcode', 'tool_certificate')->out(false);
+            $w = $this->get_width() > 0 ? $this->get_width() : 50;
+            $imageinfo = $data + ['width' => $w, 'height' => $w];
+
+            $html = \tool_certificate\element_helper::render_image_html($url, $imageinfo,
+                (float)$imageinfo['width'], (float)$imageinfo['height'], $this->get_display_name());
+        } else {
+            $code = \tool_certificate\certificate::generate_code();
+            $html = \tool_certificate\element_helper::render_html_content($this, $this->format_code($code));
+        }
+
+        return $html;
     }
+
+    /**
+     * Put a QR code in cerficate pdf object
+     *
+     * @param pdf $pdf The pdf object
+     * @param string $code The certificate code
+     */
+    protected function render_qrcode($pdf, $code) {
+
+        $style = [
+            'border' => 0,
+            'vpadding' => 'auto',
+            'hpadding' => 'auto',
+            'fgcolor' => array(0, 0, 0),
+            'bgcolor' => array(255, 255, 255),
+            'module_width' => 1,
+            'module_height' => 1
+        ];
+
+        $codeurl = new \moodle_url("/admin/tool/certificate/index.php", ['code' => $code]);
+        $codeurl->param('code', $code);
+
+        $x = $this->get_posx();
+        $y = $this->get_posy();
+        $w = $this->get_width();
+        $refpoint = $this->get_refpoint();
+        $page = $this->get_page()->to_record();
+
+        $align = 'L';
+        if ($refpoint == \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPRIGHT) {
+            $align = 'R';
+            $w = $w ?: ($x - $page->leftmargin);
+            $x = $x - $w;
+        } else if ($refpoint == \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPCENTER) {
+            $align = 'C';
+            if (!$w) {
+                $w = min($x - $page->leftmargin, $page->width - $page->rightmargin - $x) * 2;
+            }
+            $x = $x - $w / 2;
+        } else {
+            if (!$w) {
+                $w = max(0, $page->width - $page->rightmargin - $x);
+            }
+        }
+        if ($w) {
+            $w += 0.0001;
+        }
+        $pdf->setCellPaddings(0, 0, 0, 0);
+
+        $pdf->write2DBarcode($codeurl->out(false), 'QRCODE,M', $x, $y, $w, $w, $style, 'N');
+        $pdf->SetXY($x, $y + 49);
+        $pdf->SetFillColor(255, 255, 255);
+    }
+
 
     /**
      * Prepare data to pass to moodleform::set_data()
