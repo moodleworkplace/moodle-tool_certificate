@@ -155,7 +155,7 @@ class certificate_template extends entity_base {
             ->add_joins($this->get_joins())
             ->add_field("COALESCE($coursecatalias.name, '-')", 'categoryname')
             ->add_aggregation_fields('count', "$coursecatalias.id")
-            ->set_groupby_sql("$coursecatalias.id");
+            ->set_groupby_sql("$coursecatalias.id,$coursecatalias.name");
         $columns[] = $newcolumn;
 
         $str = '<span>{{name}}</span data-category="{{id}}">';
@@ -174,7 +174,7 @@ class certificate_template extends entity_base {
             ->add_callback([$this, 'categoryname_replace_all'])
             ->add_aggregation_callback('groupconcat', [$this, 'categoryname_replace_all'])
             ->add_aggregation_callback('groupconcatdistinct', [$this, 'categoryname_replace_all'])
-            ->set_groupby_sql("$coursecatalias.id");
+            ->set_groupby_sql("$coursecatalias.id,$coursecatalias.name");
 
         $columns[] = $newcolumn;
 
