@@ -76,7 +76,9 @@ class template extends persistent_exporter {
     protected static function define_other_properties(): array {
         return [
             'pages' => ['type' => page::class . '[]'],
+            'addbutton' => ['type' => 'bool'],
             'addbuttontitle' => ['type' => 'string'],
+            'addbuttonicon' => ['type' => 'bool'],
             'elementtypes' => ['type' => 'array'],
         ];
     }
@@ -109,7 +111,9 @@ class template extends persistent_exporter {
         }
         return [
             'pages' => $exportedpages,
+            'addbutton' => true,
             'addbuttontitle' => get_string('addcertpage', 'tool_certificate'),
+            'addbuttonicon' => true,
             'elementtypes' => $this->get_element_types(),
         ];
     }

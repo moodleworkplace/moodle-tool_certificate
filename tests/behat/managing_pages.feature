@@ -13,7 +13,7 @@ Feature: Being able to manage pages in a certificate template
     And I click on "Edit content" "link"
 
   Scenario: Adding a page to a certificate template
-    When I follow "Add page"
+    When I follow "New page"
     And I press "Save" in the modal form dialogue
     And I should see "Page 1"
     And I should see "Page 2"
@@ -23,7 +23,7 @@ Feature: Being able to manage pages in a certificate template
     And I press "Save" in the modal form dialogue
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
-    And I follow "Add page"
+    And I follow "New page"
     And I press "Save" in the modal form dialogue
     And I should see "Page 1"
     And I should see "Page 2"
@@ -38,7 +38,7 @@ Feature: Being able to manage pages in a certificate template
   Scenario: Rearrange pages in a certificate template
     When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
-    And I follow "Add page"
+    And I follow "New page"
     And I press "Save" in the modal form dialogue
     And I add the element "User field" to page "2" of the "Certificate 1" site certificate template
     And I press "Save" in the modal form dialogue
