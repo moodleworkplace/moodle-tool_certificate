@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addcertpage'] = 'Add page';
+$string['addcertpage'] = 'New page';
 $string['addelement'] = 'Add element';
 $string['aissueswerecreated'] = '{$a} issues were created';
 $string['aligncentre'] = 'Centre';
@@ -49,7 +49,7 @@ $string['changeelementsequence'] = 'Bring forward or move back';
 $string['code'] = 'Code';
 $string['codewithlink'] = 'Code with link';
 $string['coursecategorywithlink'] = 'Course category with link';
-$string['createtemplate'] = 'New template';
+$string['createtemplate'] = 'New certificate template';
 $string['customfield_previewvalue'] = 'Preview value';
 $string['customfield_previewvalue_help'] = 'Value displayed when previewing the certificate template';
 $string['customfield_visible'] = 'Visible';
@@ -97,7 +97,7 @@ $string['invalidheight'] = 'The height has to be a valid number greater than 0.'
 $string['invalidmargin'] = 'The margin has to be a valid number greater than 0.';
 $string['invalidposition'] = 'Please select a positive number for position {$a}.';
 $string['invalidwidth'] = 'The width has to be a valid number greater than 0.';
-$string['issuecertificates'] = 'Issue new certificates';
+$string['issuecertificates'] = 'Issue certificates';
 $string['issuedon'] = 'Issued on';
 $string['issuenewcertificate'] = 'Issue new certificate from this template';
 $string['issuenewcertificates'] = 'Issue new certificates';
