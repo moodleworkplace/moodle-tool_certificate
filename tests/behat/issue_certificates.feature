@@ -42,7 +42,7 @@ Feature: Being able to manually issue a certificate to a user
     And I wait "3" seconds
     And I open the autocomplete suggestions list
     And I click on "User 11" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     Then "User 11" "text" should exist in the "report-table" "table"
@@ -55,7 +55,7 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Issue certificates" "link"
     And I open the autocomplete suggestions list
     And I click on "User 11" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     Then "User 11" "text" should exist in the "report-table" "table"
     And I log out
@@ -84,7 +84,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "User 11"
     And I should see "User 13"
     And I click on "User 12" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
@@ -99,7 +99,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "User 12"
     And I should see "User 11"
     And I click on "User 13" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should not see "User 2"
@@ -163,7 +163,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 21"
     And I should see "Admin User"
     And I click on "User 13" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should see "User 13"
@@ -181,7 +181,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "User 11"
     And I should see "Admin User"
     And I click on "User 12" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 12"
@@ -216,7 +216,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 21"
     And I should not see "User 1"
     And I click on "User 22" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 2" "table_row"
     And I should see "User 22"
