@@ -38,11 +38,11 @@ Feature: Being able to manually issue a certificate to a user
   Scenario: Issue a certificate as admin, from the list of templates
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
+    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
     And I wait "3" seconds
     And I open the autocomplete suggestions list
     And I click on "User 11" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     Then "User 11" "text" should exist in the "report-table" "table"
@@ -52,10 +52,10 @@ Feature: Being able to manually issue a certificate to a user
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    And I click on "Issue new certificates" "link"
+    And I click on "Issue certificates" "link"
     And I open the autocomplete suggestions list
     And I click on "User 11" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     Then "User 11" "text" should exist in the "report-table" "table"
     And I log out
@@ -78,13 +78,13 @@ Feature: Being able to manually issue a certificate to a user
     # The templates from other tenants should not be visible.
     And I should not see "Certificate 2"
     # Issue a certificate for a template that belongs to the same tenant (user from my tenants that don't have certificate yet).
-    And I click on "Issue new certificate from this template" "link" in the "Certificate 1" "table_row"
+    And I click on "Issue certificates from this template" "link" in the "Certificate 1" "table_row"
     And I open the autocomplete suggestions list
     And I should not see "User 2"
     And I should not see "User 11"
     And I should see "User 13"
     And I click on "User 12" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
@@ -93,13 +93,13 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "User 2"
     And I follow "Manage certificate templates"
     # Issue a certificate for a template that is shared between tenants (user from my tenants that don't have certificate yet).
-    And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
+    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
     And I open the autocomplete suggestions list
     And I should not see "User 2"
     And I should not see "User 12"
     And I should see "User 11"
     And I click on "User 13" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should not see "User 2"
@@ -155,7 +155,7 @@ Feature: Being able to manually issue a certificate to a user
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # It is possible to issue certificate0 to users from all tenants (except for those who already have this certificate).
     And I wait "3" seconds
-    And I click on "Issue new certificate from this template" "link" in the "Certificate 0" "table_row"
+    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
     And I open the autocomplete suggestions list
     And I should not see "User 12"
     And I should not see "User 22"
@@ -163,7 +163,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 21"
     And I should see "Admin User"
     And I click on "User 13" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should see "User 13"
@@ -173,7 +173,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "User 21"
     And I follow "Manage certificate templates"
     # It is possible to issue certificate1 only to users from tenant1 (except for those who already have this certificate).
-    And I click on "Issue new certificate from this template" "link" in the "Certificate 1" "table_row"
+    And I click on "Issue certificates from this template" "link" in the "Certificate 1" "table_row"
     And I open the autocomplete suggestions list
     And I should see "User 12"
     And I should see "User 13"
@@ -181,7 +181,7 @@ Feature: Being able to manually issue a certificate to a user
     And I should not see "User 11"
     And I should see "Admin User"
     And I click on "User 12" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 12"
@@ -211,12 +211,12 @@ Feature: Being able to manually issue a certificate to a user
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 0"
     And I should not see "Certificate 1"
-    And I click on "Issue new certificate from this template" "link" in the "Certificate 2" "table_row"
+    And I click on "Issue certificates from this template" "link" in the "Certificate 2" "table_row"
     And I open the autocomplete suggestions list
     And I should see "User 21"
     And I should not see "User 1"
     And I click on "User 22" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate for"
+    And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 2" "table_row"
     And I should see "User 22"
@@ -238,8 +238,8 @@ Feature: Being able to manually issue a certificate to a user
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should see "Certificate 0"
     And I should not see "Certificate 1"
-    And "Issue new certificate from this template" "link" should not exist in the "Certificate 0" "table_row"
-    And "Issue new certificate from this template" "link" should exist in the "Certificate 2" "table_row"
+    And "Issue certificates from this template" "link" should not exist in the "Certificate 0" "table_row"
+    And "Issue certificates from this template" "link" should exist in the "Certificate 2" "table_row"
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I should see "User 22"
     And I should not see "User 1"

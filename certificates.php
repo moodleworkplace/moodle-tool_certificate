@@ -56,7 +56,7 @@ $report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\is
     ['templateid' => $template->get_id()]);
 $r = new \tool_wp\output\content_with_heading($report->output(), format_string($template->get_name()));
 if ($template->can_issue_to_anybody()) {
-    $r->add_button(get_string('issuenewcertificates', 'tool_certificate'), null,
+    $r->add_button(get_string('issuecertificates', 'tool_certificate'), null,
         ['data-tid' => $template->get_id()]);
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');

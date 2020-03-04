@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addcertpage'] = 'Add page';
+$string['addcertpage'] = 'New page';
 $string['addelement'] = 'Add element';
 $string['aissueswerecreated'] = '{$a} issues were created';
 $string['aligncentre'] = 'Centre';
@@ -49,7 +49,7 @@ $string['changeelementsequence'] = 'Bring forward or move back';
 $string['code'] = 'Code';
 $string['codewithlink'] = 'Code with link';
 $string['coursecategorywithlink'] = 'Course category with link';
-$string['createtemplate'] = 'New template';
+$string['createtemplate'] = 'New certificate template';
 $string['customfield_previewvalue'] = 'Preview value';
 $string['customfield_previewvalue_help'] = 'Value displayed when previewing the certificate template';
 $string['customfield_visible'] = 'Visible';
@@ -62,7 +62,7 @@ $string['deletepageconfirm'] = 'Are you sure you want to delete this certificate
 $string['deletetemplateconfirm'] = 'Are you sure you want to delete the certificate template \'{$a}\' and all associated data? This action cannot be undone.';
 $string['duplicate'] = 'Duplicate';
 $string['duplicatetemplateconfirm'] = 'Are you sure you want to duplicate the template \'{$a}\'?';
-$string['editcertificate'] = 'Edit certificate \'{$a}\'';
+$string['editcertificate'] = 'Edit certificate template \'{$a}\'';
 $string['editcontent'] = 'Edit content';
 $string['editdetails'] = 'Edit details';
 $string['editelement'] = 'Edit \'{$a}\'';
@@ -97,9 +97,9 @@ $string['invalidheight'] = 'The height has to be a valid number greater than 0.'
 $string['invalidmargin'] = 'The margin has to be a valid number greater than 0.';
 $string['invalidposition'] = 'Please select a positive number for position {$a}.';
 $string['invalidwidth'] = 'The width has to be a valid number greater than 0.';
-$string['issuecertificates'] = 'Issue new certificates';
+$string['issuecertificates'] = 'Issue certificates';
 $string['issuedon'] = 'Issued on';
-$string['issuenewcertificate'] = 'Issue new certificate from this template';
+$string['issuenewcertificate'] = 'Issue certificates from this template';
 $string['issuenewcertificates'] = 'Issue new certificates';
 $string['issuenotallowed'] = 'You are not allowed to issue certificates from this template.';
 $string['issueormangenotallowed'] = 'You are not allowed to issue certificates from or manage this template.';
@@ -142,7 +142,7 @@ $string['revokecertificateconfirm'] = 'Are you sure you want to revoke this cert
 $string['rightmargin'] = 'Right margin, mm';
 $string['rightmargin_help'] = 'This is the right margin of the certificate PDF in mm.';
 $string['selectcertificate'] = 'Select certificate';
-$string['selectuserstoissuecertificatefor'] = 'Select users to issue certificate for';
+$string['selectuserstoissuecertificatefor'] = 'Select users to issue certificate to';
 $string['subplugintype_certificateelement_plural'] = 'Element plugins';
 $string['timecreated'] = 'Time created';
 $string['toomanycertificatestoshow'] = 'Too many certificates ({$a}) to show';
