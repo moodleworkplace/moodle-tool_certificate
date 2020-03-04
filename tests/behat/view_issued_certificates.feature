@@ -86,10 +86,10 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 2"
-    And "Issue new certificate from this template" "link" should exist in the "Certificate 1" "table_row"
+    And "Issue certificates from this template" "link" should exist in the "Certificate 1" "table_row"
     And I should not see "Certificate 0"
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    And "Issue new certificate" "link" should exist
+    And "Issue certificates" "link" should exist
     And I should see "User 11"
     And I should see "User 12"
     And I log out
@@ -107,10 +107,10 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 2"
-    And "Issue new certificate from this template" "link" should not exist in the "Certificate 1" "table_row"
+    And "Issue certificates from this template" "link" should not exist in the "Certificate 1" "table_row"
     And I should not see "Certificate 0"
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    And "Issue new certificate" "link" should not exist
+    And "Issue certificates" "link" should not exist
     And I should see "User 11"
     And I should see "User 12"
     And I log out
@@ -127,10 +127,10 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 2"
-    And "Issue new certificate from this template" "link" should not exist in the "Certificate 1" "table_row"
+    And "Issue certificates from this template" "link" should not exist in the "Certificate 1" "table_row"
     And I should not see "Certification 0"
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    And "Issue new certificate" "link" should not exist
+    And "Issue certificates" "link" should not exist
     And I should see "User 11"
     And I should see "User 12"
     And I log out
@@ -146,16 +146,16 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Issue new certificate from this template" "link" should exist in the "Certificate 2" "table_row"
-    And "Issue new certificate from this template" "link" should exist in the "Certificate 1" "table_row"
-    And "Issue new certificate from this template" "link" should exist in the "Certificate 0" "table_row"
+    And "Issue certificates from this template" "link" should exist in the "Certificate 2" "table_row"
+    And "Issue certificates from this template" "link" should exist in the "Certificate 1" "table_row"
+    And "Issue certificates from this template" "link" should exist in the "Certificate 0" "table_row"
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    And "Issue new certificate" "link" should exist
+    And "Issue certificates" "link" should exist
     And I should see "User 11"
     And I should see "User 12"
     And I follow "Manage certificate templates"
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    And "Issue new certificate" "link" should exist
+    And "Issue certificates" "link" should exist
     And I should not see "User 11"
     And I should see "User 12"
     And I should see "User 22"
@@ -171,15 +171,15 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Verify certificates"
     And I should not see "Certificate images"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Issue new certificate from this template" "link" should not exist in the "Certificate 2" "table_row"
-    And "Issue new certificate from this template" "link" should not exist in the "Certificate 1" "table_row"
-    And "Issue new certificate from this template" "link" should not exist in the "Certificate 0" "table_row"
+    And "Issue certificates from this template" "link" should not exist in the "Certificate 2" "table_row"
+    And "Issue certificates from this template" "link" should not exist in the "Certificate 1" "table_row"
+    And "Issue certificates from this template" "link" should not exist in the "Certificate 0" "table_row"
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    And "Issue new certificate" "link" should not exist
+    And "Issue certificates" "link" should not exist
     And I should see "User 12"
     And I follow "Manage certificate templates"
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    And "Issue new certificate" "link" should not exist
+    And "Issue certificates" "link" should not exist
     And I should not see "User 11"
     And I should see "User 12"
     And I should not see "User 2"
