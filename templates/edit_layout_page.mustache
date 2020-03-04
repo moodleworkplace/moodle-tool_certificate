@@ -81,7 +81,9 @@
                 <div class="col-3">
                     {{> tool_certificate/edit_layout_elementlist}}
                     <div>
-                        <button id="addelement{{id}}" class="btn btn-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Add element</button>
+                        <button id="addelement{{id}}" class="btn btn-primary iconlarge nomargin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{#str}}addelement, tool_certificate{{/str}}
+                        </button>
                         <div class="dropdown-menu" aria-labelledby="addelement{{id}}" data-region="elementtypeslist">
                             {{#elementtypes}}
                                 <a class="dropdown-item" data-action="addelement" data-pageid="{{id}}" data-element="{{type}}" href="#">{{{name}}}</a>

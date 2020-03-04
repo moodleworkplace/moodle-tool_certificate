@@ -21,7 +21,7 @@ Feature: Being able to manage site templates
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I wait "2" seconds
-    And I follow "New template"
+    And I follow "New certificate template"
     And I wait "3" seconds
     And I set the field "Name" to "Certificate 1"
     And I press "Save" in the modal form dialogue
@@ -46,7 +46,7 @@ Feature: Being able to manage site templates
     And I log in as "manager"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I wait "2" seconds
-    And I follow "New template"
+    And I follow "New certificate template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
       | Course category | Category2 |
@@ -61,7 +61,7 @@ Feature: Being able to manage site templates
       | user21 | configviewer       | System       |           |
     And I log in as "user21"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I follow "New template"
+    And I follow "New certificate template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
     And I press "Save" in the modal form dialogue
@@ -80,7 +80,7 @@ Feature: Being able to manage site templates
   Scenario: Adding template with invalid width, heigth and margins
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I follow "New template"
+    And I follow "New certificate template"
     And I set the following fields to these values:
       | Name         | Certificate 1 |
       | Page width   | 0             |
