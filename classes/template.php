@@ -660,7 +660,7 @@ class template {
         $issue = new \stdClass();
         $issue->userid = $userid;
         $issue->templateid = $this->get_id();
-        $issue->code = \tool_certificate\certificate::generate_code();
+        $issue->code = \tool_certificate\certificate::generate_code($issue->userid);
         $issue->emailed = 0;
         $issue->timecreated = time();
         $issue->expires = $expires;
