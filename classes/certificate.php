@@ -261,21 +261,40 @@ class certificate {
     }
 
     /**
-     * Generates a 10-digit code of random letters and numbers.
+     * Generates a unique 10-digit code of random numbers and firstname, lastname initials if userid is passed as parameter.
      *
+     * @param int|null $userid
      * @return string
      */
-    public static function generate_code() {
+    public static function generate_code($userid = null) {
         global $DB;
-
         $uniquecodefound = false;
-        $code = random_string(10);
+        $user = $userid ? $DB->get_record('user', ['id' => $userid]) : null;
+        $code = self::generate_code_string($user);
         while (!$uniquecodefound) {
-            if (!$DB->record_exists('tool_certificate_issues', array('code' => $code))) {
+            if (!$DB->record_exists('tool_certificate_issues', ['code' => $code])) {
                 $uniquecodefound = true;
             } else {
-                $code = random_string(10);
+                $code = self::generate_code_string($user);
             }
+        }
+        return $code;
+    }
+
+    /**
+     * Generates a 10-digit code of random numbers and firstname, lastname initials if userid is passed as parameter.
+     *
+     * @param \stdClass|null $user
+     * @return string
+     */
+    private static function generate_code_string(\stdClass $user = null): string {
+        $code = '';
+        for ($i = 1; $i <= 10; $i++) {
+            $code .= mt_rand(0, 9);
+        }
+        if ($user) {
+            $code .= mb_strtoupper(substr($user->firstname, 0, 1)) ?? '';
+            $code .= mb_strtoupper(substr($user->lastname, 0, 1)) ?? '';
         }
 
         return $code;
