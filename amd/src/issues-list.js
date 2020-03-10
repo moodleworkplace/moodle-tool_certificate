@@ -21,17 +21,36 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
-function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
+define(['jquery',
+        'tool_wp/modal_form',
+        'tool_wp/tabs',
+        'core/notification',
+        'core/str',
+        'core/ajax',
+        'tool_wp/notification',
+        'tool_reportbuilder/reportbuilder_events'],
+function($,
+         ModalForm,
+         Tabs,
+         Notification,
+         Str,
+         Ajax,
+         WpNotification,
+         ReportEvents) {
+
+    const SELECTORS = {
+        ADDISSUE: "[data-tabs-element='addbutton']",
+        REPORTCONTAINER: "[data-region='system-report'] [data-region='data-report']",
+        REVOKEISSUE: "[data-action='revoke']"
+    };
 
     /**
      * Refresh the report without reloading page
      */
     var refreshReport = function() {
-        var report = $("[data-region='system-report'] [data-region='data-report']");
+        var report = $(SELECTORS.REPORTCONTAINER);
         if (report) {
-            // TODO use RELOADTABLEWITHOUTPAGINATION constant from tool_reportbuilder/reportbuilder_events.
-            report.trigger('reportbuilder:reloadtablewithoutpagination');
+            report.trigger(ReportEvents.RELOADTABLE);
         } else {
             window.location.reload();
         }
@@ -76,6 +95,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
      */
     var revokeIssue = function(e) {
         e.preventDefault();
+        e.stopPropagation();
         Str.get_strings([
             {key: 'confirm'},
             {key: 'revokecertificateconfirm', component: 'tool_certificate'},
@@ -100,8 +120,9 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
          */
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
-            $('[data-tabs-element="addbutton"]').on('click', addIssue);
-            $('[data-action="revoke"]').on('click', revokeIssue);
+            $('body')
+                .on('click', SELECTORS.ADDISSUE, addIssue)
+                .on('click', SELECTORS.REVOKEISSUE, revokeIssue);
         }
     };
 });
