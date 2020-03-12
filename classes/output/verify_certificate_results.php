@@ -26,7 +26,6 @@ namespace tool_certificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 
-use context_system;
 use renderable;
 use templatable;
 
@@ -55,11 +54,6 @@ class verify_certificate_results implements templatable, renderable {
     public $issues;
 
     /**
-     * @var bool Is the user logged in?
-     */
-    public $loggedin;
-
-    /**
      * Constructor.
      *
      * @param \stdClass $result
@@ -72,7 +66,6 @@ class verify_certificate_results implements templatable, renderable {
         } else {
             $this->message = get_string('notverified', 'tool_certificate');
         }
-        $this->loggedin = isloggedin() && \tool_certificate\permission::can_verify();
     }
 
     /**
@@ -85,7 +78,6 @@ class verify_certificate_results implements templatable, renderable {
         $result = new \stdClass();
         $result->success = $this->success;
         $result->message = $this->message;
-        $result->loggedin = $this->loggedin;
         if (isset($this->issue)) {
             $resultissue = new verify_certificate_result($this->issue);
             $result->issue = $resultissue->export_for_template($output);

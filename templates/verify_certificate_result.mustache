@@ -35,19 +35,13 @@
     Example context (json):
     {
         "expired": false,
-        "loggedin": true,
-        "table": "<table></table>"
+        "table": "<table></table>",
+        "viewurl": ""
     }
 }}
-<div class="container-fluid mt-5 p-0">
-    <div class="col-12 col-md-6 mx-auto p-0">
-        <div class="alert alert-block fade in alert-{{#expired}}danger{{/expired}}{{^expired}}success{{/expired}} my-2" role="alert">
-            {{#expired}}<p class="text-center m-0 h5 alert-danger">{{#str}}expired, tool_certificate{{/str}}{{/expired}}
-            {{^expired}}<p class="text-center m-0 h5 alert-success">{{#str}}valid, tool_certificate{{/str}}{{/expired}}</p>
-        </div>
-        {{{table}}}
-        {{#loggedin}}
-            <a class="btn btn-sm btn-secondary mx-auto" href="{{viewurl}}">{{#str}}viewcertificate, tool_certificate{{/str}}</a>
-        {{/loggedin}}
-    </div>
+<div class="alert alert-block fade in alert-{{#expired}}danger{{/expired}}{{^expired}}success{{/expired}} mb-2" role="alert">
+    {{#expired}}<p class="m-0 alert-danger">{{#str}}expiredcertificate, tool_certificate{{/str}}{{/expired}}
+    {{^expired}}<p class="m-0 alert-success">{{#str}}validcertificate, tool_certificate{{/str}}{{/expired}}</p>
 </div>
+{{{table}}}
+<a class="btn btn-sm btn-secondary" href="{{viewurl}}">{{#str}}viewcertificate, tool_certificate{{/str}}</a>
