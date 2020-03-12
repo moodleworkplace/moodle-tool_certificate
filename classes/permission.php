@@ -89,7 +89,15 @@ class permission {
      * @return bool
      */
     public static function can_verify(): bool {
-        return has_capability('tool/certificate:verify', \context_system::instance());
+        global $CFG;
+        // When user is not logged in as guest, we still want to check the capability for the "Guest" role.
+        // It should be possible to make this capability available to the guests even when forcelogin is on
+        // and "login as guest" is not available.
+        if (isloggedin()) {
+            return has_capability('tool/certificate:verify', \context_system::instance());
+        } else {
+            return has_capability('tool/certificate:verify', \context_system::instance(), $CFG->siteguest);
+        }
     }
 
     /**
