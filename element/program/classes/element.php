@@ -126,8 +126,20 @@ class element extends \tool_certificate\element {
     public function format_issue_data($issue) {
         $thisdata = json_decode($this->get_data(), true);
         $customfields = issue_handler::create()->get_instance_data($issue->id, true);
+        $timestamp = 0;
+        foreach ($customfields as $data) {
+            if ($data->get_field()->get('shortname') === 'certificationexpirydatetimestamp') {
+                $timestamp = $data->export_value();
+            }
+        }
         foreach ($customfields as $data) {
             if ($data->get_field()->get('shortname') === $thisdata['display']) {
+                if ($data->get_field()->get('shortname') === 'certificationexpirydate') {
+                    if ($timestamp <= 0) {
+                        return get_string('never');
+                    }
+                    return userdate($timestamp, get_string('strftimedatefullshort'));
+                }
                 return $data->export_value();
             }
         }
