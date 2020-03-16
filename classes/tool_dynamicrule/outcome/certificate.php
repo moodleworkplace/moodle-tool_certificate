@@ -95,7 +95,11 @@ class certificate extends \tool_dynamicrule\outcome_base {
 
         foreach ($users as $user) {
             $issuedata = $issuedataall[$user->id];
-            $template->issue_certificate($user->id, '', $issuedata, 'tool_dynamicrule');
+            $expirydate = null;
+            if (isset($issuedata['expirydatetimestamp']) && $issuedata['expirydatetimestamp'] > 0) {
+                $expirydate = $issuedata['expirydatetimestamp'];
+            }
+            $template->issue_certificate($user->id, $expirydate, $issuedata, 'tool_dynamicrule');
         }
     }
 
