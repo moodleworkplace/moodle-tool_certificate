@@ -32,6 +32,7 @@ if (!\tool_certificate\permission::can_verify()) {
     print_error('verifynotallowed', 'tool_certificate');
 }
 
+
 $pageurl = new moodle_url('/admin/tool/certificate/index.php');
 
 if ($code) {
@@ -47,7 +48,8 @@ $PAGE->set_heading($SITE->fullname);
 
 $PAGE->navbar->add($heading);
 
-$form = new \tool_certificate\verify_certificate_form($pageurl);
+$form = new \tool_certificate\verify_certificate_form($pageurl, null, 'post', '',
+    ['class' => 'mt-3 mb-5 p-4 bg-light']);
 
 if ($code) {
     $form->set_data(['code' => $code]);
