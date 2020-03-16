@@ -26,6 +26,10 @@ namespace tool_certificate\output;
 
 defined('MOODLE_INTERNAL') || die();
 
+use html_table;
+use html_table_cell;
+use html_table_row;
+use html_writer;
 use renderable;
 use templatable;
 use tool_certificate\template;
@@ -64,11 +68,20 @@ class verify_certificate_result implements templatable, renderable {
      */
     public $expires;
 
-
     /**
      * @var string If issue expired based on current time.
      */
     public $expired;
+
+    /**
+     * @var string URL of issued certificate.
+     */
+    public $viewurl;
+
+    /**
+     * @var string HTML table of issued certificate info.
+     */
+    public $table;
 
     /**
      * Constructor.
@@ -78,7 +91,7 @@ class verify_certificate_result implements templatable, renderable {
     public function __construct($issue) {
         $this->viewurl = template::view_url($issue->code);
         $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $issue->userid));
-        $this->userfullname = fullname($issue);
+        $this->userfullname = fullname($issue, has_capability('moodle/site:viewfullnames', \context_system::instance()));
         $this->certificatename = $issue->certificatename;
         $this->timecreated = userdate($issue->timecreated);
         $this->expires = ($issue->expires > 0) ? userdate($issue->expires) : get_string('never');
@@ -93,13 +106,42 @@ class verify_certificate_result implements templatable, renderable {
      */
     public function export_for_template(\renderer_base $output) {
         $result = new \stdClass();
-        $result->viewurl = $this->viewurl;
-        $result->userprofileurl = $this->userprofileurl;
-        $result->userfullname = $this->userfullname;
-        $result->certificatename = $this->certificatename;
-        $result->timecreated = $this->timecreated;
-        $result->expires = $this->expires;
+
+        $table = new html_table();
+        $table->attributes['class'] = 'admintable generaltable mb-2';
+        $fullnamerow = new html_table_row([
+            new html_table_cell(get_string('fullname')),
+            new html_table_cell($this->userfullname)
+        ]);
+        $certificaterow = new html_table_row([
+            new html_table_cell(get_string('certificate', 'tool_certificate')),
+            new html_table_cell($this->certificatename)
+        ]);
+        $issuedrow = new html_table_row([
+            new html_table_cell(get_string('issuedon', 'tool_certificate')),
+            new html_table_cell($this->timecreated)
+        ]);
+        $expiresrow = new html_table_row([
+            new html_table_cell(get_string('expires', 'tool_certificate')),
+            new html_table_cell($this->expires)
+        ]);
+        $statusrow = new html_table_row([
+            new html_table_cell(get_string('status')),
+            new html_table_cell($this->expired ? get_string('expired', 'tool_certificate') :
+                get_string('valid', 'tool_certificate'))
+        ]);
+
+        $table->data = [
+            $fullnamerow,
+            $certificaterow,
+            $issuedrow,
+            $expiresrow,
+            $statusrow,
+        ];
+
+        $result->table = html_writer::table($table);
         $result->expired = $this->expired;
+        $result->viewurl = $this->viewurl;
 
         return $result;
     }

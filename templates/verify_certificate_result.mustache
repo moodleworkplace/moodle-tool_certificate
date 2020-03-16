@@ -34,18 +34,14 @@
 
     Example context (json):
     {
-        "userprofileurl": "http://www.example.com",
-        "userfullname": "Mark Smith",
-        "courseurl": "http://www.example.com",
-        "coursefullname": "Computing 101",
-        "certificatename": "Ability to write 'Hello world' in Java."
+        "expired": false,
+        "table": "<table></table>",
+        "viewurl": ""
     }
 }}
-<ul class="list-unstyled unstyled">
-    <li><strong>{{#str}}fullname{{/str}}:</strong> <a href="{{{userprofileurl}}}">{{userfullname}}</a></li>
-    <li><strong>{{#str}}certificate, tool_certificate{{/str}}:</strong> {{certificatename}}</li>
-    <li><strong>{{#str}}issuedon, tool_certificate{{/str}}:</strong> {{timecreated}}</li>
-    <li><strong>{{#str}}expires, tool_certificate{{/str}}:</strong> {{expires}}</li>
-    <li><strong>{{$str}}Status{{/str}}:</strong> {{#expired}}{{#str}}expired, tool_certificate{{/str}}{{/expired}}{{^expired}}{{#str}}valid, tool_certificate{{/str}}{{/expired}}</li>
-    <li><strong><a href="{{{viewurl}}}">{{#str}}viewcertificate, tool_certificate{{/str}}</a></strong></li>
-</ul>
+<div class="alert alert-block fade in alert-{{#expired}}danger{{/expired}}{{^expired}}success{{/expired}} mb-2" role="alert">
+    {{#expired}}<p class="m-0 alert-danger">{{#str}}expiredcertificate, tool_certificate{{/str}}{{/expired}}
+    {{^expired}}<p class="m-0 alert-success">{{#str}}validcertificate, tool_certificate{{/str}}{{/expired}}</p>
+</div>
+{{{table}}}
+<a class="btn btn-sm btn-secondary" href="{{viewurl}}">{{#str}}viewcertificate, tool_certificate{{/str}}</a>
