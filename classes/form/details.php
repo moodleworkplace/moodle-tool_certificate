@@ -80,6 +80,9 @@ class details extends modal_form {
             $mform->addElement('hidden', 'contextid');
         }
 
+        $mform->addElement('advcheckbox', 'shared', get_string('availableincourses', 'tool_certificate'));
+        $mform->addHelpButton('shared', 'availableincourses', 'tool_certificate');
+
         if (!$this->get_template()->get_id()) {
             page::add_page_elements($mform);
         }
@@ -173,6 +176,7 @@ class details extends modal_form {
             $this->set_data([
                 'id' => $this->template->get_id(),
                 'name' => $this->template->get_name(),
+                'shared' => $this->template->get_shared(),
                 'categoryid' => $this->template->get_category_id()]);
         } else {
             $data = template::instance()->new_page()->to_record();

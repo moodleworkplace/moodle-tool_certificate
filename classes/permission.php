@@ -148,16 +148,17 @@ class permission {
      */
     public static function get_visible_categories_contexts(bool $usecache = true): array {
         global $DB;
+
         $coursecatcache = \cache::make('core', 'coursecat');
         $key = 'tool_certificate_visiblecat';
         if ($usecache && ($value = $coursecatcache->get($key)) !== false) {
             return json_decode($value, true);
         }
-
-        $sql = \context_helper::get_preload_record_columns_sql('ctx');
-        $records = $DB->get_records_sql("SELECT DISTINCT ctx.id, $sql FROM {tool_certificate_templates} ct
+        $ctxsql = \context_helper::get_preload_record_columns_sql('ctx');
+        $ctxparams = ['coursecat' => CONTEXT_COURSECAT, 'contextsys' => CONTEXT_SYSTEM];
+        $records = $DB->get_records_sql("SELECT DISTINCT ctx.id, $ctxsql FROM {tool_certificate_templates} ct
             JOIN {context} ctx ON (ctx.contextlevel = :coursecat OR ctx.contextlevel = :contextsys) AND ctx.id = ct.contextid",
-            ['coursecat' => CONTEXT_COURSECAT, 'contextsys' => CONTEXT_SYSTEM]);
+            $ctxparams);
         $ids = [];
         foreach ($records as $record) {
             \context_helper::preload_from_record($record);
@@ -166,8 +167,38 @@ class permission {
                 $ids[] = $record->id;
             }
         }
+
         $coursecatcache->set($key, json_encode($ids));
         return $ids;
+    }
+
+    /**
+     * Get templates visible to user
+     *
+     * "Visible" means that user can either manage, view or issue on template context
+     * or every parent context with "shared" property.
+     *
+     * @param \context $currentcontext
+     * @return array
+     */
+    public static function get_visible_templates(\context $currentcontext): array {
+        global $DB;
+
+        if (!self::can_issue_to_anybody($currentcontext)) {
+            return [];
+        }
+        // Get visible category contexts.
+        $visiblecatctxs = self::get_visible_categories_contexts(false);
+        [$baseinsql, $baseinparams] = $DB->get_in_or_equal($visiblecatctxs, SQL_PARAMS_NAMED, '', true, 0);
+        // Get shared parent contexts.
+        $parentctxs = $currentcontext->get_parent_context_ids();
+        [$parentinsql, $parentinparams] = $DB->get_in_or_equal($parentctxs, SQL_PARAMS_NAMED, '', true, 0);
+        // Return templates.
+        return $DB->get_records_sql("
+            SELECT * FROM {tool_certificate_templates} ct
+            WHERE ct.contextid $baseinsql
+            OR ct.contextid $parentinsql AND ct.shared = 1
+            ", $baseinparams + $parentinparams);
     }
 
     /**
@@ -183,8 +214,8 @@ class permission {
             // Category is not visible.
             return false;
         }
-        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT) {
-            // TODO WP-1196 Support certificates in course context.
+        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
+                && $context->contextlevel != CONTEXT_COURSE) {
             return false;
         }
         return has_any_capability(['tool/certificate:issue',
@@ -195,14 +226,25 @@ class permission {
     /**
      * If current user can view list of certificates
      * @param int $userid The id of user which certificates were issued for.
+     * @param \context|null $context
+     * @return bool
      */
-    public static function can_view_list($userid) {
-        // TODO WP-1196 possibly add course/context parameters to view certificates in a course.
+    public static function can_view_list(int $userid, ?\context $context = null): bool {
         global $USER;
         if ($userid == $USER->id) {
             return true;
         }
-        $context = \context_system::instance();
+        if (!$context) {
+            $context = \context_system::instance();
+        }
+        if ($context instanceof \context_coursecat && !\core_course_category::get($context->instanceid, IGNORE_MISSING)) {
+            // Category is not visible.
+            return false;
+        }
+        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
+                && $context->contextlevel != CONTEXT_COURSE) {
+            return false;
+        }
         if (class_exists('\\tool_organisation\\organisation')) {
             $user = \tool_organisation\organisation::get_user_with_jobs();
             if ($user && $user->is_manager_over_user($userid)) {
@@ -222,19 +264,43 @@ class permission {
     }
 
     /**
+     * Can view all certificates
+     * @param \context|null $context
+     * @return bool
+     */
+    public static function can_view_all_certificates(?\context $context = null) {
+        if (!$context) {
+            $context = \context_system::instance();
+        }
+        if ($context instanceof \context_coursecat && !\core_course_category::get($context->instanceid, IGNORE_MISSING)) {
+            // Category is not visible.
+            return false;
+        }
+        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSE
+                && $context->contextlevel != CONTEXT_COURSECAT) {
+            return false;
+        }
+        return has_capability('tool/certificate:viewallcertificates', $context);
+    }
+
+    /**
      * If current user can view an issued certificate
      *
      * @param template $template
      * @param \stdClass $issue
+     * @param \context|null $context
      * @return bool
      */
-    public static function can_view_issue(template $template, \stdClass $issue): bool {
+    public static function can_view_issue(template $template, \stdClass $issue, ?\context $context = null): bool {
         global $USER;
         if (!$template->get_id()) {
             return false;
         }
         if ($issue->userid == $USER->id) {
             return true;
+        }
+        if (!$context) {
+            $context = $template->get_context();
         }
         if (class_exists('\\tool_organisation\\organisation')) {
             $user = \tool_organisation\organisation::get_user_with_jobs();
@@ -244,7 +310,7 @@ class permission {
         }
 
         return has_any_capability(['tool/certificate:issue', 'tool/certificate:viewallcertificates',
-                'tool/certificate:manage'] , $template->get_context()) &&
+                'tool/certificate:manage'] , $context) &&
             !self::is_user_hidden_by_tenancy($issue->userid);
     }
 

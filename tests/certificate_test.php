@@ -212,6 +212,89 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
     }
 
     /**
+     * Test count issues for course
+     */
+    public function test_count_issues_for_course() {
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+        $user3 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+        $user4 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+        $user5 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course1->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user2->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user3->id]);
+
+        $template1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        // Create a dummy assignment to test groupmode.
+        $module = $this->getDataGenerator()->create_module('assignment', ['course' => $course1->id]);
+        $cm = get_coursemodule_from_instance('assignment', $module->id);
+
+        $template1->issue_certificate($user1->id, null, [], 'mod_coursecertificate', $course1->id);
+        $template1->issue_certificate($user2->id, null, [], 'mod_coursecertificate', $course1->id);
+        $template1->issue_certificate($user3->id, null, [], 'mod_coursecertificate', $course1->id);
+        $template1->issue_certificate($user4->id, null, [], 'mod_coursecertificate', $course1->id);
+
+        $this->assertEmpty(\tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course2->id, null, null));
+        $this->assertEquals(4, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id, null,
+            null));
+        $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
+            true, $group1->id));
+        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
+            true, $group2->id));
+
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user1->id]);
+        $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
+            true, $group2->id));
+    }
+
+    /**
+     * Test get issues for course
+     */
+    public function test_get_issues_for_course() {
+        $course1 = $this->getDataGenerator()->create_course();
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course1, 'student');
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user2->id]);
+
+        $template1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        // Create a dummy assignment to test groupmode.
+        $module = $this->getDataGenerator()->create_module('assignment', ['course' => $course1->id]);
+        $cm = get_coursemodule_from_instance('assignment', $module->id);
+
+        $template1->issue_certificate($user1->id, null, [], 'mod_coursecertificate', $course1->id);
+        $template1->issue_certificate($user2->id, null, [], 'mod_coursecertificate', $course1->id);
+
+        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, false, null,
+            0, 100, 'userid ASC');
+        $this->assertCount(2, $issues);
+        $issue1 = reset($issues);
+        $this->assertEquals($user1->id, $issue1->userid);
+        $this->assertEquals($course1->id, $issue1->courseid);
+        $this->assertEquals($template1->get_id(), $issue1->templateid);
+        $issue2 = next($issues);
+        $this->assertEquals($user2->id, $issue2->userid);
+        $this->assertEquals($course1->id, $issue1->courseid);
+        $this->assertEquals($template1->get_id(), $issue1->templateid);
+
+        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, true, $group1->id,
+            0, 100, '');
+        $this->assertCount(1, $issues);
+        $issue1 = reset($issues);
+        $this->assertEquals($user2->id, $issue1->userid);
+        $this->assertEquals($course1->id, $issue1->courseid);
+        $this->assertEquals($template1->get_id(), $issue1->templateid);
+    }
+
+    /**
      * Test verify
      */
     public function test_verify() {

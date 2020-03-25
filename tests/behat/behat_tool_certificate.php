@@ -192,7 +192,12 @@ class behat_tool_certificate extends behat_base {
             }
             if ($template = \tool_certificate\template::find_by_name($elementdata['template'])) {
                 if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
-                    $issueid = $template->issue_certificate($userid);
+                    if (isset($elementdata['course'])) {
+                        $courseid = $DB->get_field('course', 'id', ['shortname' => $elementdata['course']]);
+                        $issueid = $template->issue_certificate($userid, null, [], 'mod_coursecertificate', $courseid);
+                    } else {
+                        $issueid = $template->issue_certificate($userid);
+                    }
                     if (isset($elementdata['code'])) {
                         $DB->update_record('tool_certificate_issues', (object) ['id' => $issueid, 'code' => $elementdata['code']]);
                     }

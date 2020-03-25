@@ -15,22 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of the certificate tool
+ * Strings for component 'certificateelement_coursefield'.
  *
- * @package    tool_certificate
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ * @package    certificateelement_coursefield
+ * @copyright  2020 Mikel Martín <mikel@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-// This plugin is part of Moodle Workplace product.
-$plugin->component    = 'tool_certificate';
-$plugin->release      = '3.9.1';
-$plugin->version      = 2020071600;
-$plugin->requires     = 2020061501.00;
-$plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = [
-    'tool_tenant'     => 2020071500,
-    'tool_wp'         => 2020071500,
-];
+$string['coursefield'] = 'Course field';
+$string['coursefield_help'] = 'This is the course field that will be displayed on the PDF.';
+$string['pluginname'] = 'Course field';
+$string['privacy:metadata'] = 'The User field plugin does not store any personal data.';
