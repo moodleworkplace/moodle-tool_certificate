@@ -120,5 +120,33 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020070700, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2020071600) {
+
+        // Define field courseid to be added to tool_certificate_issues.
+        $table = new xmldb_table('tool_certificate_issues');
+        $field = new xmldb_field('courseid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'component');
+        $key = new xmldb_key('courseid', XMLDB_KEY_FOREIGN, ['courseid'], 'course', ['id']);
+
+        // Conditionally launch add field courseid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Launch add key courseid.
+        $dbman->add_key($table, $key);
+
+        // Define field shared to be added to tool_certificate_templates.
+        $table = new xmldb_table('tool_certificate_templates');
+        $field = new xmldb_field('shared', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'contextid');
+
+        // Conditionally launch add field visible.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Appointment savepoint reached.
+        upgrade_plugin_savepoint(true, 2020071600, 'tool', 'certificate');
+    }
+
     return true;
 }

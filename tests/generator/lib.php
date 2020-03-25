@@ -58,6 +58,23 @@ class tool_certificate_generator extends component_generator_base {
     }
 
     /**
+     * Looks up a template by name or id
+     * @param string $nameorid
+     * @return int
+     */
+    public function lookup_template(string $nameorid): int {
+        global $DB;
+        if (empty($nameorid)) {
+            return 0;
+        }
+        if ($DB->record_exists(\tool_certificate\persistent\template::TABLE, ['id' => (int) $nameorid])) {
+            return $nameorid;
+        }
+        return $DB->get_field_select(\tool_certificate\persistent\template::TABLE, 'id',
+            'name = ?', [$nameorid, $nameorid], MUST_EXIST);
+    }
+
+    /**
      * Create a page
      *
      * @param \tool_certificate\template|int $template

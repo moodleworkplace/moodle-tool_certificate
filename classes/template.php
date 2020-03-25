@@ -82,6 +82,9 @@ class template {
         if (isset($data->contextid)) {
             $this->persistent->set('contextid', $data->contextid);
         }
+        if (isset($data->shared)) {
+            $this->persistent->set('shared', $data->shared);
+        }
         $this->persistent->save();
         \tool_certificate\event\template_updated::create_from_template($this)->trigger();
     }
@@ -298,6 +301,7 @@ class template {
     public function duplicate(?\context $context = null) {
         $data = new \stdClass();
         $data->name = get_string('certificatecopy', 'tool_certificate', $this->get_name());
+        $data->shared = $this->get_shared();
         $data->contextid = $context ? $context->id : $this->get_context()->id;
         $newtemplate = self::create($data);
 
@@ -395,6 +399,15 @@ class template {
      */
     public function get_name() {
         return $this->persistent->get('name');
+    }
+
+    /**
+     * Returns the shared setting of the template.
+     *
+     * @return string the shared setting of the template
+     */
+    public function get_shared() {
+        return $this->persistent->get('shared');
     }
 
     /**
@@ -536,30 +549,33 @@ class template {
     /**
      * If a user can issue certificates from this template (to anybody)
      *
+     * @param \context|null $context
      * @return bool
      */
-    public function can_issue_to_anybody(): bool {
-        return $this->get_id() && permission::can_issue_to_anybody($this->get_context());
+    public function can_issue_to_anybody(\context $context = null): bool {
+        return $this->get_id() && permission::can_issue_to_anybody($context ?? $this->get_context());
     }
 
     /**
      * If a user can issue certificate from this template to particular user
      *
      * @param int $issuetouserid When issuing to a specific user, validate user's tenant.
+     * @param \context|null $context
      * @return bool
      */
-    public function can_issue(int $issuetouserid): bool {
-        return $this->can_issue_to_anybody() && !permission::is_user_hidden_by_tenancy($issuetouserid);
+    public function can_issue(int $issuetouserid, \context $context = null): bool {
+        return $this->can_issue_to_anybody($context) && !permission::is_user_hidden_by_tenancy($issuetouserid);
     }
 
     /**
      * A user can revoke certificates from this template.
      *
      * @param int $userid
+     * @param \context|null $context
      * @return bool
      */
-    public function can_revoke(int $userid): bool {
-        return $this->can_issue($userid);
+    public function can_revoke(int $userid, \context $context = null): bool {
+        return $this->can_issue($userid, $context);
     }
 
     /**
@@ -594,6 +610,7 @@ class template {
     public static function create($formdata) {
         $template = new \stdClass();
         $template->name = $formdata->name;
+        $template->shared = $formdata->shared ?? 0;
         if (!isset($formdata->contextid)) {
             debugging('Context is missing', DEBUG_DEVELOPER);
             $template->contextid = \context_system::instance()->id;
@@ -631,9 +648,11 @@ class template {
      * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
      * @param array $data Additional data that will json_encode'd and stored with the issue.
      * @param string $component The component the certificate was issued by.
+     * @param null $courseid
      * @return int The ID of the issue
      */
-    public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate') {
+    public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate',
+            $courseid = null) {
         global $DB;
 
         $issue = new \stdClass();
@@ -644,6 +663,7 @@ class template {
         $issue->timecreated = time();
         $issue->expires = $expires;
         $issue->component = $component;
+        $issue->courseid = $courseid;
 
         // Store user fullname.
         $data['userfullname'] = fullname($DB->get_record('user', ['id' => $userid]));
@@ -662,7 +682,6 @@ class template {
 
         return $issue->id;
     }
-
     /**
      * Creates stored file for an issue.
      *

@@ -53,6 +53,9 @@ class template extends persistent {
             'contextid' => array(
                 'type' => PARAM_INT
             ),
+            'shared' => array(
+                'type' => PARAM_BOOL
+            ),
         );
     }
 }

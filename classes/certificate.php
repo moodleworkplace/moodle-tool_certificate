@@ -112,6 +112,133 @@ class certificate {
     }
 
     /**
+     * Returns the total number of course issues for a given template and course.
+     *
+     * @param int $templateid
+     * @param int $courseid
+     * @param int|null $groupmode
+     * @param int|null $groupid
+     * @return int the number of issues
+     */
+    public static function count_issues_for_course(int $templateid, int $courseid, ?int $groupmode, ?int $groupid) {
+        global $DB;
+
+        $params = [
+            'templateid' => $templateid,
+            'courseid' => $courseid,
+            'component' => 'mod_coursecertificate'
+        ];
+
+        if ($groupmode) {
+            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($courseid, $groupmode, $groupid);
+            $params += $groupmodeparams;
+
+            $sql = "SELECT COUNT(u.id) as count
+                  FROM {user} u
+            INNER JOIN {tool_certificate_issues} ci
+                    ON u.id = ci.userid
+                 WHERE ci.templateid = :templateid
+                    AND ci.courseid = :courseid
+                    AND ci.component = :component
+                    $groupmodequery";
+
+            return $DB->count_records_sql($sql, $params);
+        } else {
+            return $DB->count_records('tool_certificate_issues', $params);
+        }
+    }
+
+    /**
+     * Get the course certificate issues for a given templateid, courseid, paginated.
+     *
+     * @param int $templateid
+     * @param int $courseid
+     * @param int|null $groupmode
+     * @param int|null $groupid
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @param string $sort
+     * @return array
+     */
+    public static function get_issues_for_course(int $templateid, int $courseid, ?int $groupmode, ?int $groupid,
+            int $limitfrom, int $limitnum, string $sort = ''): array {
+        global $DB;
+
+        if (empty($sort)) {
+            $sort = 'ci.timecreated DESC';
+        }
+
+        $params = ['templateid' => $templateid, 'courseid' => $courseid];
+        $groupmodequery = '';
+        if ($groupmode) {
+            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($courseid, $groupmode, $groupid);
+            $params += $groupmodeparams;
+        }
+
+        $usersquery = self::get_users_subquery();
+        $extrafields = get_extra_user_fields(\context_course::instance($courseid));
+        $userfields = \user_picture::fields('u', $extrafields);
+        $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
+                       t.name, ci.courseid, $userfields
+                  FROM {tool_certificate_templates} t
+                  JOIN {tool_certificate_issues} ci
+                    ON (ci.templateid = t.id) AND (courseid = :courseid) AND (component = 'mod_coursecertificate')
+                  JOIN {user} u
+                    ON (u.id = ci.userid)
+                 WHERE t.id = :templateid
+                   AND $usersquery
+                   $groupmodequery
+              ORDER BY {$sort}";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Get groupmode subquery
+     *
+     * @param int $courseid
+     * @param int $groupmode
+     * @param int $groupid
+     * @return array
+     */
+    private static function get_groupmode_subquery(int $courseid, int $groupmode, int $groupid) {
+        global $DB, $USER;
+
+        $context = \context_course::instance($courseid);
+        [$groupmodequery, $groupmodeparams] = ['', []];
+
+        $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
+        $currentgroup = $groupid;
+
+        if ($groupmode && $currentgroup) {
+            if (!$canaccessallgroups) {
+                if (isguestuser()) {
+                    return ['', []];
+                }
+                // The user must belong to the group.
+                $usersgroups = groups_get_all_groups($courseid, $USER->id);
+                if ($usersgroups) {
+                    if (!isset($usersgroups[$currentgroup])) {
+                        return ['', []];
+                    }
+                } else {
+                    return ['', []];
+                }
+            }
+
+            $groupusers = array_keys(groups_get_members($currentgroup, 'u.*'));
+            if (empty($groupusers)) {
+                return ['', []];
+            }
+
+            [$sql, $params] = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED, 'grp');
+            $groupmodequery .= "AND u.id $sql ";
+            $groupmodeparams += $params;
+        }
+        return [$groupmodequery, $groupmodeparams];
+    }
+
+    /**
      * Get number of certificates for a user.
      *
      * @param int $userid
@@ -197,7 +324,7 @@ class certificate {
         $conditions = ['code' => $code];
 
         $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
-                       ci.expires, ci.data, ci.component,
+                       ci.expires, ci.data, ci.component, ci.courseid,
                        ci.userid,
                        t.name as certificatename,
                        t.contextid
