@@ -86,6 +86,7 @@ class behat_tool_certificate extends behat_base {
     /**
      * Verifies the certificate code for a user.
      *
+     * @codingStandardsIgnoreLine
      * @Given /^I can not verify the "(?P<certificate_name>(?:[^"]|\\")*)" site certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
      * @param string $templatename
      * @param string $username
