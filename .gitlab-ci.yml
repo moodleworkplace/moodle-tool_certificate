@@ -44,7 +44,7 @@ codecheck:
   - . check moodle-plugin-ci phplint
   #- . check moodle-plugin-ci phpcpd
   #- . check moodle-plugin-ci phpmd
-  - . check moodle-plugin-ci codechecker --files all --max-warnings 1 # Behat steps definitions have long lines
+  - . check moodle-plugin-ci codechecker --files all --max-warnings 0
   - . check moodle-plugin-ci phpdoc
   - . check moodle-plugin-ci validate
   - . check moodle-plugin-ci savepoints
