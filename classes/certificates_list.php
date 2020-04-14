@@ -209,7 +209,7 @@ class certificates_list extends system_report {
         \context_helper::preload_from_record($template);
         $context = \context::instance_by_id($value);
         if ($context instanceof \context_system) {
-            return '-';
+            return get_string('none');
         } else {
             $url = new \moodle_url('/course/index.php', ['categoryid' => $context->instanceid]);
             $name = format_string($template->categoryname, false, ['context' => $context, 'escape' => false]);
