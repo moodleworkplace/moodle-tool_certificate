@@ -153,14 +153,17 @@ class certificate_template extends entity_base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_field("COALESCE($coursecatalias.name, '-')", 'categoryname')
+            ->add_field("COALESCE($coursecatalias.name, :nonestr)", 'categoryname', ['nonestr' => get_string('none')])
             ->add_aggregation_fields('count', "$coursecatalias.id")
             ->set_groupby_sql("$coursecatalias.id,$coursecatalias.name");
         $columns[] = $newcolumn;
 
         $str = '<span>{{name}}</span data-category="{{id}}">';
-        list($sql, $params) = \tool_reportbuilder\db::sql_string_with_placeholders($str,
-            ['{{id}}' => "COALESCE($coursecatalias.id, 0)", '{{name}}' => "COALESCE($coursecatalias.name, '-')"]);
+        list($sql, $params) = \tool_reportbuilder\db::sql_string_with_placeholders($str, [
+            '{{id}}' => "COALESCE($coursecatalias.id, 0)",
+            '{{name}}' => "COALESCE($coursecatalias.name, :nonestr)"
+        ]);
+        $params += ['nonestr' => get_string('none')];
 
         $fieldname = 'coursecatnamewithlink';
         $newcolumn = (new report_column(
@@ -232,7 +235,9 @@ class certificate_template extends entity_base {
         ))
             ->add_joins($this->get_joins())
             ->set_field_sql("COALESCE($coursecatalias.id, 0)")
-            ->set_options([0 => '-'] + \core_course_category::make_categories_list());
+            ->set_options_callback(function () {
+                return [0 => get_string('none')] + \core_course_category::make_categories_list();
+            });
 
         return $filters;
     }
@@ -260,7 +265,7 @@ class certificate_template extends entity_base {
      */
     protected static function categoryname_replace_one($name, $id) {
         if (!$id) {
-            return '-';
+            return get_string('none');
         }
         $url = new \moodle_url('/course/index.php', ['categoryid' => $id]);
         $name = format_string($name, false, ['context' => \context_system::instance(), 'escape' => false]);

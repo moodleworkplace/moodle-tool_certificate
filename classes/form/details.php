@@ -100,7 +100,7 @@ class details extends modal_form {
         $options = \core_course_category::make_categories_list('tool/certificate:manage');
         $systemcontext = \context_system::instance();
         if (has_capability('tool/certificate:manage', $systemcontext)) {
-            $options = [0 => '-'] + $options;
+            $options = [0 => get_string('none')] + $options;
         }
         return $options;
     }
