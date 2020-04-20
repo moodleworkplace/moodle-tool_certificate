@@ -1,4 +1,4 @@
-image: moodlehq/moodle-workplace-plugin-ci:7.1
+image: moodlehq/moodle-workplace-plugin-ci:7.2
 
 services:
 - postgres:9.6
@@ -44,13 +44,12 @@ codecheck:
   - . check moodle-plugin-ci phplint
   #- . check moodle-plugin-ci phpcpd
   #- . check moodle-plugin-ci phpmd
-  - . check moodle-plugin-ci codechecker --files all --max-warnings 0
+  - . check moodle-plugin-ci codechecker --max-warnings 0
   - . check moodle-plugin-ci phpdoc
   - . check moodle-plugin-ci validate
   - . check moodle-plugin-ci savepoints
   - . check moodle-plugin-ci mustache
-  - . check moodle-plugin-ci eslint --max-warnings 0
-  - . check moodle-plugin-ci grunt
+  - . check moodle-plugin-ci grunt --max-lint-warnings 0
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output -v admin/tool/dataprivacy/tests/metadata_registry_test.php
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output -v lib/tests/externallib_test.php
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output -v privacy/tests/provider_test.php
