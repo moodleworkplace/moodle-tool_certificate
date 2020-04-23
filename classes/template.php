@@ -24,7 +24,10 @@
 
 namespace tool_certificate;
 
+use core\message\message;
 use core\output\inplace_editable;
+use core_user;
+use moodle_url;
 use tool_certificate\customfield\issue_handler;
 
 defined('MOODLE_INTERNAL') || die();
@@ -229,8 +232,10 @@ class template {
      *
      * @param bool $preview True if it is a preview, false otherwise
      * @param \stdClass $issue The issued certificate we want to view
+     * @param bool $return
+     * @return string|null Return the PDF as string if $return specified
      */
-    public function generate_pdf($preview = false, $issue = null) {
+    public function generate_pdf($preview = false, $issue = null, $return = false) {
         global $CFG, $USER;
 
         if (is_null($issue)) {
@@ -271,6 +276,9 @@ class template {
                         $element->render($pdf, $preview, $user, $issue);
                     }
                 }
+            }
+            if ($return) {
+                return $pdf->Output('', 'S');
             }
             if (defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
                 // For some reason phpunit on travis-ci.com do not return 'cli' on php_sapi_name().
@@ -641,11 +649,72 @@ class template {
         $issue->id = $DB->insert_record('tool_certificate_issues', $issue);
         issue_handler::create()->save_additional_data($issue, $data);
 
+        // Send notification.
+        self::send_issue_notification($issue);
+
         // Trigger event.
         $issue->data = json_encode([]);
         \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
 
         return $issue->id;
+    }
+
+    /**
+     * Sends a moodle notification of the certificate issued.
+     *
+     * @param \stdClass $issue
+     */
+    private function send_issue_notification(\stdClass $issue): void {
+        global $DB;
+
+        $context = \context_system::instance();
+        $user = core_user::get_user($issue->userid);
+        $userfullname = fullname($user, true);
+        $mycertificatesurl = new moodle_url('/admin/tool/certificate/my.php');
+        $subject = get_string('notificationsubjectcertificateissued', 'tool_certificate');
+        $fullmessage = get_string(
+            'notificationmsgcertificateissued',
+            'tool_certificate',
+            ['fullname' => $userfullname, 'url' => $mycertificatesurl->out(false)]
+        );
+
+        $message = new message();
+        $message->courseid = $issue->courseid ?? SITEID;
+        $message->component = 'tool_certificate';
+        $message->name = 'certificateissued';
+        $message->notification = 1;
+        $message->userfrom = core_user::get_noreply_user();
+        $message->userto = $user;
+        $message->subject = $subject;
+        $message->contexturl = $mycertificatesurl;
+        $message->contexturlname = get_string('mycertificates', 'tool_certificate');
+        $message->fullmessage = html_to_text($fullmessage);
+        $message->fullmessagehtml = $fullmessage;
+        $message->fullmessageformat = FORMAT_HTML;
+        $message->smallmessage = '';
+
+        // Generate attachment.
+        $filecontents = self::generate_pdf(false, $issue, true);
+        // Create a file instance.
+        $file = (object) [
+            'contextid' => $context->id,
+            'component' => 'tool_certificate',
+            'filearea'  => 'issues',
+            'itemid'    => $issue->id,
+            'filepath'  => '/',
+            'filename'  => $issue->code . '.pdf'
+        ];
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string($file, $filecontents);
+        $message->attachment = $file;
+        $message->attachname = $file->get_filename();
+
+        if (message_send($message)) {
+            $DB->set_field('tool_certificate_issues', 'emailed', 1, ['id' => $issue->id]);
+        }
+
+        // Delete the filearea.
+        $fs->delete_area_files($context->id, 'tool_certificate', 'issues', $issue->id);
     }
 
     /**
