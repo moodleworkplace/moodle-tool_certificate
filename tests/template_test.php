@@ -275,13 +275,19 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
+        $messagessink = $this->redirectMessages();
 
         $issueid1 = $certificate1->issue_certificate($user1->id);
 
         $code1 = $DB->get_field('tool_certificate_issues', 'code', ['id' => $issueid1]);
 
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
+        $messages = $messagessink->get_messages();
+        $sink->close();
+        $messagessink->close();
+
+        // There are two events: notification_viewed and certificate_issued.
+        $this->assertCount(2, $events);
         $event = array_pop($events);
 
         // Checking that the event contains the expected values.
@@ -293,6 +299,13 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertNotEmpty($event->get_description());
 
         $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
+
+        // Check issue notification.
+        $issuenotification = reset($messages);
+        $this->assertEquals($user1->id, $issuenotification->useridto);
+        $this->assertEquals('tool_certificate', $issuenotification->component);
+        $this->assertEquals('certificateissued', $issuenotification->eventtype);
+        $this->assertEquals('Your certificate is available!', $issuenotification->subject);
 
         $certificate1->issue_certificate($user2->id);
 
