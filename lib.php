@@ -99,7 +99,7 @@ function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $
         } else {
             $link = get_string('certificates', 'tool_certificate');
         }
-        $url = new moodle_url('/admin/tool/certificate/my_certificates.php', $iscurrentuser ? [] : ['userid' => $user->id]);
+        $url = new moodle_url('/admin/tool/certificate/my.php', $iscurrentuser ? [] : ['userid' => $user->id]);
         $node = new core_user\output\myprofile\node('miscellaneous', 'toolcertificatemy', $link, null, $url);
         $tree->add_node($node);
     }
