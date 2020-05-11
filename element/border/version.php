@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // This plugin is part of Moodle Workplace product.
 $plugin->component    = 'certificateelement_border';
-$plugin->release      = '3.8.2';
-$plugin->version      = 2020031000;
-$plugin->requires     = 2019111802.00;
+$plugin->release      = '3.8.3';
+$plugin->version      = 2020051200;
+$plugin->requires     = 2019111803.00;
 $plugin->maturity     = MATURITY_STABLE;
