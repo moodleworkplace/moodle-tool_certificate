@@ -17,7 +17,7 @@ Feature: Check datasources for certificate
       | Certificate 2 | user21 |
 
   Scenario: Create a report about certificates templates
-    Given the following custom reports exist:
+    Given the following "tool_reportbuilder > reports" exist:
       | name    | tenant  | source                                                       |
       | Report1 | Tenant1 | tool_certificate\tool_reportbuilder\datasources\certificates |
       | Report2 | Tenant2 | tool_certificate\tool_reportbuilder\datasources\certificates |
@@ -40,7 +40,7 @@ Feature: Check datasources for certificate
     And I should not see "Certificate 1"
 
   Scenario: Create a report about certificates issues
-    Given the following custom reports exist:
+    Given the following "tool_reportbuilder > reports" exist:
       | name    | tenant  | source                                                 |
       | Report1 | Tenant1 | tool_certificate\tool_reportbuilder\datasources\issues |
     When I log in as "tenantadmin1"
