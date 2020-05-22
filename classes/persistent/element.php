@@ -65,7 +65,7 @@ class element extends persistent {
             'font' => array(
                 'type' => PARAM_NOTAGS,
                 'null' => NULL_ALLOWED,
-                'default' => null
+                'default' => 'helvetica',
             ),
             'fontsize' => array(
                 'type' => PARAM_INT,
