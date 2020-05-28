@@ -78,12 +78,13 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
      */
     var displayIssue = function(e) {
         e.preventDefault();
+        const target = $(e.currentTarget);
         var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\certificate_issues',
-            args: {tid: $(e.currentTarget).attr('data-tid')},
+            args: {tid: target.attr('data-tid')},
             modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate')},
             saveButtonText: Str.get_string('save'),
-            triggerElement: $(e.currentTarget),
+            triggerElement: target,
         });
         modal.onSubmitSuccess = function(data) {
             data = parseInt(data, 10);
@@ -106,12 +107,14 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
 
     var duplicateMulticategory = function(e) {
         e.preventDefault();
+        const target = $(e.currentTarget);
+        const templateId = target.attr('data-id');
         var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\category_selector',
-            args: {id: $(e.currentTarget).attr('data-id')},
+            args: {id: templateId},
             modalConfig: {title: Str.get_string('confirm')},
             saveButtonText: Str.get_string('duplicate', 'tool_certificate'),
-            triggerElement: $(e.currentTarget),
+            triggerElement: target,
         });
         modal.onSubmitSuccess = function() {
             window.location.reload();
@@ -120,6 +123,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
 
     var duplicateSinglecategory = function(e) {
         e.preventDefault();
+        const templateId = $(e.currentTarget).attr('data-id');
         Str.get_strings([
             {key: 'confirm'},
             {key: 'duplicatetemplateconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
@@ -129,7 +133,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([
                     {methodname: 'tool_certificate_duplicate_template',
-                        args: {id: $(e.currentTarget).attr('data-id')}}
+                        args: {id: templateId}}
                 ]);
                 promises[0].done(function() {
                     window.location.reload();
@@ -140,6 +144,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
 
     var deleteTemplate = function(e) {
         e.preventDefault();
+        const templateId = $(e.currentTarget).attr('data-id');
         Str.get_strings([
             {key: 'confirm'},
             {key: 'deletetemplateconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
@@ -149,7 +154,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([
                     {methodname: 'tool_certificate_delete_template',
-                        args: {id: $(e.currentTarget).attr('data-id')}}
+                        args: {id: templateId}}
                 ]);
                 promises[0].done(function() {
                     window.location.reload();
@@ -164,12 +169,14 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
          */
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
-            $('body').on('click', '[data-tabs-element="addbutton"]', displayAddTemplate);
-            $('[data-action="editdetails"]').on('click', displayEditTemplate);
-            $('[data-action="issue"]').on('click', displayIssue);
-            $('[data-action="duplicate"][data-selectcategory="1"]').on('click', duplicateMulticategory);
-            $('[data-action="duplicate"][data-selectcategory="0"]').on('click', duplicateSinglecategory);
-            $('[data-action="delete"]').on('click', deleteTemplate);
+            $('body')
+                .on('click', '[data-tabs-element="addbutton"]', displayAddTemplate)
+                .on('click', '[data-action="editdetails"]', displayEditTemplate)
+                .on('click', '[data-action="issue"]', displayIssue)
+                .on('click', '[data-action="duplicate"][data-selectcategory="1"]', duplicateMulticategory)
+                .on('click', '[data-action="duplicate"][data-selectcategory="0"]', duplicateSinglecategory)
+                .on('click', '[data-action="delete"]', deleteTemplate);
         }
     };
 });
+
