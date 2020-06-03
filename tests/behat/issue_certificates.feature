@@ -47,6 +47,13 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     Then "User 11" "text" should exist in the "report-table" "table"
     And I log out
+    # Check notifications are triggered.
+    And I log in as "user11"
+    And I am on site homepage
+    When I click on ".popover-region-notifications" "css_element"
+    And I click on "View full notification" "link" in the ".popover-region-notifications" "css_element"
+    Then I should see "Your certificate is available!"
+    And I log out
 
   Scenario: Issue a certificate as admin, from the list of issues
     When I log in as "admin"

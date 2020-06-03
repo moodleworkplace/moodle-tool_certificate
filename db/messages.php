@@ -15,22 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Code fragment to define the version of the certificate tool
+ * Defines message providers (types of messages being sent)
  *
  * @package    tool_certificate
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or late
+ * @copyright  2020 Mikel Martín <mikel@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 
 defined('MOODLE_INTERNAL') || die();
 
-// This plugin is part of Moodle Workplace product.
-$plugin->component    = 'tool_certificate';
-$plugin->release      = '3.8.3';
-$plugin->version      = 2020060200;
-$plugin->requires     = 2019111803.00;
-$plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = [
-    'tool_tenant'     => 2020051200,
-    'tool_wp'         => 2020051200,
+$messageproviders = [
+    // Notification for certificate issued.
+    'certificateissued' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+        ],
+    ],
 ];
