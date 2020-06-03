@@ -251,3 +251,15 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 22"
     And I should not see "User 1"
     And I log out
+
+  Scenario: Regenerate issued certificate file as a tenant issuer
+    Given the following certificate issues exist:
+      | template      | user   |
+      | Certificate 1 | user11 |
+    When I log in as "user14"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I click on "Regenerate issue file" "link" in the "User 11" "table_row"
+    And I click on "Regenerate" "button" in the "Confirm" "dialogue"
+    And I should see "User 11"
+    And I log out

@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @return bool|null false if file not found, does not return anything if found - just send the file
  */
 function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once($CFG->libdir . '/filelib.php');
 
@@ -64,6 +64,28 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
         $elementid = array_shift($args);
         $template = \tool_certificate\template::find_by_element_id($elementid);
         $template->require_can_manage();
+
+        $filename = array_pop($args);
+        if (!$args) {
+            $filepath = '/';
+        } else {
+            $filepath = '/' . implode('/', $args) . '/';
+        }
+        $fs = get_file_storage();
+        $file = $fs->get_file($context->id, 'tool_certificate', $filearea, $elementid, $filepath, $filename);
+        if (!$file) {
+            return false;
+        }
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    }
+
+    // Issues filearea.
+    if ($filearea === 'issues') {
+        $elementid = array_shift($args);
+
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $elementid], '*', MUST_EXIST);
+        $template = \tool_certificate\template::instance($issue->templateid);
+        \tool_certificate\permission::can_view_issue($template, $issue);
 
         $filename = array_pop($args);
         if (!$args) {

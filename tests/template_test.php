@@ -277,9 +277,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         $messagessink = $this->redirectMessages();
 
-        $issueid1 = $certificate1->issue_certificate($user1->id);
-
-        $code1 = $DB->get_field('tool_certificate_issues', 'code', ['id' => $issueid1]);
+        $issue1 = $this->get_generator()->issue($certificate1, $user1);
 
         $events = $sink->get_events();
         $messages = $messagessink->get_messages();
@@ -293,7 +291,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\tool_certificate\event\certificate_issued', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
-        $this->assertEquals(\tool_certificate\template::view_url($code1), $event->get_url());
+        $this->assertEquals(\tool_certificate\template::view_url($issue1->code), $event->get_url());
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
         $this->assertNotEmpty($event->get_description());
@@ -306,6 +304,11 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertEquals('tool_certificate', $issuenotification->component);
         $this->assertEquals('certificateissued', $issuenotification->eventtype);
         $this->assertEquals('Your certificate is available!', $issuenotification->subject);
+
+        // Check issue file was created.
+        $fs = get_file_storage();
+        $this->assertTrue($fs->file_exists(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue1->id, '/', $issue1->code . '.pdf'));
 
         $certificate1->issue_certificate($user2->id);
 
@@ -363,5 +366,69 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $certificate1->revoke_issue($issueid2);
 
         $this->assertEquals(0, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
+    }
+
+    /**
+     * Test create_issue_file
+     */
+    public function test_create_issue_file() {
+        // Create the certificate.
+        $certificate = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+
+        // Issue certificate.
+        $user = $this->getDataGenerator()->create_user();
+        $issue = $this->get_generator()->issue($certificate, $user);
+
+        // Check issue file already exists after issuing certificate.
+        $fs = get_file_storage();
+        $file = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue->id, '/', $issue->code . '.pdf');
+        $this->assertNotFalse($file);
+
+        $file->delete();
+
+        // Check create new issue file.
+        $file = $certificate->create_issue_file($issue);
+        $this->assertEquals($issue->id, $file->get_itemid());
+
+        // Regenerate issue file.
+        $file2 = $certificate->create_issue_file($issue, true);
+
+        // Check new file was created for issue.
+        $issuefile = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue->id, '/', $issue->code . '.pdf');
+        $this->assertEquals($issue->id, $file2->get_itemid());
+        $this->assertEquals($issuefile->get_id(), $file2->get_id());
+
+        // Try to create an existing issue file.
+        $this->expectException('stored_file_creation_exception');
+        $certificate->create_issue_file($issue);
+    }
+
+    /**
+     * Test get_issue_file
+     */
+    public function test_get_issue_file() {
+        // Create the certificate.
+        $certificate = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+
+        // Issue certificate.
+        $user = $this->getDataGenerator()->create_user();
+        $issue = $this->get_generator()->issue($certificate, $user);
+
+        // Check issue file already exists after issuing certificate.
+        $fs = get_file_storage();
+        $this->assertTrue($fs->file_exists(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue->id, '/', $issue->code . '.pdf'));
+
+        $issuefile = $certificate->get_issue_file($issue);
+        $this->assertEquals($issue->id, $issuefile->get_itemid());
+
+        // Check issue file is recreated after deletion.
+        $issuefile->delete();
+        $this->assertFalse($fs->file_exists(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue->id, '/', $issue->code . '.pdf'));
+        $issuefile = $certificate->get_issue_file($issue);
+        $this->assertEquals($issue->id, $issuefile->get_itemid());
     }
 }

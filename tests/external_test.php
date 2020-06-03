@@ -147,4 +147,33 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
         $this->expectException('required_capability_exception');
         \tool_certificate\external\issues::revoke_issue($i2);
     }
+
+    /**
+     * Test regenerate_issue_file
+     */
+    public function test_regenerate_issue_file() {
+        $this->setAdminUser();
+
+        // Create the certificate.
+        $certificate = $this->certgenerator->create_template((object)['name' => 'Certificate 1']);
+
+        // Issue certificate.
+        $user = $this->getDataGenerator()->create_user();
+        $issue = $this->certgenerator->issue($certificate, $user);
+
+        // Check issue file already exists after issuing certificate.
+        $fs = get_file_storage();
+        $file = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue->id, '/', $issue->code . '.pdf');
+        $this->assertNotFalse($file);
+
+        // Regenerate issue file.
+        \tool_certificate\external\issues::regenerate_issue_file($issue->id);
+
+        // Check new file was created for issue.
+        $newfile = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
+            $issue->id, '/', $issue->code . '.pdf');
+        $this->assertNotEquals($file->get_id(), $newfile->get_id());
+        $this->assertEquals($issue->id, $newfile->get_itemid());
+    }
 }
