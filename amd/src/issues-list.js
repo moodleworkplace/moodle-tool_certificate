@@ -40,6 +40,7 @@ function($,
 
     const SELECTORS = {
         ADDISSUE: "[data-tabs-element='addbutton']",
+        REGENERATEFILE: "[data-action='regenerate']",
         REPORTCONTAINER: "[data-region='system-report'] [data-region='data-report']",
         REVOKEISSUE: "[data-action='revoke']"
     };
@@ -114,6 +115,31 @@ function($,
         }).fail(Notification.exception);
     };
 
+    /**
+     * Revoke issue
+     * @param {Event} e
+     */
+    var regenerateIssueFile = function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        Str.get_strings([
+            {key: 'confirm'},
+            {key: 'regeneratefileconfirm', component: 'tool_certificate'},
+            {key: 'regenerate', component: 'tool_certificate'},
+            {key: 'cancel'}
+        ]).done(function(s) {
+            Notification.confirm(s[0], s[1], s[2], s[3], function() {
+                var promises = Ajax.call([
+                    {methodname: 'tool_certificate_regenerate_issue_file',
+                        args: {id: $(e.currentTarget).attr('data-id')}}
+                ]);
+                promises[0].done(function() {
+                    refreshReport();
+                }).fail(Notification.exception);
+            });
+        }).fail(Notification.exception);
+    };
+
     return {
         /**
          * Init page
@@ -122,7 +148,8 @@ function($,
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
             $('body')
                 .on('click', SELECTORS.ADDISSUE, addIssue)
-                .on('click', SELECTORS.REVOKEISSUE, revokeIssue);
+                .on('click', SELECTORS.REVOKEISSUE, revokeIssue)
+                .on('click', SELECTORS.REGENERATEFILE, regenerateIssueFile);
         }
     };
 });

@@ -130,13 +130,21 @@ class issues_list extends system_report {
      * Issue actions
      */
     protected function set_actions() {
+        $template = $this->template;
+
         // File.
         $icon = new \pix_icon('i/search', get_string('view'), 'core');
         $link = template::view_url(':code');
         $this->add_action((new report_action($link, $icon, [])));
 
+        // Regenerate file.
+        $icon = new \pix_icon('a/refresh', get_string('regenerateissuefile', 'tool_certificate'), 'core');
+        $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'regenerate', 'data-id' => ':id']))
+            ->add_callback(function($row) use ($template) {
+                return $template && $template->can_issue($row->userid);
+            }));
+
         // Revoke.
-        $template = $this->template;
         $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
         $this->add_action(
             (new report_action(new \moodle_url('#'), $icon, ['data-action' => 'revoke', 'data-id' => ':id']))

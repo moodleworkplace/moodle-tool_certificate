@@ -31,7 +31,6 @@ $PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url('/admin/tool/certificate/view.php', ['code' => $issuecode]));
 
 if ($preview) {
-
     $templateid = required_param('templateid', PARAM_INT);
     require_login();
     $template = \tool_certificate\template::instance($templateid);
@@ -40,12 +39,16 @@ if ($preview) {
     }
 
 } else {
-
     $issue = \tool_certificate\template::get_issue_from_code($issuecode);
     $template = $issue ? \tool_certificate\template::instance($issue->templateid) : null;
     if ($template && (\tool_certificate\permission::can_verify() ||
             \tool_certificate\permission::can_view_issue($template, $issue))) {
-        $template->generate_pdf(false, $issue);
+        $file = $template->get_issue_file($issue);
+        // Adding cachebuster to URL to make sure files are reloaded.
+        $cachebuster = '?cb=' . time();
+        $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+            $file->get_itemid(), $file->get_filepath(), $file->get_filename()) . $cachebuster;
+        redirect($url);
     } else {
         print_error('notfound');
     }
