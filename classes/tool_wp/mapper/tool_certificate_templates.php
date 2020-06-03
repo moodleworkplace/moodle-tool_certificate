@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @license     Moodle Workplace License, distribution is restricted, contact support@moodle.com
  */
-class certificate extends export_import_mapper_base {
+class tool_certificate_templates extends export_import_mapper_base {
 
     /**
      * Initialises mapper and registers all potential notices
@@ -49,11 +49,13 @@ class certificate extends export_import_mapper_base {
     protected function initialise(): void {
         $this->register_potential_error(self::NOTFOUND, [
             self::ERROR_CONFLICTHEADER => get_string('mappingerrorcertificateheader', 'tool_certificate'),
-            self::ERROR_LOG => static function(array $identifier): string {
-                return get_string('mappingerrorcertificatelog', 'tool_certificate', (object) [
-                    'name' => s($identifier['name'] ?? ''),
-                ]);
-            }
+            self::ERROR_LOG => function(array $identifier): string {
+                return get_string('mappingerrorcertificatelog', 'tool_certificate',
+                    $this->get_identifier_for_display($identifier));
+            },
+            self::ERROR_IDENTIFIER => static function(array $identifier) {
+                return static::display_identifier_idnumber_name($identifier);
+            },
         ]);
     }
 

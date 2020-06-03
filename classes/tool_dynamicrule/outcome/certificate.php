@@ -199,7 +199,7 @@ class certificate extends \tool_dynamicrule\outcome_base {
      * @param exporter_base $exporter
      */
     public function add_exporter_mapping(exporter_base $exporter): void {
-        $exporter->add_mapping('certificate', $this->get_certificateid());
+        $exporter->add_mapping('tool_certificate_templates', $this->get_certificateid());
     }
 
     /**
@@ -209,7 +209,8 @@ class certificate extends \tool_dynamicrule\outcome_base {
      */
     public function get_importer_mapping(importer_base $importer): void {
         $configdata = $this->get_configdata();
-        $configdata['certificate'] = $importer->get_mapping('certificate', $this->get_certificateid(), IGNORE_MISSING) ?? 0;
+        $configdata['certificate'] = $importer->get_mapping('tool_certificate_templates',
+            $this->get_certificateid(), IGNORE_MISSING) ?? 0;
 
         $this->update_configdata($configdata);
     }

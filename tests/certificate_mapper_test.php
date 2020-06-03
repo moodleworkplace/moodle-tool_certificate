@@ -25,10 +25,9 @@
  * @license     Moodle Workplace License, distribution is restricted, contact support@moodle.com
  */
 
-namespace tool_wp\tool_wp\mapper;
+namespace tool_certificate\tool_wp\mapper;
 
 use context_coursecat;
-use tool_certificate\tool_wp\mapper\certificate;
 use tool_tenant\manager;
 use tool_tenant\tenancy;
 use tool_wp\local\exportimport\helper;
@@ -39,7 +38,7 @@ use tool_wp\local\exportimport\helper;
  * @package     tool_certificate
  * @group       tool_certificate
  * @category    test
- * @covers      \tool_certificate\tool_wp\mapper\certificate
+ * @covers      \tool_certificate\tool_wp\mapper\tool_certificate_templates
  * @copyright   2020 Moodle Pty Ltd <support@moodle.com>
  * @author      2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -55,8 +54,8 @@ class certificate_mapper_testcase extends \advanced_testcase {
 
         $certificate = $this->get_plugin_generator()->create_template(['name' => 'My certificate'])->to_record();
 
-        $mapper = helper::find_mapper_for_entity('certificate', helper::get_all_mappers());
-        $this->assertInstanceOf(certificate::class, $mapper);
+        $mapper = helper::find_mapper_for_entity('tool_certificate_templates', helper::get_all_mappers());
+        $this->assertInstanceOf(tool_certificate_templates::class, $mapper);
 
         $data = $mapper->get_mapping_data_for_workplace_export($certificate->id);
         $this->assertEquals([
@@ -74,7 +73,7 @@ class certificate_mapper_testcase extends \advanced_testcase {
 
         $certificate = $this->get_plugin_generator()->create_template(['name' => 'My certificate'])->to_record();
 
-        $mapping = $this->get_workplace_generator()->locate_mapping('certificate', ['name' => $certificate->name]);
+        $mapping = $this->get_workplace_generator()->locate_mapping('tool_certificate_templates', ['name' => $certificate->name]);
         $this->assertEquals([$certificate->id, [], [], true], $mapping);
     }
 
@@ -118,7 +117,7 @@ class certificate_mapper_testcase extends \advanced_testcase {
             'contextid' => $context->id,
         ])->to_record();
 
-        $mapping = $this->get_workplace_generator()->locate_mapping('certificate', ['name' => $certificate->name]);
+        $mapping = $this->get_workplace_generator()->locate_mapping('tool_certificate_templates', ['name' => $certificate->name]);
         $this->assertEquals([$certificate->id, [], [], true], $mapping);
     }
 
@@ -154,12 +153,12 @@ class certificate_mapper_testcase extends \advanced_testcase {
         $this->get_plugin_generator()->create_template(['name' => $name])->to_record();
 
         list($certificateid, $notices, $errors, $validated) =
-            $this->get_workplace_generator()->locate_mapping('certificate', $identifier);
+            $this->get_workplace_generator()->locate_mapping('tool_certificate_templates', $identifier);
 
         $this->assertNull($certificateid);
         $this->assertEmpty($notices);
         $this->assertCount(1, $errors);
-        $this->assertEquals("A certificate template with name '{$identifier['name']}' was not found", reset($errors));
+        $this->assertEquals("A certificate template {$identifier['name']} was not found", reset($errors));
         $this->assertFalse($validated);
     }
 
