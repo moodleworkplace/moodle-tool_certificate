@@ -19,6 +19,7 @@ variables:
 
 before_script:
 - . prepare-workplace $cibot_sshkey
+- nvm use 14.2.0
 - cd $CI_PROJECT_DIR/..
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
