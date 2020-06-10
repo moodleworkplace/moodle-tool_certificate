@@ -154,4 +154,17 @@ class tool_certificate_generator extends component_generator_base {
 
         return $filecontents;
     }
+
+    /**
+     * Assigns manage capability.
+     *
+     * @param int $userid
+     * @param int $roleid
+     * @param context $context
+     * @return void
+     */
+    public function assign_manage_capability(int $userid, int $roleid, context $context): void {
+        assign_capability('tool/certificate:manage', CAP_ALLOW, $roleid, $context->id);
+        role_assign($roleid, $userid, $context->id);
+    }
 }
