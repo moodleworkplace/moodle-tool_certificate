@@ -193,3 +193,79 @@ function tool_certificate_extend_navigation_course($navigation, $course, $contex
         $navigation->add_node($settingsnode);
     }
 }
+
+/**
+ * Hook called to check if template delete is permitted when deleting category.
+ *
+ * @param \core_course_category $category The category record.
+ * @return bool
+ */
+function tool_certificate_can_course_category_delete(\core_course_category $category): bool {
+    $context = $category->get_context();
+    if (\tool_certificate\permission::can_manage($context)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Hook called to check if template move is permitted when deleting category.
+ *
+ * @param \core_course_category $category The category record.
+ * @param \core_course_category $newcategory The new category record.
+ * @return bool
+ */
+function tool_certificate_can_course_category_delete_move(\core_course_category $category,
+        \core_course_category $newcategory): bool {
+    $context = $newcategory->get_context();
+    if (\tool_certificate\permission::can_manage($context)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Hook called to add information that is displayed on category deletion form.
+ *
+ * @param \core_course_category $category The category record.
+ * @return string
+ */
+function tool_certificate_get_course_category_contents(\core_course_category $category): string {
+    global $DB;
+    $context = $category->get_context();
+    if ($DB->record_exists(\tool_certificate\persistent\template::TABLE, ['contextid' => $context->id])) {
+        return get_string('certificatetemplates', 'tool_certificate');
+    }
+    return '';
+}
+
+/**
+ * Hook called before we delete a category.
+ * Deletes all the templates in the category.
+ *
+ * @param \stdClass $category The category record.
+ */
+function tool_certificate_pre_course_category_delete(\stdClass $category): void {
+    $context = context_coursecat::instance($category->id, IGNORE_MISSING);
+    $templates = \tool_certificate\persistent\template::get_records(['contextid' => $context->id]);
+    foreach ($templates as $template) {
+        $template->delete();
+    }
+}
+
+/**
+ * Hook called before we delete a category.
+ * Moves all the templates in the deleted category to the new category.
+ *
+ * @param \core_course_category $category The category record.
+ * @param \core_course_category $newcategory The new category record.
+ */
+function tool_certificate_pre_course_category_delete_move(\core_course_category $category,
+          \core_course_category $newcategory): void {
+    $context = $category->get_context();
+    $newcontext = $newcategory->get_context();
+    $templates = \tool_certificate\persistent\template::get_records(['contextid' => $context->id]);
+    foreach ($templates as $template) {
+        $template->set('contextid', $newcontext->id)->update();
+    }
+}
