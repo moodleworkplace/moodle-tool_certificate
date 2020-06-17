@@ -409,4 +409,33 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertEquals($cat3context->id, $DB->get_field(\tool_certificate\persistent\template::TABLE,
             'contextid', ['id' => $certificate2->get_id()]));
     }
+
+    /**
+     * Test category deletion for the purpose of callback behaviour with no certificates.
+     */
+    public function test_delete_category_with_no_certificates() {
+        global $DB;
+        $user = $this->getDataGenerator()->create_user();
+        $roleid = create_role('Dummy role', 'dummyrole', 'dummy role description');
+        $this->setUser($user);
+
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat2 = $this->getDataGenerator()->create_category();
+        $cat3 = $this->getDataGenerator()->create_category();
+        $cat1context = context_coursecat::instance($cat1->id);
+        $cat2context = context_coursecat::instance($cat2->id);
+        $cat3context = context_coursecat::instance($cat3->id);
+
+        // Check 'can_course_category_delete'.
+        $this->assertTrue(tool_certificate_can_course_category_delete($cat1));
+
+        // Delete cat1 with all its content.
+        $cat1->delete_full();
+
+        // Check 'can_course_category_delete_move'.
+        $this->assertTrue(tool_certificate_can_course_category_delete_move($cat2, $cat3));
+
+        // Delete cat2 moving content to cat3.
+        $cat2->delete_move($cat3->id);
+    }
 }
