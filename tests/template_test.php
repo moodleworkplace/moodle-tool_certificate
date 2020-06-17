@@ -399,6 +399,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         // Check 'can_course_category_delete_move' without capabilities.
         $this->assertFalse(tool_certificate_can_course_category_delete_move($cat2, $cat3));
+        $this->get_generator()->assign_manage_capability($user->id, $roleid, $cat2context);
         $this->get_generator()->assign_manage_capability($user->id, $roleid, $cat3context);
         // Add capabilities and check again.
         $this->assertTrue(tool_certificate_can_course_category_delete_move($cat2, $cat3));
