@@ -231,8 +231,8 @@ class tool_certificate_outcome_certificate_testcase extends advanced_testcase {
 
         // Export our rule.
         $exportid = $this->get_workplace_generator()->perform_export(rules_exporter::class, [
-            rules_exporter::EXPORT_SETTINGS => 1,
-            rules_exporter::EXPORT_TYPE => rules_exporter::FILTER_ALL,
+            rules_exporter::EXPORT_CONTENT => 1,
+            rules_exporter::EXPORT_INSTANCES => rules_exporter::EXPORT_INSTANCES_ALL,
         ]);
 
         // Now delete the original certificate, and create a new one with the same name.
@@ -243,8 +243,8 @@ class tool_certificate_outcome_certificate_testcase extends advanced_testcase {
         $newcertificate = $this->certgenerator->create_template(['name' => $originalcertifcatename]);
 
         $importid = $this->get_workplace_generator()->perform_import_from_export_id($exportid, [
-            rules_importer::IMPORT_SETTINGS => 1,
-            rules_importer::IMPORT_TYPE => rules_importer::FILTER_ALL,
+            rules_importer::IMPORT_CONTENT => 1,
+            rules_importer::IMPORT_INSTANCES => rules_importer::IMPORT_INSTANCES_ALL,
         ]);
 
         // Confirm the certificate mapping data was added.
