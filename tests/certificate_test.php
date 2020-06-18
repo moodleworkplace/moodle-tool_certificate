@@ -276,4 +276,41 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $code2 = \tool_certificate\certificate::generate_code();
         $this->assertFalse($code1 == $code2);
     }
+
+    /**
+     * Test count_templates_in_category.
+     */
+    public function test_count_templates_in_category() {
+        $category1 = $this->getDataGenerator()->create_category(['name' => 'Cat1']);
+        $category2 = $this->getDataGenerator()->create_category(['name' => 'Cat2', 'parent' => $category1->id]);
+        $category3 = $this->getDataGenerator()->create_category(['name' => 'Cat3', 'parent' => $category1->id]);
+        $category4 = $this->getDataGenerator()->create_category(['name' => 'Cat4', 'parent' => $category2->id]);
+
+        $template1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1',
+            'contextid' => $category1->get_context()->id]);
+        $template2 = $this->get_generator()->create_template((object)['name' => 'Certificate 2',
+            'contextid' => $category2->get_context()->id]);
+        $template3 = $this->get_generator()->create_template((object)['name' => 'Certificate 3',
+            'contextid' => $category4->get_context()->id]);
+        $template4 = $this->get_generator()->create_template((object)['name' => 'Certificate 4',
+            'contextid' => $category4->get_context()->id]);
+
+        /*
+         * Now we have
+         * $category1
+         *      $template1
+         *      $category2
+         *          $template2
+         *          $category4
+         *              $template3
+         *              $template4
+         *      $category3
+         * structure.
+         */
+
+        $this->assertEquals(4, \tool_certificate\certificate::count_templates_in_category($category1));
+        $this->assertEquals(3, \tool_certificate\certificate::count_templates_in_category($category2));
+        $this->assertEmpty(\tool_certificate\certificate::count_templates_in_category($category3));
+        $this->assertEquals(2, \tool_certificate\certificate::count_templates_in_category($category4));
+    }
 }
