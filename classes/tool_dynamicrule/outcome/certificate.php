@@ -25,6 +25,7 @@
 namespace tool_certificate\tool_dynamicrule\outcome;
 
 use tool_certificate\customfield\issue_handler;
+use tool_certificate\permission;
 use tool_dynamicrule\api;
 
 defined('MOODLE_INTERNAL') || die;
@@ -168,9 +169,17 @@ class certificate extends \tool_dynamicrule\outcome_base {
      * @return bool
      */
     public function user_can_add(): bool {
-        return \tool_certificate\permission::can_issue_to_anybody(\context_system::instance());
+        if (\tool_certificate\permission::can_issue_to_anybody(\context_system::instance())) {
+            return true;
+        }
+        // This is not 100% hit, this function returns the contexts where user is able to VIEW templates but we
+        // need ones there he can issue. However it is the same method that is used in the
+        // tool_certificate_potential_certificate_selector Web service, the one that certifications
+        // selector uses.
+        // If user selects template they can't issue in they'll get an error raised by user_can_edit().
+        $contexts = permission::get_visible_categories_contexts();
+        return !empty($contexts);
     }
-
 
     /**
      * If the current user is able to edit this outcome.
