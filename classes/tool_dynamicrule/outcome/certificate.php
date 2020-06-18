@@ -25,6 +25,7 @@
 namespace tool_certificate\tool_dynamicrule\outcome;
 
 use tool_certificate\customfield\issue_handler;
+use tool_certificate\permission;
 use tool_dynamicrule\api;
 
 defined('MOODLE_INTERNAL') || die;
@@ -81,8 +82,6 @@ class certificate extends \tool_dynamicrule\outcome_base {
      * @param array $users The users objects to apply the outcome to
      */
     public function apply_to_users(array $users) {
-        global $DB;
-
         // TODO SP-611 implement.
         // There is a challenge here because we need to know information about the program or course
         // that was completed in the conditions for this certificate to be issued.
@@ -90,8 +89,7 @@ class certificate extends \tool_dynamicrule\outcome_base {
         // TODO add tests.
         $issuedataall = $this->get_data_from_conditions(issue_handler::create()->get_all_fields_shortnames(), $users);
 
-        $certificateid = (int)$this->get_configdata()['certificate'];
-        $template = \tool_certificate\template::instance($certificateid);
+        $template = \tool_certificate\template::instance($this->get_certificateid());
 
         foreach ($users as $user) {
             $issuedata = $issuedataall[$user->id];
@@ -129,12 +127,12 @@ class certificate extends \tool_dynamicrule\outcome_base {
     }
 
     /**
-     * Check if certificate is not empty.
+     * Check if certificate exists.
      *
      * @return bool
      */
     public function is_configuration_valid(): bool {
-        return !empty($this->get_configdata()['certificate']);
+        return \tool_certificate\persistent\template::record_exists($this->get_certificateid());
     }
 
     /**
@@ -163,5 +161,34 @@ class certificate extends \tool_dynamicrule\outcome_base {
             $selected = [];
         }
         return $selected;
+    }
+
+    /**
+     * If the current user is able to add this outcome.
+     *
+     * @return bool
+     */
+    public function user_can_add(): bool {
+        if (\tool_certificate\permission::can_issue_to_anybody(\context_system::instance())) {
+            return true;
+        }
+        // This is not 100% hit, this function returns the contexts where user is able to VIEW templates but we
+        // need ones there he can issue. However it is the same method that is used in the
+        // tool_certificate_potential_certificate_selector Web service, the one that certifications
+        // selector uses.
+        // If user selects template they can't issue in they'll get an error raised by user_can_edit().
+        $contexts = permission::get_visible_categories_contexts();
+        return !empty($contexts);
+    }
+
+    /**
+     * If the current user is able to edit this outcome.
+     *
+     * @param array $configdata
+     * @return bool
+     */
+    public function user_can_edit(array $configdata): bool {
+        $template = \tool_certificate\template::instance($configdata['certificate']);
+        return $template->can_issue_to_anybody();
     }
 }
