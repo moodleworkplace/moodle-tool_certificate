@@ -272,4 +272,23 @@ class certificate {
         return component_class_callback('tool_tenant\\tenancy', 'get_users_subquery',
             [true, false, $usertablealias.'.id'], $usertablealias.'.deleted=0');
     }
+
+    /**
+     * Get templates count for course category and its child categories.
+     *
+     * @param \core_course_category $category
+     * @return int
+     */
+    public static function count_templates_in_category(\core_course_category $category): int {
+        global $DB;
+
+        $ctx = $category->get_context();
+
+        $select = "(id = ? OR (".$DB->sql_like('path', '?').")) AND contextlevel = ?";
+        $params = [$ctx->id, $ctx->path.'/%', CONTEXT_COURSECAT];
+        $contexts = $DB->get_records_select('context', $select, $params);
+
+        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts));
+        return \tool_certificate\persistent\template::count_records_select("contextid $insql", $inparams);
+    }
 }
