@@ -158,7 +158,7 @@ class certificate_mapper_testcase extends \advanced_testcase {
         $this->assertNull($certificateid);
         $this->assertEmpty($notices);
         $this->assertCount(1, $errors);
-        $this->assertEquals("A certificate template {$identifier['name']} was not found", reset($errors));
+        $this->assertEquals("Certificate '{$identifier['name']}' was not found", reset($errors));
         $this->assertFalse($validated);
     }
 

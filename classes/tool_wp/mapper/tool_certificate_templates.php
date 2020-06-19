@@ -51,10 +51,10 @@ class tool_certificate_templates extends export_import_mapper_base {
             self::ERROR_CONFLICTHEADER => get_string('mappingerrorcertificateheader', 'tool_certificate'),
             self::ERROR_LOG => function(array $identifier): string {
                 return get_string('mappingerrorcertificatelog', 'tool_certificate',
-                    $this->get_identifier_for_display($identifier));
+                    $this->get_identifier_for_display($identifier, true));
             },
-            self::ERROR_IDENTIFIER => static function(array $identifier) {
-                return static::display_identifier_idnumber_name($identifier);
+            self::ERROR_IDENTIFIER => static function(array $identifier, bool $usequotes = false) {
+                return static::display_identifier_idnumber_name($identifier, 'unused', 'name', $usequotes);
             },
         ]);
     }
