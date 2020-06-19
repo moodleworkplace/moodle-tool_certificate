@@ -364,49 +364,4 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
     }
-
-    /**
-     * Test move/remove template on category deletion.
-     */
-    public function test_delete_category_with_certificates() {
-        global $DB;
-        $user = $this->getDataGenerator()->create_user();
-        $roleid = create_role('Dummy role', 'dummyrole', 'dummy role description');
-        $this->setUser($user);
-
-        $cat1 = $this->getDataGenerator()->create_category();
-        $cat2 = $this->getDataGenerator()->create_category();
-        $cat3 = $this->getDataGenerator()->create_category();
-        $cat1context = context_coursecat::instance($cat1->id);
-        $cat2context = context_coursecat::instance($cat2->id);
-        $cat3context = context_coursecat::instance($cat3->id);
-
-        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1',
-            'contextid' => $cat1context->id]);
-        $certificate2 = $this->get_generator()->create_template((object)['name' => 'Certificate 2',
-            'contextid' => $cat2context->id]);
-
-        // Check 'can_course_category_delete' without capabilities.
-        $this->assertFalse(tool_certificate_can_course_category_delete($cat1));
-        // Add capabilities and check again.
-        $this->get_generator()->assign_manage_capability($user->id, $roleid, $cat1context);
-        $this->assertTrue(tool_certificate_can_course_category_delete($cat1));
-
-        // Delete cat1 with all its content.
-        $cat1->delete_full();
-        // Check certificate1 was removed.
-        $this->assertFalse($DB->record_exists(\tool_certificate\persistent\template::TABLE, ['id' => $certificate1->get_id()]));
-
-        // Check 'can_course_category_delete_move' without capabilities.
-        $this->assertFalse(tool_certificate_can_course_category_delete_move($cat2, $cat3));
-        $this->get_generator()->assign_manage_capability($user->id, $roleid, $cat3context);
-        // Add capabilities and check again.
-        $this->assertTrue(tool_certificate_can_course_category_delete_move($cat2, $cat3));
-
-        // Delete cat2 moving content to cat3.
-        $cat2->delete_move($cat3->id);
-        // Check certificate2 in now in cat3.
-        $this->assertEquals($cat3context->id, $DB->get_field(\tool_certificate\persistent\template::TABLE,
-            'contextid', ['id' => $certificate2->get_id()]));
-    }
 }

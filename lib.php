@@ -201,11 +201,9 @@ function tool_certificate_extend_navigation_course($navigation, $course, $contex
  * @return bool
  */
 function tool_certificate_can_course_category_delete(\core_course_category $category): bool {
-    $context = $category->get_context();
-    if (\tool_certificate\permission::can_manage($context)) {
-        return true;
-    }
-    return false;
+    // Deletion requires certificates to be present and permission to manage them.
+    $certificatescount = \tool_certificate\certificate::count_templates_in_category($category);
+    return !$certificatescount || \tool_certificate\permission::can_manage($category->get_context());
 }
 
 /**
@@ -217,11 +215,11 @@ function tool_certificate_can_course_category_delete(\core_course_category $cate
  */
 function tool_certificate_can_course_category_delete_move(\core_course_category $category,
         \core_course_category $newcategory): bool {
-    $context = $newcategory->get_context();
-    if (\tool_certificate\permission::can_manage($context)) {
-        return true;
-    }
-    return false;
+    // Deletion with move requires certificates to move to be present and
+    // permission to manage them at destination category.
+    $certificatescount = \tool_certificate\certificate::count_templates_in_category($category);
+    return !$certificatescount || (\tool_certificate\permission::can_manage($category->get_context())
+        && \tool_certificate\permission::can_manage($newcategory->get_context()));
 }
 
 /**
@@ -231,9 +229,7 @@ function tool_certificate_can_course_category_delete_move(\core_course_category 
  * @return string
  */
 function tool_certificate_get_course_category_contents(\core_course_category $category): string {
-    global $DB;
-    $context = $category->get_context();
-    if ($DB->record_exists(\tool_certificate\persistent\template::TABLE, ['contextid' => $context->id])) {
+    if (\tool_certificate\certificate::count_templates_in_category($category)) {
         return get_string('certificatetemplates', 'tool_certificate');
     }
     return '';
