@@ -26,7 +26,8 @@ namespace tool_certificate\tool_dynamicrule\outcome;
 
 use tool_certificate\customfield\issue_handler;
 use tool_certificate\permission;
-use tool_dynamicrule\api;
+use tool_wp\exporter_base;
+use tool_wp\importer_base;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -190,5 +191,27 @@ class certificate extends \tool_dynamicrule\outcome_base {
     public function user_can_edit(array $configdata): bool {
         $template = \tool_certificate\template::instance($configdata['certificate']);
         return $template->can_issue_to_anybody();
+    }
+
+    /**
+     * Add certificate outcome field mapping during export
+     *
+     * @param exporter_base $exporter
+     */
+    public function add_exporter_mapping(exporter_base $exporter): void {
+        $exporter->add_mapping('tool_certificate_templates', $this->get_certificateid());
+    }
+
+    /**
+     * Get certificate outcome field mapping during import
+     *
+     * @param importer_base $importer
+     */
+    public function get_importer_mapping(importer_base $importer): void {
+        $configdata = $this->get_configdata();
+        $configdata['certificate'] = $importer->get_mapping('tool_certificate_templates',
+            $this->get_certificateid(), IGNORE_MISSING) ?? 0;
+
+        $this->update_configdata($configdata);
     }
 }
