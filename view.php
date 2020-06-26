@@ -44,10 +44,10 @@ if ($preview) {
     if ($template && (\tool_certificate\permission::can_verify() ||
             \tool_certificate\permission::can_view_issue($template, $issue))) {
         $file = $template->get_issue_file($issue);
-        // Adding cachebuster to URL to make sure files are reloaded.
-        $cachebuster = '?cb=' . time();
+        // We add timemodified instead of issue id to prevent caching of changed certificate.
+        // The callback tool_certificate_pluginfile() ignores the itemid and only takes the code.
         $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-            $file->get_itemid(), $file->get_filepath(), $file->get_filename()) . $cachebuster;
+            $file->get_timemodified(), $file->get_filepath(), $issue->code . '.pdf');
         redirect($url);
     } else {
         print_error('notfound');
