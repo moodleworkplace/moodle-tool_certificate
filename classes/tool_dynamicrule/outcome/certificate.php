@@ -73,7 +73,13 @@ class certificate extends \tool_dynamicrule\outcome_base {
      * @return array Array with errors for each element
      */
     public function validate_config_form(array $data): array {
+        // As form selector does not filter certificates by issue capability,
+        // we need to verify and show for error (rather than exception on saving).
+        // TODO: This might be not required once WP-1196 has landed.
         $errors = [];
+        if (!$this->user_can_edit($data)) {
+            $errors['certificate'] = get_string('errornopermissionissuecertificate', 'tool_certificate');
+        }
         return $errors;
     }
 
