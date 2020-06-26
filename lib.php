@@ -81,21 +81,18 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // Issues filearea.
     if ($filearea === 'issues') {
-        $elementid = array_shift($args);
+        $filename = array_pop($args); // File name is actually the certificate code.
+        $code = pathinfo($filename, PATHINFO_FILENAME);
 
-        $issue = $DB->get_record('tool_certificate_issues', ['id' => $elementid], '*', MUST_EXIST);
+        $issue = $DB->get_record('tool_certificate_issues', ['code' => $code], '*', MUST_EXIST);
         $template = \tool_certificate\template::instance($issue->templateid);
-        \tool_certificate\permission::can_view_issue($template, $issue);
-
-        $filename = array_pop($args);
-        if (!$args) {
-            $filepath = '/';
-        } else {
-            $filepath = '/' . implode('/', $args) . '/';
+        if (!\tool_certificate\permission::can_view_issue($template, $issue)) {
+            return false;
         }
+
         $fs = get_file_storage();
-        $file = $fs->get_file($context->id, 'tool_certificate', $filearea, $elementid, $filepath, $filename);
-        if (!$file) {
+        $files = $fs->get_area_files($context->id, 'tool_certificate', $filearea, $issue->id, '', false);
+        if (!$file = reset($files)) {
             return false;
         }
         send_stored_file($file, null, 0, $forcedownload, $options);
