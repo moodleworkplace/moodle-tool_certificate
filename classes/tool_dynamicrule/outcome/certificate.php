@@ -26,6 +26,7 @@ namespace tool_certificate\tool_dynamicrule\outcome;
 
 use tool_certificate\customfield\issue_handler;
 use tool_certificate\permission;
+use tool_certificate\template;
 use tool_wp\exporter_base;
 use tool_wp\importer_base;
 
@@ -59,7 +60,9 @@ class certificate extends \tool_dynamicrule\outcome_base {
             'ajax' => 'tool_certificate/form_certificate_selector',
             'multiple' => false,
             'class' => 'select_certificate',
-            'valuehtmlcallback' => [$this, 'get_certificate_name']
+            'valuehtmlcallback' => static function(int $value): string {
+                return template::instance($value)->get_formatted_name();
+            }
         ];
         $selected = $this->get_selected();
         $mform->addElement('autocomplete', 'certificate', get_string('selectcertificate', 'tool_certificate'), $selected, $options);
@@ -73,7 +76,13 @@ class certificate extends \tool_dynamicrule\outcome_base {
      * @return array Array with errors for each element
      */
     public function validate_config_form(array $data): array {
+        // As form selector does not filter certificates by issue capability,
+        // we need to verify and show for error (rather than exception on saving).
+        // TODO: This might be not required once WP-1196 has landed.
         $errors = [];
+        if (!$this->user_can_edit($data)) {
+            $errors['certificate'] = get_string('errornopermissionissuecertificate', 'tool_certificate');
+        }
         return $errors;
     }
 
@@ -118,6 +127,7 @@ class certificate extends \tool_dynamicrule\outcome_base {
      */
     public function get_certificate_name(): string {
         global $DB;
+
         if ($cid = $this->get_certificateid()) {
             if ($c = $DB->get_field_sql("SELECT name FROM {tool_certificate_templates} WHERE id = ?", [$cid])) {
                 $options = ['context' => \context_system::instance(), 'escape' => false];
