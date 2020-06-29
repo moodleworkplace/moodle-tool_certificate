@@ -86,7 +86,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
         $issue = $DB->get_record('tool_certificate_issues', ['code' => $code], '*', MUST_EXIST);
         $template = \tool_certificate\template::instance($issue->templateid);
-        if (!\tool_certificate\permission::can_view_issue($template, $issue)) {
+        if (!\tool_certificate\permission::can_view_issue($template, $issue) && !\tool_certificate\permission::can_verify()) {
             return false;
         }
 
