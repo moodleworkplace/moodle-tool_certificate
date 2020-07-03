@@ -645,6 +645,10 @@ class template {
         $issue->expires = $expires;
         $issue->component = $component;
 
+        // Store user fullname.
+        $issuedata = $data + ['userfullname' => fullname($DB->get_record('user', ['id' => $userid]))];
+        $issue->data = json_encode($issuedata);
+
         // Insert the record into the database.
         $issue->id = $DB->insert_record('tool_certificate_issues', $issue);
         issue_handler::create()->save_additional_data($issue, $data);
@@ -654,7 +658,6 @@ class template {
         self::send_issue_notification($issue, $issuefile);
 
         // Trigger event.
-        $issue->data = json_encode([]);
         \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
 
         return $issue->id;
