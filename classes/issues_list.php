@@ -55,7 +55,7 @@ class issues_list extends system_report {
         $this->add_base_condition_simple('i.templateid', $templateid);
         $this->add_base_join('INNER JOIN {user} u ON u.id = i.userid');
         $this->add_base_condition_sql(certificate::get_users_subquery());
-        $this->add_base_fields('i.id, i.expires, i.code, i.userid'); // Necessary for row class and actions.
+        $this->add_base_fields('i.id, i.expires, i.code, i.userid, i.data'); // Necessary for row class and actions.
         $this->set_actions();
     }
 
@@ -81,11 +81,10 @@ class issues_list extends system_report {
             new \lang_string('fullname'),
             'user'
         ))
-            ->add_fields(user_entity::get_all_user_name_fields(true, 'u'))
-            ->add_field('u.id')
+            ->add_field('i.data')
             ->set_is_default(true, 1)
-            ->set_is_sortable(true, true);
-        $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'fullname']);
+            ->set_is_sortable(false, false);
+        $newcolumn->add_callback([$this, 'col_fullname']);
         $this->add_column($newcolumn);
 
         // Column "awarded".
@@ -188,6 +187,16 @@ class issues_list extends system_report {
     public function col_code($code) {
         return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]),
             $code, ['title' => get_string('verify', 'tool_certificate')]);
+    }
+
+    /**
+     * Generate the fullname column.
+     *
+     * @param string $data
+     * @return string
+     */
+    public function col_fullname($data) {
+        return @json_decode($data, true)['userfullname'];
     }
 
     /**

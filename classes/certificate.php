@@ -196,20 +196,15 @@ class certificate {
 
         $conditions = ['code' => $code];
 
-        $userfields = get_all_user_name_fields(true, 'u');
-
         $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
                        ci.expires, ci.data, ci.component,
-                       u.id as userid, {$userfields},
+                       ci.userid,
                        t.name as certificatename,
                        t.contextid
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
-                  JOIN {user} u
-                    ON ci.userid = u.id
-                 WHERE ci.code = :code
-                   AND u.deleted = 0";
+                 WHERE ci.code = :code";
 
         if ($issue = $DB->get_record_sql($sql, $conditions)) {
             $result->success = true;

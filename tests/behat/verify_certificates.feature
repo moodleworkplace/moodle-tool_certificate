@@ -79,3 +79,13 @@ Feature: Being able to verify that a certificate is valid or not
     And I verify the "Certificate 00" site certificate for the user "user22"
     And I verify the "Certificate 00" site certificate for the user "user12"
     And I log out
+
+  Scenario: Verify certificate of a removed user
+    And the following certificate issues exist:
+      | template | user |
+      | Certificate 1 | student1 |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on "Delete" "link" in the "Student 1" "table_row"
+    And I visit the sites certificates verification url
+    And I verify the "Certificate 1" site certificate for the user "student1"

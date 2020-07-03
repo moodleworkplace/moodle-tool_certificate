@@ -152,20 +152,29 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
      * Test regenerate_issue_file
      */
     public function test_regenerate_issue_file() {
+        global $DB;
+
         $this->setAdminUser();
 
         // Create the certificate.
         $certificate = $this->certgenerator->create_template((object)['name' => 'Certificate 1']);
 
         // Issue certificate.
-        $user = $this->getDataGenerator()->create_user();
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => '01']);
         $issue = $this->certgenerator->issue($certificate, $user);
+
+        // Check issue userfullname data.
+        $userfullname = $data = @json_decode($issue->data, true)['userfullname'];
+        $this->assertEquals('User 01', $userfullname);
 
         // Check issue file already exists after issuing certificate.
         $fs = get_file_storage();
         $file = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
             $issue->id, '/', $issue->code . '.pdf');
         $this->assertNotFalse($file);
+
+        // Change user name.
+        $DB->update_record('user', (object) ['id' => $user->id, 'lastname' => '02']);
 
         // Regenerate issue file.
         \tool_certificate\external\issues::regenerate_issue_file($issue->id);
@@ -175,5 +184,10 @@ class tool_certificate_external_test_testcase extends advanced_testcase {
             $issue->id, '/', $issue->code . '.pdf');
         $this->assertNotEquals($file->get_id(), $newfile->get_id());
         $this->assertEquals($issue->id, $newfile->get_itemid());
+
+        // Check issue userfullname data was updated.
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issue->id]);
+        $userfullname = @json_decode($issue->data, true)['userfullname'];
+        $this->assertEquals('User 02', $userfullname);
     }
 }

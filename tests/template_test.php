@@ -270,7 +270,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         global $DB;
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
-        $user1 = $this->getDataGenerator()->create_user();
+        $user1 = $this->getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => '01']);
         $user2 = $this->getDataGenerator()->create_user();
 
         // Trigger and capture the event.
@@ -283,6 +283,10 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $messages = $messagessink->get_messages();
         $sink->close();
         $messagessink->close();
+
+        // Check userfullname data is stored.
+        $userfullname = @json_decode($issue1->data, true)['userfullname'];
+        $this->assertEquals('User 01', $userfullname);
 
         // There are two events: notification_viewed and certificate_issued.
         $this->assertCount(2, $events);
