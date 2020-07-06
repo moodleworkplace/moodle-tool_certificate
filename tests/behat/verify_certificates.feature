@@ -90,3 +90,4 @@ Feature: Being able to verify that a certificate is valid or not
     And I press "Delete"
     And I visit the sites certificates verification url
     And I verify the site certificate with code "aaaaaaaaa"
+    And I should see "Student 1"
