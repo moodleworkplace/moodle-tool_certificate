@@ -84,6 +84,23 @@ class behat_tool_certificate extends behat_base {
     }
 
     /**
+     * Verifies the certificate with a code.
+     *
+     * @Given /^I verify the site certificate with code "(?P<code>(?:[^"]|\\")*)"$/
+     * @param string $code
+     */
+    public function i_verify_the_site_certificate_with_code($code) {
+        global $DB;
+
+        $issue = $DB->get_record('tool_certificate_issues', ['code' => $code], '*', MUST_EXIST);
+
+        $this->execute('behat_forms::i_set_the_field_to', [get_string('code', 'tool_certificate'), $issue->code]);
+        $this->execute('behat_forms::press_button', get_string('verify', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_contains_text', get_string('valid', 'tool_certificate'));
+        $this->execute('behat_general::assert_page_not_contains_text', get_string('expired', 'tool_certificate'));
+    }
+
+    /**
      * Verifies the certificate code for a user.
      *
      * @codingStandardsIgnoreLine
@@ -175,7 +192,10 @@ class behat_tool_certificate extends behat_base {
             }
             if ($template = \tool_certificate\template::find_by_name($elementdata['template'])) {
                 if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
-                    $template->issue_certificate($userid);
+                    $issueid = $template->issue_certificate($userid);
+                    if (isset($elementdata['code'])) {
+                        $DB->update_record('tool_certificate_issues', (object) ['id' => $issueid, 'code' => $elementdata['code']]);
+                    }
                 }
             }
         }

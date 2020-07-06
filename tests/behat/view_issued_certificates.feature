@@ -214,6 +214,7 @@ Feature: Being able to view the certificates that have been issued
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I click on "Delete" "link" in the "User 11" "table_row"
+    And I press "Delete"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
     And I should see "User 11"
