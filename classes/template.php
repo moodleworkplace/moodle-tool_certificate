@@ -646,8 +646,8 @@ class template {
         $issue->component = $component;
 
         // Store user fullname.
-        $issuedata = $data + ['userfullname' => fullname($DB->get_record('user', ['id' => $userid]))];
-        $issue->data = json_encode($issuedata);
+        $data['userfullname'] = fullname($DB->get_record('user', ['id' => $userid]));
+        $issue->data = json_encode($data);
 
         // Insert the record into the database.
         $issue->id = $DB->insert_record('tool_certificate_issues', $issue);

@@ -100,6 +100,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
 
         $this->resetAfterTest();
+        \tool_certificate\customfield\issue_handler::create()->delete_all();
         $tablename = 'tool_certificate_issues_tmp';
 
         $this->temptable = $table = new xmldb_table($tablename);
@@ -133,5 +134,42 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals('[]', $DB->get_field($tablename, 'data', ['id' => $id1]));
         $this->assertEquals('[]', $DB->get_field($tablename, 'data', ['id' => $id2]));
         $this->assertEquals('{"coursename":"X"}', $DB->get_field($tablename, 'data', ['id' => $id3]));
+    }
+
+    /**
+     * Tests for tool_certificate_upgrade_store_fullname_in_data()
+     */
+    public function test_tool_certificate_upgrade_store_fullname_in_data() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
+
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => '01']);
+        $user2 = $this->getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => '02']);
+        $user3 = $this->getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => '03']);
+
+        $tablename = 'tool_certificate_issues_tmp';
+
+        $this->temptable = $table = new xmldb_table($tablename);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('data', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $DB->get_manager()->create_temp_table($table);
+
+        $id1 = $DB->insert_record($tablename, (object) ['userid' => $user1->id, 'data' => '{}']);
+        $id2 = $DB->insert_record($tablename, (object) ['userid' => $user2->id, 'data' => '{}']);
+        $id3 = $DB->insert_record($tablename, (object) ['userid' => $user3->id, 'data' => '{"userfullname":"User 03"}']);
+
+        tool_certificate_upgrade_store_fullname_in_data($tablename);
+
+        $issue1 = $DB->get_record($tablename, ['id' => $id1]);
+        $issue2 = $DB->get_record($tablename, ['id' => $id2]);
+        $issue3 = $DB->get_record($tablename, ['id' => $id3]);
+
+        $this->assertEquals('{"userfullname":"User 01"}', $issue1->data);
+        $this->assertEquals('{"userfullname":"User 02"}', $issue2->data);
+        $this->assertEquals('{"userfullname":"User 03"}', $issue3->data);
     }
 }
