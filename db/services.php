@@ -34,6 +34,13 @@ $functions = array(
         'ajax'        => true,
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+    'tool_certificate_regenerate_issue_file' => array(
+        'classname'   => \tool_certificate\external\issues::class,
+        'methodname'  => 'regenerate_issue_file',
+        'description' => 'Regenerates an issue file',
+        'type'        => 'write',
+        'ajax'        => true,
+    ),
     'tool_certificate_duplicate_template' => array(
         'classname'   => \tool_certificate\external\templates::class,
         'methodname'  => 'duplicate_template',

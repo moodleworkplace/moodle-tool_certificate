@@ -112,5 +112,13 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019111502, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2020070700) {
+
+        tool_certificate_upgrade_store_fullname_in_data();
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2020070700, 'tool', 'certificate');
+    }
+
     return true;
 }

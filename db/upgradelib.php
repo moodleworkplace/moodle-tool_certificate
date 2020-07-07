@@ -101,3 +101,25 @@ function tool_certificate_upgrade_move_data_to_customfields($tablename = 'tool_c
         }
     }
 }
+
+/**
+ * Store user fullname data in tool_certificate_issues 'data' column if it does not exist
+ *
+ * @param string $tablename for unittests we might need a different table because main table may already not have all fields
+ */
+function tool_certificate_upgrade_store_fullname_in_data($tablename = 'tool_certificate_issues') {
+    global $DB;
+
+    $records = $DB->get_records($tablename);
+    if (!$records) {
+        return;
+    }
+    foreach ($records as $record) {
+        $data = @json_decode($record->data, true);
+        if (!isset($data['userfullname'])) {
+            $user = $DB->get_record('user', ['id' => $record->userid]);
+            $data = json_encode(['userfullname' => fullname($user)]);
+            $DB->update_record($tablename, ['id' => $record->id, 'data' => $data]);
+        }
+    }
+}
