@@ -83,4 +83,57 @@ class issues extends \external_api {
         return null;
     }
 
+    /**
+     * Returns the regenerate_issue_file() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function regenerate_issue_file_parameters() {
+        return new \external_function_parameters(
+            array(
+                'id' => new \external_value(PARAM_INT, 'The issue id'),
+            )
+        );
+    }
+
+    /**
+     * Handles regenerating a certificate issue file.
+     *
+     * @param int $issueid The issue id.
+     */
+    public static function regenerate_issue_file($issueid) {
+        global $DB;
+
+        $params = self::validate_parameters(self::regenerate_issue_file_parameters(), ['id' => $issueid]);
+
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $params['id']], '*', MUST_EXIST);
+
+        // Make sure the user has the required capabilities.
+        $context = \context_system::instance();
+        self::validate_context($context);
+        $template = \tool_certificate\template::instance($issue->templateid);
+        if (!$template->can_issue($issue->userid)) {
+            throw new \required_capability_exception($template->get_context(), 'tool/certificate:issue', 'nopermissions', 'error');
+        }
+
+        // Regenerate the issue file.
+        $template->create_issue_file($issue, true);
+        // Update issue userfullname data.
+        if ($user = $DB->get_record('user', ['id' => $issue->userid])) {
+            $issuedata = @json_decode($issue->data, true);
+            $issuedata['userfullname'] = fullname($user);
+            $issue->data = json_encode($issuedata);
+            $DB->update_record('tool_certificate_issues', $issue);
+        }
+    }
+
+    /**
+     * Returns the regenerate_issue_file result value.
+     *
+     * @return \external_value
+     */
+    public static function regenerate_issue_file_returns() {
+        return null;
+    }
+
 }

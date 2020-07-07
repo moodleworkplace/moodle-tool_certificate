@@ -55,7 +55,7 @@ class issues_list extends system_report {
         $this->add_base_condition_simple('i.templateid', $templateid);
         $this->add_base_join('INNER JOIN {user} u ON u.id = i.userid');
         $this->add_base_condition_sql(certificate::get_users_subquery());
-        $this->add_base_fields('i.id, i.expires, i.code, i.userid'); // Necessary for row class and actions.
+        $this->add_base_fields('i.id, i.expires, i.code, i.userid, i.data'); // Necessary for row class and actions.
         $this->set_actions();
     }
 
@@ -81,11 +81,10 @@ class issues_list extends system_report {
             new \lang_string('fullname'),
             'user'
         ))
-            ->add_fields(user_entity::get_all_user_name_fields(true, 'u'))
-            ->add_field('u.id')
+            ->add_field('i.data')
             ->set_is_default(true, 1)
-            ->set_is_sortable(true, true);
-        $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'fullname']);
+            ->set_is_sortable(false, false);
+        $newcolumn->add_callback([$this, 'col_fullname']);
         $this->add_column($newcolumn);
 
         // Column "awarded".
@@ -130,13 +129,21 @@ class issues_list extends system_report {
      * Issue actions
      */
     protected function set_actions() {
+        $template = $this->template;
+
         // File.
         $icon = new \pix_icon('i/search', get_string('view'), 'core');
         $link = template::view_url(':code');
         $this->add_action((new report_action($link, $icon, [])));
 
+        // Regenerate file.
+        $icon = new \pix_icon('a/refresh', get_string('regenerateissuefile', 'tool_certificate'), 'core');
+        $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'regenerate', 'data-id' => ':id']))
+            ->add_callback(function($row) use ($template) {
+                return $template && $template->can_issue($row->userid);
+            }));
+
         // Revoke.
-        $template = $this->template;
         $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
         $this->add_action(
             (new report_action(new \moodle_url('#'), $icon, ['data-action' => 'revoke', 'data-id' => ':id']))
@@ -180,6 +187,16 @@ class issues_list extends system_report {
     public function col_code($code) {
         return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]),
             $code, ['title' => get_string('verify', 'tool_certificate')]);
+    }
+
+    /**
+     * Generate the fullname column.
+     *
+     * @param string $data
+     * @return string
+     */
+    public function col_fullname($data) {
+        return @json_decode($data, true)['userfullname'];
     }
 
     /**

@@ -37,7 +37,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
  * @return bool|null false if file not found, does not return anything if found - just send the file
  */
 function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once($CFG->libdir . '/filelib.php');
 
@@ -74,6 +74,25 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
         $fs = get_file_storage();
         $file = $fs->get_file($context->id, 'tool_certificate', $filearea, $elementid, $filepath, $filename);
         if (!$file) {
+            return false;
+        }
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    }
+
+    // Issues filearea.
+    if ($filearea === 'issues') {
+        $filename = array_pop($args); // File name is actually the certificate code.
+        $code = pathinfo($filename, PATHINFO_FILENAME);
+
+        $issue = $DB->get_record('tool_certificate_issues', ['code' => $code], '*', MUST_EXIST);
+        $template = \tool_certificate\template::instance($issue->templateid);
+        if (!\tool_certificate\permission::can_view_issue($template, $issue) && !\tool_certificate\permission::can_verify()) {
+            return false;
+        }
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'tool_certificate', $filearea, $issue->id, '', false);
+        if (!$file = reset($files)) {
             return false;
         }
         send_stored_file($file, null, 0, $forcedownload, $options);

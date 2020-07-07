@@ -645,29 +645,86 @@ class template {
         $issue->expires = $expires;
         $issue->component = $component;
 
+        // Store user fullname.
+        $data['userfullname'] = fullname($DB->get_record('user', ['id' => $userid]));
+        $issue->data = json_encode($data);
+
         // Insert the record into the database.
         $issue->id = $DB->insert_record('tool_certificate_issues', $issue);
         issue_handler::create()->save_additional_data($issue, $data);
 
-        // Send notification.
-        self::send_issue_notification($issue);
+        // Create the issue file and send notification.
+        $issuefile = $this->create_issue_file($issue);
+        self::send_issue_notification($issue, $issuefile);
 
         // Trigger event.
-        $issue->data = json_encode([]);
         \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
 
         return $issue->id;
     }
 
     /**
+     * Creates stored file for an issue.
+     *
+     * @param \stdClass $issue
+     * @param bool $regenerate
+     * @return \stored_file
+     */
+    public function create_issue_file(\stdClass $issue, bool $regenerate = false): \stored_file {
+        // Generate issue pdf contents.
+        $filecontents = $this->generate_pdf(false, $issue, true);
+        // Create a file instance.
+        $file = (object) [
+            'contextid' => \context_system::instance()->id,
+            'component' => 'tool_certificate',
+            'filearea'  => 'issues',
+            'itemid'    => $issue->id,
+            'filepath'  => '/',
+            'filename'  => $issue->code . '.pdf'
+        ];
+        $fs = get_file_storage();
+
+        // If file exists and $regenerate=true, delete current issue file.
+        $storedfile = $fs->get_file($file->contextid, $file->component, $file->filearea, $file->itemid, $file->filepath,
+            $file->filename);
+        if ($storedfile && $regenerate) {
+            $storedfile->delete();
+        }
+
+        return $fs->create_file_from_string($file, $filecontents);
+    }
+
+    /**
+     * Gets the stored file for an issue. If issue file doesn't exist new file is created.
+     *
+     * @param \stdClass $issue
+     * @return \stored_file
+     */
+    public function get_issue_file(\stdClass $issue): \stored_file {
+        $fs = get_file_storage();
+        $file = $fs->get_file(
+            \context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        );
+        if (!$file) {
+            $file = $this->create_issue_file($issue);
+        }
+        return $file;
+    }
+
+    /**
      * Sends a moodle notification of the certificate issued.
      *
      * @param \stdClass $issue
+     * @param \stored_file $file
      */
-    private function send_issue_notification(\stdClass $issue): void {
+    private function send_issue_notification(\stdClass $issue, \stored_file $file): void {
         global $DB;
 
-        $context = \context_system::instance();
         $user = core_user::get_user($issue->userid);
         $userfullname = fullname($user, true);
         $mycertificatesurl = new moodle_url('/admin/tool/certificate/my.php');
@@ -692,29 +749,12 @@ class template {
         $message->fullmessagehtml = $fullmessage;
         $message->fullmessageformat = FORMAT_HTML;
         $message->smallmessage = '';
-
-        // Generate attachment.
-        $filecontents = self::generate_pdf(false, $issue, true);
-        // Create a file instance.
-        $file = (object) [
-            'contextid' => $context->id,
-            'component' => 'tool_certificate',
-            'filearea'  => 'issues',
-            'itemid'    => $issue->id,
-            'filepath'  => '/',
-            'filename'  => $issue->code . '.pdf'
-        ];
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_string($file, $filecontents);
         $message->attachment = $file;
         $message->attachname = $file->get_filename();
 
         if (message_send($message)) {
             $DB->set_field('tool_certificate_issues', 'emailed', 1, ['id' => $issue->id]);
         }
-
-        // Delete the filearea.
-        $fs->delete_area_files($context->id, 'tool_certificate', 'issues', $issue->id);
     }
 
     /**
