@@ -19,7 +19,6 @@ variables:
 
 before_script:
 - . prepare-workplace $cibot_sshkey
-- nvm use 14.2.0
 - cd $CI_PROJECT_DIR/..
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
 - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
@@ -56,6 +55,8 @@ codecheck:
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output -v privacy/tests/provider_test.php
   - . check moodle-plugin-ci phpunit --coverage-text
   - . check-finish
+  except:
+  - tags
 
 behat:
   script:
@@ -66,3 +67,5 @@ behat:
   - . check-finish
   except:
   - master
+  - tags
+  - /^WORKPLACE_\d+$/
