@@ -26,11 +26,11 @@ defined('MOODLE_INTERNAL') || die();
 
 // This plugin is part of Moodle Workplace product.
 $plugin->component    = 'tool_certificate';
-$plugin->release      = '3.9';
-$plugin->version      = 2020070700;
-$plugin->requires     = 2020061500.00;
+$plugin->release      = '3.9.1';
+$plugin->version      = 2020071500;
+$plugin->requires     = 2020061501.00;
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->dependencies = [
-    'tool_tenant'     => 2020063000,
-    'tool_wp'         => 2020063000,
+    'tool_tenant'     => 2020071500,
+    'tool_wp'         => 2020071500,
 ];
