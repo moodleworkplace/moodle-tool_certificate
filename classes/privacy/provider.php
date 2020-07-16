@@ -164,6 +164,11 @@ class provider implements \core_privacy\local\metadata\provider,
             return;
         }
 
+        // Delete issue files.
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'tool_certificate', 'issues');
+
+        // Delete issue records.
         $DB->delete_records('tool_certificate_issues');
     }
 
@@ -184,6 +189,15 @@ class provider implements \core_privacy\local\metadata\provider,
             if (!$context instanceof \context_system) {
                 continue;
             }
+
+            // Delete issue files.
+            $fs = get_file_storage();
+            $issues = $DB->get_records('tool_certificate_issues', ['userid' => $userid]);
+            foreach ($issues as $issue) {
+                $fs->delete_area_files($context->id, 'tool_certificate', 'issues', $issue->id);
+            }
+
+            // Delete issue records.
             $DB->delete_records('tool_certificate_issues', ['userid' => $userid]);
         }
     }
@@ -200,6 +214,14 @@ class provider implements \core_privacy\local\metadata\provider,
             return;
         }
         list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+
+        // Delete issue files.
+        $fs = get_file_storage();
+        $issues = $DB->get_records_select('tool_certificate_issues', ' userid ' . $userinsql, $userinparams);
+        foreach ($issues as $issue) {
+            $fs->delete_area_files($context->id, 'tool_certificate', 'issues', $issue->id);
+        }
+        // Delete issue records.
         $DB->delete_records_select('tool_certificate_issues', ' userid ' . $userinsql, $userinparams);
     }
 }
