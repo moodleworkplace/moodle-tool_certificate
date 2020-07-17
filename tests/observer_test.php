@@ -64,12 +64,12 @@ class tool_certificate_observer_testcase extends advanced_testcase {
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Template 01']);
         $certificate2 = $this->get_generator()->create_template((object)['name' => 'Template 02']);
+        // Using dummy component name.
+        $certificate1->issue_certificate($user1->id, null, [], 'mod_myawesomecert', $course1->id);
+        $certificate2->issue_certificate($user1->id, null, [], 'mod_myawesomecert', $course1->id);
+        $certificate2->issue_certificate($user2->id, null, [], 'mod_myawesomecert', $course1->id);
 
-        $certificate1->issue_certificate($user1->id, null, [], 'mod_coursecertificate', $course1->id);
-        $certificate2->issue_certificate($user1->id, null, [], 'mod_coursecertificate', $course1->id);
-        $certificate2->issue_certificate($user2->id, null, [], 'mod_coursecertificate', $course1->id);
-
-        $certificate1->issue_certificate($user1->id, null, [], 'mod_coursecertificate', $course2->id);
+        $certificate1->issue_certificate($user1->id, null, [], 'mod_myawesomecert', $course2->id);
 
         $this->assertEquals(3, $DB->count_records('tool_certificate_issues', ['courseid' => $course1->id]));
         $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['courseid' => $course2->id]));
