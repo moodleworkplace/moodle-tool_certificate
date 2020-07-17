@@ -121,7 +121,8 @@ class certificate {
      * @param int|null $groupid
      * @return int the number of issues
      */
-    public static function count_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode, ?int $groupid) {
+    public static function count_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode,
+            ?int $groupid) {
         global $DB;
 
         $params = [
