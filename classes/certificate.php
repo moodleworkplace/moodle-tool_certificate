@@ -116,17 +116,18 @@ class certificate {
      *
      * @param int $templateid
      * @param int $courseid
+     * @param string $component
      * @param int|null $groupmode
      * @param int|null $groupid
      * @return int the number of issues
      */
-    public static function count_issues_for_course(int $templateid, int $courseid, ?int $groupmode, ?int $groupid) {
+    public static function count_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode, ?int $groupid) {
         global $DB;
 
         $params = [
             'templateid' => $templateid,
             'courseid' => $courseid,
-            'component' => 'mod_coursecertificate'
+            'component' => $component
         ];
 
         if ($groupmode) {
@@ -153,6 +154,7 @@ class certificate {
      *
      * @param int $templateid
      * @param int $courseid
+     * @param string $component
      * @param int|null $groupmode
      * @param int|null $groupid
      * @param int $limitfrom
@@ -160,7 +162,7 @@ class certificate {
      * @param string $sort
      * @return array
      */
-    public static function get_issues_for_course(int $templateid, int $courseid, ?int $groupmode, ?int $groupid,
+    public static function get_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode, ?int $groupid,
             int $limitfrom, int $limitnum, string $sort = ''): array {
         global $DB;
 
@@ -168,7 +170,7 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $params = ['templateid' => $templateid, 'courseid' => $courseid];
+        $params = ['templateid' => $templateid, 'courseid' => $courseid, 'component' => $component];
         $groupmodequery = '';
         if ($groupmode) {
             [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($courseid, $groupmode, $groupid);
@@ -182,7 +184,7 @@ class certificate {
                        t.name, ci.courseid, $userfields
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
-                    ON (ci.templateid = t.id) AND (courseid = :courseid) AND (component = 'mod_coursecertificate')
+                    ON (ci.templateid = t.id) AND (ci.courseid = :courseid) AND (component = :component)
                   JOIN {user} u
                     ON (u.id = ci.userid)
                  WHERE t.id = :templateid

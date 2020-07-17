@@ -194,7 +194,7 @@ class behat_tool_certificate extends behat_base {
                 if ($userid = $DB->get_field('user', 'id', ['username' => $elementdata['user']])) {
                     if (isset($elementdata['course'])) {
                         $courseid = $DB->get_field('course', 'id', ['shortname' => $elementdata['course']]);
-                        $issueid = $template->issue_certificate($userid, null, [], 'mod_coursecertificate', $courseid);
+                        $issueid = $template->issue_certificate($userid, null, [], $elementdata['component'] ?? '', $courseid);
                     } else {
                         $issueid = $template->issue_certificate($userid);
                     }
