@@ -26,15 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use tool_certification\constants;
-use tool_certification\event\certification_completion_created;
-use tool_certification\event\user_allocation_created;
-use tool_certification\event\user_allocation_deleted;
-use tool_program\event\program_completed;
-use tool_certification\api;
-use core\event\user_deleted;
-use tool_program\persistent\program_user;
-
 /**
  * Class tool_certificate_observer
  *
@@ -49,11 +40,18 @@ class tool_certificate_observer
     /**
      * Course deleted observer
      *
-     * @param \core\event\course_deleted $event
+     * @param \core\event\course_content_deleted $event
      */
-    public static function on_course_deleted(\core\event\course_deleted $event): void {
+    public static function on_course_content_deleted(\core\event\course_content_deleted $event): void {
         global $DB;
 
+        $fs = get_file_storage();
+        $issues = $DB->get_records('tool_certificate_issues', ['courseid' => $event->courseid]);
+        foreach ($issues as $issue) {
+            $fs->delete_area_files(context_system::instance()->id, 'tool_certificate', 'issues', $issue->id);
+        }
+
         $DB->delete_records('tool_certificate_issues', ['courseid' => $event->courseid]);
+
     }
 }
