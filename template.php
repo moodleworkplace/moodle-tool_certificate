@@ -60,10 +60,15 @@ if ($action && $pageid) {
     redirect($pageurl);
 }
 
-$heading = $template->get_formatted_name();
-$PAGE->navbar->add($heading, $pageurl);
+$heading = $title = $template->get_formatted_name();
+// If 'formatstringstriptags' config is enabled, we can't show a styled badge, so we avoid showing 'shared' string.
+if ($template->get_shared() && empty($CFG->formatstringstriptags)) {
+    $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
+        ['class' => 'label ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
+}
+$PAGE->navbar->add($title, $pageurl);
 
-$PAGE->set_title($heading);
+$PAGE->set_title($title);
 $PAGE->set_heading($heading);
 
 $output = $PAGE->get_renderer('tool_certificate');
