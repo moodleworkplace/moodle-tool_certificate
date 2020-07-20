@@ -132,7 +132,7 @@ class certificate {
         ];
 
         if ($groupmode) {
-            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($courseid, $groupmode, $groupid);
+            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($groupmode, $groupid);
             $params += $groupmodeparams;
 
             $sql = "SELECT COUNT(u.id) as count
@@ -174,7 +174,7 @@ class certificate {
         $params = ['templateid' => $templateid, 'courseid' => $courseid, 'component' => $component];
         $groupmodequery = '';
         if ($groupmode) {
-            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($courseid, $groupmode, $groupid);
+            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($groupmode, $groupid);
             $params += $groupmodeparams;
         }
 
@@ -199,46 +199,17 @@ class certificate {
     /**
      * Get groupmode subquery
      *
-     * @param int $courseid
      * @param int $groupmode
      * @param int $groupid
      * @return array
      */
-    private static function get_groupmode_subquery(int $courseid, int $groupmode, int $groupid) {
-        global $DB, $USER;
-
-        $context = \context_course::instance($courseid);
-        [$groupmodequery, $groupmodeparams] = ['', []];
-
-        $canaccessallgroups = has_capability('moodle/site:accessallgroups', $context);
-        $currentgroup = $groupid;
-
-        if ($groupmode && $currentgroup) {
-            if (!$canaccessallgroups) {
-                if (isguestuser()) {
-                    return ['', []];
-                }
-                // The user must belong to the group.
-                $usersgroups = groups_get_all_groups($courseid, $USER->id);
-                if ($usersgroups) {
-                    if (!isset($usersgroups[$currentgroup])) {
-                        return ['', []];
-                    }
-                } else {
-                    return ['', []];
-                }
-            }
-
-            $groupusers = array_keys(groups_get_members($currentgroup, 'u.*'));
-            if (empty($groupusers)) {
-                return ['', []];
-            }
-
-            [$sql, $params] = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED, 'grp');
-            $groupmodequery .= "AND u.id $sql ";
-            $groupmodeparams += $params;
+    private static function get_groupmode_subquery(int $groupmode, int $groupid) {
+        if (($groupmode != NOGROUPS) && $groupid) {
+            [$sql, $params] = groups_get_members_ids_sql($groupid);
+            $groupmodequery = "AND u.id IN ($sql)";
+            return [$groupmodequery, $params];
         }
-        return [$groupmodequery, $groupmodeparams];
+        return ['', []];
     }
 
     /**
