@@ -111,12 +111,17 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
         $DB->get_manager()->create_temp_table($table);
 
-        $id1 = $DB->insert_record($tablename, ['component' => 'tool_dynamicrule',
+        $context = context_system::instance();
+        $templateid = $DB->insert_record('tool_certificate_templates', (object)['name' => 'Template 01',
+            'contextid' => $context->id]);
+
+        $id1 = $DB->insert_record($tablename, (object)['component' => 'tool_dynamicrule', 'templateid' => $templateid,
             'data' => '{"certificationname":"","programname":"","completiondate":"","completedcourses":[]}']);
-        $id2 = $DB->insert_record($tablename, ['component' => 'tool_dynamicrule',
+        $id2 = $DB->insert_record($tablename, (object)['component' => 'tool_dynamicrule', 'templateid' => $templateid,
             'data' => '{"certificationname":"My cert","programname":"My prog","completiondate":"1546344000",' .
                 '"completedcourses":["a","b"]}']);
-        $id3 = $DB->insert_record($tablename, ['component' => 'tool_dynamicrule', 'data' => json_encode(['coursename' => 'X'])]);
+        $id3 = $DB->insert_record($tablename, (object)['component' => 'tool_dynamicrule', 'templateid' => $templateid,
+            'data' => json_encode(['coursename' => 'X'])]);
 
         tool_certificate_upgrade_move_data_to_customfields($tablename);
 
