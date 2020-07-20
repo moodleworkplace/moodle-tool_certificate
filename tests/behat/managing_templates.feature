@@ -50,9 +50,16 @@ Feature: Being able to manage site templates
     And I set the following fields to these values:
       | Name | Certificate 1 |
       | Course category | Category2 |
+      | shared          | 1         |
     And I press "Save" in the modal form dialogue
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
+    And I should see "Shared" in the "Certificate 1" "table_row"
+    And I click on "Edit details" "link" in the "Certificate 1" "table_row"
+    And I set the following fields to these values:
+      | shared          | 0         |
+    And I press "Save" in the modal form dialogue
+    And I should not see "Shared" in the "Certificate 1" "table_row"
 
   Scenario: Adding a template when user can manage templates in one category
     When the following "role assigns" exist:

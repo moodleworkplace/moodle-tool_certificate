@@ -141,13 +141,18 @@ class certificates_list extends system_report {
             new \lang_string('name', 'tool_certificate'),
             'tool_certificate'
         ))
-            ->add_fields('c.name, c.id, c.contextid')
+            ->add_fields('c.name, c.id, c.contextid, c.shared')
             ->set_is_default(true, 1)
             ->set_is_sortable(true, true);
         $newcolumn->add_callback(function($v, $row) {
             global $OUTPUT;
             $t = template::instance(0, $row);
-            return $t->get_editable_name()->render($OUTPUT);
+            $name = $t->get_editable_name()->render($OUTPUT);
+            if ($t->get_shared()) {
+                $name .= \html_writer::tag('div', get_string('shared', 'tool_certificate'),
+                    ['class' => 'label ml-1']);
+            }
+            return $name;
         });
         $this->add_column($newcolumn);
 

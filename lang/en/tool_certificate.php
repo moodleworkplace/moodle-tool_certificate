@@ -156,6 +156,7 @@ $string['rightmargin'] = 'Right margin, mm';
 $string['rightmargin_help'] = 'This is the right margin of the certificate PDF in mm.';
 $string['selectcertificate'] = 'Select certificate';
 $string['selectuserstoissuecertificatefor'] = 'Select users to issue certificate to';
+$string['shared'] = 'Shared';
 $string['subplugintype_certificateelement_plural'] = 'Element plugins';
 $string['timecreated'] = 'Time created';
 $string['toomanycertificatestoshow'] = 'Too many certificates ({$a}) to show';
