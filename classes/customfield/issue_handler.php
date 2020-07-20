@@ -82,7 +82,17 @@ class issue_handler extends handler {
      * @return \context
      */
     public function get_instance_context(int $instanceid = 0) : \context {
-        // TODO WP-1217 set correct context.
+        global $DB;
+        if ($instanceid > 0) {
+            $sql = 'SELECT ct.contextid
+                    FROM {tool_certificate_templates} ct
+                    JOIN {tool_certificate_issues} ci
+                    ON ct.id = ci.templateid
+                    WHERE ci.id = :instanceid';
+            if ($templatecontext = $DB->get_field_sql($sql, ['instanceid' => $instanceid], IGNORE_MISSING)) {
+                return \context::instance_by_id($templatecontext);
+            }
+        }
         return \context_system::instance();
     }
 
