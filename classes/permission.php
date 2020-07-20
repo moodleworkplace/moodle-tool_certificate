@@ -225,6 +225,10 @@ class permission {
 
     /**
      * If current user can view list of certificates
+     *
+     * If $context is course context, we assume that we already called require_login()
+     * and user actually has access to the course.
+     *
      * @param int $userid The id of user which certificates were issued for.
      * @param \context|null $context
      * @return bool
@@ -236,10 +240,6 @@ class permission {
         }
         if (!$context) {
             $context = \context_system::instance();
-        }
-        if ($context instanceof \context_coursecat && !\core_course_category::get($context->instanceid, IGNORE_MISSING)) {
-            // Category is not visible.
-            return false;
         }
         if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
                 && $context->contextlevel != CONTEXT_COURSE) {
@@ -265,16 +265,16 @@ class permission {
 
     /**
      * Can view all certificates
+     *
+     * If $context is course context, we assume that we already called require_login()
+     * and user actually has access to the course.
+     *
      * @param \context|null $context
      * @return bool
      */
     public static function can_view_all_certificates(?\context $context = null) {
         if (!$context) {
             $context = \context_system::instance();
-        }
-        if ($context instanceof \context_coursecat && !\core_course_category::get($context->instanceid, IGNORE_MISSING)) {
-            // Category is not visible.
-            return false;
         }
         if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSE
                 && $context->contextlevel != CONTEXT_COURSECAT) {
