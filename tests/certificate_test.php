@@ -278,8 +278,8 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $template1->issue_certificate($user1->id, null, [], $component, $course1->id);
         $template1->issue_certificate($user2->id, null, [], $component, $course1->id);
 
-        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component, NOGROUPS, null,
-            0, 100, 'userid ASC');
+        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component,
+            NOGROUPS, null, 0, 100, 'userid ASC');
         $this->assertCount(2, $issues);
         $issue1 = reset($issues);
         $this->assertEquals($user1->id, $issue1->userid);
@@ -290,8 +290,8 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEquals($course1->id, $issue1->courseid);
         $this->assertEquals($template1->get_id(), $issue1->templateid);
 
-        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component, VISIBLEGROUPS,
-            $group1->id, 0, 100, '');
+        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component,
+            VISIBLEGROUPS, $group1->id, 0, 100, '');
         $this->assertCount(1, $issues);
         $issue1 = reset($issues);
         $this->assertEquals($user2->id, $issue1->userid);

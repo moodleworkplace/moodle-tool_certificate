@@ -84,6 +84,11 @@ class issue_handler extends handler {
     public function get_instance_context(int $instanceid = 0) : \context {
         global $DB;
         if ($instanceid > 0) {
+            // If issue has courseid then return course context.
+            if ($courseid = $DB->get_field('tool_certificate_issues', 'courseid', ['id' => $instanceid], IGNORE_MISSING)) {
+                return \context_course::instance($courseid);
+            }
+            // Return the issue template context.
             $sql = 'SELECT ct.contextid
                     FROM {tool_certificate_templates} ct
                     JOIN {tool_certificate_issues} ci
