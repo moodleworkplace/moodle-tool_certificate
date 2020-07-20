@@ -245,11 +245,11 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEmpty(\tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course2->id, $component,
             null, null));
         $this->assertEquals(4, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, null, null));
+            $component, NOGROUPS, null));
         $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, true, $group1->id));
+            $component, VISIBLEGROUPS, $group1->id));
         $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, true, $group2->id));
+            $component, VISIBLEGROUPS, $group2->id));
 
         $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user1->id]);
         $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
@@ -278,7 +278,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $template1->issue_certificate($user1->id, null, [], $component, $course1->id);
         $template1->issue_certificate($user2->id, null, [], $component, $course1->id);
 
-        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component, false, null,
+        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component, NOGROUPS, null,
             0, 100, 'userid ASC');
         $this->assertCount(2, $issues);
         $issue1 = reset($issues);
@@ -290,7 +290,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEquals($course1->id, $issue1->courseid);
         $this->assertEquals($template1->get_id(), $issue1->templateid);
 
-        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component, true,
+        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component, VISIBLEGROUPS,
             $group1->id, 0, 100, '');
         $this->assertCount(1, $issues);
         $issue1 = reset($issues);
