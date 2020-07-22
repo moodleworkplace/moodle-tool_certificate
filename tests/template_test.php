@@ -332,6 +332,18 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         $this->assertEquals(3, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
             'userid' => $user2->id]));
+
+        // Test issue_certificate with courseid.
+        $course = $this->getDataGenerator()->create_course();
+        // Using dummy component name.
+        $issueid = $certificate1->issue_certificate($user2->id, null, [], 'mod_myawesomecert', $course->id);
+        $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueid]);
+
+        $this->assertEquals($certificate1->get_id(), $issue->templateid);
+        $this->assertEquals($course->id, $issue->courseid);
+
+        $this->assertEquals(4, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
+            'userid' => $user2->id]));
     }
 
     /**

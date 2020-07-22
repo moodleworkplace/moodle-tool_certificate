@@ -201,15 +201,12 @@ function tool_certificate_potential_users_selector($area, $itemid) {
  * @param context $context Course context
  */
 function tool_certificate_extend_navigation_course($navigation, $course, $context) {
-    // TODO WP-1196 Support certificates in course context.
     if (\tool_certificate\permission::can_view_templates_in_context($context)) {
-        $url = new moodle_url('/admin/tool/certificate/manage_templates.php', array('courseid' => $course->id));
-        $settingsnode = navigation_node::create(get_string('managetemplates', 'tool_certificate'), $url,
-            navigation_node::NODETYPE_LEAF, 'tool_certificate', 'tool_certificate',
-            new pix_icon('i/settings', '')
-        );
-
-        $navigation->add_node($settingsnode);
+        $certificatenode = $navigation->add(get_string('certificates', 'tool_certificate'),
+            null, navigation_node::TYPE_CONTAINER, null, 'tool_certificate');
+        $url = new moodle_url('/admin/tool/certificate/manage_templates.php', ['courseid' => $course->id]);
+        $certificatenode->add(get_string('managetemplates', 'tool_certificate'), $url, navigation_node::TYPE_SETTING,
+            null, 'tool_certificate');
     }
 }
 

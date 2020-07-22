@@ -32,10 +32,9 @@ if ($courseid) {
     require_login($courseid);
     $context = context_course::instance($courseid);
     if (!\tool_certificate\permission::can_view_templates_in_context($context)) {
-        // TODO WP-1196 Support certificates in course context.
         require_capability('tool/certificate:manage', $context);
     }
-    $PAGE->set_url(new moodle_url('/admin/tool/certificate/manage_templates.php', array('courseid' => $courseid)));
+    $PAGE->set_url(new moodle_url('/admin/tool/certificate/manage_templates.php', ['courseid' => $courseid]));
     $title .= ': ' . format_string($PAGE->course->fullname);
 } else {
     admin_externalpage_setup('tool_certificate/managetemplates');
