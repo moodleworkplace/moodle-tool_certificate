@@ -61,12 +61,13 @@ class issues extends \external_api {
         $params = self::validate_parameters(self::revoke_issue_parameters(), ['id' => $issueid]);
 
         $issue = $DB->get_record('tool_certificate_issues', ['id' => $params['id']], '*', MUST_EXIST);
+        $template = \tool_certificate\template::instance($issue->templateid);
 
         // Make sure the user has the required capabilities.
-        $context = \context_system::instance();
+        $context = \context_course::instance($issue->courseid, IGNORE_MISSING) ?: $template->get_context();
         self::validate_context($context);
-        $template = \tool_certificate\template::instance($issue->templateid);
-        if (!$template->can_revoke($issue->userid)) {
+
+        if (!$template->can_revoke($issue->userid, $context)) {
             throw new \required_capability_exception($template->get_context(), 'tool/certificate:issue', 'nopermissions', 'error');
         }
 

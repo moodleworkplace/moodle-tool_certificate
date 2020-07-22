@@ -112,6 +112,107 @@ class certificate {
     }
 
     /**
+     * Returns the total number of course issues for a given template and course.
+     *
+     * @param int $templateid
+     * @param int $courseid
+     * @param string $component
+     * @param int|null $groupmode
+     * @param int|null $groupid
+     * @return int the number of issues
+     */
+    public static function count_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode,
+            ?int $groupid) {
+        global $DB;
+
+        $params = [
+            'templateid' => $templateid,
+            'courseid' => $courseid,
+            'component' => $component
+        ];
+
+        if ($groupmode) {
+            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($groupmode, $groupid);
+            $params += $groupmodeparams;
+
+            $sql = "SELECT COUNT(u.id) as count
+                  FROM {user} u
+            INNER JOIN {tool_certificate_issues} ci
+                    ON u.id = ci.userid
+                 WHERE ci.templateid = :templateid
+                    AND ci.courseid = :courseid
+                    AND ci.component = :component
+                    $groupmodequery";
+
+            return $DB->count_records_sql($sql, $params);
+        } else {
+            return $DB->count_records('tool_certificate_issues', $params);
+        }
+    }
+
+    /**
+     * Get the course certificate issues for a given templateid, courseid, paginated.
+     *
+     * @param int $templateid
+     * @param int $courseid
+     * @param string $component
+     * @param int|null $groupmode
+     * @param int|null $groupid
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @param string $sort
+     * @return array
+     */
+    public static function get_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode, ?int $groupid,
+            int $limitfrom, int $limitnum, string $sort = ''): array {
+        global $DB;
+
+        if (empty($sort)) {
+            $sort = 'ci.timecreated DESC';
+        }
+
+        $params = ['templateid' => $templateid, 'courseid' => $courseid, 'component' => $component];
+        $groupmodequery = '';
+        if ($groupmode) {
+            [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($groupmode, $groupid);
+            $params += $groupmodeparams;
+        }
+
+        $usersquery = self::get_users_subquery();
+        $extrafields = get_extra_user_fields(\context_course::instance($courseid));
+        $userfields = \user_picture::fields('u', $extrafields);
+        $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
+                       t.name, ci.courseid, $userfields
+                  FROM {tool_certificate_templates} t
+                  JOIN {tool_certificate_issues} ci
+                    ON (ci.templateid = t.id) AND (ci.courseid = :courseid) AND (component = :component)
+                  JOIN {user} u
+                    ON (u.id = ci.userid)
+                 WHERE t.id = :templateid
+                   AND $usersquery
+                   $groupmodequery
+              ORDER BY {$sort}";
+
+        return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Get groupmode subquery
+     *
+     * @param int $groupmode
+     * @param int $groupid
+     * @return array
+     */
+    private static function get_groupmode_subquery(int $groupmode, int $groupid) {
+        if (($groupmode != NOGROUPS) && $groupid) {
+            [$sql, $params] = groups_get_members_ids_sql($groupid);
+            $groupmodequery = "AND u.id IN ($sql)";
+            return [$groupmodequery, $params];
+        }
+        return ['', []];
+    }
+
+    /**
      * Get number of certificates for a user.
      *
      * @param int $userid
@@ -197,7 +298,7 @@ class certificate {
         $conditions = ['code' => $code];
 
         $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
-                       ci.expires, ci.data, ci.component,
+                       ci.expires, ci.data, ci.component, ci.courseid,
                        ci.userid,
                        t.name as certificatename,
                        t.contextid
