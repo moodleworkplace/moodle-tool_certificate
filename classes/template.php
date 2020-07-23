@@ -168,10 +168,12 @@ class template {
         // Revoke certificate issues.
         $this->revoke_issues();
 
+        $event = \tool_certificate\event\template_deleted::create_from_template($this);
+
         // Now, finally delete the actual template.
         $this->persistent->delete();
 
-        \tool_certificate\event\template_deleted::create_from_template($this)->trigger();
+        $event->trigger();
     }
 
     /**

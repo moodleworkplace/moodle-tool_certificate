@@ -173,6 +173,8 @@ class tool_certificate_template_testcase extends advanced_testcase {
         // Fist certificate without pages.
         $certname = 'Certificate 1';
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
+        // Store template id before deletion.
+        $certificate1id = $certificate1->get_id();
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -187,6 +189,7 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $this->assertInstanceOf('\tool_certificate\event\template_deleted', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals(\tool_certificate\template::manage_url(), $event->get_url());
+        $this->assertEquals($certificate1id, $event->objectid);
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
         $this->assertNotEmpty($event->get_description());
