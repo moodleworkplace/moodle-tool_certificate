@@ -122,7 +122,7 @@ class element extends \tool_certificate\element {
      */
     public function render($pdf, $preview, $user, $issue) {
         if ($preview) {
-            $code = \tool_certificate\certificate::generate_code();
+            $code = \tool_certificate\certificate::generate_code($user->id);
         } else {
             $code = $issue->code;
         }

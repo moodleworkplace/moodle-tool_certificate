@@ -360,9 +360,25 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
      * Test generate code.
      */
     public function test_generate_code() {
+        // Generate codes without user initials.
         $code1 = \tool_certificate\certificate::generate_code();
+        $this->assertEquals(10, strlen($code1));
+
+        // Check codes are different.
         $code2 = \tool_certificate\certificate::generate_code();
         $this->assertFalse($code1 == $code2);
+
+        // Check code has user initials.
+        $user1 = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Smith']);
+        $code3 = \tool_certificate\certificate::generate_code($user1->id);
+        $this->assertEquals(12, strlen($code3));
+        $this->assertEquals('J', substr($code3, -2, 1));
+        $this->assertEquals('S', substr($code3, -1));
+
+        // Check user without firstname/lastname code.
+        $user2 = $this->getDataGenerator()->create_user(['firstname' => '', 'lastname' => '']);
+        $code4 = \tool_certificate\certificate::generate_code($user2->id);
+        $this->assertEquals(10, strlen($code4));
     }
 
     /**
