@@ -148,8 +148,6 @@ Feature: Issue certificate with dynamic rules
     And I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    # TODO WP-1204 remove this, it should listen to events.
-    And I run the scheduled task "tool_dynamicrule\task\process_rules"
     # Check certificate was issued.
     And I log in as "tenantadmin1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
@@ -220,8 +218,6 @@ Feature: Issue certificate with dynamic rules
     And I run the scheduled task "core\task\completion_regular_task"
     And I wait "1" seconds
     And I run the scheduled task "core\task\completion_regular_task"
-    # TODO WP-1204 remove this, it should listen to events.
-    And I run the scheduled task "tool_dynamicrule\task\process_rules"
     # Check certificate was issued.
     And I log in as "tenantadmin1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
