@@ -171,7 +171,7 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $params = ['templateid' => $templateid, 'courseid' => $courseid, 'component' => $component];
+        $params = ['templateid' => $templateid, 'courseid' => $courseid, 'component' => $component, 'now' => time()];
         $groupmodequery = '';
         if ($groupmode) {
             [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($groupmode, $groupid);
@@ -182,7 +182,10 @@ class certificate {
         $extrafields = get_extra_user_fields(\context_course::instance($courseid));
         $userfields = \user_picture::fields('u', $extrafields);
         $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, ci.courseid, $userfields
+                       t.name, ci.courseid, $userfields,
+                  CASE WHEN ci.expires > 0  AND ci.expires < :now THEN 0
+                  ELSE 1
+                  END AS status
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
                     ON (ci.templateid = t.id) AND (ci.courseid = :courseid) AND (component = :component)

@@ -276,7 +276,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $component = 'mod_myawesomecert';
 
         $template1->issue_certificate($user1->id, null, [], $component, $course1->id);
-        $template1->issue_certificate($user2->id, null, [], $component, $course1->id);
+        $template1->issue_certificate($user2->id, strtotime(' -1 day'), [], $component, $course1->id);
 
         $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component,
             NOGROUPS, null, 0, 100, 'userid ASC');
@@ -285,10 +285,12 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEquals($user1->id, $issue1->userid);
         $this->assertEquals($course1->id, $issue1->courseid);
         $this->assertEquals($template1->get_id(), $issue1->templateid);
+        $this->assertEquals(1, $issue1->status);
         $issue2 = next($issues);
         $this->assertEquals($user2->id, $issue2->userid);
-        $this->assertEquals($course1->id, $issue1->courseid);
-        $this->assertEquals($template1->get_id(), $issue1->templateid);
+        $this->assertEquals($course1->id, $issue2->courseid);
+        $this->assertEquals($template1->get_id(), $issue2->templateid);
+        $this->assertEquals(0, $issue2->status);
 
         $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component,
             VISIBLEGROUPS, $group1->id, 0, 100, '');
