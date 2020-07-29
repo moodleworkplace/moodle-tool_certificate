@@ -82,6 +82,7 @@ class details extends modal_form {
 
         $mform->addElement('advcheckbox', 'shared', get_string('availableincourses', 'tool_certificate'));
         $mform->addHelpButton('shared', 'availableincourses', 'tool_certificate');
+        $mform->setDefault('shared', 1);
 
         if (!$this->get_template()->get_id()) {
             page::add_page_elements($mform);
