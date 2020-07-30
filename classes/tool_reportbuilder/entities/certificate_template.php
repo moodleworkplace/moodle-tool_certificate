@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of the tool_certificate for Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  * @package   tool_certificate
  * @copyright 2019 Moodle Pty Ltd <support@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @license   Moodle Workplace License, distribution is restricted, contact support@moodle.com
  */
 
 namespace tool_certificate\tool_reportbuilder\entities;
@@ -44,7 +43,6 @@ defined('MOODLE_INTERNAL') || die();
  * @package   tool_certificate
  * @copyright 2019 Moodle Pty Ltd <support@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @license   Moodle Workplace License, distribution is restricted, contact support@moodle.com
  */
 class certificate_template extends entity_base {
 

@@ -40,6 +40,7 @@ codecheck:
   - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
   - . check-start
   - . check version_number
+  - . check no_workplace_licenses
   - . check language_file_sorting
   - . check moodle-plugin-ci phplint
   #- . check moodle-plugin-ci phpcpd
