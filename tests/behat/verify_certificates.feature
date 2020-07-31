@@ -39,9 +39,6 @@ Feature: Being able to verify that a certificate is valid or not
     And I verify the "Certificate 2" site certificate for the user "student1"
 
   Scenario: Verify a certificate as a guest using the site-wide URL
-    And the following "permission overrides" exist:
-      | capability              | permission | role  | contextlevel | reference |
-      | tool/certificate:verify | Allow      | guest | System       |           |
     And the following certificate issues exist:
       | template | user |
       | Certificate 1 | student1 |

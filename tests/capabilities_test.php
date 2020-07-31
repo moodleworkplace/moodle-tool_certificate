@@ -83,18 +83,12 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
     }
 
     /**
-     * Test can_verify_loose . By default, users can not to verify certificates and manager can.
+     * Test can_verify. By default, users can verify certificates.
      */
-    public function test_can_verify_loose() {
-        global $DB;
+    public function test_can_verify() {
         $manager = $this->getDataGenerator()->create_user();
 
         $this->setUser($manager);
-
-        $this->assertFalse(\tool_certificate\permission::can_verify());
-
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
-        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
 
         $this->assertTrue(\tool_certificate\permission::can_verify());
     }
