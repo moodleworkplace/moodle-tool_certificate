@@ -115,43 +115,4 @@ class templates extends \external_api {
     public static function delete_template_returns() {
         return null;
     }
-
-    /**
-     * Parameters for the certificate selector WS.
-     *
-     * @return external_function_parameters
-     */
-    public static function potential_certificate_selector_parameters(): external_function_parameters {
-        return new \external_function_parameters([
-            'search' => new external_value(PARAM_NOTAGS, 'Search string', VALUE_REQUIRED),
-        ]);
-    }
-
-    /**
-     * Certificate selector.
-     *
-     * @param string $search
-     * @return array
-     */
-    public static function potential_certificate_selector(string $search): array {
-        $params = self::validate_parameters(self::potential_certificate_selector_parameters(), ['search' => $search]);
-
-        // We always must call validate_context in a webservice.
-        $context = \context_system::instance();
-        self::validate_context($context);
-
-        return certificate::get_potential_certificates($params['search']);
-    }
-
-    /**
-     * Return for certificate selector.
-     *
-     * @return \external_multiple_structure
-     */
-    public static function potential_certificate_selector_returns(): \external_multiple_structure {
-        return new \external_multiple_structure(new \external_single_structure([
-            'id' => new external_value(PARAM_INT, 'ID of the user'),
-            'name' => new external_value(PARAM_NOTAGS, 'The name of the certificate'),
-        ]));
-    }
 }
