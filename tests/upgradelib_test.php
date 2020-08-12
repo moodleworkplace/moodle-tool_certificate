@@ -58,6 +58,14 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Get certificate generator
+     * @return tool_certificate_generator
+     */
+    protected function get_generator() : tool_certificate_generator {
+        return $this->getDataGenerator()->get_plugin_generator('tool_certificate');
+    }
+
+    /**
      * Test for function tool_certificate_upgrade_remove_tenant_field()
      */
     public function test_tool_certificate_upgrade_remove_tenant_field() {
@@ -176,5 +184,45 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals('{"userfullname":"User 01"}', $issue1->data);
         $this->assertEquals('{"userfullname":"User 02"}', $issue2->data);
         $this->assertEquals('{"userfullname":"User 03"}', $issue3->data);
+    }
+
+    /**
+     * Test for tool_certificate_delete_certificates_with_missing_context()
+     */
+    public function test_tool_certificate_delete_certificates_with_missing_context() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create certificate with pages, elements, and issues.
+        $othercategory = $this->getDataGenerator()->create_category();
+        $othercontext = context_coursecat::instance($othercategory->id);
+        $certificate1 = $this->get_generator()->create_template([
+            'name' => 'My certificate',
+            'contextid' => $othercontext->id,
+        ]);
+        $page1 = $this->get_generator()->create_page($certificate1);
+        $page2 = $this->get_generator()->create_page($certificate1);
+        $this->get_generator()->create_element($page1->get_id(), 'text', ['text' => 'Text element for page 1']);
+        $this->get_generator()->create_element($page2->get_id(), 'text', ['text' => 'Text element for page 2']);
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $certificate1->issue_certificate($user1->id);
+        $certificate1->issue_certificate($user2->id);
+
+        // Sanity check.
+        $this->assertEquals(1, $DB->count_records('tool_certificate_templates'));
+        $this->assertEquals(2, $DB->count_records('tool_certificate_pages'));
+        $this->assertEquals(2, $DB->count_records('tool_certificate_elements'));
+        $this->assertEquals(2, $DB->count_records('tool_certificate_issues'));
+
+        // Delete context and go through upgrade.
+        $DB->delete_records('context', ['id' => $othercontext->id]);
+        tool_certificate_delete_certificates_with_missing_context();
+
+        // Test all related data cleanup.
+        $this->assertEquals(0, $DB->count_records('tool_certificate_templates'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_pages'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_elements'));
+        $this->assertEquals(0, $DB->count_records('tool_certificate_issues'));
     }
 }
