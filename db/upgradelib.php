@@ -123,3 +123,44 @@ function tool_certificate_upgrade_store_fullname_in_data($tablename = 'tool_cert
         }
     }
 }
+
+/**
+ * Finds all templates that use non-existing context and delete them.
+ *
+ * This is basically replicates what happens on $template->delete() without using API.
+ */
+function tool_certificate_delete_certificates_with_missing_context() {
+    global $DB;
+
+    // Find all templates that use non-existing context.
+    $sql = 'SELECT ct.id, ct.contextid FROM {tool_certificate_templates} ct
+                    LEFT JOIN {context} ctx ON ct.contextid = ctx.id
+                        WHERE ctx.id IS NULL';
+    $templates = $DB->get_records_sql($sql);
+    foreach ($templates as $template) {
+        // Delete page elements.
+        $pages = $DB->get_records('tool_certificate_pages', ['templateid' => $template->id]);
+        foreach ($pages as $page) {
+            // Delete elements in page.
+            // File cleanup is not required, it has been done on context deletion.
+            $DB->delete_records('tool_certificate_elements', ['pageid' => $page->id]);
+        }
+
+        // Delete pages.
+        $DB->delete_records('tool_certificate_pages', ['templateid' => $template->id]);
+
+        // Delete issues.
+        $issues = $DB->get_records('tool_certificate_issues', ['templateid' => $template->id]);
+        $handler = \tool_certificate\customfield\issue_handler::create();
+        $fs = get_file_storage();
+        foreach ($issues as $issue) {
+            $handler->delete_instance($issue->id);
+            // Delete issue files.
+            $fs->delete_area_files(context_system::instance()->id, 'tool_certificate', 'issues', $issue->id);
+        }
+        $DB->delete_records('tool_certificate_issues', ['templateid' => $template->id]);
+
+        // Delete template.
+        $DB->delete_records('tool_certificate_templates', ['id' => $template->id]);
+    }
+}
