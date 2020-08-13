@@ -20,6 +20,19 @@
     opacity: 0;
 }
 
+#page-admin-tool-certificate-template [data-region="template"] .ws-toggle .collapsed-icon-container {
+    display: none;
+}
+#page-admin-tool-certificate-template [data-region="template"] .ws-toggle .expanded-icon-container {
+    display: inline-block;
+}
+#page-admin-tool-certificate-template [data-region="template"] .ws-toggle.collapsed .collapsed-icon-container {
+    display: inline-block;
+}
+#page-admin-tool-certificate-template [data-region="template"] .ws-toggle.collapsed .expanded-icon-container {
+    display: none;
+}
+
 /* Elements refpoint */
 
 #page-admin-tool-certificate-template [data-region="pdf"] [data-region="pdfelement"][data-refpoint]:before {
