@@ -27,7 +27,7 @@ require_once('../../../config.php');
 $userid = optional_param('userid', 0, PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
+$perpage = optional_param('perpage', \tool_certificate\certificate::ISSUES_PER_PAGE, PARAM_INT);
 $pageurl = $url = new moodle_url('/admin/tool/certificate/my.php', array('userid' => $userid,
     'page' => $page, 'perpage' => $perpage));
 

@@ -45,7 +45,7 @@ Feature: Being able to manually issue a certificate to a user
     And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    Then "User 11" "text" should exist in the "report-table" "table"
+    Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
     And I log out
     # Check notifications are triggered.
     And I log in as "user11"
@@ -64,7 +64,7 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "User 11" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate to"
     And I press "Save" in the modal form dialogue
-    Then "User 11" "text" should exist in the "report-table" "table"
+    Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
     And I log out
 
   Scenario: Issue certificate as a tenant issuer

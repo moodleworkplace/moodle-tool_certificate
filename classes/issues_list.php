@@ -18,162 +18,108 @@
  * Class issues_list
  *
  * @package     tool_certificate
- * @copyright   2019 Marina Glancy
+ * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tool_certificate;
 
-use tool_reportbuilder\local\entities\user as user_entity;
-use tool_reportbuilder\report_action;
-use tool_reportbuilder\report_column;
-use tool_reportbuilder\system_report;
-
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/tablelib.php');
 
 /**
  * Class issues_list
  *
  * @package     tool_certificate
- * @copyright   2019 Marina Glancy
+ * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class issues_list extends system_report {
-
-    /** @var \tool_certificate\template */
+class issues_list extends \table_sql {
+    /** @var string */
+    protected $downloadparamname = 'download';
+    /** @var template */
     protected $template;
 
     /**
-     * Initialise the report
+     * Sets up the table.
+     * @param template $template
      */
-    protected function initialise() {
-        if ($templateid = $this->get_parameter('templateid', 0, PARAM_INT)) {
-            $this->template = \tool_certificate\template::instance($templateid);
+    public function __construct(\tool_certificate\template $template) {
+        parent::__construct('tool-certificate-issues');
+        $this->attributes['class'] = 'tool-certificate-issues';
+
+        $this->template = $template;
+
+        $columnsheaders = [
+            'fullname' => get_string('fullname'),
+            'timecreated' => get_string('receiveddate', 'tool_certificate'),
+            'expires' => get_string('expires', 'tool_certificate'),
+            'code' => get_string('code', 'tool_certificate'),
+        ];
+
+        $filename = format_string('tool-certificate-issues');
+        $this->is_downloading(optional_param($this->downloadparamname, 0, PARAM_ALPHA),
+            $filename, get_string('certificatesissues', 'tool_certificate'));
+
+        if (!$this->is_downloading()) {
+            $columnsheaders += ['actions' => \html_writer::span(get_string('actions'), 'sr-only')];
         }
-        $this->set_columns();
-        $this->set_main_table('tool_certificate_issues', 'i');
-        $this->add_base_condition_simple('i.templateid', $templateid);
-        $this->add_base_join('INNER JOIN {user} u ON u.id = i.userid');
-        $this->add_base_condition_sql(certificate::get_users_subquery());
-        $this->add_base_fields('i.id, i.expires, i.code, i.userid, i.data'); // Necessary for row class and actions.
-        $this->set_actions();
+        $this->define_columns(array_keys($columnsheaders));
+        $this->define_headers(array_values($columnsheaders));
+
+        $this->collapsible(false);
+        $this->sortable(true, 'timecreated', SORT_DESC);
+        $this->no_sorting('code');
+        $this->no_sorting('actions');
+        $this->pagesize = 10;
+        $this->pageable(true);
+        $this->is_downloadable(true);
+        $this->show_download_buttons_at([TABLE_P_BOTTOM]);
+
+        $this->column_class('actions', 'text-right');
     }
 
     /**
-     * Validates access to view this report with the given parameters
+     * Generate the fullname column.
      *
-     * @return bool
-     */
-    protected function can_view(): bool {
-        return $this->template && $this->template->can_view_issues();
-    }
-
-    /**
-     * Columns definitions
-     */
-    protected function set_columns() {
-        $this->annotate_entity('tool_certificate_issues', new \lang_string('entitycertificateissues', 'tool_certificate'));
-        $this->annotate_entity('user', new \lang_string('entityuser', 'tool_reportbuilder'));
-
-        // Column "fullname".
-        $newcolumn = (new report_column(
-            'fullname',
-            new \lang_string('fullname'),
-            'user'
-        ))
-            ->add_field('i.data')
-            ->set_is_default(true, 1)
-            ->set_is_sortable(false, false);
-        $newcolumn->add_callback([$this, 'col_fullname']);
-        $this->add_column($newcolumn);
-
-        // Column "awarded".
-        $newcolumn = (new report_column(
-            'timecreated',
-            new \lang_string('receiveddate', 'tool_certificate'),
-            'tool_certificate_issues'
-        ))
-            ->add_fields('i.timecreated')
-            ->set_is_default(true, 2)
-            ->set_is_sortable(true);
-        $newcolumn->add_callback([\tool_reportbuilder\local\helpers\format::class, 'userdate']);
-        $this->add_column($newcolumn);
-
-        // Column "expires".
-        $newcolumn = (new report_column(
-            'expires',
-            new \lang_string('expires', 'tool_certificate'),
-            'tool_certificate_issues'
-        ))
-            ->add_field('i.expires')
-            ->set_is_default(true, 3)
-            ->set_is_sortable(true);
-        $newcolumn->add_callback([$this, 'col_expires']);
-        $this->add_column($newcolumn);
-
-        // Column "code".
-        $newcolumn = (new report_column(
-            'code',
-            new \lang_string('code', 'tool_certificate'),
-            'tool_certificate_issues'
-        ))
-            ->add_field('i.code')
-            ->set_is_default(true, 4)
-            ->set_is_sortable(true);
-        $newcolumn->add_callback([$this, 'col_code']);
-        $newcolumn->set_is_available(permission::can_verify());
-        $this->add_column($newcolumn);
-    }
-
-    /**
-     * Issue actions
-     */
-    protected function set_actions() {
-        $template = $this->template;
-
-        // File.
-        $icon = new \pix_icon('i/search', get_string('view'), 'core');
-        $link = template::view_url(':code');
-        $this->add_action((new report_action($link, $icon, [])));
-
-        // Regenerate file.
-        $icon = new \pix_icon('a/refresh', get_string('regenerateissuefile', 'tool_certificate'), 'core');
-        $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'regenerate', 'data-id' => ':id']))
-            ->add_callback(function($row) use ($template) {
-                return $template && $template->can_issue($row->userid);
-            }));
-
-        // Revoke.
-        $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
-        $this->add_action(
-            (new report_action(new \moodle_url('#'), $icon, ['data-action' => 'revoke', 'data-id' => ':id']))
-                ->add_callback(function($row) use ($template) {
-                    return $template && $template->can_revoke($row->userid);
-                }));
-    }
-
-    /**
-     * Report name
+     * @param string $row
      * @return string
      */
-    public static function get_name() {
-        return get_string('certificates', 'tool_certificate');
+    public function col_fullname($row) {
+        // User fullname stored in issue data is shown, not the current user fullname. There is a slight inconsistency because
+        // current user fullname is used for table sorting.
+        return @json_decode($row->data, true)['userfullname'];
     }
 
     /**
-     * Generate the certificate expires column.
+     * Generate the timecreated column.
      *
-     * @param int $expires
+     * @param \stdClass $row
      * @return string
      */
-    public function col_expires($expires) {
-        if (!$expires) {
+    public function col_timecreated($row) {
+        return userdate($row->timecreated);
+    }
+
+    /**
+     * Generate the expires column.
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    public function col_expires($row) {
+        if (!$row->expires) {
             return get_string('never');
         }
-        $column = userdate($expires);
-        if ($expires && $expires <= time()) {
-            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'),
-                ['class' => 'badge badge-secondary']);
+        $column = userdate($row->expires);
+        if ($row->expires && $row->expires <= time()) {
+            if (!$this->is_downloading()) {
+                $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'),
+                    ['class' => 'badge badge-secondary']);
+            } else {
+                $column .= ' (' . get_string('expired', 'tool_certificate') . ')';
+            }
         }
         return $column;
     }
@@ -181,31 +127,78 @@ class issues_list extends system_report {
     /**
      * Generate the code column.
      *
-     * @param string $code
+     * @param string $row
      * @return string
      */
-    public function col_code($code) {
-        return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $code]),
-            $code, ['title' => get_string('verify', 'tool_certificate')]);
+    public function col_code($row) {
+        if (!$this->is_downloading() || $this->export_class_instance()->supports_html()) {
+            $code = \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $row->code]),
+                $row->code, ['title' => get_string('verify', 'tool_certificate')]);
+        } else {
+            $code = $row->code;
+        }
+        return $code;
     }
 
     /**
-     * Generate the fullname column.
-     *
-     * @param string $data
-     * @return string
-     */
-    public function col_fullname($data) {
-        return @json_decode($data, true)['userfullname'];
-    }
-
-    /**
-     * CSS class for the row
+     * Generate the actions column.
      *
      * @param \stdClass $row
      * @return string
      */
-    public function get_row_class(\stdClass $row): string {
-        return ($row->expires && $row->expires < time()) ? 'dimmed_text' : '';
+    public function col_actions($row) {
+        global $OUTPUT;
+        $actions = '';
+        $template = $this->template;
+
+        // View.
+        $link = template::view_url($row->code);
+        $icon = new \pix_icon('i/search', get_string('view'), 'core');
+        $actions .= $OUTPUT->action_icon($link, $icon, null, []);
+        if ($template->can_issue($row->userid)) {
+            // Regenerate file.
+            $link = new \moodle_url('#');
+            $icon = new \pix_icon('a/refresh', get_string('regenerateissuefile', 'tool_certificate'), 'core');
+            $attributes = ['data-action' => 'regenerate', 'data-id' => $row->id];
+            $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
+        }
+        if ($template->can_issue($row->userid)) {
+            // Revoke.
+            $link = new \moodle_url('#');
+            $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
+            $attributes = ['data-action' => 'revoke', 'data-id' => $row->id];
+            $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
+        }
+        return $actions;
+    }
+
+    /**
+     * Query the reader.
+     *
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar.
+     * @uses \tool_certificate\certificate
+     */
+    public function query_db($pagesize, $useinitialsbar = false) {
+        if (!$this->is_downloading()) {
+            $this->rawdata = certificate::get_issues_for_template($this->template->get_id(), $this->get_page_start(),
+                $this->get_page_size(), $this->get_sql_sort());
+        } else {
+            $this->rawdata = certificate::get_issues_for_template($this->template->get_id(), null, null);
+        }
+
+        $this->pagesize($pagesize, certificate::count_issues_for_template($this->template->get_id()));
+    }
+
+    /**
+     * Download the data.
+     *
+     * @uses \tool_certificate\certificate
+     */
+    public function download() {
+        \core\session\manager::write_close();
+        $total = certificate::count_issues_for_template($this->template->get_id());
+        $this->out($total, false);
+        exit;
     }
 }
