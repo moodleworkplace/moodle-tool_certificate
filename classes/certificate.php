@@ -41,9 +41,14 @@ class certificate {
 
     /**
      * @var int the number of issues that will be displayed on each page in the report
-     *      If you want to display all certificates on a page set this to 0.
+     *      If you want to display all issues on a page set this to 0.
      */
-    const CUSTOMCERT_PER_PAGE = '50';
+    const ISSUES_PER_PAGE = '20';
+    /**
+     * @var int the number of templates that will be displayed on each page in the report
+     *      If you want to display all templates on a page set this to 0.
+     */
+    const TEMPLATES_PER_PAGE = '10';
 
     /**
      * Handles uploading an image for the certificate module.
@@ -97,7 +102,7 @@ class certificate {
         $usersquery = self::get_users_subquery();
 
         $sql = "SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, " .
+                       t.name, ci.data, " .
                        get_all_user_name_fields(true, 'u') . "
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci

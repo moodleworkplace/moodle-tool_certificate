@@ -27,34 +27,19 @@ define(['jquery',
         'core/notification',
         'core/str',
         'core/ajax',
-        'tool_wp/notification',
-        'tool_reportbuilder/reportbuilder_events'],
+        'tool_wp/notification'],
 function($,
          ModalForm,
          Tabs,
          Notification,
          Str,
          Ajax,
-         WpNotification,
-         ReportEvents) {
+         WpNotification) {
 
     const SELECTORS = {
         ADDISSUE: "[data-tabs-element='addbutton']",
         REGENERATEFILE: "[data-action='regenerate']",
-        REPORTCONTAINER: "[data-region='system-report'] [data-region='data-report']",
         REVOKEISSUE: "[data-action='revoke']"
-    };
-
-    /**
-     * Refresh the report without reloading page
-     */
-    var refreshReport = function() {
-        var report = $(SELECTORS.REPORTCONTAINER);
-        if (report) {
-            report.trigger(ReportEvents.RELOADTABLE);
-        } else {
-            window.location.reload();
-        }
     };
 
     /**
@@ -80,7 +65,7 @@ function($,
                     var str = data > 1 ? s[1] : s[0];
                     WpNotification.addNotification({message: str, type: 'success'});
                 });
-                refreshReport();
+                window.location.reload();
             } else {
                 Str.get_string('noissueswerecreated', 'tool_certificate')
                     .done(function(s) {
@@ -109,7 +94,7 @@ function($,
                         args: {id: $(e.currentTarget).attr('data-id')}}
                 ]);
                 promises[0].done(function() {
-                    refreshReport();
+                    window.location.reload();
                 }).fail(Notification.exception);
             });
         }).fail(Notification.exception);
@@ -134,7 +119,7 @@ function($,
                         args: {id: $(e.currentTarget).attr('data-id')}}
                 ]);
                 promises[0].done(function() {
-                    refreshReport();
+                    window.location.reload();
                 }).fail(Notification.exception);
             });
         }).fail(Notification.exception);

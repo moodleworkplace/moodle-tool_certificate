@@ -31,7 +31,7 @@ $templateid = required_param('templateid', PARAM_INT);
 $confirm = optional_param('confirm', 0, PARAM_INT);
 
 $page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', \tool_certificate\certificate::CUSTOMCERT_PER_PAGE, PARAM_INT);
+$perpage = optional_param('perpage', \tool_certificate\certificate::ISSUES_PER_PAGE, PARAM_INT);
 
 $pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
 $PAGE->set_url($pageurl);
@@ -52,15 +52,25 @@ $PAGE->set_title("$SITE->shortname: " . $heading);
 $PAGE->navbar->add($heading);
 $PAGE->set_heading($heading);
 
-$report = \tool_reportbuilder\system_report_factory::create(\tool_certificate\issues_list::class,
-    ['templateid' => $template->get_id()]);
-$r = new \tool_wp\output\content_with_heading($report->output(), format_string($template->get_name()));
+
+$table = new \tool_certificate\issues_list($template);
+$table->define_baseurl($pageurl);
+
+if ($table->is_downloading()) {
+    $table->download();
+    exit();
+}
+
+$renderer = $PAGE->get_renderer('tool_certificate');
+$tablecontents = $renderer->render_table($table);
+
+echo $OUTPUT->header();
+$r = new \tool_wp\output\content_with_heading($tablecontents, format_string($template->get_name()));
 if ($template->can_issue_to_anybody()) {
     $r->add_button(get_string('issuecertificates', 'tool_certificate'), null,
         ['data-tid' => $template->get_id()]);
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
-echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 
 echo $OUTPUT->footer();

@@ -49,4 +49,20 @@ class renderer extends plugin_renderer_base {
         $data = $page->export_for_template($this);
         return parent::render_from_template('tool_certificate/verify_certificate_results', $data);
     }
+
+    /**
+     * Renders a table.
+     *
+     * @param \table_sql $table
+     * @return string HTML
+     */
+    public function render_table(\table_sql $table) {
+
+        ob_start();
+        $table->out(10, true);
+        $tablecontents = ob_get_contents();
+        ob_end_clean();
+
+        return $tablecontents;
+    }
 }

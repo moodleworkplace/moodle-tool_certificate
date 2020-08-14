@@ -450,4 +450,30 @@ class tool_certificate_template_testcase extends advanced_testcase {
         $issuefile = $certificate->get_issue_file($issue);
         $this->assertEquals($issue->id, $issuefile->get_itemid());
     }
+
+    /**
+     * Test get_visible_categories_contexts_sql
+     */
+    public function test_get_visible_categories_contexts_sql() {
+        $this->setAdminUser();
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat2 = $this->getDataGenerator()->create_category();
+        $cat3 = $this->getDataGenerator()->create_category();
+
+        $this->get_generator()->create_template((object)['name' => 'Template 1',
+            'contextid' => context_coursecat::instance($cat1->id)->id]);
+        $this->get_generator()->create_template((object)['name' => 'Template 2',
+            'contextid' => context_coursecat::instance($cat2->id)->id]);
+        $this->get_generator()->create_template((object)['name' => 'Template 2',
+            'contextid' => context_system::instance()->id]);
+
+        [$sql, $params] = \tool_certificate\template::get_visible_categories_contexts_sql();
+
+        // Check 3 contexts are returned: cat1, cat2 and system.
+        $this->assertNotEmpty($sql);
+        $this->assertCount(3, $params);
+        $this->assertEquals(context_coursecat::instance($cat2->id)->id, array_pop($params));
+        $this->assertEquals(context_coursecat::instance($cat1->id)->id, array_pop($params));
+        $this->assertEquals(context_system::instance()->id, array_pop($params));
+    }
 }
