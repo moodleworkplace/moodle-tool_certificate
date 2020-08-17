@@ -164,3 +164,24 @@ function tool_certificate_delete_certificates_with_missing_context() {
         $DB->delete_records('tool_certificate_templates', ['id' => $template->id]);
     }
 }
+
+/**
+ * Finds all orphaned issue files and remove them.
+ */
+function tool_certificate_delete_orphaned_issue_files() {
+    global $DB;
+
+    $sql = "SELECT f.itemid FROM {files} f
+                LEFT JOIN {tool_certificate_issues} ci ON ci.id = f.itemid
+                WHERE ci.id IS NULL
+                AND f.filearea = :filearea
+                AND f.component = :component
+                AND f.filename = '.'";
+    $params = ['component' => 'tool_certificate', 'filearea' => 'issues'];
+    $records = $DB->get_records_sql($sql, $params);
+
+    $fs = get_file_storage();
+    foreach ($records as $record) {
+        $fs->delete_area_files(\context_system::instance()->id, 'tool_certificate', 'issues', $record->itemid);
+    }
+}

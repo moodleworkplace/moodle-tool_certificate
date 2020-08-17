@@ -153,5 +153,10 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020081200, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2020081301) {
+        tool_certificate_delete_orphaned_issue_files();
+        upgrade_plugin_savepoint(true, 2020081301, 'tool', 'certificate');
+    }
+
     return true;
 }
