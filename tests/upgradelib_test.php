@@ -225,4 +225,41 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('tool_certificate_elements'));
         $this->assertEquals(0, $DB->count_records('tool_certificate_issues'));
     }
+
+    /**
+     * Test for test_tool_certificate_delete_orphaned_issue_files()
+     */
+    public function test_tool_certificate_delete_orphaned_issue_files() {
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
+        $this->resetAfterTest();
+        $systemcontext = \context_system::instance();
+        $fs = get_file_storage();
+
+        // Create certificate, users and issues.
+        $certificate1 = $this->get_generator()->create_template([
+            'name' => 'My certificate',
+            'contextid' => $systemcontext->id,
+        ]);
+        $user = $this->getDataGenerator()->create_user();
+        $issueid = $certificate1->issue_certificate($user->id);
+
+        // Sanity check.
+        $this->assertEquals(1, $DB->count_records('tool_certificate_templates'));
+        $files = $fs->get_area_files($systemcontext->id, 'tool_certificate', 'issues', $issueid, '', false);
+        $this->assertCount(1, $files);
+
+        // Go through upgrade and check file was not removed.
+        tool_certificate_delete_orphaned_issue_files();
+        $files = $fs->get_area_files($systemcontext->id, 'tool_certificate', 'issues', $issueid, '', false);
+        $this->assertCount(1, $files);
+
+        // Delete issue record and go through upgrade.
+        $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
+        tool_certificate_delete_orphaned_issue_files();
+
+        // Check file was removed.
+        $files = $fs->get_area_files($systemcontext->id, 'tool_certificate', 'issues', $issueid, '', true);
+        $this->assertCount(0, $files);
+    }
 }
