@@ -790,6 +790,8 @@ class template {
         }
         $DB->delete_records('tool_certificate_issues', ['id' => $issueid]);
         issue_handler::create()->delete_instance($issueid);
+        $fs = get_file_storage();
+        $fs->delete_area_files(\context_system::instance()->id, 'tool_certificate', 'issues', $issue->id);
         \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
     }
 
@@ -799,11 +801,8 @@ class template {
     protected function revoke_issues() {
         global $DB;
         $issues = $DB->get_records('tool_certificate_issues', ['templateid' => $this->get_id()]);
-        $DB->delete_records('tool_certificate_issues', ['templateid' => $this->get_id()]);
-        $handler = issue_handler::create();
         foreach ($issues as $issue) {
-            $handler->delete_instance($issue->id);
-            \tool_certificate\event\certificate_revoked::create_from_issue($issue)->trigger();
+            self::revoke_issue($issue->id);
         }
     }
 
