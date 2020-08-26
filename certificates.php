@@ -52,7 +52,6 @@ $PAGE->set_title("$SITE->shortname: " . $heading);
 $PAGE->navbar->add($heading);
 $PAGE->set_heading($heading);
 
-
 $table = new \tool_certificate\issues_list($template);
 $table->define_baseurl($pageurl);
 
@@ -70,6 +69,7 @@ if ($template->can_issue_to_anybody()) {
         'addbuttonicon' => true,];
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_certificate/content_with_heading', $data);
 echo $OUTPUT->footer();

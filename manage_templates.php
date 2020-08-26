@@ -57,9 +57,10 @@ $data = ['content'=> $tablecontents];
 if (\tool_certificate\permission::can_create()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('createtemplate', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-contextid', 'value' => $context->id, 'class' => 'mb-3'],
-        'addbuttonicon' => true,];
+        'addbuttonicon' => true];
 }
 $PAGE->requires->js_call_amd('tool_certificate/templates-list', 'init');
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_certificate/content_with_heading', $data);
 echo $OUTPUT->footer();
