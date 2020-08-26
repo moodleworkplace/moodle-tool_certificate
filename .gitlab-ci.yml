@@ -7,8 +7,10 @@ services:
   alias: selenium-standalone-chrome
 
 variables:
-  MOODLE_REPO: git@git.in.moodle.com:workplace/workplacedev.git
-  MOODLE_BRANCH: master
+  MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
+  MOODLE_BRANCH_WORKPLACE: master
+  MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
+  MOODLE_BRANCH_LMS: MOODLE_39_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -17,24 +19,50 @@ variables:
   DB: "pgsql"
 #  DB: "mysqli"
 
-before_script:
-- . prepare-workplace $cibot_sshkey
-- cd $CI_PROJECT_DIR/..
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-format_wplist.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_dynamicrule.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git
-- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git
-- moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
-- cd moodle
+# Gitlab-ci does not have matrixes, so we have these hidden jobs .setupworkplace and .setuplms to do the set up.
+.setupworkplace: &setupworkplace
+  before_script:
+  - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE
+  - . prepare-workplace $cibot_sshkey
+  - cd $CI_PROJECT_DIR/..
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-format_wplist.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_dynamicrule.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git
+  - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
+  - cd moodle
+
+.setuplms: &setuplms
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS
+    # TODO: when all plugins are removed, remove the argument with the sshkey but leave the call to prepare-workplace, it sets up the env
+    - . prepare-workplace $cibot_sshkey
+    - cd $CI_PROJECT_DIR/..
+    #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
+    #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-format_wplist.git
+    #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_dynamicrule.git
+    #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git
+    - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
+    - cd moodle
 
 codecheck:
+  <<: *setupworkplace
   script:
   - php admin/tool/phpunit/cli/init.php
   - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
@@ -61,6 +89,7 @@ codecheck:
   - tags
 
 behat:
+  <<: *setupworkplace
   script:
   - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
   - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@tool_certificate
@@ -71,3 +100,17 @@ behat:
   - master
   - tags
   - /^WORKPLACE_\d+$/
+
+lms:
+  <<: *setuplms
+  script:
+    - php admin/tool/phpunit/cli/init.php
+    - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+    - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
+    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@tool_certificate
+    - . check-start
+    - . check moodle-plugin-ci phpunit --coverage-text
+    - . check moodle-plugin-ci behat --suite default --profile chrome
+    - . check-finish
+  except:
+    - tags
