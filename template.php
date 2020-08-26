@@ -73,7 +73,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($heading);
 
 $output = $PAGE->get_renderer('tool_certificate');
-$edit = new \tool_wp\output\page_header_button(get_string('editdetails', 'tool_certificate'),
+$edit = new \tool_certificate\output\page_header_button(get_string('editdetails', 'tool_certificate'),
     ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
 $PAGE->set_button($edit->render($output) . $PAGE->button);
 
