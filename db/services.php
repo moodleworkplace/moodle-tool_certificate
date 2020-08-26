@@ -24,8 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$functions = array(
-    'tool_certificate_revoke_issue' => array(
+$functions = [
+    'tool_certificate_revoke_issue' => [
         'classname'   => \tool_certificate\external\issues::class,
         'methodname'  => 'revoke_issue',
         'classpath'   => '',
@@ -33,40 +33,47 @@ $functions = array(
         'type'        => 'write',
         'ajax'        => true,
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ),
-    'tool_certificate_regenerate_issue_file' => array(
+    ],
+    'tool_certificate_regenerate_issue_file' => [
         'classname'   => \tool_certificate\external\issues::class,
         'methodname'  => 'regenerate_issue_file',
         'description' => 'Regenerates an issue file',
         'type'        => 'write',
         'ajax'        => true,
-    ),
-    'tool_certificate_duplicate_template' => array(
+    ],
+    'tool_certificate_duplicate_template' => [
         'classname'   => \tool_certificate\external\templates::class,
         'methodname'  => 'duplicate_template',
         'description' => 'Duplicates a template',
         'type'        => 'write',
         'ajax'        => true,
-    ),
-    'tool_certificate_delete_template' => array(
+    ],
+    'tool_certificate_delete_template' => [
         'classname'   => \tool_certificate\external\templates::class,
         'methodname'  => 'delete_template',
         'description' => 'Deletes a template',
         'type'        => 'write',
         'ajax'        => true,
-    ),
-    'tool_certificate_delete_element' => array(
+    ],
+    'tool_certificate_delete_element' => [
         'classname'   => \tool_certificate\external\elements::class,
         'methodname'  => 'delete_element',
         'description' => 'Deletes an element',
         'type'        => 'write',
         'ajax'        => true,
-    ),
-    'tool_certificate_update_element' => array(
+    ],
+    'tool_certificate_update_element' => [
         'classname'   => \tool_certificate\external\elements::class,
         'methodname'  => 'update_element',
         'description' => 'Updates an element',
         'type'        => 'write',
         'ajax'        => true,
-    ),
-);
+    ],
+    'tool_certificate_modal_form' => [
+        'classname' => \tool_certificate\external\modal_form::class,
+        'methodname' => 'execute',
+        'description' => 'process submission of a modal form',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];

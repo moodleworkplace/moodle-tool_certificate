@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery',
-        'tool_wp/modal_form',
+        'tool_certificate/modal_form',
         'core/notification',
         'core/str',
         'core/ajax',

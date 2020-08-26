@@ -21,7 +21,7 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
+define(['jquery', 'tool_certificate/modal_form', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
 function($, ModalForm, Notification, Str, Ajax, WpNotification) {
 
     /**
