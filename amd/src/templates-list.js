@@ -21,8 +21,8 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'tool_wp/tabs', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
-function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
+define(['jquery', 'tool_wp/modal_form', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
+function($, ModalForm, Notification, Str, Ajax, WpNotification) {
 
     /**
      * Display modal form
@@ -170,7 +170,7 @@ function($, ModalForm, Tabs, Notification, Str, Ajax, WpNotification) {
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
             $('body')
-                .on('click', '[data-tabs-element="addbutton"]', displayAddTemplate)
+                .on('click', '[data-element="addbutton"]', displayAddTemplate)
                 .on('click', '[data-action="editdetails"]', displayEditTemplate)
                 .on('click', '[data-action="issue"]', displayIssue)
                 .on('click', '[data-action="duplicate"][data-selectcategory="1"]', duplicateMulticategory)

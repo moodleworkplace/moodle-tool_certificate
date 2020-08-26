@@ -23,21 +23,19 @@
  */
 define(['jquery',
         'tool_wp/modal_form',
-        'tool_wp/tabs',
         'core/notification',
         'core/str',
         'core/ajax',
         'tool_wp/notification'],
 function($,
          ModalForm,
-         Tabs,
          Notification,
          Str,
          Ajax,
          WpNotification) {
 
     const SELECTORS = {
-        ADDISSUE: "[data-tabs-element='addbutton']",
+        ADDISSUE: "[data-element='addbutton']",
         REGENERATEFILE: "[data-action='regenerate']",
         REVOKEISSUE: "[data-action='revoke']"
     };
