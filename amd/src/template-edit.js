@@ -21,7 +21,7 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'jqueryui', 'tool_wp/modal_form', 'core/notification', 'core/str', 'core/ajax', 'core/sortable_list'],
+define(['jquery', 'jqueryui', 'tool_certificate/modal_form', 'core/notification', 'core/str', 'core/ajax', 'core/sortable_list'],
 function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
     var editReportDetailsHandler = function(e) {
         e.preventDefault();

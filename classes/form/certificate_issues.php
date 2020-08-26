@@ -26,7 +26,7 @@ namespace tool_certificate\form;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_certificate\template;
-use tool_wp\modal_form;
+use tool_certificate\modal_form;
 
 /**
  * Certificate issues form class.
