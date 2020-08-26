@@ -29,9 +29,8 @@ define([
     'core/notification',
     'core/yui',
     'core/event',
-    'core/str',
-    'tool_wp/helper'
-], function($, ModalFactory, ModalEvents, Ajax, Notification, Y, Event, Str, Helper) {
+    'core/str'
+], function($, ModalFactory, ModalEvents, Ajax, Notification, Y, Event, Str) {
     /**
      * Constructor
      *
@@ -151,7 +150,7 @@ define([
             args: params
         }])[0]
             .then(function(response) {
-                promise.resolve(response.html, Helper.processCollectedJavascript(response.javascript));
+                promise.resolve(response.html, processCollectedJavascript(response.javascript));
                 M.util.js_complete('tool_certificate_modal_form_body');
                 return null;
             })
@@ -287,7 +286,7 @@ define([
                 if (!response.submitted) {
                     // Form was not submitted, it could be either because validation failed or because no-submit button was pressed.
                     var promise = $.Deferred();
-                    promise.resolve(response.html, Helper.processCollectedJavascript(response.javascript));
+                    promise.resolve(response.html, processCollectedJavascript(response.javascript));
                     this.modal.setBody(promise.promise());
                     this.enableButtons();
                     this.onValidationError();
@@ -313,6 +312,46 @@ define([
     ModalForm.prototype.submitForm = function(e) {
         e.preventDefault();
         this.modal.getRoot().find('form').submit();
+    };
+
+    /**
+     * Converts the JS that was received from collecting JS requirements on the $PAGE so it can be added to the existing page.
+     *
+     * Copied from core/fragment
+     *
+     * @param {string} js
+     * @return {string}
+     */
+    const processCollectedJavascript = function(js) {
+        var jsNodes = $(js);
+        var allScript = '';
+        jsNodes.each(function(index, scriptNode) {
+            scriptNode = $(scriptNode);
+            var tagName = scriptNode.prop('tagName');
+            if (tagName && (tagName.toLowerCase() === 'script')) {
+                if (scriptNode.attr('src')) {
+                    // We only reload the script if it was not loaded already.
+                    var exists = false;
+                    $('script').each(function(index, s) {
+                        if ($(s).attr('src') === scriptNode.attr('src')) {
+                            exists = true;
+                        }
+                        return !exists;
+                    });
+                    if (!exists) {
+                        allScript += ' { ';
+                        allScript += ' node = document.createElement("script"); ';
+                        allScript += ' node.type = "text/javascript"; ';
+                        allScript += ' node.src = decodeURI("' + encodeURI(scriptNode.attr('src')) + '"); ';
+                        allScript += ' document.getElementsByTagName("head")[0].appendChild(node); ';
+                        allScript += ' } ';
+                    }
+                } else {
+                    allScript += ' ' + scriptNode.text();
+                }
+            }
+        });
+        return allScript;
     };
 
     return ModalForm;
