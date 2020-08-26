@@ -32,5 +32,4 @@ $plugin->requires     = 2020061502.00;
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->dependencies = [
     'tool_tenant'     => 2020092400,
-    'tool_wp'         => 2020092400,
 ];
