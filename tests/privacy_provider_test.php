@@ -140,6 +140,11 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
             $this->certgenerator->create_template((object) ['name' => 'Another one']),
         ];
 
+        // Define courseid issue customfield.
+        $handler = tool_certificate\customfield\issue_handler::create();
+        $handler->ensure_field_exists('courseid', 'numeric',
+            'Course id', false, 1);
+
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
