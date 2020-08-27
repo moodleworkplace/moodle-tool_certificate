@@ -49,24 +49,6 @@ class tool_certificate_lib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test for callback 'wp_registration_stats'
-     * @uses \tool_wp\registration::site_info
-     */
-    public function test_registration_get_site_info() {
-        global $CFG;
-        $this->resetAfterTest(true);
-        $origsiteinfo = $siteinfo = ['moodlerelease' => $CFG->release, 'url' => $CFG->wwwroot];
-        component_class_callback('tool_wp\\registration', 'site_info', [&$siteinfo, false]);
-        $appended = array_diff_key($siteinfo, $origsiteinfo);
-
-        $this->assertNotNull($appended['wpcertificates']);
-        $this->assertNotNull($appended['wpcertificatesissues']);
-
-        $siteinfo = $origsiteinfo;
-        component_class_callback('tool_wp\\registration', 'site_info', [&$siteinfo, true]);
-    }
-
-    /**
      * Test tool_certificate_can_course_category_delete.
      */
     public function test_can_course_category_delete() {
