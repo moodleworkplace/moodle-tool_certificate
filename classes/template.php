@@ -848,7 +848,7 @@ class template {
         global $DB;
         $contextids = \tool_certificate\permission::get_visible_categories_contexts(false);
         if ($contextids) {
-            list($sql, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, \tool_wp\db::generate_param_name());
+            list($sql, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'catparam2');
             return ['ctx.id '.$sql, $params];
         } else {
             return ['1=0', []];
