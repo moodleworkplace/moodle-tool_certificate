@@ -18,308 +18,252 @@
  * Class certificates_list
  *
  * @package     tool_certificate
- * @copyright   2019 Marina Glancy
+ * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace tool_certificate;
 
-use tool_reportbuilder\report_action;
-use tool_reportbuilder\report_column;
-use tool_reportbuilder\system_report;
-use tool_wp\db;
+use tool_certificate\output\renderer;
 
 defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/tablelib.php');
 
 /**
  * Class certificates_list
  *
  * @package     tool_certificate
- * @copyright   2019 Marina Glancy
+ * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class certificates_list extends system_report {
-
+class certificates_list extends \table_sql {
+    /** @var string */
+    protected $downloadparamname = 'download';
     /** @var bool */
     protected $canchangecategory = false;
+    /** @var array */
+    protected $cateogriescontextssql = [];
 
     /**
-     * Initialise
+     * Sets up the table.
      */
-    protected function initialise() {
-        global $DB;
-        $this->set_columns();
-        // Set main table. For certificates we want a custom tenant filter, so disable automatic one.
-        $this->set_main_table('tool_certificate_templates', 'c', false);
-        $context = $this->get_context();
-        if ($context->contextlevel == CONTEXT_COURSE) {
-            // We are inside the course, only display available contexts (parents).
-            list($sql, $params) = $this->get_visible_contexts_for_course_sql();
+    public function __construct() {
+        parent::__construct('tool-certificate-templates');
+        $this->attributes['class'] = 'tool-certificate-templates';
+
+        $targetcategories = \core_course_category::make_categories_list('tool/certificate:manage');
+        $this->canchangecategory = count($targetcategories) > 1;
+        $this->cateogriescontextssql = template::get_visible_categories_contexts_sql();
+
+        $columnsheaders = [
+            'name' => get_string('name', 'tool_certificate'),
+            'coursecategory' => get_string('coursecategory'),
+        ];
+
+        $filename = format_string('tool-certificate-templates');
+        $this->is_downloading(optional_param($this->downloadparamname, 0, PARAM_ALPHA),
+            $filename, get_string('certificatetemplates', 'tool_certificate'));
+
+        if (!$this->is_downloading()) {
+            $columnsheaders += ['actions' => \html_writer::span(get_string('actions'), 'sr-only')];
+        }
+        $this->define_columns(array_keys($columnsheaders));
+        $this->define_headers(array_values($columnsheaders));
+
+        $this->collapsible(false);
+        $this->sortable(true, 'name');
+        $this->no_sorting('actions');
+        $this->pageable(true);
+        $this->is_downloadable(true);
+        $this->show_download_buttons_at([TABLE_P_BOTTOM]);
+
+        $this->column_class('actions', 'text-right');
+    }
+
+    /**
+     * Generate the name column.
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    public function col_name($row) {
+        global $PAGE;
+        $template = template::instance(0, $row);
+
+        $sharedtag = '';
+        if ($template->get_shared()) {
+            $sharedtag = \html_writer::tag('span', get_string('shared', 'tool_certificate'),
+                ['class' => 'label ml-1']);
+        }
+
+        if (!$this->is_downloading()) {
+            $renderer = $PAGE->get_renderer('tool_certificate');
+            $name = $template->get_editable_name()->render($renderer) . $sharedtag;
         } else {
-            list($sql, $params) = $this->get_visible_categories_contexts_sql();
-            $targetcategories = \core_course_category::make_categories_list('tool/certificate:manage');
-            $this->canchangecategory = count($targetcategories) > 1;
-        }
-        $this->add_base_join("JOIN {context} ctx
-            ON ctx.id = c.contextid AND " . $sql, $params);
-        $p3 = db::generate_param_name();
-        $this->add_base_join("LEFT JOIN {course_categories} coursecat
-            ON coursecat.id = ctx.instanceid AND ctx.contextlevel = :{$p3}",
-            [$p3 => CONTEXT_COURSECAT]);
-        $this->add_base_fields('c.id, c.name, c.contextid');
-        $this->set_downloadable(false);
-        $this->add_actions();
-    }
-
-    /**
-     * Get template context
-     *
-     * @return bool|\context|\context_system
-     */
-    protected function get_context() {
-        $contextid = $this->get_parameter('contextid', 0, PARAM_INT);
-        if ($contextid && ($context = \context::instance_by_id($contextid)) && $context->contextlevel == CONTEXT_COURSE) {
-            return $context;
-        }
-        return \context_system::instance();
-    }
-
-    /**
-     * Subquery for visible contexts for a course
-     *
-     * @return array
-     */
-    protected function get_visible_contexts_for_course_sql() {
-        global $DB;
-        $context = $this->get_context();
-        $ids = array_filter($context->get_parent_context_ids(true), function($contextid) {
-            return permission::can_view_templates_in_context(\context::instance_by_id($contextid));
-        });
-        list($sql, $params) = $DB->get_in_or_equal($ids,
-            SQL_PARAMS_NAMED, db::generate_param_name(), true, 0);
-        return ['ctx.id ' . $sql, $params];
-    }
-
-    /**
-     * Subquery for visible contexts for a category/system
-     *
-     * @return array
-     */
-    protected function get_visible_categories_contexts_sql() {
-        global $DB;
-        $contextids = permission::get_visible_categories_contexts(false);
-        if ($contextids) {
-            list($sql, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, db::generate_param_name());
-            return ['ctx.id '.$sql, $params];
-        } else {
-            return ['1=0', []];
-        }
-    }
-
-    /**
-     * Validates access to view this report with the given parameters
-     *
-     * @return bool
-     */
-    protected function can_view(): bool {
-        $context = $this->get_context();
-        if ($context instanceof \context_course) {
-            return permission::can_view_templates_in_context($context);
-        } else {
-            return permission::can_view_admin_tree();
-        }
-    }
-
-    /**
-     * Set columns
-     */
-    protected function set_columns() {
-        $this->annotate_entity('tool_certificate', new \lang_string('entitycertificate', 'tool_certificate'));
-
-        $newcolumn = (new report_column(
-            'name',
-            new \lang_string('name', 'tool_certificate'),
-            'tool_certificate'
-        ))
-            ->add_fields('c.name, c.id, c.contextid, c.shared')
-            ->set_is_default(true, 1)
-            ->set_is_sortable(true, true);
-        $newcolumn->add_callback(function($v, $row) {
-            global $OUTPUT;
-            $t = template::instance(0, $row);
-            $name = $t->get_editable_name()->render($OUTPUT);
-            if ($t->get_shared()) {
-                $name .= \html_writer::tag('div', get_string('shared', 'tool_certificate'),
-                    ['class' => 'label ml-1']);
+            if ($this->export_class_instance()->supports_html()) {
+                $url = $template->edit_url();
+                $name = \html_writer::link($url, $template->get_formatted_name()) . ' ' . $sharedtag;
+            } else {
+                $name = $template->get_formatted_name();
             }
-            return $name;
-        });
-        $this->add_column($newcolumn);
-
-        $contextid = $this->get_parameter('contextid', 0, PARAM_INT);
-        $iscourselisting = $contextid && \context::instance_by_id($contextid)->contextlevel == CONTEXT_COURSE;
-
-        // Add 'Course category' column (for listings in the system level).
-        $newcolumn = (new report_column(
-            'coursecatname',
-            new \lang_string('coursecategory', ''),
-            'tool_certificate'
-        ))
-            ->set_is_default(true, 3)
-            ->set_is_sortable(true)
-            ->add_callback([$this, 'col_coursecat_name']);
-        $columns = \context_helper::get_preload_record_columns('ctx');
-        foreach ($columns as $fieldname => $alias) {
-            $newcolumn->add_field($fieldname, $alias);
         }
-        $newcolumn->add_field('coursecat.name', 'categoryname');
-        $newcolumn->set_is_available(!$iscourselisting);
-        $this->add_column($newcolumn);
 
-        // Add 'Context' column (for course listings).
-        $newcolumn = (new report_column(
-            'contextname',
-            new \lang_string('context', 'role'),
-            'tool_certificate'
-        ))
-            ->set_is_default(true, 3)
-            ->set_is_sortable(true)
-            ->add_callback([$this, 'col_context_name']);
-        $columns = \context_helper::get_preload_record_columns('ctx');
-        foreach ($columns as $fieldname => $alias) {
-            $newcolumn->add_field($fieldname, $alias);
-        }
-        $newcolumn->add_field('coursecat.name', 'categoryname');
-        $newcolumn->set_is_available($iscourselisting);
-        $this->add_column($newcolumn);
+        return $name;
     }
 
     /**
-     * Name of the report
+     * Generate the course category column.
      *
+     * @param \stdClass $row
      * @return string
      */
-    public static function get_name() {
-        return get_string('managetemplates', 'tool_certificate');
-    }
-
-    /**
-     * Formatter for the course category name
-     *
-     * @param mixed $value
-     * @param \stdClass $template
-     * @return string
-     */
-    public function col_coursecat_name($value, \stdClass $template) {
-        \context_helper::preload_from_record($template);
-        $context = \context::instance_by_id($value);
+    public function col_coursecategory($row) {
+        $context = \context::instance_by_id($row->contextid);
         if ($context instanceof \context_system) {
-            return get_string('none');
+            $catname = get_string('none');
         } else {
-            $url = new \moodle_url('/course/index.php', ['categoryid' => $context->instanceid]);
-            $name = format_string($template->categoryname, false, ['context' => $context, 'escape' => false]);
-            return \html_writer::link($url, $name);
+            if (!$this->is_downloading() || $this->export_class_instance()->supports_html()) {
+                $url = new \moodle_url('/course/index.php', ['categoryid' => $context->instanceid]);
+                $name = format_string($row->categoryname, false, ['context' => $context, 'escape' => false]);
+                $catname = \html_writer::link($url, $name);
+            } else {
+                $catname = format_string($row->categoryname, false, ['context' => $context, 'escape' => false]);
+            }
         }
+        return $catname;
     }
 
     /**
-     * Formatter for the course category name
+     * Generate the actions column.
      *
-     * @param mixed $value
-     * @param \stdClass $template
+     * @param \stdClass $row
      * @return string
      */
-    public function col_context_name($value, \stdClass $template) {
-        \context_helper::preload_from_record($template);
-        $context = \context::instance_by_id($value);
-        if ($context instanceof \context_system) {
-            return get_string('coresystem');
-        } else if ($context instanceof \context_coursecat) {
-            $url = new \moodle_url('/course/index.php', ['categoryid' => $context->instanceid]);
-            $name = format_string($template->categoryname, false, ['context' => $context, 'escape' => false]);
-            return \html_writer::link($url, get_string('category') . ': ' . $name);
+    public function col_actions($row) {
+        global $CFG, $OUTPUT;
+        $actions = '';
+        $template = template::instance($row->id);
+
+        if ($template->can_manage()) {
+            // Edit content.
+            $link = new \moodle_url("/admin/tool/certificate/template.php",
+                ['id' => $template->get_id()]);
+            $icon = new \pix_icon('t/right', get_string('editcontent', 'tool_certificate'), 'core');
+            $actions .= $OUTPUT->action_icon($link, $icon, null, []);
+            // Edit details.
+            $link = new \moodle_url('#');
+            $icon = new \pix_icon('i/settings', get_string('editdetails', 'tool_certificate'), 'core');
+            $attributes = [
+                'data-action' => 'editdetails',
+                'data-id' => $template->get_id(),
+                'data-name' => $template->get_formatted_name()
+            ];
+            $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
+            // Preview.
+            $link = new \moodle_url("/admin/tool/certificate/view.php",
+                ['preview' => 1, 'templateid' => $template->get_id(), 'code' => 'previewing']);
+            $icon = new \pix_icon('i/search', get_string('preview'));
+            $actions .= $OUTPUT->action_icon($link, $icon, null, []);
+        }
+        if ($template->can_view_issues()) {
+            // View issues.
+            $link = new \moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $template->get_id()]);
+            $icon = new \pix_icon('a/view_list_active', get_string('certificatesissued', 'tool_certificate'), 'core');
+            $actions .= $OUTPUT->action_icon($link, $icon, null, []);
+        }
+        if ($template->can_issue_to_anybody()) {
+            // Issue certificate.
+            $link = new \moodle_url('#');
+            $icon = new \pix_icon('i/enrolusers', get_string('issuenewcertificate', 'tool_certificate'), 'core');
+            $attributes = ['data-action' => 'issue', 'data-tid' => $template->get_id()];
+            $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
+        }
+        if ($template->can_manage()) {
+            // Duplicate.
+            $link = new \moodle_url('#');
+            $icon = new \pix_icon('e/manage_files', get_string('duplicate'), 'core');
+            $attributes = ['data-action' => 'duplicate', 'data-id' => $template->get_id(),
+                'data-name' => $template->get_formatted_name(), 'data-selectcategory' => (int)$this->canchangecategory];
+            $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
+            // Delete.
+            $link = new \moodle_url('#');
+            $icon = new \pix_icon('i/trash', get_string('delete'), 'core');
+            $attributes = [
+                'data-action' => 'delete',
+                'data-id' => $template->get_id(),
+                'data-name' => $template->get_formatted_name()
+            ];
+            $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
+        }
+
+        return $actions;
+    }
+
+    /**
+     * Query the reader.
+     *
+     * @param int $pagesize size of page for paginated displayed table.
+     * @param bool $useinitialsbar do you want to use the initials bar.
+     * @uses \tool_certificate\certificate
+     */
+    public function query_db($pagesize, $useinitialsbar = false) {
+        $this->rawdata = $this->get_templates_for_table();
+        $this->pagesize($pagesize, $this->count_templates_for_table());
+    }
+
+    /**
+     * Download the data.
+     *
+     * @uses \tool_certificate\certificate
+     */
+    public function download() {
+        \core\session\manager::write_close();
+        $total = $this->count_templates_for_table();
+        $this->out($total, false);
+        exit;
+    }
+
+    /**
+     * Returns visible templates.
+     *
+     * @return array
+     */
+    private function get_templates_for_table() {
+        global $DB;
+
+        [$ctxsql, $ctxparams] = $this->cateogriescontextssql;
+        $sql = "SELECT c.id, c.name AS name, c.contextid, c.shared, ctx.id AS coursecategory, ctx.path, ctx.depth,
+                    ctx.contextlevel, ctx.instanceid, ctx.locked, coursecat.name AS categoryname
+                FROM {tool_certificate_templates} c
+                JOIN {context} ctx
+                ON ctx.id = c.contextid AND $ctxsql
+                LEFT JOIN {course_categories} coursecat
+                ON coursecat.id = ctx.instanceid
+                ORDER BY {$this->get_sql_sort()}";
+        if (!$this->is_downloading()) {
+            return $DB->get_records_sql($sql, $ctxparams, $this->get_page_start(), $this->get_page_size());
         } else {
-            return '';
+            return $DB->get_records_sql($sql, $ctxparams);
         }
     }
 
     /**
-     * Actions
+     * Returns visible templates count.
+     *
+     * @return int
      */
-    protected function add_actions() {
+    private function count_templates_for_table() {
+        global $DB;
 
-        // Edit content.
-        $editlink = new \moodle_url('/admin/tool/certificate/template.php', array('id' => ':id'));
-        $icon = new \pix_icon('t/right', get_string('editcontent', 'tool_certificate'), 'core');
-        $this->add_action((new report_action($editlink, $icon, []))
-            ->add_callback(function($row) {
-                return template::instance(0, $row)->can_manage();
-            })
-        );
+        [$ctxsql, $ctxparams] = $this->cateogriescontextssql;
+        $sql = "SELECT COUNT(c.id)
+                FROM {tool_certificate_templates} c
+                JOIN {context} ctx
+                ON ctx.id = c.contextid AND $ctxsql
+                LEFT JOIN {course_categories} coursecat
+                ON coursecat.id = ctx.instanceid";
 
-        // Edit details.
-        $editlink = new \moodle_url('#');
-        $icon = new \pix_icon('i/settings', get_string('editdetails', 'tool_certificate'), 'core');
-        $this->add_action(
-            (new report_action($editlink, $icon, ['data-action' => 'editdetails', 'data-id' => ':id', 'data-name' => ':name']))
-                ->add_callback(function($row) {
-                    $t = template::instance(0, $row);
-                    $row->name = $t->get_formatted_name();
-                    return $t->can_manage();
-                })
-        );
-
-        // Preview.
-        $previewlink = new \moodle_url('/admin/tool/certificate/view.php',
-            ['preview' => 1, 'templateid' => ':id', 'code' => 'previewing']);
-        $icon = new \pix_icon('i/search', get_string('preview'), 'core');
-        $this->add_action((new report_action($previewlink, $icon, []))
-            ->add_callback(function($row) {
-                return template::instance(0, $row)->can_manage();
-            })
-        );
-
-        // View issue.
-        $issueslink = new \moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => ':id'));
-        $issuesstr  = get_string('certificatesissued', 'tool_certificate');
-        $icon = new \pix_icon('a/view_list_active', $issuesstr, 'core');
-        $this->add_action((new report_action($issueslink, $icon, []))
-            ->add_callback(function($row) {
-                return template::instance(0, $row)->can_view_issues();
-            })
-        );
-
-        // Issue.
-        $newissuelink = new \moodle_url('#');
-        $newissuestr  = get_string('issuenewcertificate', 'tool_certificate');
-        $icon = new \pix_icon('i/enrolusers', $newissuestr, 'core');
-        $this->add_action((new report_action($newissuelink, $icon, ['data-action' => 'issue', 'data-tid' => ':id']))
-            ->add_callback(function($row) {
-                return template::instance(0, $row)->can_issue_to_anybody();
-            })
-        );
-
-        // Duplicate.
-        $icon = new \pix_icon('e/manage_files', get_string('duplicate'), 'core');
-        $this->add_action((new report_action(new \moodle_url('#'), $icon, ['data-action' => 'duplicate',
-                'data-id' => ':id', 'data-name' => ':name', 'data-selectcategory' => (int)$this->canchangecategory]))
-            ->add_callback(function($row) {
-                $t = template::instance(0, $row);
-                $row->name = $t->get_formatted_name();
-                return $t->can_manage();
-            })
-        );
-
-        // Delete.
-        $icon = new \pix_icon('i/trash', get_string('delete'), 'core');
-        $this->add_action((new report_action(new \moodle_url('#'), $icon,
-                ['data-action' => 'delete', 'data-id' => ':id', 'data-name' => ':name']))
-            ->add_callback(function($row) {
-                $t = template::instance(0, $row);
-                $row->name = $t->get_formatted_name();
-                return $t->can_manage();
-            })
-        );
-
+        return $DB->count_records_sql($sql, $ctxparams);
     }
 }

@@ -844,7 +844,7 @@ class template {
      *
      * @return array
      */
-    protected static function get_visible_categories_contexts_sql() {
+    public static function get_visible_categories_contexts_sql() {
         global $DB;
         $contextids = \tool_certificate\permission::get_visible_categories_contexts(false);
         if ($contextids) {
