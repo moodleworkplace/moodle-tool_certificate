@@ -471,9 +471,10 @@ class tool_certificate_template_testcase extends advanced_testcase {
 
         // Check 3 contexts are returned: cat1, cat2 and system.
         $this->assertNotEmpty($sql);
-        $this->assertCount(3, $params);
-        $this->assertEquals(context_coursecat::instance($cat2->id)->id, array_pop($params));
-        $this->assertEquals(context_coursecat::instance($cat1->id)->id, array_pop($params));
-        $this->assertEquals(context_system::instance()->id, array_pop($params));
+        $this->assertEqualsCanonicalizing([
+            context_system::instance()->id,
+            context_coursecat::instance($cat1->id)->id,
+            context_coursecat::instance($cat2->id)->id,
+        ], $params);
     }
 }
