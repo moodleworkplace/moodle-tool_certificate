@@ -131,6 +131,22 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         $id3 = $DB->insert_record($tablename, (object)['component' => 'tool_dynamicrule', 'templateid' => $templateid,
             'data' => json_encode(['coursename' => 'X'])]);
 
+        // Create tool_program issue customfields manually if tool_program is not available.
+        if (!class_exists('\\tool_program\\program')) {
+            $handler = tool_certificate\customfield\issue_handler::create();
+            $handler->ensure_field_exists('programname', 'text', 'Program name', true, 'Program name preview');
+            $handler->ensure_field_exists('programcompletiondate', 'date', 'Program completion date', true,
+                userdate(strtotime(date('Y-01-01')), get_string('strftimedatefullshort')), ['includetime' => false]);
+            $handler->ensure_field_exists('programcompletedcourses', 'textarea', 'Courses completed in program', true,
+                '<ul><li>C01</li><li>C02</li><li>C03</li></ul>'
+            );
+        }
+        // Create tool_certification issue customfields manually if tool_certification is not available.
+        if (!class_exists('\\tool_certification\\certification')) {
+            $handler = tool_certificate\customfield\issue_handler::create();
+            $handler->ensure_field_exists('certificationname', 'text', 'Certification name', true, 'Certification name preview');
+        }
+
         tool_certificate_upgrade_move_data_to_customfields($tablename);
 
         $handler = \tool_certificate\customfield\issue_handler::create();
