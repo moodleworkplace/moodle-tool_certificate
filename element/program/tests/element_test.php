@@ -58,15 +58,18 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
+        \tool_certificate\customfield\issue_handler::create()->ensure_field_exists('certificationname', 'text',
+            'Certification name preview', true, 'Certification name preview');
         $element->data = json_encode(['display' => 'certificationname']);
         /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $certificationstr = get_string('previewcertificationname', 'tool_certification');
-        $this->assertTrue(strpos($e->format_preview_data(), $certificationstr) >= 0);
+        $this->assertTrue(strpos($e->format_preview_data(), 'Certification name preview') >= 0);
 
+        \tool_certificate\customfield\issue_handler::create()->ensure_field_exists('programname', 'text',
+            'Program name preview', true, 'Program name preview');
         $element->data = json_encode(['display' => 'programname']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
-        $this->assertTrue(strpos($e->format_preview_data(), get_string('previewprogramname', 'tool_program')) >= 0);
+        $this->assertTrue(strpos($e->format_preview_data(), 'Program name preview') >= 0);
 
         $element->data = json_encode(['display' => 'completiondate']);
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
@@ -84,6 +87,18 @@ class tool_certificate_program_element_test_testcase extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
+
+        // Create issue customfields.
+        $handler = \tool_certificate\customfield\issue_handler::create();
+        $handler->ensure_field_exists('certificationname', 'text',
+            'Certification name preview', true, 'Certification name preview');
+        $handler->ensure_field_exists('programname', 'text', 'Program name', true, 'Program name preview');
+        $handler->ensure_field_exists('programcompletiondate', 'date', 'Program completion date', true,
+            userdate(strtotime(date('Y-01-01')), get_string('strftimedatefullshort')), ['includetime' => false]);
+        $handler->ensure_field_exists('programcompletedcourses', 'textarea', 'Courses completed in program', true,
+            '<ul><li>C01</li><li>C02</li><li>C03</li></ul>'
+        );
+
         $element->data = json_encode(['display' => 'certificationname']);
         /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
