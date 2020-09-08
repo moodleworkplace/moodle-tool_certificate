@@ -8,6 +8,12 @@ Feature: Being able to manage elements in a certificate template
     Given the following certificate templates exist:
       | name | numberofpages |
       | Certificate 1 | 1 |
+    Given the following "custom field categories" exist:
+      | name          | component         | area    | itemid |
+      | Other fields  | tool_certificate  | issue   | 0      |
+    Given the following "custom fields" exist:
+      | name              | category      | type | shortname       | configdata                                         |
+      | Course full name  | Other fields  | text | coursefullname  | {"visible":true,"previewvalue":"Course full name"} |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link"
