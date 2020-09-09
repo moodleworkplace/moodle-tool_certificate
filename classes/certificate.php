@@ -391,7 +391,7 @@ class certificate {
      */
     public static function get_users_subquery(string $usertablealias = 'u') : string {
         return component_class_callback('tool_tenant\\tenancy', 'get_users_subquery',
-            [true, false, $usertablealias.'.id'], $usertablealias.'.deleted=0');
+            [true, false, $usertablealias.'.id'], '1=1');
     }
 
     /**
