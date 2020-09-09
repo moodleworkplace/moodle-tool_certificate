@@ -48,7 +48,7 @@ variables:
     - . prepare-workplace $cibot_sshkey
     - cd $CI_PROJECT_DIR/..
     #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
-    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
+    #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
     - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
     #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
     #- moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-format_wplist.git
