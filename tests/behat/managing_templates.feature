@@ -5,7 +5,15 @@ Feature: Being able to manage site templates
   I need to manage and load site templates
 
   Background:
-    Given "3" tenants exist with "5" users and "0" courses in each
+    Given the following "users" exist:
+      | username           | firstname   | lastname        | email                         |
+      | user1              | User        | 1               | user1@example.com             |
+      | categorymanager1   | category    | Manager         | categorymanager1@example.com  |
+      | categorymanager2   | category    | Manager         | categorymanager2@example.com  |
+    And the following "categories" exist:
+      | name      | category | idnumber |
+      | Category1 | 0        | CAT1     |
+      | Category2 | 0        | CAT2     |
     And the following "roles" exist:
       | shortname             | name                        | archetype |
       | certificatemanager    | Certificate manager         |           |
@@ -16,6 +24,12 @@ Feature: Being able to manage site templates
       | moodle/site:configview         | Allow      | certificatemanager | System       |           |
       | moodle/category:viewcourselist | Allow      | certificatemanager | System       |           |
       | tool/certificate:manage        | Allow      | certificatemanager | System       |           |
+    And the following "role assigns" exist:
+      | user              | role                    | contextlevel   | reference     |
+      | categorymanager1  | manager                 | Category       | CAT1          |
+      | categorymanager2  | manager                 | Category       | CAT2          |
+      | categorymanager1  | configviewer            | System         |               |
+      | categorymanager2  | configviewer            | System         |               |
 
   Scenario: Adding a site template
     When I log in as "admin"
@@ -27,7 +41,7 @@ Feature: Being able to manage site templates
     And I press "Save" in the modal form dialogue
     And I add the element "Border" to page "1" of the "Certificate 1" site certificate template
     And I set the following fields to these values:
-      | Width  | 5 |
+      | Width  | 5       |
       | Colour | #045ECD |
     And I press "Save" in the modal form dialogue
     And I follow "Manage certificate templates"
@@ -35,22 +49,19 @@ Feature: Being able to manage site templates
 
   Scenario: Adding a template when user can manage templates anywhere
     When the following "users" exist:
-      | username | firstname | lastname | email           |
-      | manager  | Manager | 1 | manager@example.com |
+      | username | firstname  | lastname  | email               |
+      | manager  | Manager    | 1         | manager@example.com |
     And the following "role assigns" exist:
-      | user    | role           | contextlevel | reference |
-      | manager | certificatemanager | System       |           |
-    And the following users allocations to tenants exist:
-      | user | tenant |
-      | manager | Tenant2 |
+      | user    | role                | contextlevel | reference |
+      | manager | certificatemanager  | System       |           |
     And I log in as "manager"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I wait "2" seconds
     And I follow "New certificate template"
     And I set the following fields to these values:
-      | Name | Certificate 1 |
-      | Course category | Category2 |
-      | shared          | 1         |
+      | Name            | Certificate 1 |
+      | Course category | Category2     |
+      | shared          | 1             |
     And I press "Save" in the modal form dialogue
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
@@ -63,10 +74,10 @@ Feature: Being able to manage site templates
 
   Scenario: Adding a template when user can manage templates in one category
     When the following "role assigns" exist:
-      | user   | role               | contextlevel | reference |
-      | user21 | certificatemanager | Category     | CAT2      |
-      | user21 | configviewer       | System       |           |
-    And I log in as "user21"
+      | user  | role               | contextlevel | reference |
+      | user1 | certificatemanager | Category     | CAT2      |
+      | user1 | configviewer       | System       |           |
+    And I log in as "user1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "New certificate template"
     And I set the following fields to these values:
@@ -75,11 +86,11 @@ Feature: Being able to manage site templates
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
     And I log out
-    And I log in as "tenantadmin1"
+    And I log in as "categorymanager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 1"
     And I log out
-    And I log in as "tenantadmin2"
+    And I log in as "categorymanager2"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should see "Certificate 1"
     And I log out
@@ -103,7 +114,7 @@ Feature: Being able to manage site templates
     When the following certificate templates exist:
       | name          | numberofpages | category  |
       | Certificate 1 | 1             | Category1 |
-    And I log in as "tenantadmin1"
+    And I log in as "categorymanager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "Certificate 1"
     And I press "Edit details"
@@ -117,7 +128,7 @@ Feature: Being able to manage site templates
     When the following certificate templates exist:
       | name          | numberofpages | category  |
       | Certificate 1 | 1             | Category1 |
-    And I log in as "tenantadmin1"
+    And I log in as "categorymanager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link" in the "Certificate 1" "table_row"
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
@@ -130,11 +141,11 @@ Feature: Being able to manage site templates
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     Then I should not see "Certificate 1"
 
-  Scenario: Duplicating a site template from the same tenant without system-level capabilities
+  Scenario: Duplicating a site template from the same category without system-level capabilities
     When the following certificate templates exist:
       | name          | numberofpages | category  |
       | Certificate 1 | 1             | Category1 |
-    And I log in as "tenantadmin1"
+    And I log in as "categorymanager1"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link" in the "Certificate 1" "table_row"
     And I wait "2" seconds
@@ -149,32 +160,6 @@ Feature: Being able to manage site templates
     And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (copy)"
-    And I log out
-
-  Scenario: Duplicating a shared site template without system-level capabilities
-    When the following certificate templates exist:
-      | name          | category  | numberofpages |
-      | Certificate 0 |           | 1             |
-      | Certificate 1 | Category1 | 1             |
-      | Certificate 2 | Category2 | 1             |
-    And I log in as "tenantadmin1"
-    When I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Edit content" "link" should exist in the "Certificate 1" "table_row"
-    And I should not see "Certificate 2"
-    And "Edit content" "link" should not exist in the "Certificate 0" "table_row"
-    And "Duplicate" "link" should not exist in the "Certificate 0" "table_row"
-    And "Duplicate" "link" should exist in the "Certificate 1" "table_row"
-    And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I click on "Duplicate" "button" in the "Confirm" "dialogue"
-    Then I should see "Certificate 0"
-    And I should see "Certificate 1 (copy)"
-    And I log out
-    # Now make sure the duplicate was created for Category1.
-    And I log in as "admin"
-    When I navigate to "Certificates > Manage certificate templates" in site administration
-    And "Category1" "text" should exist in the "Certificate 1 (copy)" "table_row"
-    And "Duplicate" "link" should exist in the "Certificate 0" "table_row"
-    And "Duplicate" "link" should exist in the "Certificate 1" "table_row"
     And I log out
 
   Scenario: Duplicating a site template to another category
@@ -207,7 +192,7 @@ Feature: Being able to manage site templates
     When the following certificate templates exist:
       | name          | numberofpages | category  |
       | Certificate 1 | 1             | Category1 |
-    And I log in as "tenantadmin1"
+    And I log in as "categorymanager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit template name" "link" in the "Certificate 1" "table_row"
     And I set the field "New value for Certificate 1" to "Certificate 2"
