@@ -62,11 +62,11 @@ if ($table->is_downloading()) {
 
 $renderer = $PAGE->get_renderer('tool_certificate');
 $tablecontents = $renderer->render_table($table);
-$data = ['content'=> $tablecontents, 'heading' => format_string($template->get_name())];
+$data = ['content' => $tablecontents, 'heading' => format_string($template->get_name())];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
-        'addbuttonicon' => true,];
+        'addbuttonicon' => true];
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
 
