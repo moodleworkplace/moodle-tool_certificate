@@ -53,10 +53,10 @@ if ($table->is_downloading()) {
 $renderer = $PAGE->get_renderer('tool_certificate');
 $tablecontents = $renderer->render_table($table);
 
-$data = ['content'=> $tablecontents];
+$data = ['content' => $tablecontents];
 if (\tool_certificate\permission::can_create()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('createtemplate', 'tool_certificate'),
-        'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-contextid', 'value' => $context->id, 'class' => 'mb-3'],
+        'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-contextid', 'value' => $context->id],
         'addbuttonicon' => true];
 }
 $PAGE->requires->js_call_amd('tool_certificate/templates-list', 'init');
