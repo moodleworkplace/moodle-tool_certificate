@@ -1,0 +1,39 @@
+{{!
+    This file is part of the tool_certificate plugin for Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template tool_certificate/page_header_button
+
+    Button to display in the page heading
+
+    Classes required for JS:
+
+    Data attibutes required for JS:
+
+    Context variables required for this template:
+
+    Example context (json):
+    {
+        "title": "Edit details",
+        "class": "",
+        "attributes": [
+            {"name": "data-id", "value": 0}
+        ]
+    }
+}}
+<div class="singlebutton pageheaderbutton">
+    <button class="btn btn-outline-secondary {{class}}" {{#attributes}}{{name}}="{{value}}"{{/attributes}}>{{{title}}}</button>
+</div>

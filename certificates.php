@@ -52,7 +52,6 @@ $PAGE->set_title("$SITE->shortname: " . $heading);
 $PAGE->navbar->add($heading);
 $PAGE->set_heading($heading);
 
-
 $table = new \tool_certificate\issues_list($template);
 $table->define_baseurl($pageurl);
 
@@ -63,14 +62,14 @@ if ($table->is_downloading()) {
 
 $renderer = $PAGE->get_renderer('tool_certificate');
 $tablecontents = $renderer->render_table($table);
-
-echo $OUTPUT->header();
-$r = new \tool_wp\output\content_with_heading($tablecontents, format_string($template->get_name()));
+$data = ['content' => $tablecontents, 'heading' => format_string($template->get_name())];
 if ($template->can_issue_to_anybody()) {
-    $r->add_button(get_string('issuecertificates', 'tool_certificate'), null,
-        ['data-tid' => $template->get_id()]);
+    $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
+        'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
+        'addbuttonicon' => true];
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
-echo $OUTPUT->render_from_template('tool_wp/content_with_heading', $r->export_for_template($OUTPUT));
 
+echo $OUTPUT->header();
+echo $OUTPUT->render_from_template('tool_certificate/content_with_heading', $data);
 echo $OUTPUT->footer();
