@@ -419,4 +419,31 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEmpty(\tool_certificate\certificate::count_templates_in_category($category3));
         $this->assertEquals(2, \tool_certificate\certificate::count_templates_in_category($category4));
     }
+
+    public function test_create_demo_template() {
+        global $DB;
+
+        // Sanity check.
+        $templates = $DB->get_records('tool_certificate_templates');
+        $this->assertCount(0, $templates);
+
+        // Check template was created.
+        \tool_certificate\certificate::create_demo_template();
+        $templates = $DB->get_records('tool_certificate_templates');
+        $this->assertCount(1, $templates);
+
+        // Check demo template contents.
+        $demotemplate = \tool_certificate\template::instance(reset($templates)->id);
+        $this->assertEquals('Certificate demo template', $demotemplate->get_formatted_name());
+        $this->assertEquals(1, $demotemplate->get_shared());
+        $pages = $demotemplate->get_pages();
+        $this->assertCount(1, $pages);
+        $elements = reset($pages)->get_elements();
+        $this->assertCount(12, $elements);
+
+        // Check demo tempalte files were created.
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'element', false, '', false);
+        $this->assertCount(3, $files);
+    }
 }
