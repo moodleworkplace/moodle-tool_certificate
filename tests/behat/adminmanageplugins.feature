@@ -12,7 +12,7 @@ Feature: Manage certificate elements plugins
     And I should see "Date"
     And I should see "Digital signature"
     And I should see "Image"
-    And I should see "Dynamic rule data"
+    And I should see "Dynamic fields"
     And I should see "Text"
     And I should see "User field"
     And I should see "User picture"
