@@ -157,15 +157,15 @@ Feature: Being able to manage elements in a certificate template
       | Width  | 10 |
       | Height | 10 |
     And I press "Save" in the modal form dialogue
-    # Dynamic rule data.
-    And I add the element "Dynamic rule data" to page "1" of the "Certificate 1" site certificate template
+    # Dynamic fields.
+    And I add the element "Dynamic fields" to page "1" of the "Certificate 1" site certificate template
     And I follow "Show more..."
     And I set the following fields to these values:
       | Field  | Course full name |
       | Position X | 100           |
     And I press "Save" in the modal form dialogue
-    And I should see "Dynamic rule data" in the "[data-region='elementlist']" "css_element"
-    And I click on "Edit 'Dynamic rule data'" "link" in the "[data-region='elementlist']" "css_element"
+    And I should see "Dynamic fields" in the "[data-region='elementlist']" "css_element"
+    And I click on "Edit 'Dynamic fields'" "link" in the "[data-region='elementlist']" "css_element"
     And the following fields match these values:
       | Field  | Course full name |
     And I press "Save" in the modal form dialogue
