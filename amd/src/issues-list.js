@@ -22,17 +22,17 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define(['jquery',
-        'tool_wp/modal_form',
+        'tool_certificate/modal_form',
         'core/notification',
         'core/str',
         'core/ajax',
-        'tool_wp/notification'],
+        'core/toast'],
 function($,
          ModalForm,
          Notification,
          Str,
          Ajax,
-         WpNotification) {
+         Toast) {
 
     const SELECTORS = {
         ADDISSUE: "[data-element='addbutton']",
@@ -61,13 +61,13 @@ function($,
                     {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
                 ]).done(function(s) {
                     var str = data > 1 ? s[1] : s[0];
-                    WpNotification.addNotification({message: str, type: 'success'});
+                    Toast.add(str);
                 });
                 window.location.reload();
             } else {
                 Str.get_string('noissueswerecreated', 'tool_certificate')
                     .done(function(s) {
-                        WpNotification.addNotification({message: s, type: 'warning'});
+                        Toast.add(s);
                     });
             }
         };

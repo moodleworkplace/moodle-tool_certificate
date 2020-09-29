@@ -21,8 +21,8 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_wp/modal_form', 'core/notification', 'core/str', 'core/ajax', 'tool_wp/notification'],
-function($, ModalForm, Notification, Str, Ajax, WpNotification) {
+define(['jquery', 'tool_certificate/modal_form', 'core/notification', 'core/str', 'core/ajax', 'core/toast'],
+function($, ModalForm, Notification, Str, Ajax, Toast) {
 
     /**
      * Display modal form
@@ -94,12 +94,12 @@ function($, ModalForm, Notification, Str, Ajax, WpNotification) {
                     {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
                 ]).done(function(s) {
                     var str = data > 1 ? s[1] : s[0];
-                    WpNotification.addNotification({message: str, type: 'success'});
+                    Toast.add(str);
                 });
             } else {
                 Str.get_string('noissueswerecreated', 'tool_certificate')
                     .done(function(s) {
-                        WpNotification.addNotification({message: s, type: 'warning'});
+                        Toast.add(s);
                     });
             }
         };
