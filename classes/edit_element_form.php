@@ -26,8 +26,6 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-use tool_wp\modal_form;
-
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
 \MoodleQuickForm::registerElementType('certificate_colourpicker',

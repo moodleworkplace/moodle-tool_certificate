@@ -26,7 +26,7 @@ namespace tool_certificate\form;
 
 use tool_certificate\permission;
 use tool_certificate\template;
-use tool_wp\modal_form;
+use tool_certificate\modal_form;
 
 defined('MOODLE_INTERNAL') || die();
 
