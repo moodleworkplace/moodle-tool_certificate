@@ -137,4 +137,98 @@ class issues extends \external_api {
         return null;
     }
 
+    /**
+     * Parameters for the users selector WS.
+     * @return \external_function_parameters
+     */
+    public static function potential_users_selector_parameters(): \external_function_parameters {
+        return new \external_function_parameters([
+            'search' => new \external_value(PARAM_NOTAGS, 'Search string', VALUE_REQUIRED),
+            'itemid' => new \external_value(PARAM_INT, 'Item id', VALUE_REQUIRED),
+        ]);
+    }
+
+    /**
+     * User selector.
+     *
+     * @param string $search
+     * @param int $itemid
+     * @return array
+     */
+    public static function potential_users_selector(string $search, int $itemid): array {
+        global $DB, $CFG;
+
+        $params = self::validate_parameters(self::potential_users_selector_parameters(),
+            ['search' => $search, 'itemid' => $itemid]);
+        $search = $params['search'];
+        $itemid = $params['itemid'];
+
+        $context = \context_system::instance();
+        self::validate_context($context);
+
+        $template = \tool_certificate\template::instance($itemid);
+        \external_api::validate_context($template->get_context());
+
+        if ($template->can_issue_to_anybody()) {
+            $where = \tool_certificate\certificate::get_users_subquery();
+            $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
+        } else {
+            throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions', 'error');
+        }
+
+        $join = ' LEFT JOIN {tool_certificate_issues} ci ON u.id = ci.userid AND ci.templateid = :templateid';
+
+        $params = [];
+        $params['templateid'] = $itemid;
+        $params['now'] = time();
+
+        $fields = get_all_user_name_fields(true, 'u');
+
+        $extrasearchfields = array();
+        if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
+            $extrasearchfields = explode(',', $CFG->showuseridentity);
+        }
+        if (in_array('email', $extrasearchfields)) {
+            $fields .= ', u.email';
+        } else {
+            $fields .= ', null AS email';
+        }
+
+        list($wheresql, $whereparams) = users_search_sql($search, 'u', true, $extrasearchfields);
+        $query = "SELECT u.id, $fields
+            FROM {user} u $join
+            WHERE ($where) AND $wheresql";
+        $params += $whereparams;
+
+        list($sortsql, $sortparams) = users_order_by_sql('u', $search, $context);
+        $query .= " ORDER BY {$sortsql}";
+        $params += $sortparams;
+
+        $result = $DB->get_records_sql($query, $params);
+        $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
+        if ($result) {
+            $result = array_map(function($record) use ($viewfullnames) {
+                return (object)['id' => $record->id, 'fullname' => fullname($record, $viewfullnames), 'email' => $record->email];
+            }, $result);
+        }
+        return $result;
+    }
+
+    /**
+     * Return for User selector.
+     * @return \external_multiple_structure
+     */
+    public static function potential_users_selector_returns(): \external_multiple_structure {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/externallib.php');
+        return new \external_multiple_structure(new \external_single_structure([
+            'id' => new \external_value(\core_user::get_property_type('id'),
+                'ID of the user'),
+            'fullname' => new \external_value(\core_user::get_property_type('firstname'),
+                'The fullname of the user'),
+            'email' => new \external_value(\core_user::get_property_type('email'),
+                'An email address', VALUE_OPTIONAL),
+        ]));
+    }
+
 }
