@@ -106,6 +106,7 @@ Feature: Being able to manage site templates
     And I log in as "tenantadmin1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "Certificate 1"
+    And I wait "1" seconds
     And I press "Edit details"
     And I set the field "Name" to "Certificate 2"
     And I press "Save" in the modal form dialogue
