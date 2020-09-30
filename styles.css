@@ -63,3 +63,7 @@
     border-top: 1px solid black;
     line-height: normal;
 }
+
+#page-admin-tool-certificate-template #region-main {
+    overflow: visible;
+}

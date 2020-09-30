@@ -13,6 +13,7 @@ Feature: Being able to manage pages in a certificate template
     And I click on "Edit content" "link"
 
   Scenario: Adding a page to a certificate template
+    And I wait "1" seconds
     When I follow "New page"
     And I press "Save" in the modal form dialogue
     And I should see "Page 1"
