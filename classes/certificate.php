@@ -24,8 +24,6 @@
 
 namespace tool_certificate;
 
-use tool_wp\db;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -355,7 +353,7 @@ class certificate {
         if (!$ids) {
             return [];
         }
-        list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, db::generate_param_name());
+        list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'catparam1');
 
         $query = "SELECT *
                     FROM {tool_certificate_templates}
