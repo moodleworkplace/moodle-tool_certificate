@@ -164,36 +164,6 @@ function tool_certificate_get_fontawesome_icon_map() {
 }
 
 /**
- * Callback to filter form-potential-users-selector
- * @param string $area
- * @param int $itemid
- * @return array
- */
-function tool_certificate_potential_users_selector($area, $itemid) {
-    if ($area !== 'issue') {
-        return null;
-    }
-
-    $template = \tool_certificate\template::instance($itemid);
-    external_api::validate_context($template->get_context());
-
-    if ($template->can_issue_to_anybody()) {
-        $where = \tool_certificate\certificate::get_users_subquery();
-        $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
-    } else {
-        throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions', 'error');
-    }
-
-    $join = ' LEFT JOIN {tool_certificate_issues} ci ON u.id = ci.userid AND ci.templateid = :templateid';
-
-    $params = [];
-    $params['templateid'] = $itemid;
-    $params['now'] = time();
-
-    return [$join, $where, $params];
-}
-
-/**
  * Display the Certificate link in the course administration menu.
  *
  * @param settings_navigation $navigation The settings navigation object

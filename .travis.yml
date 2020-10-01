@@ -35,11 +35,11 @@ before_install:
 - export PATH="$(cd ci/bin; pwd):$(cd ci/vendor/bin; pwd):$PATH"
 
 install:
-- moodle-plugin-ci add-plugin moodleworkplace/moodle-theme_workplace
-- moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_tenant
-- moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_wp
-- moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_reportbuilder
-- moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_dynamicrule
+# - moodle-plugin-ci add-plugin moodleworkplace/moodle-theme_workplace
+# - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_tenant
+# - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_wp
+# - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_reportbuilder
+# - moodle-plugin-ci add-plugin moodleworkplace/moodle-tool_dynamicrule
 - moodle-plugin-ci install
 
 script:

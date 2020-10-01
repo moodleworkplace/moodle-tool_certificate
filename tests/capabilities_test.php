@@ -118,6 +118,12 @@ class tool_certificate_capabilities_test_testcase extends advanced_testcase {
      */
     public function test_can_issue_same_tenant() {
         global $DB;
+
+        // Skip tests if tool_tenant is not present.
+        if (!class_exists('tool_tenant\tenancy')) {
+            $this->markTestSkipped('Plugin tool_tenant not installed, skipping');
+        }
+
         $cat1 = self::getDataGenerator()->create_category();
         $cat2 = self::getDataGenerator()->create_category();
 

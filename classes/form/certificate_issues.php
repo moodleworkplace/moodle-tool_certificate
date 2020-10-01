@@ -62,10 +62,8 @@ class certificate_issues extends modal_form {
         $mform->setType('tid', PARAM_INT);
 
         $options = array(
-            'ajax' => 'tool_wp/form-potential-user-selector',
+            'ajax' => 'tool_certificate/form-potential-user-selector',
             'multiple' => true,
-            'data-component' => 'tool_certificate',
-            'data-area' => 'issue',
             'data-itemid' => $this->get_template()->get_id()
         );
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
