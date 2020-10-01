@@ -15,17 +15,17 @@ Feature: Being able to manage pages in a certificate template
   Scenario: Adding a page to a certificate template
     And I wait "1" seconds
     When I follow "New page"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Page 1"
     And I should see "Page 2"
 
   Scenario: Deleting a page from a certificate template
     When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "New page"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Page 1"
     And I should see "Page 2"
     And I click on "Delete" "link" in the "[data-region=\"page\"]" "css_element"
@@ -38,11 +38,11 @@ Feature: Being able to manage pages in a certificate template
 
   Scenario: Rearrange pages in a certificate template
     When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "New page"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I add the element "User field" to page "2" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I click on "Move down" "link" in the "//*[@data-region='page'][1]" "xpath_element"
     Then "User field" "text" should appear before "User picture" "text"
     And I click on "Move up" "link" in the "//*[@data-region='page'][2]" "xpath_element"

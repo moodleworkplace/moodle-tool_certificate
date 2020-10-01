@@ -67,10 +67,10 @@ class modal_form extends \external_api {
 
         if (!class_exists($formclass) || !is_subclass_of($formclass, \tool_certificate\modal_form::class)) {
             // For security reason we don't throw exception "class does not exist" but rather an access exception.
-            throw new \moodle_exception('nopermissionform', 'tool_wp');
+            throw new \moodle_exception('nopermissionform', 'tool_certificate');
         }
 
-        /** @var \tool_wp\modal_form $form */
+        /** @var \tool_certificate\modal_form $form */
         $form = new $formclass(null, null, 'post', '', [], true, $formdata, true);
         $form->set_data_for_modal();
         if (!$form->is_cancelled() && $form->is_submitted() && $form->is_validated()) {

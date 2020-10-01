@@ -20,7 +20,7 @@ Feature: Being able to set a site setting to determine whether or not to display
     And I set the following fields to these values:
       | Position X | 5  |
       | Position Y | 10 |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I click on "Edit 'Code'" "link" in the "Code" "list_item"
     And the following fields match these values:
       | Position X | 5  |

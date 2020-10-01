@@ -265,10 +265,6 @@ class issue_handler extends handler {
 
     /**
      * Initialises the custom fields for the course data.
-     *
-     * @uses tool_program_tool_certificate_fields()
-     * @uses tool_certification_tool_certificate_fields()
-     * @uses tool_dynamicrule_tool_certificate_fields()
      */
     public function create_custom_fields_if_not_exist() {
         // Allow all plugins to register their fields.

@@ -131,6 +131,7 @@ $string['name'] = 'Name';
 $string['nametoolong'] = 'You have exceeded the maximum length allowed for the name';
 $string['noimage'] = 'No image';
 $string['noissueswerecreated'] = 'No issues were created';
+$string['nopermissionform'] = 'You don\'t have permission to access this form.';
 $string['notificationmsgcertificateissued'] = 'Hi {$a->fullname},<br /><br />Your certificate is available! You will find it here:
 <a href="{$a->url}">My Certificates</a>';
 $string['notificationsubjectcertificateissued'] = 'Your certificate is available!';
