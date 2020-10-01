@@ -43,7 +43,7 @@ Feature: Being able to manually issue a certificate to a user
     And I open the autocomplete suggestions list
     And I click on "User 11" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate to"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
     And I log out
@@ -63,7 +63,7 @@ Feature: Being able to manually issue a certificate to a user
     And I open the autocomplete suggestions list
     And I click on "User 11" item in the autocomplete list
     And I press key "27" in the field "Select users to issue certificate to"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
     And I log out
 
