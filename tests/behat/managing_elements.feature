@@ -26,13 +26,13 @@ Feature: Being able to manage elements in a certificate template
     And I set the following fields to these values:
       | Width  | 2 |
       | Colour | #045ECD |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Border" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Border'" "link" in the "Border" "list_item"
     And the following fields match these values:
       | Width | 2 |
       | Colour | #045ECD |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Code.
     And I add the element "Code" to page "1" of the "Certificate 1" site certificate template
     And the following fields match these values:
@@ -43,7 +43,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Code" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Code'" "link" in the "Code" "list_item"
     And the following fields match these values:
@@ -52,7 +52,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Date.
     And I add the element "Date" to page "1" of the "Certificate 1" site certificate template
     And I set the following fields to these values:
@@ -63,7 +63,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD           |
       | Width                    | 20                |
       | Text alignment           | Left              |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Date" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Date'" "link" in the "Date" "list_item"
     And the following fields match these values:
@@ -74,7 +74,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD           |
       | Width                    | 20                |
       | Text alignment           | Left              |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Digital signature.
     And I add the element "Digital signature" to page "1" of the "Certificate 1" site certificate template
     And I upload "admin/tool/certificate/tests/fixtures/signature.crt" file to "Digital signature" filemanager
@@ -86,7 +86,7 @@ Feature: Being able to manage elements in a certificate template
       | Signature contact info | Sauron                     |
       | Width                  | 25                         |
       | Height                 | 15                         |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Digital signature" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Digital signature'" "link" in the "Digital signature" "list_item"
     And the following fields match these values:
@@ -97,20 +97,20 @@ Feature: Being able to manage elements in a certificate template
       | Signature contact info | Sauron                     |
       | Width                  | 25                         |
       | Height                 | 15                         |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Image.
     And I add the element "Image" to page "1" of the "Certificate 1" site certificate template
     And I upload "lib/tests/fixtures/gd-logo.png" file to "Upload image" filemanager
     And I set the following fields to these values:
       | Width  | 25 |
       | Height | 15 |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Image" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Image'" "link" in the "Image" "list_item"
     And the following fields match these values:
       | Width  | 25 |
       | Height | 15 |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Text.
     And I add the element "Text" to page "1" of the "Certificate 1" site certificate template
     And I set the following fields to these values:
@@ -120,7 +120,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Text" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Text'" "link" in the "Text" "list_item"
     And the following fields match these values:
@@ -130,7 +130,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # User field.
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I set the following fields to these values:
@@ -140,7 +140,7 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "User field" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'User field'" "link" in the "User field" "list_item"
     And the following fields match these values:
@@ -150,40 +150,40 @@ Feature: Being able to manage elements in a certificate template
       | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # User picture.
     And I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
     And I set the following fields to these values:
       | Width  | 10 |
       | Height | 10 |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "User picture" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'User picture'" "link" in the "User picture" "list_item"
     And the following fields match these values:
       | Width  | 10 |
       | Height | 10 |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Dynamic fields.
     And I add the element "Dynamic fields" to page "1" of the "Certificate 1" site certificate template
     And I follow "Show more..."
     And I set the following fields to these values:
       | Field  | Course full name |
       | Position X | 100           |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Dynamic fields" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Dynamic fields'" "link" in the "[data-region='elementlist']" "css_element"
     And the following fields match these values:
       | Field  | Course full name |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I log out
 
   Scenario: Delete an element from a certificate template
     When I change window size to "large"
     When I add the element "Code" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Code" in the "[data-region='elementlist']" "css_element"
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "User field" in the "[data-region='elementlist']" "css_element"
     And I click on "Delete" "link" in the "User field" "list_item"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
@@ -196,7 +196,7 @@ Feature: Being able to manage elements in a certificate template
 
   Scenario: Edit element name on a certificate template
     When I add the element "User field" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I click on "Edit element name" "link" in the "User field" "list_item"
     And I set the field "New value for User field" to "User full name"
     And I press key "13" in the field "New value for User field"
@@ -210,11 +210,11 @@ Feature: Being able to manage elements in a certificate template
 
   Scenario: Rearrange elements on a certificate template
     When I add the element "Date" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I add the element "User field" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I add the element "Code" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     Then "Date" "list_item" should appear before "User field" "list_item"
     And "User field" "list_item" should appear before "Code" "list_item"
     And I click on "Bring forward or move back" "button" in the "Date" "list_item"

@@ -38,12 +38,12 @@ Feature: Being able to manage site templates
     And I follow "New certificate template"
     And I wait "3" seconds
     And I set the field "Name" to "Certificate 1"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I add the element "Border" to page "1" of the "Certificate 1" site certificate template
     And I set the following fields to these values:
       | Width  | 5       |
       | Colour | #045ECD |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
 
@@ -62,14 +62,14 @@ Feature: Being able to manage site templates
       | Name            | Certificate 1 |
       | Course category | Category2     |
       | shared          | 1             |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
     And I should see "Shared" in the "Certificate 1" "table_row"
     And I click on "Edit details" "link" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
       | shared          | 0         |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should not see "Shared" in the "Certificate 1" "table_row"
 
   Scenario: Adding a template when user can manage templates in one category
@@ -82,7 +82,7 @@ Feature: Being able to manage site templates
     And I follow "New certificate template"
     And I set the following fields to these values:
       | Name | Certificate 1 |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "Manage certificate templates"
     Then I should see "Certificate 1"
     And I log out
@@ -105,7 +105,7 @@ Feature: Being able to manage site templates
       | Page height  | 0             |
       | Left margin  | -1            |
       | Right margin | -1            |
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     Then I should see "The width has to be a valid number greater than 0."
     Then I should see "The height has to be a valid number greater than 0."
     Then I should see "The margin has to be a valid number greater than 0."
@@ -119,7 +119,7 @@ Feature: Being able to manage site templates
     And I follow "Certificate 1"
     And I press "Edit details"
     And I set the field "Name" to "Certificate 2"
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should not see "Certificate 1"
     And I should see "Certificate 2"
     And I log out
@@ -132,7 +132,7 @@ Feature: Being able to manage site templates
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link" in the "Certificate 1" "table_row"
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Delete" "link" in the "Certificate 1" "table_row"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
@@ -150,7 +150,7 @@ Feature: Being able to manage site templates
     And I click on "Edit content" "link" in the "Certificate 1" "table_row"
     And I wait "2" seconds
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
-    And I press "Save" in the modal form dialogue
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
@@ -176,13 +176,13 @@ Feature: Being able to manage site templates
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I press "Cancel" in the modal form dialogue
+    And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (copy)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
       | Course category | Category2 |
-    And I press "Duplicate" in the modal form dialogue
+    And I click on "Duplicate" "button" in the ".modal.show .modal-footer" "css_element"
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (copy)"
     And I should see "Category2" in the "Certificate 1 (copy)" "table_row"
