@@ -70,6 +70,12 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
      */
     public function test_tool_certificate_upgrade_remove_tenant_field() {
         global $DB, $CFG;
+
+        // Skip tests if tool_tenant is not present.
+        if (!class_exists('tool_tenant\tenancy')) {
+            $this->markTestSkipped('Plugin tool_tenant not installed, skipping');
+        }
+
         require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
 
         $this->resetAfterTest();
