@@ -80,31 +80,33 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_template(0));
 
         // Create certificate in another tenant.
-        /** @var tool_tenant_generator $tenantgenerator */
-        $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
-        $cat3 = $this->getDataGenerator()->create_category();
-        $tenant = $tenantgenerator->create_tenant(['categoryid' => $cat3->id]);
+        if (class_exists('tool_tenant\tenancy')) {
+            /** @var tool_tenant_generator $tenantgenerator */
+            $tenantgenerator = $this->getDataGenerator()->get_plugin_generator('tool_tenant');
+            $cat3 = $this->getDataGenerator()->create_category();
+            $tenant = $tenantgenerator->create_tenant(['categoryid' => $cat3->id]);
 
-        $cert3name = 'Certificate 3';
-        $certificate3 = $this->get_generator()->create_template((object)['name' => $cert3name, 'categoryid' => $cat3->id]);
+            $cert3name = 'Certificate 3';
+            $certificate3 = $this->get_generator()->create_template((object)['name' => $cert3name, 'categoryid' => $cat3->id]);
 
-        $tenantgenerator->allocate_user($user3->id, $tenant->id);
-        $tenantgenerator->allocate_user($user4->id, $tenant->id);
+            $tenantgenerator->allocate_user($user3->id, $tenant->id);
+            $tenantgenerator->allocate_user($user4->id, $tenant->id);
 
-        $certificate3->issue_certificate($user3->id);
-        $certificate3->issue_certificate($user4->id);
+            $certificate3->issue_certificate($user3->id);
+            $certificate3->issue_certificate($user4->id);
 
-        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
+            $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
 
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
-        $manager = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
+            $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+            $manager = $this->getDataGenerator()->create_user();
+            $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
 
-        $tenantgenerator->allocate_user($manager->id, $tenant->id);
+            $tenantgenerator->allocate_user($manager->id, $tenant->id);
 
-        $this->setUser($manager);
+            $this->setUser($manager);
 
-        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
+            $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
+        }
     }
 
     /**
