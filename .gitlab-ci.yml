@@ -30,13 +30,8 @@ variables:
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-format_wplist.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_dynamicrule.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git
   - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
   - cd moodle
 
