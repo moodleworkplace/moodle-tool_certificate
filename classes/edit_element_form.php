@@ -103,8 +103,6 @@ class edit_element_form extends modal_form {
             $this->get_element()->get_element_type_name());
 
         $this->get_element()->render_form_elements($mform);
-
-        $this->add_action_buttons(true);
     }
 
     /**
