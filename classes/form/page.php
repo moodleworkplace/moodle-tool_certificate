@@ -80,8 +80,6 @@ class page extends modal_form {
         $mform->setType('templateid', PARAM_INT);
 
         self::add_page_elements($mform);
-
-        $this->add_action_buttons();
     }
 
     /**

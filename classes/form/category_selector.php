@@ -70,8 +70,6 @@ class category_selector extends modal_form {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-
-        $this->add_action_buttons();
     }
 
     /**
