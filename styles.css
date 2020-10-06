@@ -81,8 +81,6 @@
     overflow: visible;
 }
 
-#page-admin-tool-certificate-template .modal-dialog .mform [data-fieldtype=submit] input[name=cancel],
-#page-admin-tool-certificate-template .modal-dialog .mform [data-fieldtype=submit] input[name=submitbutton],
 #page-admin-tool-certificate-template .modal-dialog .modal-header [data-action="hide"] {
     display: none;
 }
