@@ -159,6 +159,10 @@ class details extends modal_form {
             $this->template = template::create($data);
             $this->template->new_page()->save($data);
         } else {
+            if ($data->contextid !== $this->template->get_context()->id) {
+                // Move template files to the new context if the context has changed.
+                $this->template->move_files_to_new_context($data->contextid);
+            }
             $this->template->save($data);
         }
         $url = new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->template->get_id()]);
