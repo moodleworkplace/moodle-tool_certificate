@@ -477,4 +477,51 @@ class tool_certificate_template_testcase extends advanced_testcase {
             context_coursecat::instance($cat2->id)->id,
         ], $params);
     }
+
+    /**
+     * Test move_files_to_new_context
+     */
+    public function test_move_files_to_new_context() {
+        $this->setAdminUser();
+
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat1context = context_coursecat::instance($cat1->id);
+        $template1 = $this->get_generator()->create_template((object)['name' => 'Template 1',
+            'contextid' => context_coursecat::instance($cat1->id)->id]);
+        $page1 = $this->get_generator()->create_page($template1);
+        $imageelement = $this->get_generator()->create_element($page1->get_id(), 'image');
+
+        // Create a dummy image file for element in the current template context (category1).
+        $fs = get_file_storage();
+        $filerecord = [
+            'contextid' => $template1->get_context()->id,
+            'component' => 'tool_certificate',
+            'filearea' => 'element',
+            'itemid' => $imageelement->get_id(),
+            'filepath' => '/',
+            'filename' => 'image.png'
+        ];
+        $file = $fs->create_file_from_string($filerecord, 'Awesome photography');
+        $filecontent = $file->get_content();
+
+        // Sanity check. image file is in category1 context.
+        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
+            $imageelement->get_id(), '', false);
+        $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
+
+        // Move template files to category2 context.
+        $cat2 = $this->getDataGenerator()->create_category();
+        $cat2context = context_coursecat::instance($cat2->id);
+        $template = \tool_certificate\template::instance($template1->get_id());
+        $template->move_files_to_new_context($cat2context->id);
+
+        // Check image file is not in category1 context.
+        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
+            $imageelement->get_id(), '', false);
+        $this->assertEmpty($imageelementfiles);
+        // Check image file is now in category2 context.
+        $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
+            $imageelement->get_id(), '', false);
+        $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
+    }
 }

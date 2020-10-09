@@ -37,6 +37,12 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
     /** @var string */
     protected $temptable = null;
 
+    public static function setUpBeforeClass() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/db/upgradelib.php');
+    }
+
     /**
      * After test ends
      */
@@ -69,14 +75,12 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
      * Test for function tool_certificate_upgrade_remove_tenant_field()
      */
     public function test_tool_certificate_upgrade_remove_tenant_field() {
-        global $DB, $CFG;
+        global $DB;
 
         // Skip tests if tool_tenant is not present.
         if (!class_exists('tool_tenant\tenancy')) {
             $this->markTestSkipped('Plugin tool_tenant not installed, skipping');
         }
-
-        require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
 
         $this->resetAfterTest();
         $tablename = 'tool_certificate_temp_templ';
@@ -110,8 +114,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
      * Tests for tool_certificate_upgrade_move_data_to_customfields()
      */
     public function test_tool_certificate_upgrade_move_data_to_customfields() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
+        global $DB;
 
         $this->resetAfterTest();
         \tool_certificate\customfield\issue_handler::create()->delete_all();
@@ -175,8 +178,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
      * Tests for tool_certificate_upgrade_store_fullname_in_data()
      */
     public function test_tool_certificate_upgrade_store_fullname_in_data() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
+        global $DB;
 
         $this->resetAfterTest();
 
@@ -252,8 +254,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
      * Test for test_tool_certificate_delete_orphaned_issue_files()
      */
     public function test_tool_certificate_delete_orphaned_issue_files() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
+        global $DB;
         $this->resetAfterTest();
         $systemcontext = \context_system::instance();
         $fs = get_file_storage();
@@ -283,5 +284,52 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         // Check file was removed.
         $files = $fs->get_area_files($systemcontext->id, 'tool_certificate', 'issues', $issueid, '', true);
         $this->assertCount(0, $files);
+    }
+
+    /**
+     * Test for tool_certificate_fix_orphaned_template_element_files()
+     */
+    public function test_tool_certificate_fix_orphaned_template_element_files() {
+        $this->resetAfterTest();
+
+        $cat1 = $this->getDataGenerator()->create_category();
+        $cat1context = context_coursecat::instance($cat1->id);
+        $cat2 = $this->getDataGenerator()->create_category();
+        $cat2context = context_coursecat::instance($cat2->id);
+        // Create a template in category2.
+        $template1 = $this->get_generator()->create_template((object)['name' => 'Template 1',
+            'contextid' => context_coursecat::instance($cat2->id)->id]);
+        $page1 = $this->get_generator()->create_page($template1);
+        $imageelement = $this->get_generator()->create_element($page1->get_id(), 'image');
+
+        // Create a dummy orphaned image file for element in a wrong template context (category1).
+        $fs = get_file_storage();
+        $filerecord = [
+            'contextid' => $cat1context->id,
+            'component' => 'tool_certificate',
+            'filearea' => 'element',
+            'itemid' => $imageelement->get_id(),
+            'filepath' => '/',
+            'filename' => 'image.png'
+        ];
+        $file = $fs->create_file_from_string($filerecord, 'Awesome photography');
+        $filecontent = $file->get_content();
+
+        // Sanity check. image file is in wrong category1 context.
+        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
+            $imageelement->get_id(), '', false);
+        $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
+
+        // Go through upgrade.
+        tool_certificate_fix_orphaned_template_element_files();
+
+        // Check image file is not in category1 context.
+        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
+            $imageelement->get_id(), '', false);
+        $this->assertEmpty($imageelementfiles);
+        // Check image file is now in category2 context.
+        $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
+            $imageelement->get_id(), '', false);
+        $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
     }
 }
