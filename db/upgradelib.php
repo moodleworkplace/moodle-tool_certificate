@@ -185,3 +185,28 @@ function tool_certificate_delete_orphaned_issue_files() {
         $fs->delete_area_files(\context_system::instance()->id, 'tool_certificate', 'issues', $record->itemid);
     }
 }
+
+/**
+ * Finds all orphaned template element files and move them to the correct context.
+ */
+function tool_certificate_fix_orphaned_template_element_files() {
+    global $DB;
+
+    $sql = "SELECT f.id, f.itemid, f.contextid, f.filearea, ct.contextid as templatecontextid
+                FROM {files} f
+                JOIN {tool_certificate_elements} ce ON ce.id = f.itemid
+                JOIN {tool_certificate_pages} cp ON cp.id = ce.pageid
+                JOIN {tool_certificate_templates} ct ON ct.id = cp.templateid
+                WHERE f.component = :component
+                AND (f.filearea = :filearea1 OR f.filearea = :filearea2)
+                AND f.filename = '.'
+                AND f.contextid != ct.contextid";
+
+    $params = ['component' => 'tool_certificate', 'filearea1' => 'element', 'filearea2' => 'elementaux'];
+    $records = $DB->get_records_sql($sql, $params);
+    $fs = get_file_storage();
+    foreach ($records as $record) {
+        $fs->move_area_files_to_new_context($record->contextid, $record->templatecontextid, 'tool_certificate',
+            $record->filearea, $record->itemid);
+    }
+}

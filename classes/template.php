@@ -316,6 +316,25 @@ class template {
     }
 
     /**
+     * Move element files related to the template to a new context.
+     * Note: Template issue files and shared image files are always stored in system_context, we don't need to move them.
+     *
+     * @param int $newcontextid
+     */
+    public function move_files_to_new_context(int $newcontextid) {
+        $fs = get_file_storage();
+        $oldcontextid = $this->get_context()->id;
+        foreach ($this->get_pages() as $page) {
+            foreach ($page->get_elements() as $element) {
+                $fs->move_area_files_to_new_context($oldcontextid, $newcontextid, 'tool_certificate', 'element',
+                    $element->get_id());
+                $fs->move_area_files_to_new_context($oldcontextid, $newcontextid, 'tool_certificate', 'elementaux',
+                    $element->get_id());
+            }
+        }
+    }
+
+    /**
      * Move page up or down one
      *
      * @param int $pageid
