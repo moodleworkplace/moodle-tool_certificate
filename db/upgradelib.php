@@ -206,7 +206,13 @@ function tool_certificate_fix_orphaned_template_element_files() {
     $records = $DB->get_records_sql($sql, $params);
     $fs = get_file_storage();
     foreach ($records as $record) {
-        $fs->move_area_files_to_new_context($record->contextid, $record->templatecontextid, 'tool_certificate',
-            $record->filearea, $record->itemid);
+        // If element files already exist in the correct context, then just remove the files in the old context. If not, move the
+        // files from the old context to the correct one.
+        if (!empty($fs->get_area_files($record->templatecontextid, 'tool_certificate', $record->filearea, $record->itemid))) {
+            $fs->delete_area_files($record->contextid, 'tool_certificate', $record->filearea, $record->itemid);
+        } else {
+            $fs->move_area_files_to_new_context($record->contextid, $record->templatecontextid, 'tool_certificate',
+                $record->filearea, $record->itemid);
+        }
     }
 }

@@ -292,6 +292,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
     public function test_tool_certificate_fix_orphaned_template_element_files() {
         $this->resetAfterTest();
 
+        $fs = get_file_storage();
         $cat1 = $this->getDataGenerator()->create_category();
         $cat1context = context_coursecat::instance($cat1->id);
         $cat2 = $this->getDataGenerator()->create_category();
@@ -300,36 +301,54 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         $template1 = $this->get_generator()->create_template((object)['name' => 'Template 1',
             'contextid' => context_coursecat::instance($cat2->id)->id]);
         $page1 = $this->get_generator()->create_page($template1);
-        $imageelement = $this->get_generator()->create_element($page1->get_id(), 'image');
 
-        // Create a dummy orphaned image file for element in a wrong template context (category1).
-        $fs = get_file_storage();
-        $filerecord = [
-            'contextid' => $cat1context->id,
-            'component' => 'tool_certificate',
-            'filearea' => 'element',
-            'itemid' => $imageelement->get_id(),
-            'filepath' => '/',
-            'filename' => 'image.png'
-        ];
-        $file = $fs->create_file_from_string($filerecord, 'Awesome photography');
-        $filecontent = $file->get_content();
+        $imageelement1 = $this->get_generator()->create_element($page1->get_id(), 'image');
 
-        // Sanity check. image file is in wrong category1 context.
+        // Create a dummy orphaned image file for element1 in a wrong template context (category1).
+        $file1record = ['contextid' => $cat1context->id, 'component' => 'tool_certificate', 'filearea' => 'element',
+            'itemid' => $imageelement1->get_id(), 'filepath' => '/', 'filename' => 'image1.png'];
+        $file1 = $fs->create_file_from_string($file1record, 'Awesome photography');
+        $file1content = $file1->get_content();
+
+        // Sanity check. image file1 is in wrong category1 context.
         $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement->get_id(), '', false);
-        $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
+            $imageelement1->get_id(), '', false);
+        $this->assertEquals($file1content, reset($imageelementfiles)->get_content());
+
+        $imageelement2 = $this->get_generator()->create_element($page1->get_id(), 'image');
+
+        // Create a dummy orphaned image file for element2 in a wrong template context (category1).
+        $file2record = ['contextid' => $cat1context->id, 'component' => 'tool_certificate', 'filearea' => 'element',
+            'itemid' => $imageelement2->get_id(), 'filepath' => '/', 'filename' => 'image2.png'];
+        $file2 = $fs->create_file_from_string($file2record, 'Even more awesome photography');
+        $file2content = $file2->get_content();
+
+        // Create a dummy image file for element2 in the correct template context (category1), so we can check that upgrade script
+        // is just removing the old file, and not trying to move it.
+        $file3record = ['contextid' => $cat2context->id, 'component' => 'tool_certificate', 'filearea' => 'element',
+            'itemid' => $imageelement2->get_id(), 'filepath' => '/', 'filename' => 'image2.png'];
+        $file3 = $fs->create_file_from_string($file3record, 'Even more awesome photography');
+        $file3content = $file3->get_content();
 
         // Go through upgrade.
         tool_certificate_fix_orphaned_template_element_files();
 
-        // Check image file is not in category1 context.
+        // Check element1 image file is not in category1 context.
         $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement->get_id(), '', false);
+            $imageelement1->get_id(), '', false);
         $this->assertEmpty($imageelementfiles);
-        // Check image file is now in category2 context.
+        // Check element1 image file is now in category2 context.
         $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
-            $imageelement->get_id(), '', false);
-        $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
+            $imageelement1->get_id(), '', false);
+        $this->assertEquals($file1content, reset($imageelementfiles)->get_content());
+
+        // Check element2 image file was removed from category1 context.
+        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
+            $imageelement2->get_id(), '', false);
+        $this->assertEmpty($imageelementfiles);
+        // Check element2 image file is still in category2 context.
+        $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
+            $imageelement2->get_id(), '', false);
+        $this->assertEquals($file3content, reset($imageelementfiles)->get_content());
     }
 }
