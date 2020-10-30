@@ -24,7 +24,7 @@
 
 $string['addcertpage'] = 'New page';
 $string['addelement'] = 'Add element';
-$string['aissueswerecreated'] = '{$a} issues were created';
+$string['aissueswerecreated'] = '{$a} certificates were issued';
 $string['aligncentre'] = 'Centre';
 $string['alignleft'] = 'Left';
 $string['alignment'] = 'Text alignment';
@@ -130,7 +130,7 @@ $string['mycertificatesdescription'] = 'These are the certificates you have been
 $string['name'] = 'Name';
 $string['nametoolong'] = 'You have exceeded the maximum length allowed for the name';
 $string['noimage'] = 'No image';
-$string['noissueswerecreated'] = 'No issues were created';
+$string['noissueswerecreated'] = 'No certificates were issued';
 $string['nopermissionform'] = 'You don\'t have permission to access this form.';
 $string['notificationmsgcertificateissued'] = 'Hi {$a->fullname},<br /><br />Your certificate is available! You will find it here:
 <a href="{$a->url}">My Certificates</a>';
