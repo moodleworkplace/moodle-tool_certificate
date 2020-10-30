@@ -88,13 +88,13 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
         $filesize = core_text::strlen($filecontents);
-        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+        $this->assertTrue($filesize > 30000 && $filesize < 90000);
 
         // Generate PDF for issue.
         $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
         $filesize = core_text::strlen($filecontents);
-        $this->assertTrue($filesize > 30000 && $filesize < 70000);
+        $this->assertTrue($filesize > 30000 && $filesize < 90000);
     }
 
     /**
