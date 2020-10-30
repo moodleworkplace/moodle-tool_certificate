@@ -128,7 +128,7 @@ class element_helper {
     public static function render_form_element_font($mform) {
         $mform->addElement('select', 'font', get_string('font', 'tool_certificate'), self::get_fonts());
         $mform->setType('font', PARAM_TEXT);
-        $mform->setDefault('font', 'helvetica');
+        $mform->setDefault('font', 'freesans');
         $mform->addHelpButton('font', 'font', 'tool_certificate');
         $mform->addElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'), self::get_font_sizes());
         $mform->setType('fontsize', PARAM_INT);
