@@ -38,7 +38,7 @@ class tool_certificate_userpicture_element_test_testcase extends advanced_testca
     /**
      * Test set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 
