@@ -37,7 +37,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
     /** @var string */
     protected $temptable = null;
 
-    public static function setUpBeforeClass() {
+    public static function setUpBeforeClass(): void {
         global $CFG;
 
         require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/db/upgradelib.php');
@@ -46,7 +46,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
     /**
      * After test ends
      */
-    protected function tearDown() {
+    protected function tearDown(): void {
         global $DB;
         if ($this->temptable) {
             $DB->get_manager()->drop_table($this->temptable);
