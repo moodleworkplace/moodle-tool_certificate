@@ -38,7 +38,7 @@ class tool_certificate_digitalsignature_element_test_testcase extends advanced_t
     /**
      * Test set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 

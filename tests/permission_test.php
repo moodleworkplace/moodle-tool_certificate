@@ -61,7 +61,7 @@ class tool_certificate_permission_testcase extends advanced_testcase {
     /**
      * Set up
      */
-    public function setUp() {
+    public function setUp(): void {
         // Create category tree.
         $cat1 = $this->getDataGenerator()->create_category();
         $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat1->id]);
