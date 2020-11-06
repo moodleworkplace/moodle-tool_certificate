@@ -38,7 +38,7 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
     /**
      * Test set up.
      */
-    public function setUp() {
+    public function setUp(): void {
         $this->resetAfterTest();
     }
 
@@ -61,7 +61,7 @@ class tool_certificate_text_element_test_testcase extends advanced_testcase {
             'element' => 'text', 'pageid' => $pageid];
         $e->save_form_data($formdata);
         $html = $e->render_html();
-        $this->assertContains('Here is the text', $html);
+        $this->assertStringContainsString('Here is the text', $html);
 
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
