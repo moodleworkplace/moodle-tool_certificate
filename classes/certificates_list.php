@@ -94,7 +94,7 @@ class certificates_list extends \table_sql {
         $sharedtag = '';
         if ($template->get_shared()) {
             $sharedtag = \html_writer::tag('span', get_string('shared', 'tool_certificate'),
-                ['class' => 'label ml-1']);
+                ['class' => 'badge badge-secondary ml-1']);
         }
 
         if (!$this->is_downloading()) {
