@@ -10,7 +10,7 @@ variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_BRANCH_WORKPLACE: master
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
-  MOODLE_BRANCH_LMS: MOODLE_39_STABLE
+  MOODLE_BRANCH_LMS: MOODLE_310_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
