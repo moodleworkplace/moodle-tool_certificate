@@ -53,13 +53,23 @@ class behat_tool_certificate extends behat_base {
             throw new coding_exception('You can only add element using the selenium driver.');
         }
 
+        // Click on "Add field" button.
         $this->execute('behat_general::i_click_on_in_the',
             array(get_string('addelement', 'tool_certificate'), "button",
                 "//*[@data-region='page'][{$pagenum}]", "xpath_element"));
 
+        // Wait until the respective element type selector has class .show .
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->wait_for_pending_js();
+        $xpath = "//*[@data-region='page'][{$pagenum}]".
+            "//*[@data-region='elementtypeslist' and contains(concat(' ', normalize-space(@class), ' '), ' show ')]";
+        $this->execute("behat_general::wait_until_exists", array($this->escape($xpath), "xpath_element"));
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+        $this->wait_for_pending_js();
+
+        // Click on the link in the element type selector.
         $this->execute('behat_general::i_click_on_in_the',
-            array($elementname, "link",
-                "//*[@data-region='page'][{$pagenum}]//*[@data-region='elementtypeslist']", "xpath_element"));
+            array($elementname, "link", $xpath, "xpath_element"));
     }
 
     /**
