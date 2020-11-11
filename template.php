@@ -65,7 +65,7 @@ $heading = $title = $template->get_formatted_name();
 // When MDL-69464 lands formatstringstriptags check won't be needed.
 if ($template->get_shared() && empty($CFG->formatstringstriptags)) {
     $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
-        ['class' => 'label ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
+        ['class' => 'badge badge-secondary ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
 }
 $PAGE->navbar->add($title, $pageurl);
 
