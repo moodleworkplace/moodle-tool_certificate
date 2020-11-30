@@ -49,7 +49,7 @@ function($,
         var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\certificate_issues',
             args: {tid: $(e.currentTarget).attr('data-tid')},
-            modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate')},
+            modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate'), scrollable: false},
             saveButtonText: Str.get_string('save'),
             triggerElement: $(e.currentTarget),
         });
