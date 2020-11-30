@@ -173,20 +173,21 @@ Feature: Being able to manage site templates
     And the following certificate templates exist:
       | name          | category  |
       | Certificate 1 |           |
-      | Certificate 2 | Category2 |
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
-    And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
-    And I should see "Certificate 1"
-    And I should not see "Certificate 1 (copy)"
+    # TODO: fix in WP-2016 - clicking the duplicate button multiple times in LMS results in multiple modal instances.
+  # And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
+  # And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
+  # And I should see "Certificate 1"
+  # And I should not see "Certificate 1 (copy)"
     And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
     And I set the following fields to these values:
       | Course category | Category2 |
     And I click on "Duplicate" "button" in the ".modal.show .modal-footer" "css_element"
-    Then I should see "Certificate 1"
-    And I should see "Certificate 1 (copy)"
-    And I should see "Category2" in the "Certificate 1 (copy)" "table_row"
+    Then the following should exist in the "tool-certificate-templates" table:
+      | Name                 | Course category |
+      | Certificate 1        | None            |
+      | Certificate 1 (copy) | Category2       |
     And I log out
 
   Scenario: Edit name of certificate template
