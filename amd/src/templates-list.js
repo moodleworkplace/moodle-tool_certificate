@@ -82,7 +82,7 @@ function($, ModalForm, Notification, Str, Ajax, Toast) {
         var modal = new ModalForm({
             formClass: 'tool_certificate\\form\\certificate_issues',
             args: {tid: target.attr('data-tid')},
-            modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate')},
+            modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate'), scrollable: false},
             saveButtonText: Str.get_string('save'),
             triggerElement: target,
         });
