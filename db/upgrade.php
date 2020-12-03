@@ -163,5 +163,39 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020100900, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2020120300) {
+        // Find and fix any certificate custom fields that should be textarea, but aren't.
+
+        $customfieldcategoryselect = 'component = :component AND area = :area';
+        $customfieldcategoryids = $DB->get_fieldset_select('customfield_category', 'id', $customfieldcategoryselect, [
+            'component' => 'tool_certificate',
+            'area' => 'issue',
+        ]);
+
+        if (count($customfieldcategoryids) > 0) {
+            [$categoryselect, $categoryparams] = $DB->get_in_or_equal($customfieldcategoryids, SQL_PARAMS_NAMED);
+
+            // Find all fields inside the certificate/issues category that are custom course fields.
+            $select = "categoryid {$categoryselect} AND " . $DB->sql_like('shortname', ':shortname');
+            $coursecustomfields = $DB->get_records_select('customfield_field', $select, $categoryparams + [
+                'shortname' => 'coursecustomfield_%',
+            ]);
+
+            foreach ($coursecustomfields as $coursecustomfield) {
+                // For each field, match "coursecustomfield_<X>" to the field with shortname "<X>".
+                preg_match('/coursecustomfield_(?<reference>.*)/', $coursecustomfield->shortname, $matches);
+
+                // If the reference field is 'textarea', but the current field isn't, then update current.
+                $referencetype = $DB->get_field('customfield_field', 'type', ['shortname' => $matches['reference']]);
+                if ($referencetype == 'textarea' && $coursecustomfield->type != 'textarea') {
+                    $DB->set_field('customfield_field', 'type', 'textarea', ['id' => $coursecustomfield->id]);
+                }
+            }
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2020120300, 'tool', 'certificate');
+    }
+
     return true;
 }

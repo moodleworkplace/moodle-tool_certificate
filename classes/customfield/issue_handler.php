@@ -260,7 +260,13 @@ class issue_handler extends handler {
                 }
             }
         }
-        $this->instance_form_save($issue, true);
+
+        // Instead of failing hard if we can't save additional data, emit some debugging.
+        try {
+            $this->instance_form_save($issue, true);
+        } catch (\moodle_exception $ex) {
+            debugging($ex->getMessage(), DEBUG_DEVELOPER);
+        }
     }
 
     /**
