@@ -76,7 +76,10 @@ define([
         M.util.js_pending('tool_certificate_modal_form_init');
         Str.get_strings(requiredStrings)
             .then(function() {
-                return ModalFactory.create(this.config.modalConfig, this.config.triggerElement);
+                // We don't attach trigger element to modal here to avoid MDL-70395.
+                // We normally initialise ModalForm as result of some event
+                // on trigger element, so new listener is not required.
+                return ModalFactory.create(this.config.modalConfig);
             }.bind(this))
             .then(function(modal) {
                 // Keep a reference to the modal.
@@ -89,14 +92,19 @@ define([
                 // Forms are big, we want a big modal.
                 this.modal.setLarge();
 
+                // Destroy the modal when hiding it.
+                this.modal.setRemoveOnClose(true);
+
                 // After successfull submit, when we press "Cancel" or close the dialogue by clicking on X in the top right corner.
                 this.modal.getRoot().on(ModalEvents.hidden, function() {
                     // Notify listeners that the form is about to be submitted (this will reset atto autosave).
                     Event.notifyFormSubmitAjax(this.modal.getRoot().find('form')[0], true);
-                    // Destroy modal.
-                    this.modal.destroy();
                     // Reset form-change-checker.
                     this.resetDirtyFormState();
+                    // Focus on the trigger element that actually launched the modal.
+                    if (this.config.triggerElement !== null) {
+                        this.config.triggerElement.focus();
+                    }
                 }.bind(this));
 
                 // Add the class to the modal dialogue.
