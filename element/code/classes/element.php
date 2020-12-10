@@ -74,6 +74,7 @@ class element extends \tool_certificate\element {
         $mform->setDefault('display', self::DISPLAY_QRCODE);
 
         parent::render_form_elements($mform);
+        $mform->setDefault('width', 35);
     }
 
     /**
@@ -149,7 +150,7 @@ class element extends \tool_certificate\element {
 
         if ($data['display'] == self::DISPLAY_QRCODE) {
             $url = $OUTPUT->image_url('qrcode', 'tool_certificate')->out(false);
-            $w = $this->get_width() > 0 ? $this->get_width() : 50;
+            $w = $this->get_width();
             $imageinfo = $data + ['width' => $w, 'height' => $w];
 
             $html = \tool_certificate\element_helper::render_image_html($url, $imageinfo,
@@ -181,40 +182,25 @@ class element extends \tool_certificate\element {
         ];
 
         $codeurl = new \moodle_url("/admin/tool/certificate/index.php", ['code' => $code]);
-        $codeurl->param('code', $code);
 
         $x = $this->get_posx();
         $y = $this->get_posy();
         $w = $this->get_width();
         $refpoint = $this->get_refpoint();
-        $page = $this->get_page()->to_record();
 
-        $align = 'L';
+        // Adjust X depending on the current refpoint.
         if ($refpoint == \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPRIGHT) {
-            $align = 'R';
-            $w = $w ?: ($x - $page->leftmargin);
             $x = $x - $w;
         } else if ($refpoint == \tool_certificate\element_helper::CUSTOMCERT_REF_POINT_TOPCENTER) {
-            $align = 'C';
-            if (!$w) {
-                $w = min($x - $page->leftmargin, $page->width - $page->rightmargin - $x) * 2;
-            }
             $x = $x - $w / 2;
-        } else {
-            if (!$w) {
-                $w = max(0, $page->width - $page->rightmargin - $x);
-            }
         }
-        if ($w) {
-            $w += 0.0001;
-        }
-        $pdf->setCellPaddings(0, 0, 0, 0);
+        $w += 0.0001;
 
+        $pdf->setCellPaddings(0, 0, 0, 0);
         $pdf->write2DBarcode($codeurl->out(false), 'QRCODE,M', $x, $y, $w, $w, $style, 'N');
         $pdf->SetXY($x, $y + 49);
         $pdf->SetFillColor(255, 255, 255);
     }
-
 
     /**
      * Prepare data to pass to moodleform::set_data()
@@ -228,5 +214,15 @@ class element extends \tool_certificate\element {
             $record->display = $dateinfo->display;
         }
         return $record;
+    }
+
+    /**
+     * Returns the width.
+     *
+     * @return int
+     */
+    public function get_width(): int {
+        $width = $this->persistent->get('width');
+        return $width > 0 ? $width : 35;
     }
 }
