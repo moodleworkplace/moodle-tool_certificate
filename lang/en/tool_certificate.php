@@ -24,6 +24,7 @@
 
 $string['addcertpage'] = 'New page';
 $string['addelement'] = 'Add element';
+$string['addelementwithname'] = 'Add \'{$a}\' element';
 $string['aissueswerecreated'] = '{$a} certificates were issued';
 $string['aligncentre'] = 'Centre';
 $string['alignleft'] = 'Left';

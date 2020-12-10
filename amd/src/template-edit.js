@@ -86,7 +86,7 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
         var modal = new ModalForm({
             formClass: 'tool_certificate\\edit_element_form',
             args: {pageid: pageid, element: type},
-            modalConfig: {title: Str.get_string('addelement', 'tool_certificate')},
+            modalConfig: {title: Str.get_string('addelementwithname', 'tool_certificate', $(e.currentTarget).text())},
             saveButtonText: Str.get_string('save'),
             triggerElement: $(e.currentTarget),
         });
