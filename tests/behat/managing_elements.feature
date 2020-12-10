@@ -23,6 +23,7 @@ Feature: Being able to manage elements in a certificate template
     When I change window size to "large"
     # Border.
     And I add the element "Border" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Border' element" in the ".modal.show .modal-header" "css_element"
     And I set the following fields to these values:
       | Width  | 2 |
       | Colour | #045ECD |
@@ -35,6 +36,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Code.
     And I add the element "Code" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Code' element" in the ".modal.show .modal-header" "css_element"
     And the following fields match these values:
       | Display | QR Code |
     And I set the following fields to these values:
@@ -55,6 +57,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Date.
     And I add the element "Date" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Date' element" in the ".modal.show .modal-header" "css_element"
     And I set the following fields to these values:
       | Date item                | Issued date       |
       | Date format              | strftimedateshort |
@@ -77,6 +80,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Digital signature.
     And I add the element "Digital signature" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Digital signature' element" in the ".modal.show .modal-header" "css_element"
     And I upload "admin/tool/certificate/tests/fixtures/signature.crt" file to "Digital signature" filemanager
     And I set the following fields to these values:
       | Signature name         | This is the signature name |
@@ -100,6 +104,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Image.
     And I add the element "Image" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Image' element" in the ".modal.show .modal-header" "css_element"
     And I upload "lib/tests/fixtures/gd-logo.png" file to "Upload image" filemanager
     And I set the following fields to these values:
       | Width  | 25 |
@@ -113,6 +118,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Text.
     And I add the element "Text" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Text' element" in the ".modal.show .modal-header" "css_element"
     And I set the following fields to these values:
       | Text                     | Test this |
       | Font                     | Times - Italic |
@@ -133,6 +139,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # User field.
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'User field' element" in the ".modal.show .modal-header" "css_element"
     And I set the following fields to these values:
       | User field               | Country   |
       | Font                     | Times - Italic |
@@ -153,6 +160,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # User picture.
     And I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'User picture' element" in the ".modal.show .modal-header" "css_element"
     And I set the following fields to these values:
       | Width  | 10 |
       | Height | 10 |
@@ -165,6 +173,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Dynamic fields.
     And I add the element "Dynamic fields" to page "1" of the "Certificate 1" site certificate template
+    And I should see "Add 'Dynamic fields' element" in the ".modal.show .modal-header" "css_element"
     And I follow "Show more..."
     And I set the following fields to these values:
       | Field  | Course full name |
