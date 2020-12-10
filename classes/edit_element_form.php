@@ -99,9 +99,6 @@ class edit_element_form extends modal_form {
         $mform->setType('name', PARAM_TEXT);
         $mform->addHelpButton('name', 'elementname', 'tool_certificate');
 
-        $mform->addElement('static', 'type', get_string('type', 'tool_certificate'),
-            $this->get_element()->get_element_type_name());
-
         $this->get_element()->render_form_elements($mform);
     }
 
