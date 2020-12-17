@@ -23,7 +23,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use \tool_certificate\persistent\element;
+use \tool_certificate\persistent\page;
+use \tool_certificate\persistent\template;
 
 /**
  * Tests for functions in lib.php
@@ -134,9 +136,9 @@ class tool_certificate_lib_testcase extends advanced_testcase {
      * Test move/remove template on category deletion.
      */
     public function test_delete_category_with_certificates() {
-        global $DB;
-        $user = $this->getDataGenerator()->create_user();
         $roleid = create_role('Dummy role', 'dummyrole', 'dummy role description');
+
+        $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
         $cat1 = $this->getDataGenerator()->create_category();
@@ -146,34 +148,66 @@ class tool_certificate_lib_testcase extends advanced_testcase {
         $cat2context = context_coursecat::instance($cat2->id);
         $cat3context = context_coursecat::instance($cat3->id);
 
-        $certificate1 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 1',
-            'contextid' => $cat1context->id]);
-        $certificate2 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 2',
-            'contextid' => $cat2context->id]);
+        // Create certificates with pages and elements (including files) so we can check they are moved/deleted correctly.
+        $certificate1 = $this->get_certificate_generator()->create_template((object)[
+            'name' => 'Certificate 1',
+            'contextid' => $cat1context->id,
+        ]);
+        $certificatepage1 = $this->get_certificate_generator()->create_page($certificate1->get_id());
+        $certificateelement1 = $this->get_certificate_generator()->create_element($certificatepage1->get_id(), 'text');
+
+        $certificate2 = $this->get_certificate_generator()->create_template((object)[
+            'name' => 'Certificate 2',
+            'contextid' => $cat2context->id,
+        ]);
+        $certificatepage2 = $this->get_certificate_generator()->create_page($certificate2->get_id());
+        $certificateelement2 = $this->get_certificate_generator()->create_element($certificatepage2->get_id(), 'image');
+
+        $fs = get_file_storage();
+
+        $filerecord = [
+            'contextid' => $certificate2->get_context()->id,
+            'component' => 'tool_certificate',
+            'filearea' => 'element',
+            'itemid' => $certificateelement2->get_id(),
+            'filepath' => '/',
+            'filename' => 'image.png'
+        ];
+        $fs->create_file_from_string($filerecord, 'Cat');
 
         // Check 'can_course_category_delete' without capabilities.
         $this->assertFalse(tool_certificate_can_course_category_delete($cat1));
+
         // Add capabilities and check again.
         $this->get_certificate_generator()->assign_manage_capability($user->id, $roleid, $cat1context);
         $this->assertTrue(tool_certificate_can_course_category_delete($cat1));
 
         // Delete cat1 with all its content.
         $cat1->delete_full();
-        // Check certificate1 was removed.
-        $this->assertFalse($DB->record_exists(\tool_certificate\persistent\template::TABLE, ['id' => $certificate1->get_id()]));
+
+        // Check certificate1, plus page and element, were all removed.
+        $this->assertFalse(template::record_exists($certificate1->get_id()));
+        $this->assertFalse(page::record_exists_select('templateid = ?', [$certificate1->get_id()]));
+        $this->assertFalse(element::record_exists_select('pageid = ?', [$certificatepage1->get_id()]));
 
         // Check 'can_course_category_delete_move' without capabilities.
         $this->assertFalse(tool_certificate_can_course_category_delete_move($cat2, $cat3));
+
+        // Add capabilities and check again.
         $this->get_certificate_generator()->assign_manage_capability($user->id, $roleid, $cat2context);
         $this->get_certificate_generator()->assign_manage_capability($user->id, $roleid, $cat3context);
-        // Add capabilities and check again.
         $this->assertTrue(tool_certificate_can_course_category_delete_move($cat2, $cat3));
 
         // Delete cat2 moving content to cat3.
         $cat2->delete_move($cat3->id);
-        // Check certificate2 in now in cat3.
-        $this->assertEquals($cat3context->id, $DB->get_field(\tool_certificate\persistent\template::TABLE,
-            'contextid', ['id' => $certificate2->get_id()]));
+
+        // Check certificate2 in now in cat3, along with the element file it contains.
+        $certificatemoved = new template($certificate2->get_id());
+        $this->assertEquals($cat3context->id, $certificatemoved->get('contextid'));
+
+        $certificatemovedfiles = $fs->get_area_files($cat3context->id, 'tool_certificate', 'element',
+            $certificateelement2->get_id(), 'filename', false);
+        $this->assertCount(1, $certificatemovedfiles);
     }
 
     /**
