@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Fixed issue when moving/deleting categories that contained certificates. All pages/elements
+  and issed certificates are now handled correctly
+
 ## 3.10+ (2020121700)
 ### Changed
 - Fixed a bug in how a 'Text area' course custom field is handled in the certificate templates
