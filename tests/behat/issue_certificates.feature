@@ -60,11 +60,19 @@ Feature: Being able to manually issue a certificate to a user
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     And I click on "Issue certificates" "link"
-    And I open the autocomplete suggestions list
-    And I click on "User 11" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate to"
+    And I set the field "Select users to issue certificate to" to "User 11"
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
+    Then the following should exist in the "tool-certificate-issues" table:
+      | First name / Surname | Awarded on          |
+      | User 11              | ##today##l, j F Y## |
+    # Issue second certificate to another user.
+    And I click on "Issue certificates" "link"
+    And I set the field "Select users to issue certificate to" to "User 12"
+    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And the following should exist in the "tool-certificate-issues" table:
+      | First name / Surname | Awarded on          |
+      | User 11              | ##today##l, j F Y## |
+      | User 12              | ##today##l, j F Y## |
     And I log out
 
   Scenario: Revoke issued certificate as admin
