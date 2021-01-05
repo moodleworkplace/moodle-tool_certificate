@@ -92,15 +92,17 @@ define([
                 // Forms are big, we want a big modal.
                 this.modal.setLarge();
 
-                // Destroy the modal when hiding it.
-                this.modal.setRemoveOnClose(true);
-
                 // After successfull submit, when we press "Cancel" or close the dialogue by clicking on X in the top right corner.
                 this.modal.getRoot().on(ModalEvents.hidden, function() {
                     // Notify listeners that the form is about to be submitted (this will reset atto autosave).
                     Event.notifyFormSubmitAjax(this.modal.getRoot().find('form')[0], true);
+
+                    // Destroy the modal.
+                    this.modal.destroy();
+
                     // Reset form-change-checker.
                     this.resetDirtyFormState();
+
                     // Focus on the trigger element that actually launched the modal.
                     if (this.config.triggerElement !== null) {
                         this.config.triggerElement.focus();
