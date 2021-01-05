@@ -228,10 +228,11 @@ function tool_certificate_get_course_category_contents(\core_course_category $ca
  * @param \stdClass $category The category record.
  */
 function tool_certificate_pre_course_category_delete(\stdClass $category): void {
-    $context = context_coursecat::instance($category->id, IGNORE_MISSING);
+    $context = context_coursecat::instance($category->id);
     $templates = \tool_certificate\persistent\template::get_records(['contextid' => $context->id]);
     foreach ($templates as $template) {
-        $template->delete();
+        \tool_certificate\template::instance(0, $template->to_record())
+            ->delete();
     }
 }
 
@@ -248,6 +249,9 @@ function tool_certificate_pre_course_category_delete_move(\core_course_category 
     $newcontext = $newcategory->get_context();
     $templates = \tool_certificate\persistent\template::get_records(['contextid' => $context->id]);
     foreach ($templates as $template) {
+        \tool_certificate\template::instance(0, $template->to_record())
+            ->move_files_to_new_context($newcontext->id);
+
         $template->set('contextid', $newcontext->id)->update();
     }
 }
