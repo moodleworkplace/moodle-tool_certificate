@@ -366,7 +366,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
     public function test_generate_code() {
         // Generate codes without user initials.
         $code1 = \tool_certificate\certificate::generate_code();
-        $this->assertEquals(10, strlen($code1));
+        $this->assertEquals(12, strlen($code1));
 
         // Check codes are different.
         $code2 = \tool_certificate\certificate::generate_code();
@@ -374,6 +374,7 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
 
         // Check code has user initials.
         $user1 = $this->getDataGenerator()->create_user(['firstname' => 'John', 'lastname' => 'Smith']);
+        $user3 = $this->getDataGenerator()->create_user(['firstname' => '翔', 'lastname' => '高橋']);
         $code3 = \tool_certificate\certificate::generate_code($user1->id);
         $this->assertEquals(12, strlen($code3));
         $this->assertEquals('J', substr($code3, -2, 1));
@@ -382,7 +383,14 @@ class tool_certificate_cerficate_testcase extends advanced_testcase {
         // Check user without firstname/lastname code.
         $user2 = $this->getDataGenerator()->create_user(['firstname' => '', 'lastname' => '']);
         $code4 = \tool_certificate\certificate::generate_code($user2->id);
-        $this->assertEquals(10, strlen($code4));
+        $this->assertEquals(12, strlen($code4));
+
+        // Check user with special characters.
+        $code5 = \tool_certificate\certificate::generate_code($user3->id);
+        $this->assertEquals(12, strlen($code5));
+        // Check that code does not have special chars.
+        $result = preg_match('/^[A-Z0-9]*$/', $code5);
+        $this->assertEquals(1, $result);
     }
 
     /**
