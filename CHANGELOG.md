@@ -1,9 +1,9 @@
 # Changelog
 
-## [Unreleased]
+## 3.10.1 (2021011900)
 ### Changed
 - Fixed issue when moving/deleting categories that contained certificates. All pages/elements
-  and issed certificates are now handled correctly
+  and issued certificates are now handled correctly
 
 ## 3.10+ (2020121700)
 ### Changed
