@@ -154,7 +154,7 @@ class issues_list extends \table_sql {
         // View.
         $link = template::view_url($row->code);
         $icon = new \pix_icon('i/search', get_string('view'), 'core');
-        $actions .= $OUTPUT->action_icon($link, $icon, null, []);
+        $actions .= $OUTPUT->action_icon($link, $icon, null, ['target' => '_blank']);
         if ($template->can_issue($row->userid)) {
             // Regenerate file.
             $link = new \moodle_url('#');
