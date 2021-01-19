@@ -164,7 +164,7 @@ class certificates_list extends \table_sql {
             $link = new \moodle_url("/admin/tool/certificate/view.php",
                 ['preview' => 1, 'templateid' => $template->get_id(), 'code' => 'previewing']);
             $icon = new \pix_icon('i/search', get_string('preview'));
-            $actions .= $OUTPUT->action_icon($link, $icon, null, []);
+            $actions .= $OUTPUT->action_icon($link, $icon, null, ['target' => '_blank']);
         }
         if ($template->can_view_issues()) {
             // View issues.
