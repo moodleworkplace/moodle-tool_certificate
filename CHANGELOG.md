@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Changed
+- Small UI changes in forms displaying metric system
+
 ## 3.10.1 (2021011900)
 ### Changed
 - Fixed issue when moving/deleting categories that contained certificates. All pages/elements
