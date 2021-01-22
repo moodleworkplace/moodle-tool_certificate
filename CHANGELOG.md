@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Small UI changes in forms displaying metric system
+- Viewing and previewing certificates now open a new browser tab
 
 ## 3.10.1 (2021011900)
 ### Changed
