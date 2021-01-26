@@ -229,9 +229,7 @@ abstract class element {
         element_helper::render_form_element_refpoint($mform);
 
         // Advanced elements for the text.
-        $pagerecord = $this->get_page()->to_record();
-        $defaultposx = ($pagerecord->width - $pagerecord->rightmargin + $pagerecord->leftmargin) / 2;
-        element_helper::render_form_element_position($mform, (int)$defaultposx);
+        element_helper::render_form_element_position($mform);
         element_helper::render_form_element_text_width($mform);
     }
 
