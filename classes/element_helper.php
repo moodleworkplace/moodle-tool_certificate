@@ -130,10 +130,13 @@ class element_helper {
         $mform->setType('font', PARAM_TEXT);
         $mform->setDefault('font', 'freesans');
         $mform->addHelpButton('font', 'font', 'tool_certificate');
-        $mform->addElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'), self::get_font_sizes());
+        $group = [];
+        $group[] =& $mform->createElement('select', 'fontsize', get_string('fontsize', 'tool_certificate'), self::get_font_sizes());
+        $group[] =& $mform->createElement('static', 'fontsizemetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'fontsizegroup', get_string('fontsize', 'tool_certificate'), $group, ' ', false);
         $mform->setType('fontsize', PARAM_INT);
         $mform->setDefault('fontsize', 12);
-        $mform->addHelpButton('fontsize', 'fontsize', 'tool_certificate');
+        $mform->addHelpButton('fontsizegroup', 'fontsize', 'tool_certificate');
     }
 
     /**
@@ -158,15 +161,21 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_position($mform) {
-        $mform->addElement('text', 'posx', get_string('posx', 'tool_certificate'), array('size' => 10));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'posx', get_string('posx', 'tool_certificate'), ['size' => 10]);
+        $group[] =& $mform->createElement('static', 'posxmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'posxgroup', get_string('posx', 'tool_certificate'), $group, ' ', false);
         $mform->setType('posx', PARAM_RAW_TRIMMED); // We need to track empty string.
-        $mform->addHelpButton('posx', 'posx', 'tool_certificate');
-        $mform->setAdvanced('posx');
+        $mform->addHelpButton('posxgroup', 'posx', 'tool_certificate');
+        $mform->setAdvanced('posxgroup');
 
-        $mform->addElement('text', 'posy', get_string('posy', 'tool_certificate'), array('size' => 10));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'posy', get_string('posy', 'tool_certificate'), ['size' => 10]);
+        $group[] =& $mform->createElement('static', 'posymetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'posygroup', get_string('posy', 'tool_certificate'), $group, ' ', false);
         $mform->setType('posy', PARAM_INT);
-        $mform->addHelpButton('posy', 'posy', 'tool_certificate');
-        $mform->setAdvanced('posy');
+        $mform->addHelpButton('posygroup', 'posy', 'tool_certificate');
+        $mform->setAdvanced('posygroup');
 
         $mform->addFormRule(function($data, $files) {
             return element_helper::validate_form_element_position($data);
@@ -207,11 +216,14 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_text_width($mform) {
-        $mform->addElement('text', 'width', get_string('elementwidth', 'tool_certificate'), array('size' => 10));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'width', get_string('elementwidth', 'tool_certificate'), ['size' => 10]);
+        $group[] =& $mform->createElement('static', 'widthmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'widthgroup', get_string('elementwidth', 'tool_certificate'), $group, ' ', false);
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'elementwidth', 'tool_certificate');
-        $mform->setAdvanced('width');
+        $mform->addHelpButton('widthgroup', 'elementwidth', 'tool_certificate');
+        $mform->setAdvanced('widthgroup');
 
         $mform->addFormRule(function($data, $files) {
             $errors = [];
@@ -231,10 +243,13 @@ class element_helper {
      *     'width', 'width_help', 'invalidwidth'
      */
     public static function render_form_element_width($mform, $stringcomponent = 'certificateelement_image') {
-        $mform->addElement('text', 'width', get_string('width', $stringcomponent), array('size' => 10));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'width', get_string('width', $stringcomponent), ['size' => 10]);
+        $group[] =& $mform->createElement('static', 'widthmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'widthgroup', get_string('width', $stringcomponent), $group, ' ', false);
         $mform->setType('width', PARAM_INT);
         $mform->setDefault('width', 0);
-        $mform->addHelpButton('width', 'width', $stringcomponent);
+        $mform->addHelpButton('widthgroup', 'width', $stringcomponent);
 
         $mform->addFormRule(function($data, $files) use ($stringcomponent) {
             $errors = [];
@@ -254,10 +269,13 @@ class element_helper {
      *     'height', 'height_help', 'invalidheight'
      */
     public static function render_form_element_height($mform, $stringcomponent = 'certificateelement_image') {
-        $mform->addElement('text', 'height', get_string('height', $stringcomponent), array('size' => 10));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'height', get_string('height', $stringcomponent), ['size' => 10]);
+        $group[] =& $mform->createElement('static', 'heightmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'heightgroup', get_string('height', $stringcomponent), $group, ' ', false);
         $mform->setType('height', PARAM_INT);
         $mform->setDefault('height', 0);
-        $mform->addHelpButton('height', 'height', $stringcomponent);
+        $mform->addHelpButton('heightgroup', 'height', $stringcomponent);
 
         $mform->addFormRule(function($data, $files) use ($stringcomponent) {
             $errors = [];

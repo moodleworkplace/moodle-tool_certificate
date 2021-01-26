@@ -89,39 +89,47 @@ class page extends modal_form {
      */
     public static function add_page_elements(\MoodleQuickForm $mform) {
 
-        $mform->addElement('text', 'width', get_string('pagewidth', 'tool_certificate'));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'width', get_string('pagewidth', 'tool_certificate'));
+        $group[] =& $mform->createElement('static', 'widthmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'widthgroup', get_string('pagewidth', 'tool_certificate'), $group, ' ', false);
         $mform->setType('width', PARAM_INT);
-        $mform->addRule('width', null, 'required', null, 'client');
-        $mform->addRule('width', null, 'numeric', null, 'client');
-        $mform->addHelpButton('width', 'pagewidth', 'tool_certificate');
+        $mform->addHelpButton('widthgroup', 'pagewidth', 'tool_certificate');
 
-        $mform->addElement('text', 'height', get_string('pageheight', 'tool_certificate'));
+        $group = [];
+        $group[] =& $mform->createElement('text', 'height', get_string('pageheight', 'tool_certificate'));
+        $group[] =& $mform->createElement('static', 'heightmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'heightgroup', get_string('pageheight', 'tool_certificate'), $group, ' ', false);
         $mform->setType('height', PARAM_INT);
-        $mform->addRule('height', null, 'required', null, 'client');
-        $mform->addRule('height', null, 'numeric', null, 'client');
-        $mform->addHelpButton('height', 'pageheight', 'tool_certificate');
+        $mform->addHelpButton('heightgroup', 'pageheight', 'tool_certificate');
 
-        $mform->addElement('text', 'leftmargin', get_string('leftmargin', 'tool_certificate'));
-        $mform->setType('leftmargin', PARAM_INT);
-        $mform->addHelpButton('leftmargin', 'leftmargin', 'tool_certificate');
+        $group = [];
+        $group[] =& $mform->createElement('text', 'leftmargin', get_string('leftmargin', 'tool_certificate'));
+        $group[] =& $mform->createElement('static', 'leftmarginmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'leftmargingroup', get_string('leftmargin', 'tool_certificate'), $group, ' ', false);
+        $mform->setType('leftmargingroup', PARAM_INT);
+        $mform->addHelpButton('leftmargingroup', 'leftmargin', 'tool_certificate');
 
-        $mform->addElement('text', 'rightmargin', get_string('rightmargin', 'tool_certificate'));
-        $mform->setType('rightmargin', PARAM_INT);
-        $mform->addHelpButton('rightmargin', 'rightmargin', 'tool_certificate');
+        $group = [];
+        $group[] =& $mform->createElement('text', 'rightmargin', get_string('rightmargin', 'tool_certificate'));
+        $group[] =& $mform->createElement('static', 'rightmarginmetric', '', get_string('milimeter', 'tool_certificate'));
+        $mform->addElement('group', 'rightmargingroup', get_string('rightmargin', 'tool_certificate'), $group, ' ', false);
+        $mform->setType('rightmargingroup', PARAM_INT);
+        $mform->addHelpButton('rightmargingroup', 'rightmargin', 'tool_certificate');
 
         $mform->addFormRule(function($data, $files) {
             $errors = [];
             if (!is_numeric($data['width']) || (int)$data['width'] <= 0) {
-                $errors['width'] = get_string('invalidwidth', 'tool_certificate');
+                $errors['widthgroup'] = get_string('invalidwidth', 'tool_certificate');
             }
             if (!is_numeric($data['height']) || (int)$data['height'] <= 0) {
-                $errors['height'] = get_string('invalidheight', 'tool_certificate');
+                $errors['heightgroup'] = get_string('invalidheight', 'tool_certificate');
             }
             if ((int)$data['leftmargin'] < 0) {
-                $errors['leftmargin'] = get_string('invalidmargin', 'tool_certificate');
+                $errors['leftmargingroup'] = get_string('invalidmargin', 'tool_certificate');
             }
             if ((int)$data['rightmargin'] < 0) {
-                $errors['rightmargin'] = get_string('invalidmargin', 'tool_certificate');
+                $errors['rightmargingroup'] = get_string('invalidmargin', 'tool_certificate');
             }
             return $errors;
         });
