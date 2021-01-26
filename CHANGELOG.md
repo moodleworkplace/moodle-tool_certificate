@@ -4,6 +4,8 @@
 ### Changed
 - Fixed issue when moving/deleting categories that contained certificates. All pages/elements
   and issued certificates are now handled correctly
+- Fixed issue when generating certificate codes with firstname/lastname with non-latin characters.
+  All non-latin characters are now converted for the code.
 
 ## 3.10+ (2020121700)
 ### Changed

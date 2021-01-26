@@ -299,10 +299,13 @@ class certificate {
             $code .= mt_rand(0, 9);
         }
         if ($user) {
-            $code .= mb_strtoupper(substr($user->firstname, 0, 1)) ?? '';
-            $code .= mb_strtoupper(substr($user->lastname, 0, 1)) ?? '';
+            foreach ([$user->firstname, $user->lastname] as $item) {
+                $initial = \core_text::substr(\core_text::strtoupper(\core_text::specialtoascii($item)), 0, 1);
+                $code .= preg_match('/[A-Z0-9]/', $initial) ? $initial : \core_text::strtoupper(random_string(1));
+            }
+        } else {
+            $code .= \core_text::strtoupper(random_string(2));
         }
-
         return $code;
     }
 
