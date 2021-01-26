@@ -66,7 +66,7 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
             ['display' => \certificateelement_code\element::DISPLAY_QRCODE]);
 
         // We don't know what the generated code will be, so match it's pattern.
-        $coderegex = '([A-Za-z0-9]{10})';
+        $coderegex = '([A-Za-z0-9]{12})';
         $urlregex = preg_quote(new moodle_url('/admin/tool/certificate/index.php')) .
             '\?code=' . $coderegex;
 
