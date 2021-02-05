@@ -39,11 +39,8 @@ Feature: Being able to manually issue a certificate to a user
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
-    And I wait "3" seconds
-    And I open the autocomplete suggestions list
-    And I click on "User 11" item in the autocomplete list
-    And I press key "27" in the field "Select users to issue certificate to"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I set the field "Select users to issue certificate to" to "User 11"
+    And I press "Save"
     And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
     Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
     And I log out

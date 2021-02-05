@@ -208,7 +208,7 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I click on "Edit element name" "link" in the "User field" "list_item"
     And I set the field "New value for User field" to "User full name"
-    And I press key "13" in the field "New value for User field"
+    And I press the enter key
     And I should not see "User field"
     And I should see "User full name"
     And I navigate to "Certificates > Manage certificate templates" in site administration
