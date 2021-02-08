@@ -126,6 +126,7 @@ Feature: Being able to manage site templates
     And I log out
 
   Scenario: Deleting a site template
+    When I change window size to "large"
     When the following certificate templates exist:
       | name          | numberofpages | category  |
       | Certificate 1 | 1             | Category1 |
@@ -197,7 +198,7 @@ Feature: Being able to manage site templates
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit template name" "link" in the "Certificate 1" "table_row"
     And I set the field "New value for Certificate 1" to "Certificate 2"
-    And I press key "13" in the field "New value for Certificate 1"
+    And I press the enter key
     And I should not see "Certificate 1"
     And I should see "Certificate 2"
     And I navigate to "Certificates > Manage certificate templates" in site administration
