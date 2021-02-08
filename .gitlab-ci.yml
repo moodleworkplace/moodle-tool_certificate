@@ -1,4 +1,4 @@
-image: moodlehq/moodle-workplace-plugin-ci:7.2
+image: moodlehq/moodle-workplace-plugin-ci:7.3
 
 services:
 - postgres:9.6
