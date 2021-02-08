@@ -126,6 +126,7 @@ Feature: Being able to manage site templates
     And I log out
 
   Scenario: Deleting a site template
+    When I change window size to "large"
     When the following certificate templates exist:
       | name          | numberofpages | category  |
       | Certificate 1 | 1             | Category1 |

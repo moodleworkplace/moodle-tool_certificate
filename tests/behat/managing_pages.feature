@@ -10,7 +10,7 @@ Feature: Being able to manage pages in a certificate template
       | Certificate 1 | 1 |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit content" "link"
+    And I click on "Edit content" "link" in the "Certificate 1" "table_row"
 
   Scenario: Adding a page to a certificate template
     And I wait "1" seconds
@@ -20,6 +20,7 @@ Feature: Being able to manage pages in a certificate template
     And I should see "Page 2"
 
   Scenario: Deleting a page from a certificate template
+    When I change window size to "large"
     When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
@@ -37,6 +38,7 @@ Feature: Being able to manage pages in a certificate template
     And I log out
 
   Scenario: Rearrange pages in a certificate template
+    When I change window size to "large"
     When I add the element "User picture" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I follow "New page"
