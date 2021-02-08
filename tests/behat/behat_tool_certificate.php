@@ -42,8 +42,9 @@ class behat_tool_certificate extends behat_base {
     /**
      * Adds an element to the specified page of a template.
      *
-     * @codingStandardsIgnoreLine
+     * phpcs:ignore
      * @Given /^I add the element "(?P<element_name>(?:[^"]|\\")*)" to page "(?P<page_number>\d+)" of the "(?P<template_name>(?:[^"]|\\")*)" site certificate template$/
+     *
      * @param string $elementname
      * @param int $pagenum
      * @param string $templatename
@@ -113,8 +114,9 @@ class behat_tool_certificate extends behat_base {
     /**
      * Verifies the certificate code for a user.
      *
-     * @codingStandardsIgnoreLine
+     * phpcs:ignore
      * @Given /^I can not verify the "(?P<certificate_name>(?:[^"]|\\")*)" site certificate for the user "(?P<user_name>(?:[^"]|\\")*)"$/
+     *
      * @param string $templatename
      * @param string $username
      */

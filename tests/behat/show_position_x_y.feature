@@ -11,6 +11,7 @@ Feature: Being able to set a site setting to determine whether or not to display
 
   Scenario: Adding an element with the show position X and Y setting enabled
     When I log in as "admin"
+    When I change window size to "large"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I click on "Edit content" "link"
     And I add the element "Code" to page "1" of the "Certificate 1" site certificate template

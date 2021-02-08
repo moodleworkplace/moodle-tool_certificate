@@ -16,7 +16,7 @@ Feature: Being able to manage elements in a certificate template
       | Course full name  | Other fields  | text | coursefullname  | {"visible":true,"previewvalue":"Course full name"} |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit content" "link"
+    And I click on "Edit content" "link" in the "Certificate 1" "table_row"
 
   @_file_upload
   Scenario: Add and edit elements in a certificate template
@@ -204,11 +204,12 @@ Feature: Being able to manage elements in a certificate template
     And I should not see "User field" in the "[data-region='elementlist']" "css_element"
 
   Scenario: Edit element name on a certificate template
+    When I change window size to "large"
     When I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I click on "Edit element name" "link" in the "User field" "list_item"
     And I set the field "New value for User field" to "User full name"
-    And I press key "13" in the field "New value for User field"
+    And I press the enter key
     And I should not see "User field"
     And I should see "User full name"
     And I navigate to "Certificates > Manage certificate templates" in site administration
@@ -218,6 +219,7 @@ Feature: Being able to manage elements in a certificate template
     And I log out
 
   Scenario: Rearrange elements on a certificate template
+    When I change window size to "large"
     When I add the element "Date" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I add the element "User field" to page "1" of the "Certificate 1" site certificate template
