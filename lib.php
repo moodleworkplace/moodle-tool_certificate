@@ -133,21 +133,20 @@ function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $
  * @return \core\output\inplace_editable
  */
 function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
+    $newvalue = clean_param($newvalue, PARAM_TEXT);
+    external_api::validate_context(context_system::instance());
 
     if ($itemtype === 'elementname') {
         // Validate access.
-        external_api::validate_context(context_system::instance());
         $element = \tool_certificate\element::instance($itemid);
         $element->get_template()->require_can_manage();
-
         $element->save((object)['name' => $newvalue]);
         return $element->get_inplace_editable();
     }
 
     if ($itemtype === 'templatename') {
+        // Validate access.
         $template = \tool_certificate\template::instance($itemid);
-        $template->require_can_manage();
-        external_api::validate_context(context_system::instance());
         $template->require_can_manage();
         $template->save((object)['name' => $newvalue]);
         return $template->get_editable_name();
