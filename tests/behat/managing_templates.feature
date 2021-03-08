@@ -39,7 +39,12 @@ Feature: Being able to manage site templates
     And I wait "3" seconds
     And I set the field "Name" to "Certificate 1"
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And I add the element "Border" to page "1" of the "Certificate 1" site certificate template
+    # TODO WP-2531 fix this properly, should be
+    # And I add the element "Border" to page "1" of the "Certificate 1" site certificate template
+    And I click on "Add element" "button" in the "//*[@data-region='page'][1]" "xpath_element"
+    And I wait "2" seconds
+    And I click on "Border" "link" in the "//*[@data-region='page'][1]//*[@data-region='elementtypeslist']" "xpath_element"
+    And I wait "2" seconds
     And I set the following fields to these values:
       | Width  | 5       |
       | Colour | #045ECD |
