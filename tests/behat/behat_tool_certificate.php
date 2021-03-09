@@ -60,13 +60,11 @@ class behat_tool_certificate extends behat_base {
                 "//*[@data-region='page'][{$pagenum}]", "xpath_element"));
 
         // Wait until the respective element type selector has class .show .
-        $this->execute('behat_general::wait_until_the_page_is_ready');
-        $this->wait_for_pending_js();
         $xpath = "//*[@data-region='page'][{$pagenum}]".
             "//*[@data-region='elementtypeslist' and contains(concat(' ', normalize-space(@class), ' '), ' show ')]";
         $this->execute("behat_general::wait_until_exists", array($this->escape($xpath), "xpath_element"));
-        $this->execute('behat_general::wait_until_the_page_is_ready');
-        $this->wait_for_pending_js();
+        // Wait for CSS transition to finish.
+        $this->getSession()->wait(200);
 
         // Click on the link in the element type selector.
         $this->execute('behat_general::i_click_on_in_the',
