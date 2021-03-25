@@ -61,15 +61,15 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     Then the following should exist in the "tool-certificate-issues" table:
       | First name / Surname | Awarded on          |
-      | User 11              | ##today##l, j F Y## |
+      | User 11              | ##today##%A, %d %B %Y## |
     # Issue second certificate to another user.
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 12"
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And the following should exist in the "tool-certificate-issues" table:
       | First name / Surname | Awarded on          |
-      | User 11              | ##today##l, j F Y## |
-      | User 12              | ##today##l, j F Y## |
+      | User 11              | ##today##%A, %d %B %Y## |
+      | User 12              | ##today##%A, %d %B %Y## |
     And I log out
 
   Scenario: Revoke issued certificate as admin
