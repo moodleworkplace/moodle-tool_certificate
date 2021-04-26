@@ -47,7 +47,7 @@ class page {
     /**
      * page constructor.
      */
-    protected final function __construct() {
+    final protected function __construct() {
     }
 
     /**

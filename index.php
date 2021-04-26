@@ -29,9 +29,8 @@ require_once('../../../config.php');
 $code = optional_param('code', '', PARAM_ALPHANUM); // The code for the certificate we are verifying.
 
 if (!\tool_certificate\permission::can_verify()) {
-    print_error('verifynotallowed', 'tool_certificate');
+    throw new moodle_exception('verifynotallowed', 'tool_certificate');
 }
-
 
 $pageurl = new moodle_url('/admin/tool/certificate/index.php');
 

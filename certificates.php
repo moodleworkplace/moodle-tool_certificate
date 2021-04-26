@@ -43,7 +43,7 @@ if ($coursecontext = $template->get_context()->get_course_context(false)) {
 }
 
 if (!$template->can_view_issues()) {
-    print_error('issueormanagenotallowed', 'tool_certificate');
+    throw new moodle_exception('issueormanagenotallowed', 'tool_certificate');
 }
 
 $heading = get_string('certificates', 'tool_certificate');

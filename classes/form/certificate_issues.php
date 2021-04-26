@@ -81,7 +81,7 @@ class certificate_issues extends modal_form {
      */
     public function require_access() {
         if (!$this->get_template()->can_issue_to_anybody()) {
-            print_error('issuenotallowed', 'tool_certificate');
+            throw new \moodle_exception('issuenotallowed', 'tool_certificate');
         }
     }
 

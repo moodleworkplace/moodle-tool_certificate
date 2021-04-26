@@ -52,6 +52,6 @@ if ($preview) {
             $file->get_timemodified(), $file->get_filepath(), $issue->code . '.pdf');
         redirect($url);
     } else {
-        print_error('notfound');
+        throw new moodle_exception('notfound');
     }
 }

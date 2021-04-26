@@ -280,7 +280,7 @@ abstract class element {
      *
      * @param \stdClass $data the form data or partial data to be updated (i.e. name, posx, etc.)
      */
-    public final function save(\stdClass $data) {
+    final public function save(\stdClass $data) {
         unset($data->id);
         if (!empty($this->persistent->get('id'))) {
             unset($data->pageid, $data->element);
@@ -349,7 +349,7 @@ abstract class element {
      * @param \stdClass $user the user we are rendering this for
      * @param \stdClass $issue the issue we are rendering
      */
-    public abstract function render($pdf, $preview, $user, $issue);
+    abstract public function render($pdf, $preview, $user, $issue);
 
     /**
      * Render the element in html.
@@ -361,7 +361,7 @@ abstract class element {
      *
      * @return string the html
      */
-    public abstract function render_html();
+    abstract public function render_html();
 
     /**
      * Handles deleting any data this element may have introduced.
