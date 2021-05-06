@@ -197,5 +197,37 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2020120300, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2021050600) {
+        // Make sure we don't have any pre-existing duplicates. If there are we need to append characters to make
+        // them unique. Note that this will effectively invalidate those codes, but they wouldn't have been working
+        // correctly in the first place (same code re-used for multiple issued certificates).
+        $sql = "SELECT MIN(id) AS minid, code FROM {tool_certificate_issues} GROUP BY code HAVING COUNT(code) > 1";
+        $duplicatecodes = $DB->get_records_sql($sql);
+        foreach ($duplicatecodes as $duplicatecode) {
+            $duplicatecounter = 1;
+
+            // For each duplicate code, retrieve all subsequent duplicates after the initial one and append counter.
+            $records = $DB->get_records_select('tool_certificate_issues', 'id <> :id AND code = :code',
+                ['id' => $duplicatecode->minid, 'code' => $duplicatecode->code], 'id', 'id');
+
+            foreach ($records as $record) {
+                $DB->set_field('tool_certificate_issues', 'code', $duplicatecode->code . $duplicatecounter++,
+                    ['id' => $record->id]);
+            }
+        }
+
+        // Define index code (unique) to be added to tool_certificate_issues.
+        $table = new xmldb_table('tool_certificate_issues');
+        $index = new xmldb_index('code', XMLDB_INDEX_UNIQUE, ['code']);
+
+        // Conditionally launch add index code.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2021050600, 'tool', 'certificate');
+    }
+
     return true;
 }
