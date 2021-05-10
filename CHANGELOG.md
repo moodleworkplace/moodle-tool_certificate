@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.10.4 (2021051100)
+### Changed
+- New index allowing to search for certificates quicker
+- Fixes to coding style to make new version of codechecker happy
+
 ## 3.10.1+ (2021020800)
 ### Changed
 - Small UI changes in forms displaying metric system
