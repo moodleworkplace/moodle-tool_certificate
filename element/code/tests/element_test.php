@@ -72,15 +72,15 @@ class tool_certificate_code_element_test_testcase extends advanced_testcase {
 
         // Display is DISPLAY_CODE.
         $e1output = strip_tags($e1->render_html(), '<a>');
-        $this->assertRegExp('|^' . $coderegex  . '$|', $e1output);
+        $this->assertEquals(1, preg_match('|^' . $coderegex  . '$|', $e1output));
 
         // Display is DISPLAY_CODELINK.
         $e2output = strip_tags($e2->render_html(), '<a>');
-        $this->assertRegExp('|^\<a href="' . $urlregex . '"\>' . $coderegex  . '\</a\>$|', $e2output);
+        $this->assertEquals(1, preg_match('|^\<a href="' . $urlregex . '"\>' . $coderegex  . '\</a\>$|', $e2output));
 
         // Display is DISPLAY_URL.
         $e3output = strip_tags($e3->render_html(), '<a>');
-        $this->assertRegExp('|^' . $urlregex . '$|', $e3output);
+        $this->assertEquals(1, preg_match('|^' . $urlregex . '$|', $e3output));
 
         // Display is DISPLAY_QRCODE.
         $this->assertTrue(strpos($e4->render_html(), '<img') !== false);
