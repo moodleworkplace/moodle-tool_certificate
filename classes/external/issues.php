@@ -182,7 +182,13 @@ class issues extends \external_api {
         $params['templateid'] = $itemid;
         $params['now'] = time();
 
-        $fields = get_all_user_name_fields(true, 'u');
+        if ($CFG->version < 2021050700) {
+            // Moodle 3.9-3.10.
+            $fields = get_all_user_name_fields(true, 'u');
+        } else {
+            // Moodle 3.11 and above.
+            $fields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
+        }
 
         $extrasearchfields = array();
         if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
