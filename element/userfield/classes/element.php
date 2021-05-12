@@ -41,26 +41,37 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
+        $displayname = function($field) {
+            global $CFG;
+            if ($CFG->version < 2021050700) {
+                // Moodle 3.9-3.10.
+                return get_user_field_name($field);
+            } else {
+                // Moodle 3.11 and above.
+                return \core_user\fields::get_display_name($field);
+            }
+        };
+
         // Get the user profile fields.
         $userfields = array(
-            'fullname' => get_user_field_name('fullname'),
-            'firstname' => get_user_field_name('firstname'),
-            'lastname' => get_user_field_name('lastname'),
-            'email' => get_user_field_name('email'),
-            'city' => get_user_field_name('city'),
-            'country' => get_user_field_name('country'),
-            'url' => get_user_field_name('url'),
-            'icq' => get_user_field_name('icq'),
-            'skype' => get_user_field_name('skype'),
-            'aim' => get_user_field_name('aim'),
-            'yahoo' => get_user_field_name('yahoo'),
-            'msn' => get_user_field_name('msn'),
-            'idnumber' => get_user_field_name('idnumber'),
-            'institution' => get_user_field_name('institution'),
-            'department' => get_user_field_name('department'),
-            'phone1' => get_user_field_name('phone1'),
-            'phone2' => get_user_field_name('phone2'),
-            'address' => get_user_field_name('address')
+            'fullname' => $displayname('fullname'),
+            'firstname' => $displayname('firstname'),
+            'lastname' => $displayname('lastname'),
+            'email' => $displayname('email'),
+            'city' => $displayname('city'),
+            'country' => $displayname('country'),
+            'url' => $displayname('url'),
+            'icq' => $displayname('icq'),
+            'skype' => $displayname('skype'),
+            'aim' => $displayname('aim'),
+            'yahoo' => $displayname('yahoo'),
+            'msn' => $displayname('msn'),
+            'idnumber' => $displayname('idnumber'),
+            'institution' => $displayname('institution'),
+            'department' => $displayname('department'),
+            'phone1' => $displayname('phone1'),
+            'phone2' => $displayname('phone2'),
+            'address' => $displayname('address')
         );
         // Get the user custom fields.
         $arrcustomfields = \availability_profile\condition::get_custom_profile_fields();

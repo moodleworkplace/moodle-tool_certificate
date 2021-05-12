@@ -95,10 +95,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
 
         // Check the context supplied is correct.
         $contextlist = provider::get_contexts_for_userid($user->id);
-        $this->assertCount(1, $contextlist);
-
-        $contextids = $contextlist->get_contextids();
-        $this->assertContains(\context_system::instance()->id, $contextids);
+        $this->assertEquals([\context_system::instance()->id], $contextlist->get_contextids());
     }
 
     /**
