@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11 (2021051700)
+### Changed
+- Compatibility with Moodle 3.9 - 3.11
+
 ## 3.10.4 (2021051100)
 ### Changed
 - New index allowing to search for certificates quicker
