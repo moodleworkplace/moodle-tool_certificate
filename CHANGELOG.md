@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Shared image types are now limited to "web_image". Non "web_image" images previously uploaded 
+  did not work properly.
+
 ## 3.11 (2021060800)
 ### Changed
 - Compatibility with Moodle 3.9 - 3.11
