@@ -125,10 +125,10 @@ function($, ModalForm, Notification, Str, Ajax, Toast) {
         e.preventDefault();
         const templateId = $(e.currentTarget).attr('data-id');
         Str.get_strings([
-            {key: 'confirm'},
+            {key: 'confirm', component: 'moodle'},
             {key: 'duplicatetemplateconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
             {key: 'duplicate', component: 'tool_certificate'},
-            {key: 'cancel'}
+            {key: 'cancel', component: 'moodle'}
         ]).done(function(s) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([
@@ -146,10 +146,10 @@ function($, ModalForm, Notification, Str, Ajax, Toast) {
         e.preventDefault();
         const templateId = $(e.currentTarget).attr('data-id');
         Str.get_strings([
-            {key: 'confirm'},
+            {key: 'confirm', component: 'moodle'},
             {key: 'deletetemplateconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
-            {key: 'delete'},
-            {key: 'cancel'}
+            {key: 'delete', component: 'moodle'},
+            {key: 'cancel', component: 'moodle'}
         ]).done(function(s) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([

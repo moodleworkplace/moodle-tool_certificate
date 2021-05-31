@@ -44,10 +44,10 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
     var deleteElement = function(e) {
         e.preventDefault();
         Str.get_strings([
-            {key: 'confirm'},
+            {key: 'confirm', component: 'moodle'},
             {key: 'deleteelementconfirm', component: 'tool_certificate', param: $(e.currentTarget).attr('data-name')},
-            {key: 'delete'},
-            {key: 'cancel'}
+            {key: 'delete', component: 'moodle'},
+            {key: 'cancel', component: 'moodle'}
         ]).done(function(s) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([
