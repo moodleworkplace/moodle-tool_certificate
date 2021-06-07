@@ -81,10 +81,10 @@ function($,
         e.preventDefault();
         e.stopPropagation();
         Str.get_strings([
-            {key: 'confirm'},
+            {key: 'confirm', component: 'moodle'},
             {key: 'revokecertificateconfirm', component: 'tool_certificate'},
             {key: 'revoke', component: 'tool_certificate'},
-            {key: 'cancel'}
+            {key: 'cancel', component: 'moodle'}
         ]).done(function(s) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([
@@ -106,10 +106,10 @@ function($,
         e.preventDefault();
         e.stopPropagation();
         Str.get_strings([
-            {key: 'confirm'},
+            {key: 'confirm', component: 'moodle'},
             {key: 'regeneratefileconfirm', component: 'tool_certificate'},
             {key: 'regenerate', component: 'tool_certificate'},
-            {key: 'cancel'}
+            {key: 'cancel', component: 'moodle'}
         ]).done(function(s) {
             Notification.confirm(s[0], s[1], s[2], s[3], function() {
                 var promises = Ajax.call([
