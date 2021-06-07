@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.11 (2021051700)
+## 3.11 (2021060800)
 ### Changed
 - Compatibility with Moodle 3.9 - 3.11
 
