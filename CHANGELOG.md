@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.11.1 (2021072000)
 ### Changed
 - Shared image types are now limited to "web_image". Non "web_image" images previously uploaded 
   did not work properly.
