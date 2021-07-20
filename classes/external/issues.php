@@ -173,7 +173,7 @@ class issues extends \external_api {
             $where = \tool_certificate\certificate::get_users_subquery();
             $where .= ' AND (ci.id IS NULL OR (ci.expires > 0 AND ci.expires < :now))';
         } else {
-            throw new required_capability_exception(context_system::instance(), 'tool/certificate:issue', 'nopermissions', 'error');
+            throw new \required_capability_exception($context, 'tool/certificate:issue', 'nopermissions', 'error');
         }
 
         $join = ' LEFT JOIN {tool_certificate_issues} ci ON u.id = ci.userid AND ci.templateid = :templateid';
@@ -185,15 +185,17 @@ class issues extends \external_api {
         if ($CFG->version < 2021050700) {
             // Moodle 3.9-3.10.
             $fields = get_all_user_name_fields(true, 'u');
+            $extrasearchfields = [];
+            if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
+                $extrasearchfields = explode(',', $CFG->showuseridentity);
+            }
         } else {
             // Moodle 3.11 and above.
             $fields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
+            // TODO Does not support custom user profile fields (MDL-70456).
+            $extrasearchfields = \core_user\fields::get_identity_fields($context, false);
         }
 
-        $extrasearchfields = array();
-        if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
-            $extrasearchfields = explode(',', $CFG->showuseridentity);
-        }
         if (in_array('email', $extrasearchfields)) {
             $fields .= ', u.email';
         } else {
