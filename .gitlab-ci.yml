@@ -3,8 +3,7 @@ image: moodlehq/moodle-workplace-plugin-ci:7.3
 services:
 - postgres:9.6
 #- mysql:5.7.26
-# TODO: Revert to selenium/standalone-chrome:3 once ICT-1168/WP-2796 is resolved.
-- name: selenium/standalone-chrome:3.141.59-20210713
+- name: selenium/standalone-chrome:3
   alias: selenium-standalone-chrome
 
 variables:
