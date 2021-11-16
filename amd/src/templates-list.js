@@ -17,7 +17,6 @@
  * AMD module used when viewing the list of templates
  *
  * @module     tool_certificate/templates-list
- * @package    tool_certificate
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

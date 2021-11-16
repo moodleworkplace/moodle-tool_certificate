@@ -17,7 +17,6 @@
  * Display a form in a modal dialogue
  *
  * @module     tool_certificate/modal_form
- * @package    tool_certificate
  * @copyright  2018 Mitxel Moriana
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -37,11 +36,11 @@ define([
      * Shows the required form inside a modal dialogue
      *
      * @param {Object} config Parameters for the list. See defaultParameters above for examples.
-     * @property {String} config.formClass PHP class name that handles the form (should extend \tool_certificate\modal_form )
-     * @property {Object} config.modalConfig modal config - title, type, etc. By default type is set
+     * @param {String} config.formClass PHP class name that handles the form (should extend \tool_certificate\modal_form )
+     * @param {Object} config.modalConfig modal config - title, type, etc. By default type is set
      *              to ModalFactory.types.SAVE_CANCEL
-     * @property {Object} config.args Arguments for the initial form rendering
-     * @property {$} config.triggerElement trigger element for a modal form
+     * @param {Object} config.args Arguments for the initial form rendering
+     * @param {$} config.triggerElement trigger element for a modal form
      */
     var ModalForm = function(config) {
         this.config = config;

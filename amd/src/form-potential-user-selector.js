@@ -17,7 +17,6 @@
  * User selector form on modal based on form-potential-user-selector 2016 Damyon Wiese.
  *
  * @module     tool_certificate/form-potential-user-selector
- * @package    tool_certificate
  * @copyright  2018 David Matamoros <davidmc@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
