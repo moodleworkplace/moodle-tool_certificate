@@ -26,6 +26,8 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
 
+$settings = new admin_settingpage('tool_certificate', get_string('settings', 'tool_certificate'));
+
 if ($hassiteconfig || \tool_certificate\permission::can_view_admin_tree()) {
 
     $ADMIN->add('root', new admin_category('certificates', new lang_string('certificates', 'tool_certificate')),
@@ -63,4 +65,23 @@ if ($hassiteconfig) {
             true // This item is hidden.
         )
     );
+
+    $name = new lang_string('show_shareonlinkedin', 'tool_certificate');
+    $description = new lang_string('show_shareonlinkedin_desc', 'tool_certificate');
+    $settings->add(new admin_setting_configcheckbox('tool_certificate/show_shareonlinkedin',
+        $name,
+        $description,
+        false
+    ));
+
+    $name = new lang_string('linkedinorganizationid', 'tool_certificate');
+    $description = new lang_string('linkedinorganizationid_desc', 'tool_certificate');
+    $settings->add(new admin_setting_configtext('tool_certificate/linkedinorganizationid',
+        $name,
+        $description,
+        ''));
+
+    $settings->hide_if('tool_certificate/linkedinorganizationid', 'tool_certificate/show_shareonlinkedin');
+
+    $ADMIN->add('certificates', $settings);
 }

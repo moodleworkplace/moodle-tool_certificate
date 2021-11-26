@@ -156,7 +156,8 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
  */
 function tool_certificate_get_fontawesome_icon_map() {
     return [
-        'tool_certificate:download' => 'fa-download'
+        'tool_certificate:download' => 'fa-download',
+        'tool_certificate:linkedin' => 'fa-linkedin-square'
     ];
 }
 
