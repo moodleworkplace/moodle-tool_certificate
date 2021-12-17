@@ -68,7 +68,7 @@ class certificate_issues extends modal_form {
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
 
-        $mform->addElement('date_time_selector', 'expires', get_string('expires', 'tool_certificate'),
+        $mform->addElement('date_time_selector', 'expires', get_string('expirydate', 'tool_certificate'),
             ['optional' => true]);
     }
 

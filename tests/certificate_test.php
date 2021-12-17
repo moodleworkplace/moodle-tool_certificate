@@ -451,4 +451,46 @@ class certificate_test extends advanced_testcase {
         $files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'element', false, '', false);
         $this->assertCount(3, $files);
     }
+
+    /**
+     * Test get_extra_user_fields for sql to get the values of the extra columns in certificate issues table.
+     */
+    public function test_get_extra_user_fields(): void {
+        global $CFG;
+        $this->setAdminUser();
+        $context = \context_system::instance();
+
+        // Check method without extra fields.
+        $allfields = 'u.id,u.picture,u.firstname,u.lastname,u.firstnamephonetic,u.lastnamephonetic,u.middlename,'
+                . 'u.alternatename,u.imagealt,u.email';
+        $extrauserfields = certificate::get_extra_user_fields($context);
+        $this->assertEquals($allfields, $extrauserfields);
+
+        // Add extra fields.
+        $CFG->showuseridentity = 'email,country,city';
+        // Check method with extra fields (email is already included in the default ones).
+        $allfields .= ',u.country,u.city';
+        $extrauserfields = certificate::get_extra_user_fields($context);
+        $this->assertEquals($allfields, $extrauserfields);
+    }
+
+    /**
+     * Test get_user_extra_field_names for extra columns in certificate issues table.
+     */
+    public function test_get_user_extra_field_names(): void {
+        global $CFG;
+        $this->setAdminUser();
+        $context = \context_system::instance();
+
+        // Check method without extra fields.
+        $CFG->showuseridentity = '';
+        $userextrafieldnames = certificate::get_user_extra_field_names($context);
+        $this->assertEmpty($userextrafieldnames);
+
+        // Check method with extra fields.
+        $fields = ['email', 'phone1', 'department', 'city', 'country'];
+        $CFG->showuseridentity = implode(',', $fields);
+        $userextrafieldnames = certificate::get_user_extra_field_names($context);
+        $this->assertEqualsCanonicalizing($fields, array_keys($userextrafieldnames));
+    }
 }
