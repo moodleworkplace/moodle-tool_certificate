@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die;
  */
 function xmldb_tool_certificate_upgrade($oldversion) {
     global $DB, $CFG;
-    require_once($CFG->dirroot.'/admin/tool/certificate/db/upgradelib.php');
+    require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/certificate/db/upgradelib.php');
 
     $dbman = $DB->get_manager();
 
