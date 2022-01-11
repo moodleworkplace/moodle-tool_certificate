@@ -757,6 +757,20 @@ class template {
     }
 
     /**
+     * Gets the stored file url for an issue. If issue file doesn't exist, new file is created first.
+     *
+     * @param \stdClass $issue
+     * @return moodle_url
+     */
+    public function get_issue_file_url(\stdClass $issue): moodle_url {
+        $file = $this->get_issue_file($issue);
+        // We add timemodified instead of issue id to prevent caching of changed certificate.
+        // The callback tool_certificate_pluginfile() ignores the itemid and only takes the code.
+        return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
+            $file->get_timemodified(), $file->get_filepath(), $issue->code . '.pdf');
+    }
+
+    /**
      * Sends a moodle notification of the certificate issued.
      *
      * @param \stdClass $issue
