@@ -26,8 +26,6 @@ namespace certificateelement_image;
 
 use tool_certificate\element_helper;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element image's core interaction API.
  *

@@ -30,8 +30,6 @@ use core_user;
 use moodle_url;
 use tool_certificate\customfield\issue_handler;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class represents a certificate template.
  *

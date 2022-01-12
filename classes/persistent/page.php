@@ -26,8 +26,6 @@ namespace tool_certificate\persistent;
 
 use core\persistent;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class page
  *

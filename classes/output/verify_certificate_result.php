@@ -24,8 +24,6 @@
 
 namespace tool_certificate\output;
 
-defined('MOODLE_INTERNAL') || die();
-
 use html_table;
 use html_table_cell;
 use html_table_row;

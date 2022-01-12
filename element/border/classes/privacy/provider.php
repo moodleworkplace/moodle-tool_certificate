@@ -24,8 +24,6 @@
 
 namespace certificateelement_border\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for certificateelement_border implementing null_provider.
  *

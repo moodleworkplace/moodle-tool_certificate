@@ -14,16 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File containing tests for functions in lib.php
- *
- * @package     tool_certificate
- * @category    test
- * @copyright   2020 Mikel Martín <mikel@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use tool_certificate_generator;
+use context_system;
+use context_course;
 
 /**
  * Tests for functions in lib.php
@@ -32,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_permission_testcase extends advanced_testcase {
+class permission_test extends advanced_testcase {
     /**
      * @var \stdClass
      */

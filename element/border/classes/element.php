@@ -26,8 +26,6 @@ namespace certificateelement_border;
 
 use tool_certificate\element_helper;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element border's core interaction API.
  *

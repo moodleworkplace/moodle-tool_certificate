@@ -24,8 +24,6 @@
 
 namespace certificateelement_userpicture\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for certificateelement_userpicture implementing null_provider.
  *

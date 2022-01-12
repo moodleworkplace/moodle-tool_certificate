@@ -25,8 +25,6 @@
 
 namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Implementation of multi-tenancy (used only by plugin tool_tenant and nothing else)
  *

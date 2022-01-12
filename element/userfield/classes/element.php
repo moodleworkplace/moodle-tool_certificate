@@ -24,8 +24,6 @@
 
 namespace certificateelement_userfield;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element userfield's core interaction API.
  *

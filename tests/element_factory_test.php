@@ -14,16 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File contains the unit tests for the capabilities tests of certicicates and templates.
- *
- * @package    tool_certificate
- * @category   test
- * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use tool_certificate_generator;
+use moodle_exception;
 
 /**
  * Unit tests for functions that deals with capabilities.
@@ -33,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_element_factory_test_testcase extends advanced_testcase {
+class element_factory_test extends advanced_testcase {
     /**
      * Test set up.
      */

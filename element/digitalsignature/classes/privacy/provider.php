@@ -24,8 +24,6 @@
 
 namespace certificateelement_digitalsignature\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for certificateelement_digitalsignature implementing null_provider.
  *

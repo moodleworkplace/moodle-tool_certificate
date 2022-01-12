@@ -27,8 +27,6 @@ namespace tool_certificate\form;
 use tool_certificate\template;
 use tool_certificate\modal_form;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class page
  *

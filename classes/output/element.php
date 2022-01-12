@@ -27,8 +27,6 @@ namespace tool_certificate\output;
 use core\external\persistent_exporter;
 use core\output\inplace_editable;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class element
  *

@@ -14,16 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for date element.
- *
- * @package    certificateelement_date
- * @category   test
- * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace certificateelement_date;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use tool_certificate_generator;
+use core_text;
 
 /**
  * Unit tests for date element.
@@ -33,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_date_element_test_testcase extends advanced_testcase {
+class element_test extends advanced_testcase {
 
     /**
      * Test set up.

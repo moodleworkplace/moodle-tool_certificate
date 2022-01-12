@@ -15,17 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Contains the class responsible for data generation during unit tests
- *
- * @package tool_certificate
- * @category test
- * @copyright 2017 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * The class responsible for data generation during unit tests
  *
  * @package tool_certificate

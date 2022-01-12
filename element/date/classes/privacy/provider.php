@@ -24,8 +24,6 @@
 
 namespace certificateelement_date\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for certificateelement_date implementing null_provider.
  *

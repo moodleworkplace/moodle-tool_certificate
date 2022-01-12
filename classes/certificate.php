@@ -24,8 +24,6 @@
 
 namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class certificate.
  *

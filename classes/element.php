@@ -26,8 +26,6 @@ namespace tool_certificate;
 
 use core\output\inplace_editable;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class element
  *

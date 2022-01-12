@@ -24,11 +24,6 @@
 
 namespace tool_certificate;
 
-use core\output\inplace_editable;
-use tool_certificate\customfield\issue_handler;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Certificates-related permissions
  *

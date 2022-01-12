@@ -14,19 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains the certificate element digitial signature's core interaction API.
- *
- * @package    certificateelement_digitalsignature
- * @copyright  2017 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace certificateelement_digitalsignature;
 
 use tool_certificate\element_helper;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The certificate element digital signature's core interaction API.

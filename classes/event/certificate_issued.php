@@ -26,8 +26,6 @@ namespace tool_certificate\event;
 
 use tool_certificate\template;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The tool_certificate certificate issued event class.
  *
