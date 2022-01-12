@@ -45,11 +45,7 @@ if ($preview) {
     $template = $issue ? \tool_certificate\template::instance($issue->templateid) : null;
     if ($template && (\tool_certificate\permission::can_verify() ||
             \tool_certificate\permission::can_view_issue($template, $issue, $context))) {
-        $file = $template->get_issue_file($issue);
-        // We add timemodified instead of issue id to prevent caching of changed certificate.
-        // The callback tool_certificate_pluginfile() ignores the itemid and only takes the code.
-        $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-            $file->get_timemodified(), $file->get_filepath(), $issue->code . '.pdf');
+        $url = $template->get_issue_file_url($issue);
         redirect($url);
     } else {
         throw new moodle_exception('notfound');
