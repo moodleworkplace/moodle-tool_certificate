@@ -24,8 +24,6 @@
 
 namespace certificateelement_code;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element code's core interaction API.
  *

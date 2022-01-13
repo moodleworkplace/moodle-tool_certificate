@@ -26,8 +26,6 @@ namespace tool_certificate\output;
 
 use core\external\persistent_exporter;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class page
  *

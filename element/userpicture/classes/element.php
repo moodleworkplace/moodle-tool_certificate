@@ -26,8 +26,6 @@ namespace certificateelement_userpicture;
 
 use tool_certificate\element_helper;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element userpicture's core interaction API.
  *

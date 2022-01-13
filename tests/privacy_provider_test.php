@@ -22,12 +22,13 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_certificate;
+
+use tool_certificate_generator;
 use tool_certificate\privacy\provider;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\writer;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Privacy provider tests class.
@@ -37,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\provider_testcase {
+class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var tool_certificate_generator */
     protected $certgenerator;
@@ -138,7 +139,7 @@ class tool_certificate_privacy_provider_testcase extends \core_privacy\tests\pro
         ];
 
         // Define courseid issue customfield.
-        $handler = tool_certificate\customfield\issue_handler::create();
+        $handler = \tool_certificate\customfield\issue_handler::create();
         $handler->ensure_field_exists('courseid', 'numeric',
             'Course id', false, 1);
 

@@ -33,8 +33,6 @@ use core_privacy\local\request\transform;
 use core_privacy\local\request\writer;
 use tool_certificate\customfield\issue_handler;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem implementation for tool_certificate.
  *

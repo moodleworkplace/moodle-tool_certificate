@@ -14,26 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File contains the unit tests for the certificate class.
- *
- * @package    tool_certificate
- * @category   test
- * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use tool_certificate_generator;
+use context_coursecat;
+use context_system;
 
 /**
  * Unit tests for the certificate class.
  *
  * @package    tool_certificate
- * @group      tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_template_testcase extends advanced_testcase {
+class template_test extends advanced_testcase {
 
     /** @var tool_certificate_generator */
     protected $certgenerator;

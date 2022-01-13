@@ -29,8 +29,6 @@ use core\external\persistent_exporter;
 use core\output\inplace_editable;
 use tool_certificate\element_helper;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class template
  *

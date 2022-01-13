@@ -28,8 +28,6 @@ use core_customfield\data_controller;
 use core_customfield\field_controller;
 use tool_certificate\customfield\issue_handler;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element program's core interaction API.
  *

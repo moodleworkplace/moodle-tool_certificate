@@ -23,7 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+namespace certificateelement_code;
+
+use advanced_testcase;
+use tool_certificate_generator;
+use moodle_url;
+use core_text;
 
 /**
  * Unit tests for code element.
@@ -33,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_code_element_test_testcase extends advanced_testcase {
+class element_test extends advanced_testcase {
 
     /**
      * Test set up.

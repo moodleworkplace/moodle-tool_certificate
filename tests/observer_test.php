@@ -14,16 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File containing tests for functions in observer.php
- *
- * @package     tool_certificate
- * @category    test
- * @copyright   2020 Mikel Martín <mikel@moodle.com>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use tool_certificate_generator;
 
 /**
  * Tests for functions in observer.php
@@ -32,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_observer_testcase extends advanced_testcase {
+class observer_test extends advanced_testcase {
     /**
      * Test setup
      */

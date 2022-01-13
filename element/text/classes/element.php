@@ -24,10 +24,6 @@
 
 namespace certificateelement_text;
 
-use tool_certificate\element_helper;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The certificate element text's core interaction API.
  *

@@ -24,8 +24,6 @@
 
 namespace tool_certificate\output\email;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Email certificate as text renderer.
  *

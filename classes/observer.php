@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 /**
  * Class tool_certificate_observer
  *
@@ -33,8 +31,7 @@ defined('MOODLE_INTERNAL') || die;
  * @copyright  2020 Moodle Pty Ltd <support@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_observer
-{
+class tool_certificate_observer {
     /**
      * Course deleted observer
      *

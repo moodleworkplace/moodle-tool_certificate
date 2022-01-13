@@ -14,16 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * File containing tests for functions in db/upgradelib.php
- *
- * @package     tool_certificate
- * @category    test
- * @copyright   2019 Marina Glancy
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+namespace tool_certificate;
 
-defined('MOODLE_INTERNAL') || die();
+use advanced_testcase;
+use tool_certificate_generator;
+use tool_tenant_generator;
+use context_coursecat;
+use context_system;
+use xmldb_table;
 
 /**
  * Tests for functions in db/upgradelib.php
@@ -32,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_upgradelib_testcase extends advanced_testcase {
+class upgradelib_test extends advanced_testcase {
 
     /** @var string */
     protected $temptable = null;
@@ -142,7 +140,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
 
         // Create tool_program issue customfields manually if tool_program is not available.
         if (!class_exists('\\tool_program\\program')) {
-            $handler = tool_certificate\customfield\issue_handler::create();
+            $handler = \tool_certificate\customfield\issue_handler::create();
             $handler->ensure_field_exists('programname', 'text', 'Program name', true, 'Program name preview');
             $handler->ensure_field_exists('programcompletiondate', 'date', 'Program completion date', true,
                 userdate(strtotime(date('Y-01-01')), get_string('strftimedatefullshort')), ['includetime' => false]);
@@ -152,7 +150,7 @@ class tool_certificate_upgradelib_testcase extends advanced_testcase {
         }
         // Create tool_certification issue customfields manually if tool_certification is not available.
         if (!class_exists('\\tool_certification\\certification')) {
-            $handler = tool_certificate\customfield\issue_handler::create();
+            $handler = \tool_certificate\customfield\issue_handler::create();
             $handler->ensure_field_exists('certificationname', 'text', 'Certification name', true, 'Certification name preview');
         }
 

@@ -23,6 +23,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_certificate;
+
+use advanced_testcase;
+use tool_certificate_generator;
+use context_coursecat;
 use \tool_certificate\persistent\element;
 use \tool_certificate\persistent\page;
 use \tool_certificate\persistent\template;
@@ -34,7 +39,7 @@ use \tool_certificate\persistent\template;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_certificate_lib_testcase extends advanced_testcase {
+class lib_test extends advanced_testcase {
     /**
      * Test set up.
      */
