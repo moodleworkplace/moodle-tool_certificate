@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.11.5 (2022011800)
+### Added
+- Added mobile support to mod_coursecertificate (small changes required in this plugin)
+
+### Changed
+- Compliance with codechecker v3.0.5
+
 ## 3.11.1 (2021072000)
 ### Changed
 - Shared image types are now limited to "web_image". Non "web_image" images previously uploaded 
