@@ -26,6 +26,7 @@ namespace tool_certificate\form;
 
 use tool_certificate\template;
 use tool_certificate\modal_form;
+use tool_certificate\certificate as certificate_manager;
 
 /**
  * Certificate issues form class.
@@ -60,6 +61,7 @@ class certificate_issues extends modal_form {
         $mform->addElement('hidden', 'tid');
         $mform->setType('tid', PARAM_INT);
 
+        // Users.
         $options = array(
             'ajax' => 'tool_certificate/form-potential-user-selector',
             'multiple' => true,
@@ -68,8 +70,8 @@ class certificate_issues extends modal_form {
         $selectstr = get_string('selectuserstoissuecertificatefor', 'tool_certificate');
         $mform->addElement('autocomplete', 'users', $selectstr, array(), $options);
 
-        $mform->addElement('date_time_selector', 'expires', get_string('expirydate', 'tool_certificate'),
-            ['optional' => true]);
+        // Expiry date.
+        certificate_manager::add_expirydate_to_form($mform);
     }
 
     /**
@@ -94,9 +96,11 @@ class certificate_issues extends modal_form {
      */
     public function process(\stdClass $data) {
         $i = 0;
+        $expirydate = certificate_manager::calculate_expirydate($data->expirydatetype, $data->expirydateabsolute,
+            $data->expirydaterelative);
         foreach ($data->users as $userid) {
             if ($this->get_template()->can_issue($userid)) {
-                $result = $this->get_template()->issue_certificate($userid, $data->expires);
+                $result = $this->get_template()->issue_certificate($userid, $expirydate);
                 if ($result) {
                     $i++;
                 }

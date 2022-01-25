@@ -72,6 +72,35 @@ Feature: Being able to manually issue a certificate to a user
       | User 12              | ##today##%d %B %Y## |
     And I log out
 
+  Scenario: Issue a certificate with expiry date as admin
+    When I log in as "admin"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    # Issue a certificate for user11 with absolute expiry date.
+    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
+    And the field "expirydatetype" matches value "Never"
+    And I set the following fields to these values:
+      | Select users to issue certificate to  | User 11                 |
+      | Expiry date type                      | Select date             |
+      | expirydateabsolute[day]               | ##tomorrow##%d##        |
+      | expirydateabsolute[month]             | ##tomorrow##%B##        |
+      | expirydateabsolute[year]              | ##tomorrow##%Y##        |
+    And I press "Save"
+    # Issue a certificate for user11 with relative expiry date.
+    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
+    And I set the following fields to these values:
+      | Select users to issue certificate to  | User 12 |
+      | Expiry date type                      | After   |
+      | expirydaterelative[number]            | 1       |
+      | expirydaterelative[timeunit]          | days    |
+    And I press "Save"
+    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
+    Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
+    And the following should exist in the "tool-certificate-issues" table:
+      | First name / Surname | Expiry date            |
+      | User 11              | ##tomorrow##%d %B %Y## |
+      | User 12              | ##tomorrow##%d %B %Y## |
+    And I log out
+
   Scenario: Revoke issued certificate as admin
     Given the following certificate issues exist:
       | template      | user   |

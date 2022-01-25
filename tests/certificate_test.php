@@ -23,6 +23,7 @@ use tool_tenant_generator;
 /**
  * Unit tests for the certificate class.
  *
+ * @covers     \tool_certificate\certificate
  * @package    tool_certificate
  * @group      tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
@@ -492,5 +493,44 @@ class certificate_test extends advanced_testcase {
         $CFG->showuseridentity = implode(',', $fields);
         $userextrafieldnames = certificate::get_user_extra_field_names($context);
         $this->assertEqualsCanonicalizing($fields, array_keys($userextrafieldnames));
+    }
+
+    /**
+     * Data provider for {@see test_calculate_expirydate}
+     *
+     * @return array
+     */
+    public function calculate_expirydate_provider(): array {
+        return [
+            'Expires never' => [
+                certificate::DATE_EXPIRATION_NEVER, null, null, null
+            ],
+            'Expires on 10 September 2022' => [
+                certificate::DATE_EXPIRATION_ABSOLUTE, '10 September 2022', null, '10 September 2022'
+            ],
+            'Expires after 2 weeks from now' => [
+                certificate::DATE_EXPIRATION_AFTER, null, 2 * WEEKSECS, '+2 week'
+            ],
+            'Expires after 5 days from now' => [
+                certificate::DATE_EXPIRATION_AFTER, null, 5 * DAYSECS, '+5 day'
+            ],
+        ];
+    }
+
+    /**
+     * Test for test_calculate_expirydate
+     *
+     * @param int $datetype
+     * @param string|null $absolutedatestr
+     * @param int|null $duration
+     * @param string|null $expirydatestr
+     * @dataProvider calculate_expirydate_provider
+     */
+    public function test_calculate_expirydate(int $datetype, ?string $absolutedatestr, ?int $duration,
+            ?string $expirydatestr): void {
+        $absolutedate = isset($absolutedatestr) ? strtotime($absolutedatestr) : null;
+        $expirydate = isset($expirydatestr) ? strtotime($expirydatestr) : 0;
+        $date = certificate::calculate_expirydate($datetype, $absolutedate, $duration);
+        $this->assertEquals($expirydate, $date);
     }
 }
