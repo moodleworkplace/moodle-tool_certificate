@@ -26,6 +26,8 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
 require_once($CFG->libdir . '/tablelib.php');
 
 /**
@@ -40,22 +42,36 @@ class issues_list extends \table_sql {
     protected $downloadparamname = 'download';
     /** @var template */
     protected $template;
+    /** @var string[] The list of countries. */
+    protected $countries;
 
     /**
      * Sets up the table.
      * @param template $template
      */
     public function __construct(\tool_certificate\template $template) {
+        global $CFG;
         parent::__construct('tool-certificate-issues');
         $this->attributes['class'] = 'tool-certificate-issues';
 
         $this->template = $template;
 
-        $columnsheaders = [
-            'fullname' => get_string('fullname'),
-            'timecreated' => get_string('receiveddate', 'tool_certificate'),
-            'expires' => get_string('expires', 'tool_certificate'),
-            'code' => get_string('code', 'tool_certificate'),
+        $columnsheaders = ['fullname' => get_string('fullname')];
+
+        $context = \context_system::instance();
+        if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
+            $columnsheaders += certificate::get_user_extra_field_names($context);
+
+            if (array_key_exists('country', $columnsheaders)) {
+                $this->countries = get_string_manager()->get_list_of_countries(true);
+            }
+        }
+
+        $columnsheaders += [
+            'status' => get_string('status'),
+            'expires' => get_string('expirydate', 'tool_certificate'),
+            'timecreated' => get_string('issueddate', 'tool_certificate'),
+            'code' => get_string('code', 'tool_certificate')
         ];
 
         $filename = format_string('tool-certificate-issues');
@@ -63,7 +79,7 @@ class issues_list extends \table_sql {
             $filename, get_string('certificatesissues', 'tool_certificate'));
 
         if (!$this->is_downloading()) {
-            $columnsheaders += ['actions' => \html_writer::span(get_string('actions'), 'sr-only')];
+            $columnsheaders += ['actions' => \html_writer::span(get_string('actions'))];
         }
         $this->define_columns(array_keys($columnsheaders));
         $this->define_headers(array_values($columnsheaders));
@@ -83,13 +99,38 @@ class issues_list extends \table_sql {
     /**
      * Generate the fullname column.
      *
-     * @param string $row
+     * @param \stdClass $row
      * @return string
      */
-    public function col_fullname($row) {
-        // User fullname stored in issue data is shown, not the current user fullname. There is a slight inconsistency because
-        // current user fullname is used for table sorting.
-        return @json_decode($row->data, true)['userfullname'];
+    public function col_fullname($row): string {
+        global $OUTPUT;
+
+        if (!$this->is_downloading()) {
+            return $OUTPUT->user_picture($row) . ' ' . fullname($row);
+        } else {
+            return fullname($row);
+        }
+    }
+
+    /**
+     * Generate the country column.
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    public function col_country(\stdClass $row):string {
+        return $this->countries[$row->country] ?? $row->country;
+    }
+
+    /**
+     * Generate the status column.
+     *
+     * @param \stdClass $row
+     * @return string
+     */
+    public function col_status(\stdClass $row): string {
+        $status = $row->expires && $row->expires <= time() ? 'expired' : 'valid';
+        return get_string($status, 'tool_certificate');
     }
 
     /**
@@ -99,7 +140,7 @@ class issues_list extends \table_sql {
      * @return string
      */
     public function col_timecreated($row) {
-        return userdate($row->timecreated);
+        return userdate($row->timecreated, get_string("strftimedatetime", "langconfig"));
     }
 
     /**
@@ -112,16 +153,7 @@ class issues_list extends \table_sql {
         if (!$row->expires) {
             return get_string('never');
         }
-        $column = userdate($row->expires);
-        if ($row->expires && $row->expires <= time()) {
-            if (!$this->is_downloading()) {
-                $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'),
-                    ['class' => 'badge badge-secondary']);
-            } else {
-                $column .= ' (' . get_string('expired', 'tool_certificate') . ')';
-            }
-        }
-        return $column;
+        return userdate($row->expires, get_string("strftimedatetime", "langconfig"));
     }
 
     /**
@@ -159,14 +191,14 @@ class issues_list extends \table_sql {
             // Regenerate file.
             $link = new \moodle_url('#');
             $icon = new \pix_icon('a/refresh', get_string('regenerateissuefile', 'tool_certificate'), 'core');
-            $attributes = ['data-action' => 'regenerate', 'data-id' => $row->id];
+            $attributes = ['data-action' => 'regenerate', 'data-id' => $row->issueid];
             $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
         }
         if ($template->can_issue($row->userid)) {
             // Revoke.
             $link = new \moodle_url('#');
             $icon = new \pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core');
-            $attributes = ['data-action' => 'revoke', 'data-id' => $row->id];
+            $attributes = ['data-action' => 'revoke', 'data-id' => $row->issueid];
             $actions .= $OUTPUT->action_icon($link, $icon, null, $attributes);
         }
         return $actions;

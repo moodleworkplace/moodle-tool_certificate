@@ -58,8 +58,8 @@ class my_certificates_table extends \table_sql {
         );
         $headers = array(
             get_string('name'),
-            get_string('receiveddate', 'tool_certificate'),
-            get_string('expires', 'tool_certificate'),
+            get_string('issueddate', 'tool_certificate'),
+            get_string('expirydate', 'tool_certificate'),
         );
 
         if (permission::can_verify()) {

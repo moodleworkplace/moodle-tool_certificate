@@ -87,7 +87,7 @@ class certificate {
      * @return array
      */
     public static function get_issues_for_template($templateid, $limitfrom, $limitnum, $sort = '') {
-        global $DB, $CFG;
+        global $DB;
 
         if (empty($sort)) {
             $sort = 'ci.timecreated DESC';
@@ -96,17 +96,11 @@ class certificate {
         $conditions = ['templateid' => $templateid];
 
         $usersquery = self::get_users_subquery();
-        if ($CFG->version < 2021050700) {
-            // Moodle 3.9-3.10.
-            $userfields = get_all_user_name_fields(true, 'u');
-        } else {
-            // Moodle 3.11 and above.
-            $userfields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
-        }
+        $context = \context_system::instance();
+        $userfields = self::get_extra_user_fields($context);
 
-        $sql = "SELECT ci.id, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, ci.data, " .
-                       $userfields . "
+        $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
+                       t.name, ci.data, {$userfields}
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
                     ON (ci.templateid = t.id)
@@ -117,6 +111,56 @@ class certificate {
               ORDER BY {$sort}";
 
         return $DB->get_records_sql($sql, $conditions, $limitfrom, $limitnum);
+    }
+
+    /**
+     * Get column headers for issues list tables.
+     *
+     * @param \context $context
+     * @return array
+     */
+    public static function get_user_extra_field_names(\context $context): array {
+        global $CFG;
+
+        $extrafieldnames = [];
+        if ($CFG->version < 2021050700) {
+            // Moodle 3.9-3.10.
+            $extrafields = get_extra_user_fields($context);
+            foreach ($extrafields as $extrafield) {
+                $extrafieldnames += [$extrafield => get_user_field_name($extrafield)];
+            }
+        } else {
+            // Moodle 3.11 and above.
+            $extrafields = \core_user\fields::for_identity($context, false)->get_required_fields();
+            foreach ($extrafields as $extrafield) {
+                $extrafieldnames += [$extrafield => \core_user\fields::get_display_name($extrafield)];
+            }
+        }
+
+        return $extrafieldnames;
+    }
+
+    /**
+     * Get extra fields for select query of certificates.
+     *
+     * @param \context $context
+     * @return string
+     */
+    public static function get_extra_user_fields(\context $context): string {
+        global $CFG;
+
+        if ($CFG->version < 2021050700) {
+            // Moodle 3.9-3.10.
+            $extrafields = get_extra_user_fields($context);
+            $userfields = \user_picture::fields('u', $extrafields);
+        } else {
+            // Moodle 3.11 and above.
+            $extrafields = \core_user\fields::for_identity($context, false)->get_required_fields();
+            $userfields = \core_user\fields::for_userpic()->including(...$extrafields)
+                ->get_sql('u', false, '', '', false)->selects;
+        }
+
+        return str_replace(' ', '', $userfields);
     }
 
     /**
@@ -173,7 +217,7 @@ class certificate {
      */
     public static function get_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode, ?int $groupid,
             int $limitfrom, int $limitnum, string $sort = ''): array {
-        global $DB, $CFG;
+        global $DB;
 
         if (empty($sort)) {
             $sort = 'ci.timecreated DESC';
@@ -187,16 +231,8 @@ class certificate {
         }
 
         $usersquery = self::get_users_subquery();
-        if ($CFG->version < 2021050700) {
-            // Moodle 3.9-3.10.
-            $extrafields = get_extra_user_fields(\context_course::instance($courseid));
-            $userfields = \user_picture::fields('u', $extrafields);
-        } else {
-            // Moodle 3.11 and above.
-            $extrafields = \core_user\fields::for_identity(\context_course::instance($courseid), false)->get_required_fields();
-            $userfields = \core_user\fields::for_userpic()->including(...$extrafields)
-                ->get_sql('u', false, '', '', false)->selects;
-        }
+        $context = \context_course::instance($courseid);
+        $userfields = self::get_extra_user_fields($context);
 
         $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
                        t.name, ci.courseid, $userfields,

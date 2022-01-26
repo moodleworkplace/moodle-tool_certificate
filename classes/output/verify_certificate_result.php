@@ -91,8 +91,11 @@ class verify_certificate_result implements templatable, renderable {
         $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $issue->userid));
         $this->userfullname = @json_decode($issue->data, true)['userfullname'];
         $this->certificatename = $issue->certificatename;
-        $this->timecreated = userdate($issue->timecreated);
-        $this->expires = ($issue->expires > 0) ? userdate($issue->expires) : get_string('never');
+        $strftimedatetime = get_string("strftimedatetime", "langconfig");
+        $this->timecreated = userdate($issue->timecreated, $strftimedatetime);
+        $this->expires = $issue->expires > 0
+            ? userdate($issue->expires, $strftimedatetime)
+            : get_string('never');
         $this->expired = ($issue->expires > 0) && ($issue->expires <= time());
     }
 
@@ -116,11 +119,11 @@ class verify_certificate_result implements templatable, renderable {
             new html_table_cell($this->certificatename)
         ]);
         $issuedrow = new html_table_row([
-            new html_table_cell(get_string('issuedon', 'tool_certificate')),
+            new html_table_cell(get_string('issueddate', 'tool_certificate')),
             new html_table_cell($this->timecreated)
         ]);
         $expiresrow = new html_table_row([
-            new html_table_cell(get_string('expires', 'tool_certificate')),
+            new html_table_cell(get_string('expirydate', 'tool_certificate')),
             new html_table_cell($this->expires)
         ]);
         $statusrow = new html_table_row([
