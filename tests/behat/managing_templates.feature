@@ -44,7 +44,7 @@ Feature: Being able to manage site templates
       | Width  | 5       |
       | Colour | #045ECD |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And I follow "Manage certificate templates"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
     Then I should see "Certificate 1"
 
   Scenario: Adding a template when user can manage templates anywhere
@@ -63,7 +63,7 @@ Feature: Being able to manage site templates
       | Course category | Category2     |
       | shared          | 1             |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And I follow "Manage certificate templates"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
     Then I should see "Certificate 1"
     And I should see "Shared" in the "Certificate 1" "table_row"
     And I click on "Edit details" "link" in the "Certificate 1" "table_row"
@@ -83,7 +83,7 @@ Feature: Being able to manage site templates
     And I set the following fields to these values:
       | Name | Certificate 1 |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And I follow "Manage certificate templates"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
     Then I should see "Certificate 1"
     And I log out
     And I log in as "categorymanager1"
