@@ -24,6 +24,9 @@
 
 namespace tool_certificate;
 
+use coding_exception;
+use MoodleQuickForm;
+
 /**
  * Class certificate.
  *
@@ -45,6 +48,12 @@ class certificate {
      *      If you want to display all templates on a page set this to 0.
      */
     const TEMPLATES_PER_PAGE = '10';
+    /** @var int Certificate does not expire. */
+    public const DATE_EXPIRATION_NEVER = 0;
+    /** @var int Certificate expires on a specific date */
+    public const DATE_EXPIRATION_ABSOLUTE = 1;
+    /** @var int Certificate expires on a relative date after it was issued to the user */
+    public const DATE_EXPIRATION_AFTER = 2;
 
     /**
      * Handles uploading an image for the certificate module.
@@ -592,5 +601,61 @@ class certificate {
             'filename'  => basename($filepath),
         ];
         $fs->create_file_from_pathname($filerecord, $filepath);
+    }
+
+    /**
+     * Add certificate expirydate element to a MoodleQuickForm.
+     *
+     * @param MoodleQuickForm $mform form the elements are added to
+     */
+    public static function add_expirydate_to_form(MoodleQuickForm &$mform): void {
+        $expirydateoptions = [
+            self::DATE_EXPIRATION_NEVER => get_string('never', 'tool_certificate'),
+            self::DATE_EXPIRATION_ABSOLUTE => get_string('selectdate', 'tool_certificate'),
+            self::DATE_EXPIRATION_AFTER => get_string('after', 'tool_certificate'),
+        ];
+        $group = [];
+        $group[] =& $mform->createElement('select', 'expirydatetype', get_string('expirydatetype', 'tool_certificate'),
+            $expirydateoptions);
+        $group[] =& $mform->createElement('date_time_selector', 'expirydateabsolute', '');
+        // TODO: Missing here "month" and "year" options. See MDL-61624.
+        $group[] =& $mform->createElement('duration', 'expirydaterelative', '', ['defaulunit' => DAYSECS,
+            'units' => [DAYSECS, WEEKSECS]]);
+        $mform->addGroup($group, 'expirydateformgroup', get_string('expirydate', 'tool_certificate'), ' ', false);
+        $mform->setDefault('expirydatetype', self::DATE_EXPIRATION_NEVER);
+        $mform->hideIf('expirydateabsolute', 'expirydatetype', 'noteq', self::DATE_EXPIRATION_ABSOLUTE);
+        $mform->hideIf('expirydaterelative', 'expirydatetype', 'noteq', self::DATE_EXPIRATION_AFTER);
+    }
+
+    /**
+     * Calculates certificate expiry date.
+     *
+     * @param int $datetype DATE_NEVER|DATE_ABSOLUTE|DATE_AFTER
+     * @param int|null $absolutedate timestamp for datetype DATE_ABSOLUTE
+     * @param int|null $duration in seconds for datetype DATE_ATFER
+     * @return int expiry date timestamp
+     * @throws coding_exception
+     */
+    public static function calculate_expirydate(int $datetype, ?int $absolutedate = null, ?int $duration = null): int {
+        switch ($datetype) {
+            case self::DATE_EXPIRATION_NEVER:
+                $expirydate = 0;
+                break;
+            case self::DATE_EXPIRATION_ABSOLUTE:
+                if ($absolutedate === null) {
+                    throw new coding_exception('absolutedate parameter expected but not found');
+                }
+                $expirydate = $absolutedate;
+                break;
+            case self::DATE_EXPIRATION_AFTER:
+                if ($duration === null) {
+                    throw new coding_exception('duration parameter expected but not found');
+                }
+                $expirydate = time() + $duration;
+                break;
+            default:
+                throw new coding_exception('unexpected expiry date type');
+        }
+        return $expirydate;
     }
 }
