@@ -1,7 +1,7 @@
 image: moodlehq/moodle-workplace-plugin-ci:7.3
 
 services:
-- postgres:9.6
+- postgres:10
 #- mysql:5.7.26
 - name: selenium/standalone-chrome:3
   alias: selenium-standalone-chrome
@@ -9,9 +9,11 @@ services:
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_BRANCH_WORKPLACE: master
+  MOODLE_BRANCH_WORKPLACE311: WORKPLACE_311
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
-  MOODLE_BRANCH_LMS: MOODLE_311_STABLE
-  MOODLE_BRANCH_LMSPREV: MOODLE_310_STABLE
+  MOODLE_BRANCH_LMS: master # TODO change to stable when released
+  MOODLE_BRANCH_LMS311: MOODLE_311_STABLE
+  MOODLE_BRANCH_LMS310: MOODLE_310_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -76,9 +78,8 @@ behat:
   - tags
   - /^WORKPLACE_\d+$/
 
-.scriptlms: &scriptlms
+.scriptshorttest: &scriptshorttest
   script:
-    - export MOODLE_REPO=$MOODLE_REPO_LMS
     # TODO: when all plugins are removed, remove the argument with the sshkey but leave the call to prepare-workplace, it sets up the env
     - . prepare-workplace $cibot_sshkey
     - cd $CI_PROJECT_DIR/..
@@ -93,19 +94,41 @@ behat:
     - . check moodle-plugin-ci behat --suite default --profile chrome
     - . check-finish
 
-lms:
+wp311:
   before_script:
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS
-  <<: *scriptlms
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE311
+  <<: *scriptshorttest
   except:
     - master
     - tags
     - /^WORKPLACE_\d+$/
 
-lmsprev:
+lms:
   before_script:
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMSPREV
-  <<: *scriptlms
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
+lms310:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS310
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
+lms311:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS311
+  <<: *scriptshorttest
   except:
     - master
     - tags
