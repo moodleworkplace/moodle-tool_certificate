@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:9.6
+        image: postgres:10
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -42,6 +42,10 @@ jobs:
             extensions:
           - php: '8.0'
             moodle-branch: 'MOODLE_311_STABLE'
+            database: mariadb
+            extensions: xmlrpc-beta
+          - php: '8.0'
+            moodle-branch: 'master' # TODO change to MOODLE_400_STABLE when released
             database: mariadb
             extensions: xmlrpc-beta
 
@@ -116,9 +120,9 @@ jobs:
         run: |
           moodle-plugin-ci phpunit
           cd moodle
-          vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter tool_dataprivacy_metadata_registry_testcase
-          vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter core_externallib_testcase
-          vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_testcase
+          vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
+          vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
+          vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
 
       - name: Behat features
         if: ${{ always() }}

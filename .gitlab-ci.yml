@@ -11,7 +11,7 @@ variables:
   MOODLE_BRANCH_WORKPLACE: master
   MOODLE_BRANCH_WORKPLACE311: WORKPLACE_311
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
-  MOODLE_BRANCH_LMS: master # TODO change to stable when released
+  MOODLE_BRANCH_LMS: master # TODO change to MOODLE_400_STABLE when released
   MOODLE_BRANCH_LMS311: MOODLE_311_STABLE
   MOODLE_BRANCH_LMS310: MOODLE_310_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
@@ -57,9 +57,9 @@ codecheck:
   - . check moodle-plugin-ci savepoints
   - . check moodle-plugin-ci mustache
   - . check moodle-plugin-ci grunt --max-lint-warnings 0
-  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter tool_dataprivacy_metadata_registry_testcase
-  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter core_externallib_testcase
-  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_testcase
+  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
+  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
+  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
   - . check moodle-plugin-ci phpunit --coverage-text
   - . check-finish
   except:
