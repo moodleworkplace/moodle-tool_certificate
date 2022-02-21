@@ -66,7 +66,14 @@ class element extends \tool_certificate\element {
      * @param \stdClass $issue the issue we are rendering
      */
     public function render($pdf, $preview, $user, $issue) {
-        $text = format_text($this->get_data(), FORMAT_HTML, ['context' => \context_system::instance()]);
+        global $DB;
+
+        $context = \context_system::instance();
+        // If the issue was generated in a course, use course context instead.
+        if (isset($issue->courseid) && $DB->record_exists('course', ['id' => $issue->courseid])) {
+            $context = \context_course::instance($issue->courseid);
+        }
+        $text = format_text($this->get_data(), FORMAT_HTML, ['context' => $context]);
         \tool_certificate\element_helper::render_content($pdf, $this, $text);
     }
 
