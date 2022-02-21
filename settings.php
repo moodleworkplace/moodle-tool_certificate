@@ -63,4 +63,15 @@ if ($hassiteconfig) {
             true // This item is hidden.
         )
     );
+
+    // Certificates settings.
+    $settings = new admin_settingpage('tool_certificate', get_string('certificatesettings', 'tool_certificate'));
+
+    $settings->add(new admin_setting_configcheckbox('tool_certificate/issuelang',
+        new lang_string('issuelang', 'tool_certificate'),
+        new lang_string('issuelangdesc', 'tool_certificate'),
+        false
+    ));
+
+    $ADMIN->add('certificates', $settings);
 }

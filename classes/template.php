@@ -254,6 +254,13 @@ class template {
             // Create the pdf object.
             $pdf = new \pdf();
 
+            // If 'issuelang' setting, force the current language to the users being issued otherwise force site language.
+            if (get_config('tool_certificate', 'issuelang') && isset($user->lang)) {
+                $currentlang = force_current_language($user->lang);
+            } else {
+                $currentlang = force_current_language($CFG->lang);
+            }
+
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
             $pdf->SetTitle($this->get_formatted_name());
@@ -280,6 +287,9 @@ class template {
                     }
                 }
             }
+            // Reset forced language.
+            force_current_language($currentlang);
+
             if ($return) {
                 return $pdf->Output('', 'S');
             }
