@@ -262,6 +262,47 @@ class template_test extends advanced_testcase {
     }
 
     /**
+     * Test generate_pdf with multilang text and 'issuelang' setting.
+     */
+    public function test_generate_pdf() {
+        // Enable multilang filter.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        $this->add_spanish_language_pack();
+
+        // Create a user with spanish language.
+        $user1 = $this->getDataGenerator()->create_user(['lang' => 'es']);
+
+        // Create a template with multilang text.
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $this->get_generator()->create_page($certificate1)->get_id();
+        $multilangtext = '<span lang="es" class="multilang">Enhorabuena</span>'
+            . '<span lang="en" class="multilang">Congratulations</span>';
+        $this->get_generator()->create_element($pageid, 'text', ['text' => $multilangtext]);
+
+        // Generate the certificate pdf file.
+        $issue = $this->get_generator()->issue($certificate1, $user1);
+        $template = \tool_certificate\template::instance($certificate1->get_id());
+        $filecontents = $template->generate_pdf(false, $issue, true);
+
+        // Check that pdf contains english text.
+        $this->assertTrue($this->pdf_contains_text('Congratulations', $filecontents));
+        $this->assertFalse($this->pdf_contains_text('Enhorabuena', $filecontents));
+
+        // Now activate 'issuelang' setting.
+        set_config('issuelang', 1, 'tool_certificate');
+
+        // Generate the certificate pdf file.
+        $issue = $this->get_generator()->issue($certificate1, $user1);
+        $template = \tool_certificate\template::instance($certificate1->get_id());
+        $filecontents = $template->generate_pdf(false, $issue, true);
+
+        // Check that pdf contains spanish text.
+        $this->assertTrue($this->pdf_contains_text('Enhorabuena', $filecontents));
+        $this->assertFalse($this->pdf_contains_text('Contratulations', $filecontents));
+    }
+
+    /**
      * Test issue_certificate
      */
     public function test_issue_certificate() {
@@ -518,5 +559,41 @@ class template_test extends advanced_testcase {
         $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
             $imageelement->get_id(), '', false);
         $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
+    }
+
+    /**
+     * Checks if the PDF file contains a given string
+     *
+     * @param string $text string to search
+     * @param string $filecontents contents of the PDF file
+     * @return bool
+     */
+    private function pdf_contains_text(string $text, string $filecontents): bool {
+        global $CFG;
+        require_once($CFG->dirroot.'/lib/tcpdf/tcpdf_parser.php');
+        $parser = new \TCPDF_PARSER($filecontents);
+        list($xref, $data) = $parser->getParsedData();
+
+        $searchtext = 'Td [(';
+        for ($i = 0; $i < strlen($text); $i++) {
+            $searchtext .= chr(0) . substr($text, $i, 1);
+        }
+        $searchtext .= ')]';
+        $found = false;
+        array_walk_recursive($data, function($value, $key) use ($searchtext, &$found) {
+            $found = $found || (!empty($value) && strpos((string)$value, $searchtext) !== false);
+        });
+        return $found;
+    }
+
+    /**
+     * Simulate the presence of Spanish language pack for multilang test purpose.
+     */
+    private function add_spanish_language_pack(): void {
+        global $CFG;
+        $langfolder = $CFG->dataroot . '/lang/es';
+        check_dir_exists($langfolder);
+        $langconfig = "<?php\n\$string['parentlanguage'] = 'en';";
+        file_put_contents($langfolder . '/langconfig.php', $langconfig);
     }
 }
