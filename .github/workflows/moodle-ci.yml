@@ -44,10 +44,6 @@ jobs:
             moodle-branch: 'MOODLE_311_STABLE'
             database: mariadb
             extensions: xmlrpc-beta
-          - php: '8.0'
-            moodle-branch: 'master' # TODO change to MOODLE_400_STABLE when released
-            database: mariadb
-            extensions: xmlrpc-beta
 
     steps:
       - name: Check out repository code

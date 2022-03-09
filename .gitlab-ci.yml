@@ -8,12 +8,12 @@ services:
 
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
-  MOODLE_BRANCH_WORKPLACE: master
   MOODLE_BRANCH_WORKPLACE311: WORKPLACE_311
+  MOODLE_BRANCH_WORKPLACE310: WORKPLACE_310
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
-  MOODLE_BRANCH_LMS: master # TODO change to MOODLE_400_STABLE when released
   MOODLE_BRANCH_LMS311: MOODLE_311_STABLE
   MOODLE_BRANCH_LMS310: MOODLE_310_STABLE
+  MOODLE_BRANCH_LMS39: MOODLE_39_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -26,14 +26,14 @@ variables:
 .setupworkplace: &setupworkplace
   before_script:
   - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE
+  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE311
   - . prepare-workplace $cibot_sshkey
   - cd $CI_PROJECT_DIR/..
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git --branch WORKPLACE_311
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git --branch WORKPLACE_311
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch WORKPLACE_311
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git --branch WORKPLACE_311
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git --branch WORKPLACE_311
   - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
   - cd moodle
 
@@ -43,7 +43,7 @@ codecheck:
   - php admin/tool/phpunit/cli/init.php
   - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
   - . check-start
-  - . check version_number
+  - . check version_number 20220318
   - . check no_workplace_licenses
   - . check this_plugin_is_part_of "the tool_certificate plugin for Moodle - http://moodle.org/" --nowplicensecomment
   - . check language_file_sorting
@@ -93,20 +93,20 @@ behat:
     - . check moodle-plugin-ci behat --suite default --profile chrome
     - . check-finish
 
-wp311:
+wp310:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE311
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE310
   <<: *scriptshorttest
   except:
     - master
     - tags
     - /^WORKPLACE_\d+$/
 
-lms:
+lms39:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS39
   <<: *scriptshorttest
   except:
     - master
