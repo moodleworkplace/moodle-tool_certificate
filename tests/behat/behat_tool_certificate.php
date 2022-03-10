@@ -28,6 +28,7 @@
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 use Behat\Gherkin\Node\TableNode as TableNode;
+use tool_certificate\my_certificates_table;
 
 /**
  * The class responsible for step definitions related to tool_certificate.
@@ -213,6 +214,55 @@ class behat_tool_certificate extends behat_base {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Checks that a share on LinkedIn link exists on the page
+     *
+     * @Then /^I should see a share on LinkedIn link for "([^"]*)"$/
+     *
+     * @param string $certificatename
+     */
+    public function i_should_see_a_share_on_linkedin_link_for(string $certificatename) {
+        $certificatename = str_replace(' ', '%20', $certificatename);
+        $year = (new DateTime())->format('Y');
+        $month = (new DateTime())->format('m');
+
+        $url = my_certificates_table::LINKEDIN_ADD_TO_PROFILE_URL . "?name=$certificatename&issueYear=$year&issueMonth=$month";
+
+        $this->find(
+            'xpath',
+            "//a[contains(@href, '$url')]"
+        );
+    }
+
+    /**
+     * Checks that a share on LinkedIn link does not exist on the page
+     *
+     * @Then /^I should not see a share on LinkedIn link for "([^"]*)"$/
+     *
+     * @param string $certificatename
+     */
+    public function i_should_not_see_a_share_on_linkedin_link_for(string $certificatename) {
+        $certificatename = str_replace(' ', '%20', $certificatename);
+        $year = (new DateTime())->format('Y');
+        $month = (new DateTime())->format('m');
+
+        $url = my_certificates_table::LINKEDIN_ADD_TO_PROFILE_URL . "?name=$certificatename&issueYear=$year&issueMonth=$month";
+
+        $exception = null;
+        try {
+            $this->find(
+                'xpath',
+                "//a[contains(@href, '$url')]"
+            );
+        } catch (\Behat\Mink\Exception\ElementNotFoundException $e) {
+            $exception = $e;
+        }
+
+        if ($exception === null) {
+            throw new \Behat\Mink\Exception\ExpectationException('Share on LinkedIn link was found', $this->getSession());
         }
     }
 }

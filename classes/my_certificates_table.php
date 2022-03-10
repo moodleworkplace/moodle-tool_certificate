@@ -43,6 +43,11 @@ class my_certificates_table extends \table_sql {
     protected $userid;
 
     /**
+     * The add to profile LinkedIn URL
+     */
+    public const LINKEDIN_ADD_TO_PROFILE_URL = 'https://www.linkedin.com/profile/add';
+
+    /**
      * Sets up the table.
      *
      * @param int $userid
@@ -50,6 +55,7 @@ class my_certificates_table extends \table_sql {
      */
     public function __construct($userid, $download = null) {
         parent::__construct('tool_certificate_my_certificates_table');
+        $this->userid = $userid;
 
         $columns = array(
             'name',
@@ -77,6 +83,12 @@ class my_certificates_table extends \table_sql {
             $headers[] = get_string('file');
         }
 
+        if ($this->show_share_on_linkedin()) {
+            $columns[] = 'linkedin';
+            $headers[] = get_string('shareonlinkedin', 'tool_certificate');
+            $this->no_sorting('linkedin');
+        }
+
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->collapsible(false);
@@ -84,8 +96,6 @@ class my_certificates_table extends \table_sql {
         $this->no_sorting('code');
         $this->no_sorting('download');
         $this->is_downloadable(true);
-
-        $this->userid = $userid;
     }
 
     /**
@@ -183,5 +193,51 @@ class my_certificates_table extends \table_sql {
         $total = certificate::count_issues_for_user($this->userid);
         $this->out($total, false);
         exit;
+    }
+
+    /**
+     * Generate the LinkedIn column
+     *
+     * @param \stdClass $issue
+     * @return string
+     */
+    public function col_linkedin($issue) {
+        global $OUTPUT;
+
+        $params = [
+            'name' => $issue->name,
+            'issueYear' => date('Y', $issue->timecreated),
+            'issueMonth' => date('m', $issue->timecreated),
+            'certId' => $issue->code,
+            'certUrl' => template::verification_url($issue->code)
+        ];
+
+        if ($issue->expires !== '0') {
+            $params['expirationYear'] = date('Y', $issue->expires);
+            $params['expirationMonth'] = date('m', $issue->expires);
+        }
+
+        $organizationid = get_config('tool_certificate', 'linkedinorganizationid');
+        if ($organizationid !== '') {
+            $params['organizationId'] = $organizationid;
+        }
+
+        $icon = new \pix_icon('linkedin', get_string('shareonlinkedin', 'tool_certificate'), 'tool_certificate');
+        $link = new \moodle_url(self::LINKEDIN_ADD_TO_PROFILE_URL, $params);
+
+        return $OUTPUT->action_link($link, '', null, [
+            'target' => '_blank',
+            'class' => 'd-flex'
+        ], $icon);
+    }
+
+    /**
+     * Whether the LinkedIn column be shown
+     *
+     * @return bool
+     */
+    private function show_share_on_linkedin() {
+        global $USER;
+        return $USER->id == $this->userid && get_config('tool_certificate', 'show_shareonlinkedin');
     }
 }
