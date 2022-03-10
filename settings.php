@@ -72,6 +72,17 @@ if ($hassiteconfig) {
         new lang_string('issuelangdesc', 'tool_certificate'),
         false
     ));
+    $settings->add(new admin_setting_configcheckbox('tool_certificate/show_shareonlinkedin',
+        new lang_string('show_shareonlinkedin', 'tool_certificate'),
+        new lang_string('show_shareonlinkedin_desc', 'tool_certificate'),
+        false
+    ));
+    $settings->add(new admin_setting_configtext('tool_certificate/linkedinorganizationid',
+        new lang_string('linkedinorganizationid', 'tool_certificate'),
+        new lang_string('linkedinorganizationid_desc', 'tool_certificate'),
+        false
+    ));
+    $settings->hide_if('tool_certificate/linkedinorganizationid', 'tool_certificate/show_shareonlinkedin');
 
     $ADMIN->add('certificates', $settings);
 }
