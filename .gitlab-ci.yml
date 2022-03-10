@@ -9,11 +9,8 @@ services:
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_BRANCH_WORKPLACE: master
-  MOODLE_BRANCH_WORKPLACE311: WORKPLACE_311
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_BRANCH_LMS: master # TODO change to MOODLE_400_STABLE when released
-  MOODLE_BRANCH_LMS311: MOODLE_311_STABLE
-  MOODLE_BRANCH_LMS310: MOODLE_310_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -93,16 +90,6 @@ behat:
     - . check moodle-plugin-ci behat --suite default --profile chrome
     - . check-finish
 
-wp311:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE311
-  <<: *scriptshorttest
-  except:
-    - master
-    - tags
-    - /^WORKPLACE_\d+$/
-
 lms:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
@@ -111,24 +98,3 @@ lms:
   except:
     - master
     - tags
-    - /^WORKPLACE_\d+$/
-
-lms310:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_LMS
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS310
-  <<: *scriptshorttest
-  except:
-    - master
-    - tags
-    - /^WORKPLACE_\d+$/
-
-lms311:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_LMS
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS311
-  <<: *scriptshorttest
-  except:
-    - master
-    - tags
-    - /^WORKPLACE_\d+$/
