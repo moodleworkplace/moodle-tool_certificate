@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.11.6 (2022031500)
+### Added
+- Setting 'Show share on LinkedIn'. When enabled users can add their certificates to LinkedIn
+  from the 'My certificates' page in their profile
+- Show identity fields in the list of issued certificates
+- Allow relative dates for expiry dates (i.e. 1 year after issue)
+
 ## 3.11.5 (2022011800)
 ### Added
 - Added mobile support to mod_coursecertificate (small changes required in this plugin)

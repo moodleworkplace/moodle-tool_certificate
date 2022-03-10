@@ -80,7 +80,7 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_configtext('tool_certificate/linkedinorganizationid',
         new lang_string('linkedinorganizationid', 'tool_certificate'),
         new lang_string('linkedinorganizationid_desc', 'tool_certificate'),
-        false
+        ''
     ));
     $settings->hide_if('tool_certificate/linkedinorganizationid', 'tool_certificate/show_shareonlinkedin');
 
