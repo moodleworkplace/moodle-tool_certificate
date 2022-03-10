@@ -34,6 +34,7 @@ variables:
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch WORKPLACE_311
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git --branch WORKPLACE_311
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git --branch WORKPLACE_311
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git --branch WORKPLACE_311
   - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
   - cd moodle
 
