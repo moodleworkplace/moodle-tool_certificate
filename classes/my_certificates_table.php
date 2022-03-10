@@ -55,6 +55,7 @@ class my_certificates_table extends \table_sql {
      */
     public function __construct($userid, $download = null) {
         parent::__construct('tool_certificate_my_certificates_table');
+        $this->userid = $userid;
 
         $columns = array(
             'name',
@@ -95,8 +96,6 @@ class my_certificates_table extends \table_sql {
         $this->no_sorting('code');
         $this->no_sorting('download');
         $this->is_downloadable(true);
-
-        $this->userid = $userid;
     }
 
     /**
@@ -238,6 +237,7 @@ class my_certificates_table extends \table_sql {
      * @return bool
      */
     private function show_share_on_linkedin() {
-        return get_config('tool_certificate', 'show_shareonlinkedin');
+        global $USER;
+        return $USER->id == $this->userid && get_config('tool_certificate', 'show_shareonlinkedin');
     }
 }
