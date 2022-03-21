@@ -23,6 +23,7 @@ use tool_certificate_generator;
  * Tests for functions in observer.php
  *
  * @package     tool_certificate
+ * @covers      \tool_certificate_observer
  * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

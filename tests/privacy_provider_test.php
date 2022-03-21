@@ -35,6 +35,7 @@ use core_privacy\local\request\writer;
  *
  * @package    tool_certificate
  * @group      tool_certificate
+ * @covers     \tool_certificate\privacy\provider
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

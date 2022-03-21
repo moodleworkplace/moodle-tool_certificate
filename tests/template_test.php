@@ -25,6 +25,7 @@ use context_system;
  * Unit tests for the certificate class.
  *
  * @package    tool_certificate
+ * @covers     \tool_certificate\template
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
