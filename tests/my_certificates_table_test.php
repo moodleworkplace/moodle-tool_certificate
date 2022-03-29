@@ -20,6 +20,7 @@ namespace tool_certificate;
  * Tests for functions in /classes/my_certificates_table.php
  *
  * @package    tool_certificate
+ * @covers     \tool_certificate\my_certificates_table
  * @copyright  2022 Frederik Pytlick
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -27,6 +27,7 @@ use context_system;
  *
  * @package    tool_certificate
  * @group      tool_certificate
+ * @covers     \tool_certificate\permission
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

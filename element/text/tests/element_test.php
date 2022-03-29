@@ -34,6 +34,7 @@ use core_text;
  *
  * @package    certificateelement_text
  * @group      tool_certificate
+ * @covers     \certificateelement_text\element
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

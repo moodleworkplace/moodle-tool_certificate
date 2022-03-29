@@ -25,6 +25,7 @@ use moodle_exception;
  *
  * @package    tool_certificate
  * @group      tool_certificate
+ * @covers     \tool_certificate\element
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

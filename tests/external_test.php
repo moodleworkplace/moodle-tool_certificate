@@ -25,6 +25,7 @@ use tool_certificate_generator;
  * @package    tool_certificate
  * @group      tool_certificate
  * @category   test
+ * @covers     \tool_certificate\external\issues
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
