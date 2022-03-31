@@ -175,6 +175,7 @@ class behat_tool_certificate extends behat_base {
     public function the_following_certificate_templates_exist(TableNode $data) {
         foreach ($data->getHash() as $elementdata) {
             $this->lookup_category($elementdata);
+            $elementdata['contextid'] = $elementdata['contextid'] ?? \context_system::instance()->id;
             $template = \tool_certificate\template::create((object)$elementdata);
             if (isset($elementdata['numberofpages']) && $elementdata['numberofpages'] > 0) {
                 for ($p = 0; $p < $elementdata['numberofpages']; $p++) {
