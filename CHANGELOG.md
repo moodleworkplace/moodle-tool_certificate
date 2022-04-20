@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.0 (2022042000)
+### Changed
+- This version of the plugin is only for Moodle LMS 4.0 and above
+
 ## 3.11.6 (2022031500)
 ### Added
 - Setting 'Show share on LinkedIn'. When enabled users can add their certificates to LinkedIn
