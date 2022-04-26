@@ -25,6 +25,7 @@
 namespace tool_certificate;
 
 use coding_exception;
+use core_reportbuilder\local\helpers\database;
 use MoodleQuickForm;
 
 /**
@@ -449,11 +450,12 @@ class certificate {
      * @uses \tool_tenant\tenancy::get_users_subquery
      *
      * @param string $usertablealias
+     * @param bool $canseeall do not add tenant check if user has capability 'tool/tenant:manage'
      * @return string
      */
-    public static function get_users_subquery(string $usertablealias = 'u') : string {
+    public static function get_users_subquery(string $usertablealias = 'u', bool $canseeall = true) : string {
         return component_class_callback('tool_tenant\\tenancy', 'get_users_subquery',
-            [true, false, $usertablealias.'.id'], '1=1');
+            [$canseeall, false, $usertablealias.'.id'], '1=1');
     }
 
     /**
@@ -657,5 +659,25 @@ class certificate {
                 throw new coding_exception('unexpected expiry date type');
         }
         return $expirydate;
+    }
+
+    /**
+     * Subquery for visible contexts for a category/system
+     *
+     * @param string $fieldsql
+     * @return array
+     */
+    public static function get_visible_categories_contexts_sql(string $fieldsql): array {
+        global $DB;
+        $categorysubquery = ['1=0', []];
+        $contextids = permission::get_visible_categories_contexts(false);
+
+        if ($contextids) {
+            $paramprefix = database::generate_param_name() . '_';
+            [$sql, $params] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, $paramprefix);
+            $categorysubquery = ["{$fieldsql} {$sql}", $params];
+        }
+
+        return $categorysubquery;
     }
 }
