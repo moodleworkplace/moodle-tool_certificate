@@ -62,15 +62,14 @@ if ($action && $pageid) {
 
 $heading = $title = $template->get_formatted_name();
 // If 'formatstringstriptags' config is enabled, we can't show a styled badge, so we avoid showing 'shared' string.
-// When MDL-69464 lands formatstringstriptags check won't be needed.
-if ($template->get_shared() && empty($CFG->formatstringstriptags)) {
+if ($template->get_shared() && (empty($CFG->formatstringstriptags) || $CFG->version >= 2020110900)) {
     $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
         ['class' => 'badge badge-secondary ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
 }
 $PAGE->navbar->add($title, $pageurl);
 
 $PAGE->set_title($title);
-$PAGE->set_heading($heading);
+$PAGE->set_heading($heading, false);
 
 $output = $PAGE->get_renderer('tool_certificate');
 $edit = new \tool_certificate\output\page_header_button(get_string('editdetails', 'tool_certificate'),
