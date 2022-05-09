@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.7 (2022031510)
+### Changed
+- Prevent race condition resulting in issuing course certificate twice
+
 ## 3.11.6 (2022031500)
 ### Added
 - Setting 'Show share on LinkedIn'. When enabled users can add their certificates to LinkedIn
