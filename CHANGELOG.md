@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.1 (2022051000)
+### Changed
+- Prevent race condition resulting in issuing course certificate twice
+
 ## 4.0.0 (2022042000)
 ### Changed
 - This version of the plugin is only for Moodle LMS 4.0 and above
