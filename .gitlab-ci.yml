@@ -56,7 +56,7 @@ codecheck:
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
-  - . check moodle-plugin-ci phpunit --coverage-text
+  - . check moodle-plugin-ci phpunit --coverage-text --fail-on-warning
   - . check-finish
   except:
   - tags
@@ -86,7 +86,7 @@ behat:
     - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
     - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@tool_certificate
     - . check-start
-    - . check moodle-plugin-ci phpunit --coverage-text
+    - . check moodle-plugin-ci phpunit --coverage-text --fail-on-warning
     - . check moodle-plugin-ci behat --suite default --profile chrome
     - . check-finish
 
