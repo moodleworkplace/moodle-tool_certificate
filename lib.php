@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_certificate\permission;
+
 /**
  * Serves certificate issues and other files.
  *
@@ -41,7 +43,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // We are positioning the elements.
     if ($filearea === 'image') {
-        if (!\tool_certificate\permission::can_manage_anywhere()) {
+        if (!permission::can_manage_anywhere()) {
             // Shared images are only displayed to the users during editing of a template.
             return false;
         }
@@ -84,7 +86,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
 
         $issue = $DB->get_record('tool_certificate_issues', ['code' => $code], '*', MUST_EXIST);
         $template = \tool_certificate\template::instance($issue->templateid);
-        if (!\tool_certificate\permission::can_view_issue($template, $issue) && !\tool_certificate\permission::can_verify()) {
+        if (!permission::can_view_issue($template, $issue) && !permission::can_verify()) {
             return false;
         }
 
@@ -110,7 +112,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
  */
 function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     global $USER;
-    if (\tool_certificate\permission::can_view_list($user->id)) {
+    if (permission::can_view_list($user->id)) {
         if ($USER->id == $user->id) {
             $link = get_string('mycertificates', 'tool_certificate');
         } else {
@@ -169,7 +171,7 @@ function tool_certificate_get_fontawesome_icon_map() {
  * @param context $context Course context
  */
 function tool_certificate_extend_navigation_course($navigation, $course, $context) {
-    if (\tool_certificate\permission::can_view_templates_in_context($context)) {
+    if (permission::can_view_templates_in_context($context)) {
         $certificatenode = $navigation->add(get_string('certificates', 'tool_certificate'),
             null, navigation_node::TYPE_CONTAINER, null, 'tool_certificate');
         $url = new moodle_url('/admin/tool/certificate/manage_templates.php', ['courseid' => $course->id]);
@@ -187,7 +189,7 @@ function tool_certificate_extend_navigation_course($navigation, $course, $contex
 function tool_certificate_can_course_category_delete(\core_course_category $category): bool {
     // Deletion requires certificates to be present and permission to manage them.
     $certificatescount = \tool_certificate\certificate::count_templates_in_category($category);
-    return !$certificatescount || \tool_certificate\permission::can_manage($category->get_context());
+    return !$certificatescount || permission::can_manage($category->get_context());
 }
 
 /**
@@ -202,8 +204,8 @@ function tool_certificate_can_course_category_delete_move(\core_course_category 
     // Deletion with move requires certificates to move to be present and
     // permission to manage them at destination category.
     $certificatescount = \tool_certificate\certificate::count_templates_in_category($category);
-    return !$certificatescount || (\tool_certificate\permission::can_manage($category->get_context())
-        && \tool_certificate\permission::can_manage($newcategory->get_context()));
+    return !$certificatescount || (permission::can_manage($category->get_context())
+        && permission::can_manage($newcategory->get_context()));
 }
 
 /**
@@ -252,4 +254,28 @@ function tool_certificate_pre_course_category_delete_move(\core_course_category 
 
         $template->set('contextid', $newcontext->id)->update();
     }
+}
+
+/**
+ * Callback for theme_workplace, return list of workplace menu items to be added to the launcher.
+ *
+ * @return array[] The array containing the workplace menu items where each item is an array with keys:
+ *                 url => moodle_url where item will redirect
+ *                 name => string name shown in the launcher
+ *                 imageurl => string url for the icon shown in the launcher
+ *                 isglobal (optional) => bool to indicate if item is displayed in the global section.
+ */
+function tool_certificate_theme_workplace_menu_items(): array {
+    global $OUTPUT;
+
+    $menuitems = [];
+    if (permission::can_view_admin_tree()) {
+        $menuitems[] = [
+            'url' => new moodle_url("/admin/tool/certificate/manage_templates.php"),
+            'name' => get_string('certificates', 'tool_certificate'),
+            'imageurl' => $OUTPUT->image_url('icon', 'tool_certificate')->out(false),
+            'isglobal' => true
+        ];
+    }
+    return $menuitems;
 }
