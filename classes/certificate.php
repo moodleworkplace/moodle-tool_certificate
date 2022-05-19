@@ -244,7 +244,7 @@ class certificate {
         $userfields = self::get_extra_user_fields($context);
 
         $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, ci.courseid, $userfields,
+                       t.name, ci.courseid, ci.archived, $userfields,
                   CASE WHEN ci.expires > 0  AND ci.expires < :now THEN 0
                   ELSE 1
                   END AS status
@@ -386,7 +386,7 @@ class certificate {
 
         $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
                        ci.expires, ci.data, ci.component, ci.courseid,
-                       ci.userid,
+                       ci.userid, ci.archived,
                        t.name as certificatename,
                        t.contextid
                   FROM {tool_certificate_templates} t
