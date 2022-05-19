@@ -693,6 +693,7 @@ class template {
         $issue->expires = $expires;
         $issue->component = $component;
         $issue->courseid = $courseid;
+        $issue->archived = 0;
 
         // Store user fullname.
         $data['userfullname'] = fullname($DB->get_record('user', ['id' => $userid]));
