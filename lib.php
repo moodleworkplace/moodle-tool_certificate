@@ -274,7 +274,7 @@ function tool_certificate_theme_workplace_menu_items(): array {
             'url' => new moodle_url("/admin/tool/certificate/manage_templates.php"),
             'name' => get_string('certificates', 'tool_certificate'),
             'imageurl' => $OUTPUT->image_url('icon', 'tool_certificate')->out(false),
-            'isglobal' => true
+            'isglobal' => component_class_callback('\tool_tenant\permission', 'can_switch_tenant', [], false)
         ];
     }
     return $menuitems;
