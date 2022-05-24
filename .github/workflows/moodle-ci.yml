@@ -114,7 +114,7 @@ jobs:
       - name: PHPUnit tests
         if: ${{ always() }}
         run: |
-          moodle-plugin-ci phpunit
+          moodle-plugin-ci phpunit --fail-on-warning
           cd moodle
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
