@@ -210,8 +210,13 @@ class behat_tool_certificate extends behat_base {
                     } else {
                         $issueid = $template->issue_certificate($userid);
                     }
-                    if (isset($elementdata['code'])) {
-                        $DB->update_record('tool_certificate_issues', (object) ['id' => $issueid, 'code' => $elementdata['code']]);
+                    // Update all the fields that can only be specified in a generator.
+                    $update = [];
+                    $update += !empty($elementdata['code']) ? ['code' => $elementdata['code']] : [];
+                    $update += !empty($elementdata['timecreated']) ? ['timecreated' => $elementdata['timecreated']] : [];
+                    $update += !empty($elementdata['archived']) ? ['archived' => 1] : [];
+                    if ($update) {
+                        $DB->update_record('tool_certificate_issues', ['id' => $issueid] + $update);
                     }
                 }
             }
