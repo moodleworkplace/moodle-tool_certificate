@@ -227,5 +227,20 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021050600, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2022031611) {
+
+        // Define field archived to be added to tool_certificate_issues.
+        $table = new xmldb_table('tool_certificate_issues');
+        $field = new xmldb_field('archived', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'courseid');
+
+        // Conditionally launch add field archived.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2022031611, 'tool', 'certificate');
+    }
+
     return true;
 }

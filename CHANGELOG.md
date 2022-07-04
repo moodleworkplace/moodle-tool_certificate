@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+### Added
+- Course certificates may be archived when a course is reset allowing to receive more than one
+  certificate per user in the same course
+
 ## 3.11.7 (2022031510)
 ### Changed
 - Prevent race condition resulting in issuing course certificate twice

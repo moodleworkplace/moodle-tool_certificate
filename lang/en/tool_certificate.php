@@ -32,6 +32,7 @@ $string['alignleft'] = 'Left';
 $string['alignment'] = 'Text alignment';
 $string['alignment_help'] = 'Right alignment of the text will mean that element coordinates (Position X and Position Y) will refer to the top right corner of the text box, in center alignment they will refer to the top middle and in left alignment to the top left corner';
 $string['alignright'] = 'Right';
+$string['archived'] = 'Archived';
 $string['availableincourses'] = 'Available in sub-categories and courses';
 $string['availableincourses_help'] = 'By enabling this option, users (with issue capabilities) will be able to use this template in every course inside the selected category and the courses inside its sub-categories as well. If this option is disabled, this template will be available exclusively to users with issue capabilities in the selected category.';
 $string['certificate'] = 'Certificate';
