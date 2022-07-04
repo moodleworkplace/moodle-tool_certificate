@@ -27,9 +27,9 @@ variables:
   - . prepare-workplace $cibot_sshkey
   - cd $CI_PROJECT_DIR/..
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git --branch WP-3351
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git --branch WP-3351
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_custompage.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-block_myteams.git

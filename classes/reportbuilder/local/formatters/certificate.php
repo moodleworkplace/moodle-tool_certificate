@@ -97,4 +97,24 @@ class certificate {
         $status = $row->expires && $row->expires <= time() ? 'expired' : 'valid';
         return get_string($status, 'tool_certificate');
     }
+
+    /**
+     * Appends shared badge if needed
+     *
+     * Note that this method needs 'fullname' and 'shared' to be passed in order to work.
+     *
+     * @param string $fullname
+     * @param stdClass $row
+     * @return string
+     */
+    public static function append_shared_badge(string $fullname, stdClass $row): string {
+        $badge = '';
+
+        if ($row->shared) {
+            $badge = html_writer::tag('span', get_string('shared', 'tool_certificate'),
+                ['class' => 'badge badge-secondary ml-1']);
+        }
+
+        return $fullname . ' ' . $badge;
+    }
 }

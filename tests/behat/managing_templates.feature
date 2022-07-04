@@ -66,7 +66,7 @@ Feature: Being able to manage site templates
     And I navigate to "Certificates > Manage certificate templates" in site administration
     Then I should see "Certificate 1"
     And I should see "Shared" in the "Certificate 1" "table_row"
-    And I click on "Edit details" "link" in the "Certificate 1" "table_row"
+    And I press "Edit details" action in the "Certificate 1" report row
     And I set the following fields to these values:
       | shared          | 0         |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
@@ -132,14 +132,14 @@ Feature: Being able to manage site templates
       | Certificate 1 | 1             | Category1 |
     And I log in as "categorymanager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit content" "link" in the "Certificate 1" "table_row"
+    And I press "Edit content" action in the "Certificate 1" report row
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Delete" "link" in the "Certificate 1" "table_row"
+    And I press "Delete" action in the "Certificate 1" report row
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
-    And I click on "Delete" "link" in the "Certificate 1" "table_row"
+    And I press "Delete" action in the "Certificate 1" report row
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     Then I should not see "Certificate 1"
 
@@ -149,16 +149,16 @@ Feature: Being able to manage site templates
       | Certificate 1 | 1             | Category1 |
     And I log in as "categorymanager1"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Edit content" "link" in the "Certificate 1" "table_row"
+    And I press "Edit content" action in the "Certificate 1" report row
     And I wait "2" seconds
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
+    And I press "Duplicate" action in the "Certificate 1" report row
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (copy)"
-    And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
+    And I press "Duplicate" action in the "Certificate 1" report row
     And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (copy)"
@@ -176,11 +176,11 @@ Feature: Being able to manage site templates
       | Certificate 1 |           |
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
+    And I press "Duplicate" action in the "Certificate 1" report row
     And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (copy)"
-    And I click on "Duplicate" "link" in the "Certificate 1" "table_row"
+    And I press "Duplicate" action in the "Certificate 1" report row
     And I set the following fields to these values:
       | Course category | Category2 |
     And I click on "Duplicate" "button" in the ".modal.show .modal-footer" "css_element"

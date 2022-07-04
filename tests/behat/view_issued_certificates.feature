@@ -52,10 +52,11 @@ Feature: Being able to view the certificates that have been issued
       | moodle/site:configview               | Allow      | certificateviewer     | System       |           |
       | moodle/site:configview               | Allow      | configviewer          | System       |           |
 
+  @javascript
   Scenario: View the issued certificates as admin
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I press "Certificates issued" action in the "Certificate 1" report row
     And I should see "User 11"
     And I should see "User 12"
 
@@ -63,14 +64,14 @@ Feature: Being able to view the certificates that have been issued
   Scenario: Revoke an issued certificate as admin
     When I log in as "admin"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I press "Certificates issued" action in the "Certificate 1" report row
     And I should see "User 11"
     And I should see "User 12"
-    And I click on "Revoke" "link" in the "User 12" "table_row"
+    And I press "Revoke" action in the "User 12" report row
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
     And I should see "User 12"
-    And I click on "Revoke" "link" in the "User 12" "table_row"
+    And I press "Revoke" action in the "User 12" report row
     And I click on "Revoke" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
     And I should not see "User 12"
@@ -100,11 +101,12 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Certificate images"
     And I log out
 
+  @javascript
   Scenario: View certificate of a removed user
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I click on "Delete" "link" in the "User 11" "table_row"
     And I press "Delete"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I press "Certificates issued" action in the "Certificate 1" report row
     And I should see "User 11"

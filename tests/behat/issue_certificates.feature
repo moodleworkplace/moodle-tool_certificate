@@ -38,11 +38,11 @@ Feature: Being able to manually issue a certificate to a user
   Scenario: Issue a certificate as admin, from the list of templates
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
+    And I press "Issue certificates from this template" action in the "Certificate 0" report row
     And I set the field "Select users to issue certificate to" to "User 11"
     And I press "Save"
-    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
+    And I press "Certificates issued" action in the "Certificate 0" report row
+    Then "User 11" "text" should exist in the "reportbuilder-table" "table"
     And I log out
     # Check notifications are triggered.
     And I log in as "user11"
@@ -55,18 +55,18 @@ Feature: Being able to manually issue a certificate to a user
   Scenario: Issue a certificate as admin, from the list of issues
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
+    And I press "Certificates issued" action in the "Certificate 0" report row
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 11"
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    Then the following should exist in the "tool-certificate-issues" table:
+    And the following should exist in the "reportbuilder-table" table:
       | First name / Surname | Date issued             |
       | User 11              | ##today##%d %B %Y## |
     # Issue second certificate to another user.
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 12"
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And the following should exist in the "tool-certificate-issues" table:
+    And the following should exist in the "reportbuilder-table" table:
       | First name / Surname | Date issued             |
       | User 11              | ##today##%d %B %Y## |
       | User 12              | ##today##%d %B %Y## |
@@ -76,7 +76,7 @@ Feature: Being able to manually issue a certificate to a user
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # Issue a certificate for user11 with absolute expiry date.
-    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
+    And I press "Issue certificates from this template" action in the "Certificate 0" report row
     And the field "expirydatetype" matches value "Never"
     And I set the following fields to these values:
       | Select users to issue certificate to  | User 11                 |
@@ -86,16 +86,16 @@ Feature: Being able to manually issue a certificate to a user
       | expirydateabsolute[year]              | ##tomorrow##%Y##        |
     And I press "Save"
     # Issue a certificate for user11 with relative expiry date.
-    And I click on "Issue certificates from this template" "link" in the "Certificate 0" "table_row"
+    And I press "Issue certificates from this template" action in the "Certificate 0" report row
     And I set the following fields to these values:
       | Select users to issue certificate to  | User 12 |
       | Expiry date type                      | After   |
       | expirydaterelative[number]            | 1       |
       | expirydaterelative[timeunit]          | days    |
     And I press "Save"
-    And I click on "Certificates issued" "link" in the "Certificate 0" "table_row"
-    Then "User 11" "text" should exist in the "tool-certificate-issues" "table"
-    And the following should exist in the "tool-certificate-issues" table:
+    And I press "Certificates issued" action in the "Certificate 0" report row
+    Then "User 11" "text" should exist in the "reportbuilder-table" "table"
+    And the following should exist in the "reportbuilder-table" table:
       | First name / Surname | Expiry date            |
       | User 11              | ##tomorrow##%d %B %Y## |
       | User 12              | ##tomorrow##%d %B %Y## |
@@ -108,10 +108,10 @@ Feature: Being able to manually issue a certificate to a user
       | Certificate 1 | user12 |
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I press "Certificates issued" action in the "Certificate 1" report row
     And I should see "User 11"
     And I should see "User 12"
-    And I click on "Revoke" "link" in the "User 11" "table_row"
+    And I press "Revoke" action in the "User 11" report row
     And I click on "Revoke" "button" in the "Confirm" "dialogue"
     And I should not see "User 11"
     And I should see "User 12"
@@ -123,8 +123,8 @@ Feature: Being able to manually issue a certificate to a user
       | Certificate 1 | user11 |
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
-    And I click on "Regenerate issue file" "link" in the "User 11" "table_row"
+    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I press "Regenerate issue file" action in the "User 11" report row
     And I click on "Regenerate" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
     And I log out

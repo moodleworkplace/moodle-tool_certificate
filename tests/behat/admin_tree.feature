@@ -56,7 +56,7 @@ Feature: View links on admin tree
     And I click on "Issue certificates from this template" "link"
     And I set the field "Select users to issue certificate to" to "User One"
     And I press "Save"
-    And I click on "Certificates issued" "link" in the "Certificate 1" "table_row"
+    And I press "Certificates issued" action in the "Certificate 1" report row
     Then "User One" "text" should exist in the "tool-certificate-issues" "table"
     And I log out
 

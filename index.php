@@ -60,7 +60,6 @@ $form->display();
 if ($form->get_data()) {
     $result = \tool_certificate\certificate::verify($code);
     $results = new \tool_certificate\output\verify_certificate_results($result);
-    $renderer = $PAGE->get_renderer('tool_certificate');
-    echo $renderer->render($results);
+    echo $OUTPUT->render($results);
 }
 echo $OUTPUT->footer();
