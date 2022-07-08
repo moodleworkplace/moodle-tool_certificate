@@ -31,6 +31,8 @@ variables:
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_custompage.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-block_myteams.git
   - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
   - cd moodle
 

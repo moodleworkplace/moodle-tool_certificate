@@ -24,6 +24,7 @@
 
 namespace tool_certificate;
 
+use context_helper;
 use core\message\message;
 use core\output\inplace_editable;
 use core_user;
@@ -866,7 +867,7 @@ class template {
         global $DB;
 
         list($sql, $params) = self::get_visible_categories_contexts_sql();
-        $sql = "SELECT tct.id, tct.name
+        $sql = "SELECT tct.id, tct.name, tct.contextid
                   FROM {tool_certificate_templates} tct
                   JOIN {context} ctx
                     ON ctx.id = tct.contextid AND " . $sql .
@@ -876,7 +877,8 @@ class template {
 
         $list = [];
         foreach ($templates as $t) {
-            $list[$t->id] = format_string($t->name);
+            context_helper::preload_from_record($t);
+            $list[$t->id] = format_string($t->name, true, ['context' => $t->contextid, 'escape' => false]);
         }
         return $list;
     }
