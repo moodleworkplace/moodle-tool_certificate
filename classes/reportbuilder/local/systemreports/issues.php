@@ -28,6 +28,7 @@ use stdClass;
 use tool_certificate\certificate;
 use tool_certificate\reportbuilder\local\entities\issue;
 use tool_certificate\template;
+use html_writer;
 
 /**
  * Certificate issues system report implementation
@@ -104,8 +105,13 @@ class issues extends system_report {
      * unique identifier
      */
     public function add_columns(): void {
+        // The user.
+        $certificateissuealias = $this->get_main_table_alias();
+        $this->add_column_from_entity('user:fullnamewithpicturelink')
+            ->add_field("{$certificateissuealias}.archived")
+            ->add_callback([$this, 'apply_archived_label']);
+
         $columns = [
-            'user:fullnamewithpicturelink',
             'user:email',
             'issue:status',
             'issue:expires',
@@ -128,6 +134,8 @@ class issues extends system_report {
             'user:email',
             'issue:expires',
             'issue:timecreated',
+            'issue:expired',
+            'issue:archived',
         ];
 
         $this->add_filters_from_entities($filters);
@@ -186,5 +194,19 @@ class issues extends system_report {
      */
     public function row_callback(stdClass $row): void {
         $this->userid = (int) $row->userid;
+    }
+
+    /**
+     * Callback for the fullname to display badge for archived issues.
+     *
+     * @param string $userfullname
+     * @param stdClass $row
+     * @return string
+     */
+    public function apply_archived_label($userfullname, stdClass $row) {
+        if ($row->archived) {
+            $userfullname .= html_writer::span(get_string('archived', 'tool_certificate'), 'ml-1 badge badge-pill badge-secondary');
+        }
+        return $userfullname;
     }
 }
