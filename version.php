@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component    = 'tool_certificate';
-$plugin->release      = '4.0.1+';
-$plugin->version      = 2022051800;
+$plugin->release      = '4.0.2';
+$plugin->version      = 2022071200;
 $plugin->requires     = 2022041900.00;
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->supported    = [400, 400];
