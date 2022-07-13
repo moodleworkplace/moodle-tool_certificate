@@ -71,8 +71,10 @@ class issues extends system_report {
         // Add user entity.
         $userentity = new user();
         $useralias = $userentity->get_table_alias('user');
-        $userentity->add_join("JOIN {user} {$useralias} ON {$useralias}.id = {$entitymainalias}.userid");
         $this->add_entity($userentity);
+
+        // Add user join.
+        $this->add_join("JOIN {user} {$useralias} ON {$useralias}.id = {$entitymainalias}.userid");
 
         // Any columns required by actions should be defined here to ensure they're always available.
         $requiredcolumns = ['code', 'id', 'userid', 'templateid'];
@@ -80,6 +82,19 @@ class issues extends system_report {
 
         // Add callback for tenant feature.
         $this->add_base_condition_sql(certificate::get_users_subquery($useralias, false));
+
+        // If this report is used in mod_coursecertificate, add course and group conditions.
+        if ($courseid = $this->get_parameter('courseid', 0, PARAM_INT)) {
+            $this->add_base_condition_simple("{$entitymainalias}.courseid", $courseid);
+
+            $groupid = $this->get_parameter('groupid', 0, PARAM_INT);
+            $groupmode = $this->get_parameter('groupmode', 0, PARAM_INT);
+            if (($groupmode != NOGROUPS) && $groupid) {
+                $groupjoin = groups_get_members_join([$groupid], "{$useralias}.id");
+                $this->add_join($groupjoin->joins, $groupjoin->params, false);
+                $this->add_base_condition_sql($groupjoin->wheres);
+            }
+        }
 
         $this->add_columns();
         $this->add_filters();
