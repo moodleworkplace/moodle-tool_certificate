@@ -678,10 +678,11 @@ class template {
      * @param array $data Additional data that will json_encode'd and stored with the issue.
      * @param string $component The component the certificate was issued by.
      * @param null $courseid
+     * @param \core\lock\lock|null $lock optional lock to release after a record was inserted into the DB
      * @return int The ID of the issue
      */
     public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate',
-            $courseid = null) {
+            $courseid = null, ?\core\lock\lock $lock = null) {
         global $DB;
 
         $issue = new \stdClass();
@@ -701,6 +702,9 @@ class template {
 
         // Insert the record into the database.
         $issue->id = $DB->insert_record('tool_certificate_issues', $issue);
+        if ($lock) {
+            $lock->release();
+        }
         issue_handler::create()->save_additional_data($issue, $data);
 
         // Create the issue file and send notification.
