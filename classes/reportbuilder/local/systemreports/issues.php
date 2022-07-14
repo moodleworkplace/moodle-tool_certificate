@@ -147,9 +147,9 @@ class issues extends system_report {
         $filters = [
             'user:fullname',
             'user:email',
+            'issue:status',
             'issue:expires',
             'issue:timecreated',
-            'issue:expired',
             'issue:archived',
         ];
 

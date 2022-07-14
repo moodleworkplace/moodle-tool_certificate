@@ -25,6 +25,7 @@ use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\helpers\format;
+use tool_certificate\reportbuilder\local\filters\status;
 use tool_certificate\reportbuilder\local\formatters\certificate as formatter;
 use tool_certificate\permission;
 
@@ -156,6 +157,17 @@ class issue extends base {
 
         $certificateissuealias = $this->get_table_alias('tool_certificate_issues');
 
+        // Filter issue status.
+        $filters[] = (new filter(
+            status::class,
+            'status',
+            new lang_string('status', 'tool_certificate'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_field_sql("(CASE WHEN ({$certificateissuealias}.expires > 0 AND
+                {$certificateissuealias}.expires <= " . time() . ") THEN 1 ELSE 0 END)");
+
         // Filter issue time created.
         $filters[] = (new filter(
             date::class,
@@ -175,17 +187,6 @@ class issue extends base {
             "{$certificateissuealias}.expires"
         ))
             ->add_joins($this->get_joins());
-
-        // Filter issue status.
-        $filters[] = (new filter(
-            boolean_select::class,
-            'expired',
-            new lang_string('expired', 'tool_certificate'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_field_sql("(CASE WHEN ({$certificateissuealias}.expires > 0 AND
-                {$certificateissuealias}.expires <= " . time() . ") THEN 1 ELSE 0 END)");
 
         // Filter archived status.
         $filters[] = (new filter(
