@@ -20,118 +20,156 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery',
-        'tool_certificate/modal_form',
-        'core/notification',
-        'core/str',
-        'core/ajax',
-        'core/toast'],
-function($,
-         ModalForm,
-         Notification,
-         Str,
-         Ajax,
-         Toast) {
 
-    const SELECTORS = {
-        ADDISSUE: "[data-element='addbutton']",
-        REGENERATEFILE: "[data-action='regenerate']",
-        REVOKEISSUE: "[data-action='revoke']"
-    };
+import Notification from 'core/notification';
+import {get_strings as getStrings, get_string as getString} from 'core/str';
+import Ajax from 'core/ajax';
+import ModalForm from 'tool_certificate/modal_form';
+import Toast from 'core/toast';
+import {refreshTableContent, getFilters, setFilters} from 'core_table/dynamic';
+import * as DynamicTableSelectors from 'core_table/local/dynamic/selectors';
 
-    /**
-     * Add issue dialogue
-     * @param {Event} e
-     */
-    var addIssue = function(e) {
-        e.preventDefault();
-        var modal = new ModalForm({
-            formClass: 'tool_certificate\\form\\certificate_issues',
-            args: {tid: $(e.currentTarget).attr('data-tid')},
-            modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate'), scrollable: false},
-            saveButtonText: Str.get_string('save'),
-            triggerElement: $(e.currentTarget),
-        });
-        modal.onSubmitSuccess = function(data) {
-            data = parseInt(data, 10);
-            if (data) {
-                Str.get_strings([
-                    {key: 'oneissuewascreated', component: 'tool_certificate'},
-                    {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
-                ]).done(function(s) {
-                    var str = data > 1 ? s[1] : s[0];
-                    Toast.add(str);
+const SELECTORS = {
+    ADDISSUE: "[data-element='addbutton']",
+    REGENERATEFILE: "[data-action='regenerate']",
+    REVOKEISSUE: "[data-action='revoke']",
+    GROUPFORM: ".groupselector form",
+    GROUPSELECTOR: "select[name='group']"
+};
+
+/**
+ * Add issue dialogue
+ * @param {Element} element
+ */
+const addIssue = function(element) {
+    var modal = new ModalForm({
+        formClass: 'tool_certificate\\form\\certificate_issues',
+        args: {tid: element.dataset.tid},
+        modalConfig: {title: getString('issuecertificates', 'tool_certificate'), scrollable: false},
+        saveButtonText: getString('save'),
+        triggerElement: element,
+    });
+    modal.onSubmitSuccess = function(data) {
+        data = parseInt(data, 10);
+        if (data) {
+            getStrings([
+                {key: 'oneissuewascreated', component: 'tool_certificate'},
+                {key: 'aissueswerecreated', component: 'tool_certificate', param: data}
+            ]).done(function(s) {
+                var str = data > 1 ? s[1] : s[0];
+                Toast.add(str);
+            });
+            reloadReport();
+        } else {
+            getString('noissueswerecreated', 'tool_certificate')
+                .done(function(s) {
+                    Toast.add(s);
                 });
-                window.location.reload();
-            } else {
-                Str.get_string('noissueswerecreated', 'tool_certificate')
-                    .done(function(s) {
-                        Toast.add(s);
-                    });
-            }
-        };
-    };
-
-    /**
-     * Revoke issue
-     * @param {Event} e
-     */
-    var revokeIssue = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        Str.get_strings([
-            {key: 'confirm', component: 'moodle'},
-            {key: 'revokecertificateconfirm', component: 'tool_certificate'},
-            {key: 'revoke', component: 'tool_certificate'},
-            {key: 'cancel', component: 'moodle'}
-        ]).done(function(s) {
-            Notification.confirm(s[0], s[1], s[2], s[3], function() {
-                var promises = Ajax.call([
-                    {methodname: 'tool_certificate_revoke_issue',
-                        args: {id: $(e.currentTarget).attr('data-id')}}
-                ]);
-                promises[0].done(function() {
-                    window.location.reload();
-                }).fail(Notification.exception);
-            });
-        }).fail(Notification.exception);
-    };
-
-    /**
-     * Revoke issue
-     * @param {Event} e
-     */
-    var regenerateIssueFile = function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        Str.get_strings([
-            {key: 'confirm', component: 'moodle'},
-            {key: 'regeneratefileconfirm', component: 'tool_certificate'},
-            {key: 'regenerate', component: 'tool_certificate'},
-            {key: 'cancel', component: 'moodle'}
-        ]).done(function(s) {
-            Notification.confirm(s[0], s[1], s[2], s[3], function() {
-                var promises = Ajax.call([
-                    {methodname: 'tool_certificate_regenerate_issue_file',
-                        args: {id: $(e.currentTarget).attr('data-id')}}
-                ]);
-                promises[0].done(function() {
-                    window.location.reload();
-                }).fail(Notification.exception);
-            });
-        }).fail(Notification.exception);
-    };
-
-    return {
-        /**
-         * Init page
-         */
-        init: function() {
-            // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
-            $('body')
-                .on('click', SELECTORS.ADDISSUE, addIssue)
-                .on('click', SELECTORS.REVOKEISSUE, revokeIssue)
-                .on('click', SELECTORS.REGENERATEFILE, regenerateIssueFile);
         }
     };
-});
+};
+
+/**
+ * Revoke issue
+ * @param {Element} element
+ */
+const revokeIssue = function(element) {
+    getStrings([
+        {key: 'confirm', component: 'moodle'},
+        {key: 'revokecertificateconfirm', component: 'tool_certificate'},
+        {key: 'revoke', component: 'tool_certificate'},
+        {key: 'cancel', component: 'moodle'}
+    ]).done(function(s) {
+        Notification.confirm(s[0], s[1], s[2], s[3], function() {
+            var promises = Ajax.call([
+                {methodname: 'tool_certificate_revoke_issue',
+                    args: {id: element.dataset.id}}
+            ]);
+            promises[0].done(function() {
+                reloadReport();
+            }).fail(Notification.exception);
+        });
+    }).fail(Notification.exception);
+};
+
+/**
+ * Revoke issue
+ * @param {Element} element
+ */
+const regenerateIssueFile = function(element) {
+    getStrings([
+        {key: 'confirm', component: 'moodle'},
+        {key: 'regeneratefileconfirm', component: 'tool_certificate'},
+        {key: 'regenerate', component: 'tool_certificate'},
+        {key: 'cancel', component: 'moodle'}
+    ]).done(function(s) {
+        Notification.confirm(s[0], s[1], s[2], s[3], function() {
+            var promises = Ajax.call([
+                {methodname: 'tool_certificate_regenerate_issue_file',
+                    args: {id: element.dataset.id}}
+            ]);
+            promises[0].done(function() {
+                reloadReport();
+            }).fail(Notification.exception);
+        });
+    }).fail(Notification.exception);
+};
+
+/**
+ * Reload report
+ */
+var reloadReport = function() {
+    const report = document.querySelector(DynamicTableSelectors.main.region);
+    refreshTableContent(report).catch(Notification.exception);
+};
+
+/**
+ * Change group and refresh table
+ * @param {Event} e
+ */
+const changeGroup = function(e) {
+    const report = document.querySelector(DynamicTableSelectors.main.region);
+    let filters = getFilters(report);
+    let params = JSON.parse(filters.filters.parameters.values[0]);
+    params.groupid = e.target.value;
+    filters.filters.parameters.values[0] = JSON.stringify(params);
+    setFilters(report, filters);
+};
+
+/**
+ * Init page
+ */
+export function init() {
+    document.addEventListener('click', event => {
+
+        // Add issue.
+        const addIssueElement = event.target.closest(SELECTORS.ADDISSUE);
+        if (addIssueElement) {
+            event.preventDefault();
+            addIssue(addIssueElement);
+        }
+
+        // Revoke issue.
+        const revokeIssueElement = event.target.closest(SELECTORS.REVOKEISSUE);
+        if (revokeIssueElement) {
+            event.preventDefault();
+            revokeIssue(revokeIssueElement);
+        }
+
+        // Regenerate file.
+        const regenerateFileElement = event.target.closest(SELECTORS.REGENERATEFILE);
+        if (regenerateFileElement) {
+            event.preventDefault();
+            regenerateIssueFile(regenerateFileElement);
+        }
+    });
+
+    const groupform = document.querySelector(SELECTORS.GROUPFORM);
+    if (groupform) {
+        // Flush existing event listeners.
+        const node = groupform.cloneNode(true);
+        groupform.replaceWith(node);
+        // Add event handler.
+        node.querySelector(SELECTORS.GROUPSELECTOR).addEventListener('change', changeGroup);
+    }
+}
