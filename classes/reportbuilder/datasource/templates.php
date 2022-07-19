@@ -22,7 +22,6 @@ use core_course\local\entities\course_category;
 use core_reportbuilder\datasource;
 use tool_certificate\certificate;
 use tool_certificate\reportbuilder\local\entities\template;
-use tool_certificate\permission;
 use tool_certificate\reportbuilder\local\formatters\certificate as formatter;
 
 /**
@@ -84,15 +83,6 @@ class templates extends datasource {
         if ($categorypath = $this->get_column('course_category:path')) {
             $categorypath->set_callback([formatter::class, 'course_category_path']);
         }
-    }
-
-    /**
-     * Get the report availability.
-     *
-     * @return bool
-     */
-    public static function is_available(): bool {
-        return permission::can_manage_anywhere();
     }
 
     /**
