@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Fixed bug with the reportbuilder reports showing 'source unavailable' error to some users.
+
 ## 4.0.2 (2022071200)
 ### Added
 - Course certificates may be archived when a course is reset allowing to receive more than one
