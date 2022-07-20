@@ -68,6 +68,11 @@ class issues extends system_report {
         $this->set_main_table('tool_certificate_issues', $entitymainalias);
         $this->add_entity($entitymain);
 
+        // Restrict to given template.
+        if ($templateid = $this->get_parameter('templateid', 0, PARAM_INT)) {
+            $this->add_base_condition_simple("{$entitymainalias}.templateid", $templateid);
+        }
+
         // Add user entity.
         $userentity = new user();
         $useralias = $userentity->get_table_alias('user');
@@ -81,7 +86,7 @@ class issues extends system_report {
         $this->add_base_fields("{$entitymainalias}." . implode(", {$entitymainalias}.", $requiredcolumns));
 
         // Add callback for tenant feature.
-        $this->add_base_condition_sql(certificate::get_users_subquery($useralias, false));
+        $this->add_base_condition_sql(certificate::get_users_subquery($useralias));
 
         // If this report is used in mod_coursecertificate, add course and group conditions.
         if ($courseid = $this->get_parameter('courseid', 0, PARAM_INT)) {

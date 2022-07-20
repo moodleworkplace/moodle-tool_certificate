@@ -35,8 +35,8 @@ Feature: Being able to manually issue a certificate to a user
       | moodle/site:configview         | Allow      | certificateissuerall | System       |           |
       | moodle/category:viewcourselist | Allow      | certificateissuerall | System       |           |
 
-  Scenario: Issue a certificate as admin, from the list of templates
-    When I log in as "admin"
+  Scenario: Issue a certificate as issuer user, from the list of templates
+    When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Issue certificates from this template" action in the "Certificate 0" report row
     And I set the field "Select users to issue certificate to" to "User 11"
@@ -52,28 +52,28 @@ Feature: Being able to manually issue a certificate to a user
     Then I should see "Your certificate is available!"
     And I log out
 
-  Scenario: Issue a certificate as admin, from the list of issues
-    When I log in as "admin"
+  Scenario: Issue a certificate as issuer user, from the list of issues
+    When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Certificates issued" action in the "Certificate 0" report row
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 11"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Save" "button" in the "Issue certificates" "dialogue"
     And the following should exist in the "reportbuilder-table" table:
-      | First name / Surname | Date issued             |
+      | First name / Surname | Time created        |
       | User 11              | ##today##%d %B %Y## |
     # Issue second certificate to another user.
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 12"
-    And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
+    And I click on "Save" "button" in the "Issue certificates" "dialogue"
     And the following should exist in the "reportbuilder-table" table:
-      | First name / Surname | Date issued             |
+      | First name / Surname | Time created        |
       | User 11              | ##today##%d %B %Y## |
       | User 12              | ##today##%d %B %Y## |
     And I log out
 
-  Scenario: Issue a certificate with expiry date as admin
-    When I log in as "admin"
+  Scenario: Issue a certificate with expiry date as issuer user
+    When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # Issue a certificate for user11 with absolute expiry date.
     And I press "Issue certificates from this template" action in the "Certificate 0" report row
@@ -101,12 +101,12 @@ Feature: Being able to manually issue a certificate to a user
       | User 12              | ##tomorrow##%d %B %Y## |
     And I log out
 
-  Scenario: Revoke issued certificate as admin
+  Scenario: Revoke issued certificate as issuer user
     Given the following certificate issues exist:
       | template      | user   |
       | Certificate 1 | user11 |
       | Certificate 1 | user12 |
-    When I log in as "admin"
+    When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Certificates issued" action in the "Certificate 1" report row
     And I should see "User 11"
@@ -117,11 +117,11 @@ Feature: Being able to manually issue a certificate to a user
     And I should see "User 12"
     And I log out
 
-  Scenario: Regenerate issued certificate file as admin
+  Scenario: Regenerate issued certificate file as issuer user
     Given the following certificate issues exist:
       | template      | user   |
       | Certificate 1 | user11 |
-    When I log in as "admin"
+    When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Certificates issued" action in the "Certificate 1" report row
     And I press "Regenerate issue file" action in the "User 11" report row

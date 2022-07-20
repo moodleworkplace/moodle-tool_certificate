@@ -6,14 +6,13 @@ Feature: Being able to view the certificates that have been issued
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email               |
-      | manager0 | Manager   | A        | viewer1@example.com |
-      | manager1 | Manager   | 1        | viewer1@example.com |
-      | manager2 | Manager   | 2        | viewer1@example.com |
-      | user11   | User      | 11       | user11@example.com  |
-      | user12   | User      | 12       | user12@example.com  |
-      | user21   | User      | 21       | user21@example.com  |
-      | user22   | User      | 22       | user22@example.com  |
+      | username | firstname | lastname | email                |
+      | manager0 | Manager   | Zero     | manager0@example.com |
+      | manager1 | Manager   | One      | manager1@example.com |
+      | user11   | User      | 11       | user11@example.com   |
+      | user12   | User      | 12       | user12@example.com   |
+      | user21   | User      | 21       | user21@example.com   |
+      | user22   | User      | 22       | user22@example.com   |
     And the following "categories" exist:
       | name      | category | idnumber |
       | Category1 | 0        | CAT1     |
@@ -33,40 +32,45 @@ Feature: Being able to view the certificates that have been issued
     And the following "roles" exist:
       | shortname             | name                        | archetype |
       | certificatemanager    | Certificate manager         |           |
-      | certificatemanagerall | Certificate manager for all |           |
       | certificateissuer     | Certificate issuer          |           |
-      | certificateissuerall  | Certificate issuer for all  |           |
       | certificateviewer     | Certificate viewer          |           |
-      | configviewer          | Config viewer               |           |
+    And the following "role assigns" exist:
+      | user     | role                 | contextlevel | reference |
+      | manager0 | certificatemanager   | System       |           |
     And the following "permission overrides" exist:
       | capability                           | permission | role                  | contextlevel | reference |
-      | tool/certificate:manage              | Allow      | certificatemanagerall | System       |           |
-      | moodle/category:viewcourselist       | Allow      | certificatemanagerall | System       |           |
-      | moodle/site:configview               | Allow      | certificatemanagerall | System       |           |
       | tool/certificate:manage              | Allow      | certificatemanager    | System       |           |
       | tool/certificate:issue               | Allow      | certificateissuer     | System       |           |
-      | tool/certificate:issue               | Allow      | certificateissuerall  | System       |           |
-      | moodle/category:viewcourselist       | Allow      | certificateissuerall  | System       |           |
-      | moodle/site:configview               | Allow      | certificateissuerall  | System       |           |
       | tool/certificate:viewallcertificates | Allow      | certificateviewer     | System       |           |
+      | moodle/site:configview               | Allow      | certificatemanager    | System       |           |
       | moodle/site:configview               | Allow      | certificateviewer     | System       |           |
-      | moodle/site:configview               | Allow      | configviewer          | System       |           |
 
   @javascript
-  Scenario: View the issued certificates as admin
-    When I log in as "admin"
+  Scenario: View the issued certificates as manager
+    And I log in as "manager0"
     When I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Certificates issued" action in the "Certificate 1" report row
     And I should see "User 11"
     And I should see "User 12"
+    And I should not see "User 21"
+    And I should not see "User 22"
 
   @javascript
-  Scenario: Revoke an issued certificate as admin
-    When I log in as "admin"
-    When I navigate to "Certificates > Manage certificate templates" in site administration
+  Scenario: Revoke an issued certificate not possible without permissions
+    When I log in as "manager0"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Certificates issued" action in the "Certificate 1" report row
-    And I should see "User 11"
-    And I should see "User 12"
+    And I open the action menu in "User 12" "table_row"
+    And I should not see "Revoke"
+
+  @javascript
+  Scenario: Revoke an issued certificate as manager
+    When the following "role assigns" exist:
+      | user     | role                 | contextlevel | reference |
+      | manager0 | certificateissuer    | System       |           |
+    And I log in as "manager0"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I press "Certificates issued" action in the "Certificate 1" report row
     And I press "Revoke" action in the "User 12" report row
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
@@ -102,11 +106,15 @@ Feature: Being able to view the certificates that have been issued
     And I log out
 
   @javascript
-  Scenario: View certificate of a removed user
-    And I log in as "admin"
-    And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I click on "Delete" "link" in the "User 11" "table_row"
-    And I press "Delete"
+  Scenario: View certificate as user with certificateviewer role
+    When the following "role assigns" exist:
+      | user     | role                 | contextlevel | reference |
+      | manager1 | certificateviewer    | System       |           |
+    And I log in as "manager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I press "Certificates issued" action in the "Certificate 1" report row
-    And I should see "User 11"
+    And I open the action menu in "User 12" "table_row"
+    # Make sure only viewing is permitted.
+    And I should not see "Revoke"
+    And I should not see "Regenerate issue file"
+    And I should see "View"

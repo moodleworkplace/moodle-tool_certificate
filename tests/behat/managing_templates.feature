@@ -184,8 +184,8 @@ Feature: Being able to manage site templates
     And I set the following fields to these values:
       | Course category | Category2 |
     And I click on "Duplicate" "button" in the ".modal.show .modal-footer" "css_element"
-    Then the following should exist in the "tool-certificate-templates" table:
-      | Name                 | Course category |
+    Then the following should exist in the "reportbuilder-table" table:
+      | Name                 | Category name   |
       | Certificate 1        | None            |
       | Certificate 1 (copy) | Category2       |
     And I log out
