@@ -38,7 +38,7 @@ Feature: Being able to manually issue a certificate to a user
   Scenario: Issue a certificate as issuer user, from the list of templates
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Issue certificates from this template" action in the "Certificate 0" report row
+    And I press "Issue certificates" action in the "Certificate 0" report row
     And I set the field "Select users to issue certificate to" to "User 11"
     And I press "Save"
     And I press "Certificates issued" action in the "Certificate 0" report row
@@ -60,14 +60,14 @@ Feature: Being able to manually issue a certificate to a user
     And I set the field "Select users to issue certificate to" to "User 11"
     And I click on "Save" "button" in the "Issue certificates" "dialogue"
     And the following should exist in the "reportbuilder-table" table:
-      | First name / Surname | Time created        |
+      | First name / Surname | Date issued         |
       | User 11              | ##today##%d %B %Y## |
     # Issue second certificate to another user.
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 12"
     And I click on "Save" "button" in the "Issue certificates" "dialogue"
     And the following should exist in the "reportbuilder-table" table:
-      | First name / Surname | Time created        |
+      | First name / Surname | Date issued         |
       | User 11              | ##today##%d %B %Y## |
       | User 12              | ##today##%d %B %Y## |
     And I log out
@@ -76,7 +76,7 @@ Feature: Being able to manually issue a certificate to a user
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # Issue a certificate for user11 with absolute expiry date.
-    And I press "Issue certificates from this template" action in the "Certificate 0" report row
+    And I press "Issue certificates" action in the "Certificate 0" report row
     And the field "expirydatetype" matches value "Never"
     And I set the following fields to these values:
       | Select users to issue certificate to  | User 11                 |
@@ -86,7 +86,7 @@ Feature: Being able to manually issue a certificate to a user
       | expirydateabsolute[year]              | ##tomorrow##%Y##        |
     And I press "Save"
     # Issue a certificate for user11 with relative expiry date.
-    And I press "Issue certificates from this template" action in the "Certificate 0" report row
+    And I press "Issue certificates" action in the "Certificate 0" report row
     And I set the following fields to these values:
       | Select users to issue certificate to  | User 12 |
       | Expiry date type                      | After   |

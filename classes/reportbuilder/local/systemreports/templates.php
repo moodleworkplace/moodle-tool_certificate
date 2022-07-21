@@ -210,7 +210,7 @@ class templates extends system_report {
                 'data-tid' => ':id',
             ],
             false,
-            new lang_string('issuenewcertificate', 'tool_certificate')
+            new lang_string('issuecertificates', 'tool_certificate')
         ))->add_callback(function() {
             return $this->lasttemplate->can_issue_to_anybody();
         }));

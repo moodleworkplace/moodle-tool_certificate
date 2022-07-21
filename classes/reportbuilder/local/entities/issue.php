@@ -112,7 +112,7 @@ class issue extends base {
         // Column certificate issue timecreated.
         $columns[] = (new column(
             'timecreated',
-            new lang_string('timecreated', 'tool_certificate'),
+            new lang_string('issueddate', 'tool_certificate'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())

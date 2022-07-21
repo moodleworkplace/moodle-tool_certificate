@@ -67,4 +67,4 @@ Feature: View links on admin tree
     And I log in as "manager"
     And I am on site homepage
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    Then I should not see "Issue certificates from this template"
+    Then I should not see "Issue certificates"

@@ -125,7 +125,7 @@ class issues extends system_report {
      * unique identifier
      */
     public function add_columns(): void {
-        // The user.
+        // User fullname.
         $certificateissuealias = $this->get_main_table_alias();
         $this->add_column_from_entity('user:fullnamewithpicturelink')
             ->add_field("{$certificateissuealias}.archived")
@@ -136,10 +136,12 @@ class issues extends system_report {
             'issue:status',
             'issue:expires',
             'issue:timecreated',
-            'issue:codewithlink',
         ];
-
         $this->add_columns_from_entities($columns);
+
+        // Code with a link.
+        $this->add_column_from_entity('issue:codewithlink')
+            ->set_title(new lang_string('code', 'tool_certificate'));
     }
 
     /**
