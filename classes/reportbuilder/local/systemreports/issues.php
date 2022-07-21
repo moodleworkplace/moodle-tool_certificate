@@ -115,7 +115,7 @@ class issues extends system_report {
      * @return bool
      */
     protected function can_view(): bool {
-        return $this->get_template()->can_view_issues();
+        return $this->get_template()->can_view_issues($this->get_context());
     }
 
     /**
@@ -189,7 +189,7 @@ class issues extends system_report {
             false,
             new lang_string('regenerateissuefile', 'tool_certificate')
         ))->add_callback(function() {
-            return $this->get_template()->can_issue($this->userid);
+            return $this->get_template()->can_issue($this->userid, $this->get_context());
         }));
 
         // Revoke.
@@ -203,7 +203,7 @@ class issues extends system_report {
             false,
             new lang_string('revoke', 'tool_certificate')
         ))->add_callback(function() {
-            return $this->get_template()->can_issue($this->userid);
+            return $this->get_template()->can_issue($this->userid, $this->get_context());
         }));
     }
 

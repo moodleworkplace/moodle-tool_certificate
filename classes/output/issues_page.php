@@ -19,6 +19,7 @@ namespace tool_certificate\output;
 use core_reportbuilder\system_report_factory;
 use renderer_base;
 use tool_certificate\reportbuilder\local\systemreports\issues;
+use tool_certificate\template;
 
 /**
  * Class tool_certificate\output\issues_page
@@ -50,7 +51,8 @@ class issues_page implements \templatable, \renderable {
      * @throws \coding_exception
      */
     public function export_for_template(renderer_base $output) {
-        $report = system_report_factory::create(issues::class, \context_system::instance(),
+        $context = template::instance($this->templateid)->get_context();
+        $report = system_report_factory::create(issues::class, $context,
             '', '', 0, ['templateid' => $this->templateid]);
 
         return ['content' => $report->output()];

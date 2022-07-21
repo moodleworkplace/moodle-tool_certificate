@@ -610,10 +610,13 @@ class template {
 
     /**
      * Can view issues for this template
+     *
+     * @param \context|null $issuecontext
      * @return bool
      */
-    public function can_view_issues() {
-        return permission::can_view_templates_in_context($this->get_context());
+    public function can_view_issues(\context $issuecontext = null) {
+        // The context is not always matching template context, e.g. when template is used in the course module.
+        return permission::can_view_templates_in_context($issuecontext ?? $this->get_context());
     }
 
     /**
