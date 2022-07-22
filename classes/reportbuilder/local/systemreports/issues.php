@@ -29,6 +29,7 @@ use tool_certificate\certificate;
 use tool_certificate\reportbuilder\local\entities\issue;
 use tool_certificate\template;
 use html_writer;
+use core_user\fields;
 
 /**
  * Certificate issues system report implementation
@@ -131,8 +132,15 @@ class issues extends system_report {
             ->add_field("{$certificateissuealias}.archived")
             ->add_callback([$this, 'apply_archived_label']);
 
+        // Add all identity field columns (Includes all user profile fields set as identity fields).
+        $userentity = $this->get_entity('user');
+        $identityfields = fields::for_identity($this->get_context(), true)->get_required_fields();
+        foreach ($identityfields as $identityfield) {
+            $column = $userentity->get_column(self::normalise_identity_fieldname($identityfield));
+            $this->add_column($column);
+        }
+
         $columns = [
-            'user:email',
             'issue:status',
             'issue:expires',
             'issue:timecreated',
@@ -151,9 +159,18 @@ class issues extends system_report {
      * unique identifier
      */
     protected function add_filters(): void {
+        // Add full name filter.
+        $this->add_filter_from_entity('user:fullname');
+
+        // Add identity fields filters.
+        $userentity = $this->get_entity('user');
+        $identityfields = fields::for_identity($this->get_context(), true)->get_required_fields();
+        foreach ($identityfields as $identityfield) {
+            $filter = $userentity->get_filter(self::normalise_identity_fieldname($identityfield));
+            $this->add_filter($filter);
+        }
+
         $filters = [
-            'user:fullname',
-            'user:email',
             'issue:status',
             'issue:expires',
             'issue:timecreated',
@@ -230,5 +247,19 @@ class issues extends system_report {
             $userfullname .= html_writer::span(get_string('archived', 'tool_certificate'), 'ml-1 badge badge-pill badge-secondary');
         }
         return $userfullname;
+    }
+
+    /**
+     * Adjusts identity field name to be used for user entity columns and filters selection.
+     *
+     * @param string $identityfieldname either field from the table 'user' or a shortname of a user profile field,
+     *     in which case it starts with 'profile_field_'
+     * @return string
+     */
+    private static function normalise_identity_fieldname(string $identityfieldname): string {
+        if (preg_match("/^profile_field_(?<shortname>.*)$/", $identityfieldname, $matches)) {
+            $identityfieldname = 'profilefield_' . $matches['shortname'];
+        }
+        return $identityfieldname;
     }
 }
