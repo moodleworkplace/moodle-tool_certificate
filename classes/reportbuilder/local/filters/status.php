@@ -28,7 +28,7 @@ use core_reportbuilder\local\filters\boolean_select;
  * Overrides the operator language strings.
  *
  * @package   tool_certificate
- * @copyright 2019 Moodle Pty Ltd <support@moodle.com>
+ * @copyright 2022 Moodle Pty Ltd <support@moodle.com>
  * @author    2022 Ruslan Kabalin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

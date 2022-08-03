@@ -189,7 +189,7 @@ class issues extends system_report {
         // View.
         $this->add_action((new action(
             new moodle_url('/admin/tool/certificate/view.php', ['code' => ':code']),
-            new pix_icon('i/search', get_string('view'), 'core'),
+            new pix_icon('i/search', ''),
             [
                 'target' => '_blank'
             ],
@@ -200,7 +200,7 @@ class issues extends system_report {
         // Regenerate file.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('a/refresh', get_string('regenerateissuefile', 'tool_certificate'), 'core'),
+            new pix_icon('a/refresh', ''),
             [
                 'data-action' => 'regenerate',
                 'data-id' => ':id',
@@ -214,7 +214,7 @@ class issues extends system_report {
         // Revoke.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('i/trash', get_string('revoke', 'tool_certificate'), 'core'),
+            new pix_icon('i/trash', ''),
             [
                 'data-action' => 'revoke',
                 'data-id' => ':id',

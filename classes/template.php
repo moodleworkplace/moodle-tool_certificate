@@ -446,7 +446,7 @@ class template {
      * @return string the name of the template
      */
     public function get_formatted_name() {
-        return format_string($this->get_name(), true, ['escape' => false]);
+        return $this->persistent->get_formatted_name();
     }
 
     /**
@@ -454,7 +454,7 @@ class template {
      *
      * @return inplace_editable
      */
-    public function get_editable_name() : inplace_editable {
+    public function get_editable_name(): inplace_editable {
         $editable = $this->can_manage();
         $displayname = $this->get_formatted_name();
         if ($editable) {
@@ -472,7 +472,7 @@ class template {
      *
      * @return \context the context
      */
-    public function get_context() {
+    public function get_context(): \context {
         return \context::instance_by_id($this->persistent->get('contextid'));
     }
 

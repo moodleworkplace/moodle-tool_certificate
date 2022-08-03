@@ -53,7 +53,7 @@ Feature: View links on admin tree
     And I log in as "manager"
     And I am on site homepage
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Issue certificates from this template" action in the "Certificate 1" report row
+    And I press "Issue certificates" action in the "Certificate 1" report row
     And I set the field "Select users to issue certificate to" to "User One"
     And I click on "Save" "button" in the "Issue certificates" "dialogue"
     And I press "Certificates issued" action in the "Certificate 1" report row

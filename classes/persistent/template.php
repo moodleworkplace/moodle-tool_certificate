@@ -64,7 +64,7 @@ class template extends persistent {
      * @return string the name of the template
      */
     public function get_formatted_name() {
-        return format_string($this->get('name'), true, ['escape' => false]);
+        return format_string($this->get('name'), true, ['escape' => false, 'context' => $this->get_context()]);
     }
 
     /**
@@ -81,7 +81,7 @@ class template extends persistent {
      *
      * @return \context the context
      */
-    public function get_context() {
+    public function get_context(): \context {
         return \context::instance_by_id($this->get('contextid'));
     }
 

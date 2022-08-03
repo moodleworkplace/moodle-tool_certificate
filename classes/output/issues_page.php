@@ -46,11 +46,9 @@ class issues_page implements \templatable, \renderable {
      * Implementation of exporter from templatable interface
      *
      * @param renderer_base $output
-     *
-     * @return array|\stdClass
-     * @throws \coding_exception
+     * @return array
      */
-    public function export_for_template(renderer_base $output) {
+    public function export_for_template(renderer_base $output): array {
         $context = template::instance($this->templateid)->get_context();
         $report = system_report_factory::create(issues::class, $context,
             '', '', 0, ['templateid' => $this->templateid]);

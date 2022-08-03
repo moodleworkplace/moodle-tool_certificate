@@ -154,7 +154,7 @@ class templates extends system_report {
         // Edit content.
         $this->add_action((new action(
             new moodle_url('/admin/tool/certificate/template.php', ['id' => ':id']),
-            new pix_icon('t/right', get_string('editcontent', 'tool_certificate'), 'core'),
+            new pix_icon('t/right', ''),
             [],
             false,
             new lang_string('editcontent', 'tool_certificate')
@@ -165,7 +165,7 @@ class templates extends system_report {
         // Edit details.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('i/settings', get_string('editdetails', 'tool_certificate'), 'core'),
+            new pix_icon('i/settings', ''),
             [
                 'data-action' => 'editdetails',
                 'data-id' => ':id',
@@ -180,7 +180,7 @@ class templates extends system_report {
         // Preview.
         $this->add_action((new action(
             new moodle_url('/admin/tool/certificate/view.php', ['templateid' => ':id', 'preview' => 1, 'code' => 'previewing']),
-            new pix_icon('i/search', get_string('preview'), 'core'),
+            new pix_icon('i/search', ''),
             [
                 'target' => '_blank'
             ],
@@ -193,7 +193,7 @@ class templates extends system_report {
         // View issues.
         $this->add_action((new action(
             new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => ':id']),
-            new pix_icon('a/view_list_active', get_string('certificatesissued', 'tool_certificate'), 'core'),
+            new pix_icon('a/view_list_active', ''),
             [],
             false,
             new lang_string('certificatesissued', 'tool_certificate')
@@ -204,7 +204,7 @@ class templates extends system_report {
         // Issue certificate.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('i/enrolusers', get_string('issuenewcertificate', 'tool_certificate'), 'core'),
+            new pix_icon('i/enrolusers', ''),
             [
                 'data-action' => 'issue',
                 'data-tid' => ':id',
@@ -218,7 +218,7 @@ class templates extends system_report {
         // Duplicate.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('e/manage_files', get_string('duplicate'), 'core'),
+            new pix_icon('e/manage_files', ''),
             [
                 'data-action' => 'duplicate',
                 'data-id' => ':id',
@@ -234,7 +234,7 @@ class templates extends system_report {
         // Delete.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('i/trash', get_string('delete'), 'core'),
+            new pix_icon('i/trash', ''),
             [
                 'data-action' => 'delete',
                 'data-id' => ':id',

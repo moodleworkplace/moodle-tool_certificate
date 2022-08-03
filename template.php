@@ -71,13 +71,11 @@ $PAGE->navbar->add($title, $pageurl);
 $PAGE->set_title($title);
 $PAGE->set_heading($heading, false);
 
-$output = $PAGE->get_renderer('core');
+// Edit button.
 $edit = new \tool_certificate\output\page_header_button(get_string('editdetails', 'tool_certificate'),
     ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
-$PAGE->set_button($edit->render($output) . $PAGE->button);
+$PAGE->set_button($OUTPUT->render($edit) . $PAGE->button);
 
 echo $OUTPUT->header();
-
-$data = $template->get_exporter()->export($OUTPUT);
-echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $data);
+echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $template->get_exporter()->export($OUTPUT));
 echo $OUTPUT->footer();

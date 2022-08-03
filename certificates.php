@@ -55,7 +55,7 @@ $PAGE->set_heading($heading);
 $outputpage = new \tool_certificate\output\issues_page($template->get_id());
 
 $data = $outputpage->export_for_template($PAGE->get_renderer('core'));
-$data += ['heading' => format_string($template->get_name())];
+$data += ['heading' => $template->get_formatted_name()];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
