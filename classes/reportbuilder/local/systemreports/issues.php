@@ -26,6 +26,7 @@ use moodle_url;
 use pix_icon;
 use stdClass;
 use tool_certificate\certificate;
+use tool_certificate\permission;
 use tool_certificate\reportbuilder\local\entities\issue;
 use tool_certificate\template;
 use html_writer;
@@ -90,12 +91,15 @@ class issues extends system_report {
         $this->add_base_condition_sql(certificate::get_users_subquery($useralias));
 
         // If this report is used in mod_coursecertificate, add course and group conditions.
-        if ($courseid = $this->get_parameter('courseid', 0, PARAM_INT)) {
+        if ($this->get_context()->contextlevel === CONTEXT_MODULE) {
+            $courseid = $this->get_context()->get_course_context()->instanceid;
             $this->add_base_condition_simple("{$entitymainalias}.courseid", $courseid);
 
+            $cm = get_coursemodule_from_id('coursecertificate', $this->get_context()->instanceid);
+            $groupmode = groups_get_activity_groupmode($cm);
             $groupid = $this->get_parameter('groupid', 0, PARAM_INT);
-            $groupmode = $this->get_parameter('groupmode', 0, PARAM_INT);
-            if (($groupmode != NOGROUPS) && $groupid) {
+            // Notice that permission to use certain groupid are validated in {@see self::can_view}.
+            if (($groupmode !== NOGROUPS) && $groupid) {
                 $groupjoin = groups_get_members_join([$groupid], "{$useralias}.id");
                 $this->add_join($groupjoin->joins, $groupjoin->params, false);
                 $this->add_base_condition_sql($groupjoin->wheres);
@@ -111,12 +115,20 @@ class issues extends system_report {
     }
 
     /**
-     * Validates access to view this report
+     * Validates access to view this report.
      *
      * @return bool
      */
     protected function can_view(): bool {
-        return $this->get_template()->can_view_issues($this->get_context());
+        $context = $this->get_context();
+        if ($context->contextlevel === CONTEXT_MODULE) {
+            // This permission is validated when issues report is used in the mod_coursecertificate.
+            $groupid = $this->get_parameter('groupid', 0, PARAM_INT);
+            $modulepermission = component_class_callback('mod_coursecertificate\permission', 'can_view_issues',
+                [$context, $groupid]) ?? true;
+            return $modulepermission && $this->get_template()->can_view_issues($context->get_course_context());
+        }
+        return $this->get_template()->can_view_issues($context);
     }
 
     /**
