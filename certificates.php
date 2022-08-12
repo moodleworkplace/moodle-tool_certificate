@@ -52,17 +52,10 @@ $PAGE->set_title("$SITE->shortname: " . $heading);
 $PAGE->navbar->add($heading);
 $PAGE->set_heading($heading);
 
-$table = new \tool_certificate\issues_list($template);
-$table->define_baseurl($pageurl);
+$outputpage = new \tool_certificate\output\issues_page($template->get_id());
 
-if ($table->is_downloading()) {
-    $table->download();
-    exit();
-}
-
-$renderer = $PAGE->get_renderer('tool_certificate');
-$tablecontents = $renderer->render_table($table);
-$data = ['content' => $tablecontents, 'heading' => format_string($template->get_name())];
+$data = $outputpage->export_for_template($PAGE->get_renderer('core'));
+$data += ['heading' => $template->get_formatted_name()];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],

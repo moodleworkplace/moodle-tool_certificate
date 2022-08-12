@@ -446,7 +446,7 @@ class template {
      * @return string the name of the template
      */
     public function get_formatted_name() {
-        return format_string($this->get_name(), true, ['escape' => false]);
+        return $this->persistent->get_formatted_name();
     }
 
     /**
@@ -454,7 +454,7 @@ class template {
      *
      * @return inplace_editable
      */
-    public function get_editable_name() : inplace_editable {
+    public function get_editable_name(): inplace_editable {
         $editable = $this->can_manage();
         $displayname = $this->get_formatted_name();
         if ($editable) {
@@ -472,7 +472,7 @@ class template {
      *
      * @return \context the context
      */
-    public function get_context() {
+    public function get_context(): \context {
         return \context::instance_by_id($this->persistent->get('contextid'));
     }
 
@@ -610,10 +610,13 @@ class template {
 
     /**
      * Can view issues for this template
+     *
+     * @param \context|null $issuecontext
      * @return bool
      */
-    public function can_view_issues() {
-        return permission::can_view_templates_in_context($this->get_context());
+    public function can_view_issues(\context $issuecontext = null) {
+        // The context is not always matching template context, e.g. when template is used in the course module.
+        return permission::can_view_templates_in_context($issuecontext ?? $this->get_context());
     }
 
     /**

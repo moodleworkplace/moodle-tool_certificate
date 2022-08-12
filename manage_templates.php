@@ -41,19 +41,11 @@ if (!\tool_certificate\permission::can_view_admin_tree()) {
 
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
+$PAGE->set_url($pageurl);
 
-$table = new \tool_certificate\certificates_list();
-$table->define_baseurl($pageurl);
+$outputpage = new \tool_certificate\output\templates_page();
 
-if ($table->is_downloading()) {
-    $table->download();
-    exit();
-}
-
-$renderer = $PAGE->get_renderer('tool_certificate');
-$tablecontents = $renderer->render_table($table);
-
-$data = ['content' => $tablecontents];
+$data = $outputpage->export_for_template($PAGE->get_renderer('core'));
 if (\tool_certificate\permission::can_create()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('createtemplate', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-contextid', 'value' => $context->id],

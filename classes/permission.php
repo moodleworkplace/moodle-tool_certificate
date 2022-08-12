@@ -197,9 +197,7 @@ class permission {
     }
 
     /**
-     * If current user can view the section on admin tree
-     *
-     * Note, for course context this function does not check access to the course (enrolled/can view)!
+     * If current user can view the templates in the given context
      *
      * @param \context $context
      * @return bool

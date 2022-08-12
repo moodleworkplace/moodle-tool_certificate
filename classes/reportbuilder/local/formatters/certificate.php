@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace tool_certificate\reportbuilder\local\formatters;
 
+use core_reportbuilder\local\helpers\format;
 use core_course_category;
 use html_writer;
 use stdClass;
@@ -96,5 +97,39 @@ class certificate {
     public static function certificate_issued_status(?string $value, stdClass $row): string {
         $status = $row->expires && $row->expires <= time() ? 'expired' : 'valid';
         return get_string($status, 'tool_certificate');
+    }
+
+    /**
+     * Format the expires column.
+     *
+     * @param int|null $value
+     * @param stdClass $row
+     * @return string
+     */
+    public static function certificate_issued_expires(?int $value, stdClass $row): string {
+        if ($value > 0) {
+            return format::userdate($value, $row);
+        }
+        return get_string('never', 'tool_certificate');
+    }
+
+    /**
+     * Appends shared badge if needed
+     *
+     * Note that this method needs 'fullname' and 'shared' to be passed in order to work.
+     *
+     * @param string $fullname
+     * @param stdClass $row
+     * @return string
+     */
+    public static function append_shared_badge(string $fullname, stdClass $row): string {
+        $badge = '';
+
+        if ($row->shared) {
+            $badge = html_writer::tag('span', get_string('shared', 'tool_certificate'),
+                ['class' => 'badge badge-secondary ml-1']);
+        }
+
+        return $fullname . ' ' . $badge;
     }
 }
