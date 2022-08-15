@@ -31,7 +31,7 @@ namespace tool_certificate\output\email;
  * @copyright  2017 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class renderer_textemail extends \tool_certificate\output\renderer {
+class renderer_textemail extends \plugin_renderer_base {
 
     /**
      * The template name for this renderer.
