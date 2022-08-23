@@ -43,7 +43,7 @@ if ($template->get_context()->contextlevel == CONTEXT_COURSE) {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'), $manageurl);
     $PAGE->set_url($pageurl);
 } else {
-    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl, ['nosearch' => true]);
 }
 
 $template->require_can_manage();
@@ -71,11 +71,19 @@ $PAGE->navbar->add($title, $pageurl);
 $PAGE->set_title($title);
 $PAGE->set_heading($heading, false);
 
+// Secondary navigation
+$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template->get_id());
+$secondarynav->initialise();
+$PAGE->set_secondarynav($secondarynav);
+
 // Edit button.
 $edit = new \tool_certificate\output\page_header_button(get_string('editdetails', 'tool_certificate'),
     ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
 $PAGE->set_button($OUTPUT->render($edit) . $PAGE->button);
 
+$data = $template->get_exporter()->export($OUTPUT);
+$data->heading = get_string('template', 'tool_certificate');
+
 echo $OUTPUT->header();
-echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $template->get_exporter()->export($OUTPUT));
+echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $data);
 echo $OUTPUT->footer();

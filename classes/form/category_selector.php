@@ -55,7 +55,10 @@ class category_selector extends modal_form {
      * Form definition.
      */
     public function definition() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
+        $mform->setDisableShortforms();
+        // Add empty header for consistency.
+        $mform->addElement('header', 'hdr', '');
 
         $mform->addElement('static', 'confirmmessage', '',
             get_string('duplicatetemplateconfirm', 'tool_certificate',

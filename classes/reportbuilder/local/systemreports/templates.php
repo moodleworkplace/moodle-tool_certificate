@@ -117,6 +117,7 @@ class templates extends system_report {
         // Add inplaceeditable, visible icon and shared badge (if needed) to certificate name column.
         if ($column = $this->get_column('template:name')) {
             $column
+                ->set_title(new lang_string('name', 'tool_certificate'))
                 ->set_callback([$this, 'nameeditable'])
                 ->add_field("{$entitymainalias}.shared")
                 ->add_callback([certificateformatter::class, 'append_shared_badge']);
@@ -125,6 +126,7 @@ class templates extends system_report {
         // Add link to category name column.
         if ($column = $this->get_column('course_category:name')) {
             $column
+                ->set_title(new lang_string('coursecategory', 'tool_certificate'))
                 ->set_callback([certificateformatter::class, 'course_category_name'])
                 ->add_callback([$this, 'coursecategoryname']);
         }
@@ -151,32 +153,6 @@ class templates extends system_report {
      * Note the use of ":id" placeholder which will be substituted according to actual values in the row
      */
     protected function add_actions(): void {
-        // Edit content.
-        $this->add_action((new action(
-            new moodle_url('/admin/tool/certificate/template.php', ['id' => ':id']),
-            new pix_icon('t/right', ''),
-            [],
-            false,
-            new lang_string('editcontent', 'tool_certificate')
-        ))->add_callback(function() {
-            return $this->lasttemplate->can_manage();
-        }));
-
-        // Edit details.
-        $this->add_action((new action(
-            new moodle_url('#'),
-            new pix_icon('i/settings', ''),
-            [
-                'data-action' => 'editdetails',
-                'data-id' => ':id',
-                'data-name' => ':name'
-            ],
-            false,
-            new lang_string('editdetails', 'tool_certificate')
-        ))->add_callback(function() {
-            return $this->lasttemplate->can_manage();
-        }));
-
         // Preview.
         $this->add_action((new action(
             new moodle_url('/admin/tool/certificate/view.php', ['templateid' => ':id', 'preview' => 1, 'code' => 'previewing']),
@@ -188,17 +164,6 @@ class templates extends system_report {
             new lang_string('preview')
         ))->add_callback(function() {
             return $this->lasttemplate->can_manage();
-        }));
-
-        // View issues.
-        $this->add_action((new action(
-            new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => ':id']),
-            new pix_icon('a/view_list_active', ''),
-            [],
-            false,
-            new lang_string('certificatesissued', 'tool_certificate')
-        ))->add_callback(function() {
-            return $this->lasttemplate->can_view_issues();
         }));
 
         // Issue certificate.

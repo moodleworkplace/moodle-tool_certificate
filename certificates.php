@@ -46,16 +46,25 @@ if (!$template->can_view_issues()) {
     throw new moodle_exception('issueormanagenotallowed', 'tool_certificate');
 }
 
-$heading = get_string('certificates', 'tool_certificate');
+$heading = $title = $template->get_formatted_name();
+// If 'formatstringstriptags' config is enabled, we can't show a styled badge, so we avoid showing 'shared' string.
+if ($template->get_shared()) {
+    $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
+        ['class' => 'badge badge-secondary ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
+}
+$PAGE->navbar->add($title, $pageurl);
+$PAGE->set_title($title);
+$PAGE->set_heading($heading, false);
 
-$PAGE->set_title("$SITE->shortname: " . $heading);
-$PAGE->navbar->add($heading);
-$PAGE->set_heading($heading);
+// Secondary navigation
+$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template->get_id());
+$secondarynav->initialise();
+$PAGE->set_secondarynav($secondarynav);
 
 $outputpage = new \tool_certificate\output\issues_page($template->get_id());
 
 $data = $outputpage->export_for_template($PAGE->get_renderer('core'));
-$data += ['heading' => $template->get_formatted_name()];
+$data += ['heading' => get_string('template', 'tool_certificate')];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
