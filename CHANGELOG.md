@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.11.9 (2022031630)
+### Changed
+- Add lock when generating certificate
+
 ## 3.11.8 (2022031620)
 ### Added
 - Course certificates may be archived when a course is reset allowing to receive more than one
