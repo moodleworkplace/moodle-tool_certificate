@@ -1,8 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## 4.0.3 (2022082400)
 ### Fixed
 - Fixed bug with the reportbuilder reports showing 'source unavailable' error to some users.
+
+### Changed
+- Add lock when generating certificate
+- Convert certificates to use core reportbuilder system reports
 
 ## 4.0.2 (2022071200)
 ### Added
