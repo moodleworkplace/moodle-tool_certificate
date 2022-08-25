@@ -28,6 +28,7 @@ import ModalForm from 'tool_certificate/modal_form';
 import {add as toastAdd} from 'core/toast';
 import {refreshTableContent, getFilters, setFilters} from 'core_table/dynamic';
 import * as DynamicTableSelectors from 'core_table/local/dynamic/selectors';
+import Pending from 'core/pending';
 
 const SELECTORS = {
     ADDISSUE: "[data-element='addbutton']",
@@ -68,6 +69,7 @@ const addIssue = function(element) {
  * @param {Element} element
  */
 const revokeIssue = function(element) {
+    let pendingPromise;
     const triggerElement = element.closest('.dropdown').querySelector('.dropdown-toggle');
     getStrings([
         {key: 'confirm', component: 'moodle'},
@@ -76,11 +78,13 @@ const revokeIssue = function(element) {
     ]).then(([title, question, saveLabel]) => {
         return Notification.saveCancelPromise(title, question, saveLabel, {triggerElement});
     }).then(() => {
+        pendingPromise = new Pending('tool_certificate/revokeIssue');
         return Ajax.call([
             {methodname: 'tool_certificate_revoke_issue', args: {id: element.dataset.id}}
-        ]);
+        ])[0];
     }).then(() => {
-        return reloadReport();
+        reloadReport();
+        return pendingPromise.resolve();
     }).catch((e) => {
         if (e.type === 'modal-save-cancel:cancel') {
             // Clicked cancel.
