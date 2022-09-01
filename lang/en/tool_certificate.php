@@ -78,6 +78,7 @@ $string['demotmplissueddate'] = 'Issued date';
 $string['demotmplqrcode'] = 'QR code';
 $string['demotmplsignature'] = 'Signature';
 $string['demotmplusername'] = 'User name';
+$string['details'] = 'Details';
 $string['duplicate'] = 'Duplicate';
 $string['duplicatetemplateconfirm'] = 'Are you sure you want to duplicate the template \'{$a}\'?';
 $string['editcertificate'] = 'Edit certificate template \'{$a}\'';

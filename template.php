@@ -76,11 +76,6 @@ $secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $tem
 $secondarynav->initialise();
 $PAGE->set_secondarynav($secondarynav);
 
-// Edit button.
-$edit = new \tool_certificate\output\page_header_button(get_string('editdetails', 'tool_certificate'),
-    ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
-$PAGE->set_button($OUTPUT->render($edit) . $PAGE->button);
-
 $data = $template->get_exporter()->export($OUTPUT);
 $data->heading = get_string('template', 'tool_certificate');
 

@@ -22,23 +22,6 @@
  */
 define(['jquery', 'jqueryui', 'tool_certificate/modal_form', 'core/notification', 'core/str', 'core/ajax', 'core/sortable_list'],
 function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
-    var editReportDetailsHandler = function(e) {
-        e.preventDefault();
-        var el = $(e.currentTarget),
-            id = el.attr('data-id'),
-            name = el.attr('data-name');
-
-        var modal = new ModalForm({
-            formClass: 'tool_certificate\\form\\details',
-            args: {id: id},
-            modalConfig: {title: Str.get_string('editcertificate', 'tool_certificate', name)},
-            saveButtonText: Str.get_string('save'),
-            triggerElement: el,
-        });
-        modal.onSubmitSuccess = function() {
-            window.location.reload();
-        };
-    };
 
     var deleteElement = function(e) {
         e.preventDefault();
@@ -247,7 +230,6 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
     return {
         init: function() {
             // Add button is not inside a tab, so we can't use Tab.addButtonOnClick .
-            $('[data-action="editdetails"]').on('click', editReportDetailsHandler);
             $('[data-action="deleteelement"]').on('click', deleteElement);
             $('[data-action="editelement"]').on('click', editElement);
             $('[data-action="addelement"]').on('click', addElement);
