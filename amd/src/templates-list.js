@@ -29,7 +29,7 @@ function($, ModalForm, CoreModalForm, Notification, Str, Ajax, {add: addToast}) 
      * @param {jQuery} triggerElement
      * @param {String} title
      * @param {Object} args
-     * @return {ModalForm}
+     * @return {CoreModalForm}
      */
     var displayModal = function(triggerElement, title, args) {
         const modal = new CoreModalForm({

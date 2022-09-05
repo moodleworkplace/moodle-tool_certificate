@@ -17,6 +17,7 @@
 namespace tool_certificate\local\views;
 
 use core\navigation\views\secondary as core_secondary;
+use tool_certificate\template;
 
 /**
  * Class tool_certificate\local\views\template_secondary
@@ -26,19 +27,19 @@ use core\navigation\views\secondary as core_secondary;
  * @author    2022 Ruslan Kabalin
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class template_secondary extends core_secondary {
 
-    /** @var int */
-    protected $templateid = null;
+    /** @var template */
+    protected $template;
 
     /**
      * Navigation constructor.
+     *
      * @param \moodle_page $page
-     * @param int $templateid
+     * @param template $template
      */
-    public function __construct(\moodle_page $page, int $templateid) {
-        $this->templateid = $templateid;
+    public function __construct(\moodle_page $page, template $template) {
+        $this->template = $template;
         parent::__construct($page);
     }
 
@@ -46,14 +47,18 @@ class template_secondary extends core_secondary {
      * Initialise the view based navigation based on the current context.
      */
     public function initialise(): void {
-        $this->add(get_string('template', 'tool_certificate'),
-            new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->templateid]),
-            null, null, 'template');
-        $this->add(get_string('details', 'tool_certificate'),
-            new \moodle_url('/admin/tool/certificate/template_details.php', ['id' => $this->templateid]),
-            null, null, 'details');
-        $this->add(get_string('issuedcertificates', 'tool_certificate'),
-            new \moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $this->templateid]),
-            null, null, 'issuedcertificates');
+        if ($this->template->can_manage()) {
+            $this->add(get_string('template', 'tool_certificate'),
+                new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->template->get_id()]),
+                null, null, 'template');
+            $this->add(get_string('details', 'tool_certificate'),
+                new \moodle_url('/admin/tool/certificate/template_details.php', ['id' => $this->template->get_id()]),
+                null, null, 'details');
+        }
+        if ($this->template->can_view_issues()) {
+            $this->add(get_string('issuedcertificates', 'tool_certificate'),
+                new \moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $this->template->get_id()]),
+                null, null, 'issuedcertificates');
+        }
     }
 }

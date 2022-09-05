@@ -71,12 +71,12 @@ $PAGE->navbar->add($title, $pageurl);
 $PAGE->set_title($title);
 $PAGE->set_heading($heading, false);
 
-// Secondary navigation
-$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template->get_id());
+// Secondary navigation.
+$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template);
 $secondarynav->initialise();
 $PAGE->set_secondarynav($secondarynav);
 
-$data = $template->get_exporter()->export($OUTPUT);
+$data = $template->get_exporter()->export($PAGE->get_renderer('core'));
 $data->heading = get_string('template', 'tool_certificate');
 
 echo $OUTPUT->header();

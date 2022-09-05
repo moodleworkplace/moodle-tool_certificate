@@ -230,9 +230,8 @@ class templates extends system_report {
         global $PAGE;
         $template = $this->lasttemplate;
 
-        $canedit = $template->can_manage();
         $name = $template->get_formatted_name();
-        if ($canedit) {
+        if ($template->can_manage()) {
             $name = html_writer::link($template->edit_url(), $name);
 
             $value = $template->get('name');
@@ -240,9 +239,11 @@ class templates extends system_report {
             $editlabel = get_string('newvaluefor', 'form', $template->get_formatted_name());
 
             $inlineeditable = new inplace_editable('tool_certificate', 'templatename',
-                $template->get('id'), $canedit, $name, $value, $edithint, $editlabel);
+                $template->get('id'), true, $name, $value, $edithint, $editlabel);
 
             $name = $inlineeditable->render($PAGE->get_renderer('core'));
+        } else if ($template->can_view_issues()) {
+            $name = html_writer::link($template->view_issues_url(), $name);
         }
 
         return $name;

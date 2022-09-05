@@ -16,7 +16,7 @@ Feature: Being able to manage elements in a certificate template
       | Course full name  | Other fields  | text | coursefullname  | {"visible":true,"previewvalue":"Course full name"} |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Edit content" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
 
   @_file_upload
   Scenario: Add and edit elements in a certificate template
@@ -213,7 +213,7 @@ Feature: Being able to manage elements in a certificate template
     And I should not see "User field"
     And I should see "User full name"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Edit content" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
     And I should not see "User field"
     And I should see "User full name"
     And I log out
@@ -233,7 +233,7 @@ Feature: Being able to manage elements in a certificate template
     And "User field" "list_item" should appear before "Date" "list_item"
     Then "Date" "list_item" should appear before "Code" "list_item"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Edit content" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
     And "User field" "list_item" should appear before "Date" "list_item"
     Then "Date" "list_item" should appear before "Code" "list_item"
     And I log out

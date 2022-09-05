@@ -33,7 +33,7 @@ $template = \tool_certificate\template::instance($templateid);
 if ($coursecontext = $template->get_context()->get_course_context(false)) {
     require_login($coursecontext->instanceid);
 } else {
-    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl, ['nosearch' => true]);
 }
 
 if (!$template->can_view_issues()) {
@@ -50,8 +50,8 @@ $PAGE->navbar->add($title, $pageurl);
 $PAGE->set_title($title);
 $PAGE->set_heading($heading, false);
 
-// Secondary navigation
-$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template->get_id());
+// Secondary navigation.
+$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template);
 $secondarynav->initialise();
 $PAGE->set_secondarynav($secondarynav);
 
