@@ -84,7 +84,7 @@ class details extends dynamic_form {
         $mform->addRule('name', null, 'required');
 
         if ($categoryoptions = $this->get_category_options()) {
-            $mform->addElement('select', 'categoryid', get_string('coursecategory', ''), $categoryoptions);
+            $mform->addElement('select', 'categoryid', get_string('coursecategory'), $categoryoptions);
             $mform->setType('categoryid', PARAM_INT);
         } else {
             $mform->addElement('hidden', 'contextid');

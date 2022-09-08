@@ -61,10 +61,9 @@ if ($action && $pageid) {
 }
 
 $heading = $title = $template->get_formatted_name();
-// If 'formatstringstriptags' config is enabled, we can't show a styled badge, so we avoid showing 'shared' string.
 if ($template->get_shared()) {
     $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
-        ['class' => 'badge badge-secondary ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
+        ['class' => 'badge badge-pill badge-secondary font-small ml-2 align-middle']);
 }
 $PAGE->navbar->add($title, $pageurl);
 

@@ -51,7 +51,7 @@ class template_secondary extends core_secondary {
             $this->add(get_string('template', 'tool_certificate'),
                 new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->template->get_id()]),
                 null, null, 'template');
-            $this->add(get_string('details', 'tool_certificate'),
+            $this->add(get_string('details'),
                 new \moodle_url('/admin/tool/certificate/template_details.php', ['id' => $this->template->get_id()]),
                 null, null, 'details');
         }

@@ -57,7 +57,6 @@ class category_selector extends modal_form {
     public function definition() {
         $mform = $this->_form;
         $mform->setDisableShortforms();
-        // Add empty header for consistency.
         $mform->addElement('header', 'hdr', '');
 
         $mform->addElement('static', 'confirmmessage', '',
@@ -65,7 +64,7 @@ class category_selector extends modal_form {
                 $this->get_template()->get_formatted_name()));
 
         if ($categoryoptions = $this->get_category_options()) {
-            $mform->addElement('select', 'categoryid', get_string('coursecategory', ''), $categoryoptions);
+            $mform->addElement('select', 'categoryid', get_string('coursecategory'), $categoryoptions);
             $mform->setType('categoryid', PARAM_INT);
         }
 

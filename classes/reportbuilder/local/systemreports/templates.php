@@ -126,7 +126,7 @@ class templates extends system_report {
         // Add link to category name column.
         if ($column = $this->get_column('course_category:name')) {
             $column
-                ->set_title(new lang_string('coursecategory', 'tool_certificate'))
+                ->set_title(new lang_string('coursecategory'))
                 ->set_callback([certificateformatter::class, 'course_category_name'])
                 ->add_callback([$this, 'coursecategoryname']);
         }
