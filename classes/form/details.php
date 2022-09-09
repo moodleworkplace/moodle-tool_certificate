@@ -26,7 +26,7 @@ namespace tool_certificate\form;
 
 use tool_certificate\permission;
 use tool_certificate\template;
-use tool_certificate\modal_form;
+use core_form\dynamic_form;
 
 /**
  * Class details
@@ -35,7 +35,7 @@ use tool_certificate\modal_form;
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class details extends modal_form {
+class details extends dynamic_form {
 
     /** @var template */
     protected $template;
@@ -46,10 +46,10 @@ class details extends modal_form {
      */
     protected function get_template() : template {
         $id = $this->optional_param('id', 0, PARAM_INT);
-        $contextid = $this->optional_param('contextid', \context_system::instance()->id, PARAM_INT);
         if ($this->template === null) {
             $obj = null;
             if (!$id) {
+                $contextid = $this->optional_param('contextid', \context_system::instance()->id, PARAM_INT);
                 $obj = (object)['contextid' => $contextid];
             }
             $this->template = template::instance($id, $obj);
@@ -58,11 +58,23 @@ class details extends modal_form {
     }
 
     /**
+     * Returns context where this form is used
+     *
+     * @return \context
+     */
+    public function get_context_for_dynamic_submission(): \context {
+        $contextid = $this->optional_param('contextid', \context_system::instance()->id, PARAM_INT);
+        return \context::instance_by_id($contextid);
+    }
+
+    /**
      * Form definition
      */
     public function definition() {
-
-        $mform =& $this->_form;
+        $mform = $this->_form;
+        $mform->setDisableShortforms();
+        // Add empty header for consistency.
+        $mform->addElement('header', 'hdr', '');
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -72,7 +84,7 @@ class details extends modal_form {
         $mform->addRule('name', null, 'required');
 
         if ($categoryoptions = $this->get_category_options()) {
-            $mform->addElement('select', 'categoryid', get_string('coursecategory', ''), $categoryoptions);
+            $mform->addElement('select', 'categoryid', get_string('coursecategory'), $categoryoptions);
             $mform->setType('categoryid', PARAM_INT);
         } else {
             $mform->addElement('hidden', 'contextid');
@@ -84,6 +96,9 @@ class details extends modal_form {
 
         if (!$this->get_template()->get_id()) {
             page::add_page_elements($mform);
+        } else {
+            // Add save button on details page.
+            $this->add_action_buttons(false);
         }
     }
 
@@ -124,12 +139,9 @@ class details extends modal_form {
     }
 
     /**
-     * Check if current user has access to this form, otherwise throw exception
-     *
-     * Sometimes permission check may depend on the action and/or id of the entity.
-     * If necessary, form data is available in $this->_ajaxformdata
+     * Check if current user has access to this form.
      */
-    public function require_access() {
+    public function check_access_for_dynamic_submission(): void {
         if ($this->get_template()->get_id()) {
             $this->get_template()->require_can_manage();
         } else {
@@ -140,14 +152,12 @@ class details extends modal_form {
     /**
      * Process the form submission
      *
-     * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
-     *
-     * @param \stdClass $data
      * @return mixed
      */
-    public function process(\stdClass $data) {
+    public function process_dynamic_submission() {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
+        $data = $this->get_data();
 
         if (isset($data->categoryid)) {
             $data->contextid = get_category_or_system_context($data->categoryid)->id;
@@ -164,16 +174,13 @@ class details extends modal_form {
             $this->template->save($data);
         }
         $url = new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->template->get_id()]);
-        return $url->out(false);
+        return ['id' => $this->template->get_id(), 'url' => $url->out(false)];
     }
 
     /**
-     * Load in existing data as form defaults
-     *
-     * Can be overridden to retrieve existing values from db by entity id and also
-     * to preprocess editor and filemanager elements
+     * Load in existing data as form defaults.
      */
-    public function set_data_for_modal() {
+    public function set_data_for_dynamic_submission(): void {
         $template = $this->get_template();
         if ($template->get_id()) {
             $this->set_data([
@@ -187,5 +194,16 @@ class details extends modal_form {
             $data->contextid = $this->optional_param('contextid', null, PARAM_INT);
             $this->set_data($data);
         }
+    }
+
+    /**
+     * Returns url to set in $PAGE->set_url() when form is being rendered or submitted via AJAX
+     *
+     * @return \moodle_url
+     */
+    protected function get_page_url_for_dynamic_submission(): \moodle_url {
+        return new \moodle_url('/admin/tool/certificate/template_details.php', [
+            'id' => $this->optional_param('id', 0, PARAM_INT),
+        ]);
     }
 }

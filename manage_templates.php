@@ -32,13 +32,14 @@ $perpage = optional_param('perpage', \tool_certificate\certificate::TEMPLATES_PE
 $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php', ['page' => $page, 'perpage' => $perpage]);
 
 $title = get_string('managetemplates', 'tool_certificate');
-admin_externalpage_setup('tool_certificate/managetemplates');
+admin_externalpage_setup('tool_certificate/managetemplates', '', null, '', ['nosearch' => true]);
 $context = context_system::instance();
 
 if (!\tool_certificate\permission::can_view_admin_tree()) {
     throw new moodle_exception('managenotallowed', 'tool_certificate');
 }
 
+$PAGE->set_secondary_navigation(false);
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_url($pageurl);

@@ -55,14 +55,16 @@ class category_selector extends modal_form {
      * Form definition.
      */
     public function definition() {
-        $mform =& $this->_form;
+        $mform = $this->_form;
+        $mform->setDisableShortforms();
+        $mform->addElement('header', 'hdr', '');
 
         $mform->addElement('static', 'confirmmessage', '',
             get_string('duplicatetemplateconfirm', 'tool_certificate',
                 $this->get_template()->get_formatted_name()));
 
         if ($categoryoptions = $this->get_category_options()) {
-            $mform->addElement('select', 'categoryid', get_string('coursecategory', ''), $categoryoptions);
+            $mform->addElement('select', 'categoryid', get_string('coursecategory'), $categoryoptions);
             $mform->setType('categoryid', PARAM_INT);
         }
 

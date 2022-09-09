@@ -43,7 +43,7 @@ if ($template->get_context()->contextlevel == CONTEXT_COURSE) {
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'), $manageurl);
     $PAGE->set_url($pageurl);
 } else {
-    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl);
+    admin_externalpage_setup('tool_certificate/managetemplates', '', null, $pageurl, ['nosearch' => true]);
 }
 
 $template->require_can_manage();
@@ -61,21 +61,23 @@ if ($action && $pageid) {
 }
 
 $heading = $title = $template->get_formatted_name();
-// If 'formatstringstriptags' config is enabled, we can't show a styled badge, so we avoid showing 'shared' string.
 if ($template->get_shared()) {
     $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
-        ['class' => 'badge badge-secondary ml-2', 'style' => 'font-size: 40%; vertical-align: middle;']);
+        ['class' => 'badge badge-pill badge-secondary font-small ml-2 align-middle']);
 }
 $PAGE->navbar->add($title, $pageurl);
 
 $PAGE->set_title($title);
 $PAGE->set_heading($heading, false);
 
-// Edit button.
-$edit = new \tool_certificate\output\page_header_button(get_string('editdetails', 'tool_certificate'),
-    ['data-action' => 'editdetails', 'data-id' => $template->get_id(), 'data-name' => $template->get_formatted_name()]);
-$PAGE->set_button($OUTPUT->render($edit) . $PAGE->button);
+// Secondary navigation.
+$secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $template);
+$secondarynav->initialise();
+$PAGE->set_secondarynav($secondarynav);
+
+$data = $template->get_exporter()->export($PAGE->get_renderer('core'));
+$data->heading = get_string('template', 'tool_certificate');
 
 echo $OUTPUT->header();
-echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $template->get_exporter()->export($OUTPUT));
+echo $OUTPUT->render_from_template('tool_certificate/edit_layout', $data);
 echo $OUTPUT->footer();

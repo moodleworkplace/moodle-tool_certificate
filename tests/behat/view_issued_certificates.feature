@@ -49,7 +49,8 @@ Feature: Being able to view the certificates that have been issued
   Scenario: View the issued certificates as manager
     And I log in as "manager0"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I should see "User 11"
     And I should see "User 12"
     And I should not see "User 21"
@@ -59,7 +60,8 @@ Feature: Being able to view the certificates that have been issued
   Scenario: Revoke an issued certificate not possible without permissions
     When I log in as "manager0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I open the action menu in "User 12" "table_row"
     And I should not see "Revoke"
 
@@ -70,7 +72,8 @@ Feature: Being able to view the certificates that have been issued
       | manager0 | certificateissuer    | System       |           |
     And I log in as "manager0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I press "Revoke" action in the "User 12" report row
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
@@ -112,7 +115,8 @@ Feature: Being able to view the certificates that have been issued
       | manager1 | certificateviewer    | System       |           |
     And I log in as "manager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I open the action menu in "User 12" "table_row"
     # Make sure only viewing is permitted.
     And I should not see "Revoke"

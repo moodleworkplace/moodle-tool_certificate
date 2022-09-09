@@ -77,6 +77,15 @@ class template extends persistent {
     }
 
     /**
+     * The URL to view certificate issues
+     *
+     * @return \moodle_url
+     */
+    public function view_issues_url(): \moodle_url {
+        return new \moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $this->get('id')]);
+    }
+
+    /**
      * Returns the context id.
      *
      * @return \context the context

@@ -10,7 +10,7 @@ Feature: Being able to manage pages in a certificate template
       | Certificate 1 | 1 |
     And I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Edit content" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
 
   Scenario: Adding a page to a certificate template
     And I wait "1" seconds

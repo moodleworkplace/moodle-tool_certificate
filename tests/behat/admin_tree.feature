@@ -56,7 +56,9 @@ Feature: View links on admin tree
     And I press "Issue certificates" action in the "Certificate 1" report row
     And I set the field "Select users to issue certificate to" to "User One"
     And I click on "Save" "button" in the "Issue certificates" "dialogue"
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I wait until ".toast-message" "css_element" does not exist
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I should see "User One"
     And I log out
 

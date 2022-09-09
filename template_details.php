@@ -15,25 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage issued certificates for a given templateid.
+ * Edit template details.
  *
  * @package    tool_certificate
- * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
+ * @copyright  2022 Ruslan Kabalin
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$download = optional_param('download', null, PARAM_ALPHA);
-$templateid = required_param('templateid', PARAM_INT);
+$templateid = required_param('id', PARAM_INT);
 
-$confirm = optional_param('confirm', 0, PARAM_INT);
-
-$page = optional_param('page', 0, PARAM_INT);
-$perpage = optional_param('perpage', \tool_certificate\certificate::ISSUES_PER_PAGE, PARAM_INT);
-
-$pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
+$pageurl = $url = new moodle_url('/admin/tool/certificate/template_details.php', ['id' => $templateid]);
 $PAGE->set_url($pageurl);
 $template = \tool_certificate\template::instance($templateid);
 if ($coursecontext = $template->get_context()->get_course_context(false)) {
@@ -60,16 +54,15 @@ $secondarynav = new \tool_certificate\local\views\template_secondary($PAGE, $tem
 $secondarynav->initialise();
 $PAGE->set_secondarynav($secondarynav);
 
-$outputpage = new \tool_certificate\output\issues_page($template->get_id());
+$form = new \tool_certificate\form\details(null, null, 'post', '', [], true, ['id' => $template->get_id()]);
+$form->set_data_for_dynamic_submission();
 
-$data = $outputpage->export_for_template($PAGE->get_renderer('core'));
-$data += ['heading' => get_string('template', 'tool_certificate')];
-if ($template->can_issue_to_anybody()) {
-    $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
-        'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
-        'addbuttonicon' => true];
-}
-$PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
+$data = [
+    'content' => html_writer::div($form->render(), '', ['id' => 'template-details']),
+    'heading' => get_string('details'),
+];
+
+$PAGE->requires->js_call_amd('tool_certificate/template-details', 'init');
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_certificate/content_with_heading', $data);

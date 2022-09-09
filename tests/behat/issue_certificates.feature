@@ -41,7 +41,9 @@ Feature: Being able to manually issue a certificate to a user
     And I press "Issue certificates" action in the "Certificate 0" report row
     And I set the field "Select users to issue certificate to" to "User 11"
     And I press "Save"
-    And I press "Certificates issued" action in the "Certificate 0" report row
+    And I wait until ".toast-message" "css_element" does not exist
+    And I follow "Certificate 0"
+    And I navigate to "Issued certificates" in current page administration
     Then "User 11" "text" should exist in the "reportbuilder-table" "table"
     And I log out
     # Check notifications are triggered.
@@ -55,7 +57,8 @@ Feature: Being able to manually issue a certificate to a user
   Scenario: Issue a certificate as issuer user, from the list of issues
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 0" report row
+    And I follow "Certificate 0"
+    And I navigate to "Issued certificates" in current page administration
     And I click on "Issue certificates" "link"
     And I set the field "Select users to issue certificate to" to "User 11"
     And I click on "Save" "button" in the "Issue certificates" "dialogue"
@@ -93,7 +96,9 @@ Feature: Being able to manually issue a certificate to a user
       | expirydaterelative[number]            | 1       |
       | expirydaterelative[timeunit]          | days    |
     And I press "Save"
-    And I press "Certificates issued" action in the "Certificate 0" report row
+    And I wait until ".toast-message" "css_element" does not exist
+    And I follow "Certificate 0"
+    And I navigate to "Issued certificates" in current page administration
     Then "User 11" "text" should exist in the "reportbuilder-table" "table"
     And the following should exist in the "reportbuilder-table" table:
       | First name / Surname | Expiry date            |
@@ -108,7 +113,8 @@ Feature: Being able to manually issue a certificate to a user
       | Certificate 1 | user12 |
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I should see "User 11"
     And I should see "User 12"
     And I press "Revoke" action in the "User 11" report row
@@ -123,7 +129,8 @@ Feature: Being able to manually issue a certificate to a user
       | Certificate 1 | user11 |
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I press "Certificates issued" action in the "Certificate 1" report row
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
     And I press "Regenerate issue file" action in the "User 11" report row
     And I click on "Regenerate" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
