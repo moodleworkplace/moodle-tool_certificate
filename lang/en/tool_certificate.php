@@ -53,6 +53,7 @@ $string['certificatetemplates'] = 'Certificate templates';
 $string['changeelementsequence'] = 'Bring forward or move back';
 $string['code'] = 'Code';
 $string['codewithlink'] = 'Code with link';
+$string['coursecategorywithlink'] = 'Course category with link';
 $string['createtemplate'] = 'New certificate template';
 $string['customfield_previewvalue'] = 'Preview value';
 $string['customfield_previewvalue_help'] = 'Value displayed when previewing the certificate template';
