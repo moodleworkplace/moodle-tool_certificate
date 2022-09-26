@@ -89,4 +89,20 @@ class templates_test extends core_reportbuilder_testcase {
         $this->assertEqualsCanonicalizing($contentcerts, $content);
 
     }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $newcategory = core_course_category::create(['name' => 'Certificate category']);
+        $cert = ['name' => 'Certificate 1', 'categoryid' => $newcategory->id];
+        $this->certgenerator->create_template((object)$cert);
+
+        $this->datasource_stress_test_columns(templates::class);
+        $this->datasource_stress_test_columns_aggregation(templates::class);
+        $this->datasource_stress_test_conditions(templates::class, 'template:name');
+    }
 }

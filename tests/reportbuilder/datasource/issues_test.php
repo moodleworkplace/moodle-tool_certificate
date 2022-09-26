@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace tool_certificate\reportbuilder\datasource;
 
+use core_course_category;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use tool_certificate\reportbuilder\datasource\issues as issuesource;
@@ -96,4 +97,25 @@ class issues_test extends core_reportbuilder_testcase {
         ];
         $this->assertEqualsCanonicalizing($contentcerts, $content);
     }
+
+    /**
+     * Stress test datasource
+     */
+    public function test_stress_datasource(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $newcategory = core_course_category::create(['name' => 'Certificate category']);
+        $cert = ['name' => 'Certificate 1', 'categoryid' => $newcategory->id];
+        $certificate = $this->certgenerator->create_template((object)$cert);
+
+        // Create user and issue a certificate.
+        $user = self::getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => 'Cert 1']);
+        $certificate->issue_certificate((int)$user->id);
+
+        $this->datasource_stress_test_columns(issues::class);
+        $this->datasource_stress_test_columns_aggregation(issues::class);
+        $this->datasource_stress_test_conditions(issues::class, 'issue:timecreated');
+    }
+
 }
