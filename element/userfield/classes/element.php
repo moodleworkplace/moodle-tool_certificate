@@ -39,6 +39,7 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
+        global $CFG;
         $displayname = function($field) {
             global $CFG;
             if ($CFG->version < 2021050700) {
@@ -51,7 +52,7 @@ class element extends \tool_certificate\element {
         };
 
         // Get the user profile fields.
-        $userfields = array(
+        $userfields = [
             'fullname' => $displayname('fullname'),
             'firstname' => $displayname('firstname'),
             'lastname' => $displayname('lastname'),
@@ -59,18 +60,20 @@ class element extends \tool_certificate\element {
             'city' => $displayname('city'),
             'country' => $displayname('country'),
             'url' => $displayname('url'),
+        ] + (($CFG->version < 2021050700) ? [
             'icq' => $displayname('icq'),
             'skype' => $displayname('skype'),
             'aim' => $displayname('aim'),
             'yahoo' => $displayname('yahoo'),
             'msn' => $displayname('msn'),
+        ] : []) + [
             'idnumber' => $displayname('idnumber'),
             'institution' => $displayname('institution'),
             'department' => $displayname('department'),
             'phone1' => $displayname('phone1'),
             'phone2' => $displayname('phone2'),
             'address' => $displayname('address')
-        );
+        ];
         // Get the user custom fields.
         $arrcustomfields = \availability_profile\condition::get_custom_profile_fields();
         $customfields = array();
