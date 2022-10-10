@@ -173,4 +173,18 @@ class tool_certificate_generator extends component_generator_base {
         assign_capability('tool/certificate:manage', CAP_ALLOW, $roleid, $context->id);
         role_assign($roleid, $userid, $context->id);
     }
+
+    /**
+     * Creates a template with an empty page and an edit element
+     *
+     * @param string $elementtype
+     * @return \tool_certificate\edit_element_form
+     */
+    public function create_template_and_edit_element_form(string $elementtype): \tool_certificate\edit_element_form {
+        $certificate1 = $this->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $this->create_page($certificate1)->get_id();
+
+        $ajaxformdata = ['pageid' => $pageid, 'element' => $elementtype];
+        return new \tool_certificate\edit_element_form(null, null, 'post', '', [], true, $ajaxformdata, true);
+    }
 }

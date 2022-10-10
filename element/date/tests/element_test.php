@@ -96,4 +96,15 @@ class element_test extends advanced_testcase {
     public function test_get_date_formats() {
         $this->assertFalse(empty(\certificateelement_date\element::get_date_formats()));
     }
+
+    /**
+     * Tests that the edit element form can be initiated without any errors
+     */
+    public function test_edit_element_form() {
+        $this->setAdminUser();
+
+        preg_match('|^certificateelement_(\w*)\\\\|', get_class($this), $matches);
+        $form = $this->get_generator()->create_template_and_edit_element_form($matches[1]);
+        $this->assertNotEmpty($form->render());
+    }
 }
