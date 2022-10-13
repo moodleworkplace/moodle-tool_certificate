@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.4+ (2022101400)
+### Fixed
+- Removed no longer existing user profile fields from the element form (Twitter/ICQ/etc)
+
 ## 4.0.4 (2022091300)
 ### Changed
 - Forms in the popups now use core dynamic forms
