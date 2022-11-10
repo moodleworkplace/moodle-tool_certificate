@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace tool_certificate\reportbuilder\local\systemreports;
 
 use core\output\inplace_editable;
-use core_course\local\entities\course_category;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\system_report;
 use html_writer;
@@ -60,7 +59,12 @@ class templates extends system_report {
         $this->add_entity($entitymain);
 
         // Add categories/tool_certificate_templates joins/entity.
-        $coursecatentity = new course_category();
+        if (class_exists(\core_course\reportbuilder\local\entities\course_category::class)) {
+            // Class was renamed in Moodle LMS 4.1.
+            $coursecatentity = new \core_course\reportbuilder\local\entities\course_category();
+        } else {
+            $coursecatentity = new \core_course\local\entities\course_category();
+        }
         $coursecatentityalias = $coursecatentity->get_table_alias('course_categories');
         $contextalias = $coursecatentity->get_table_alias('context');
 

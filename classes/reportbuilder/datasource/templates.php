@@ -18,7 +18,6 @@ declare(strict_types=1);
 
 namespace tool_certificate\reportbuilder\datasource;
 
-use core_course\local\entities\course_category;
 use core_reportbuilder\datasource;
 use tool_certificate\certificate;
 use tool_certificate\reportbuilder\local\entities\template;
@@ -50,7 +49,12 @@ class templates extends datasource {
         $this->set_main_table('tool_certificate_templates', $certificatetempl);
 
         // Add course category joins/entity.
-        $coursecatentity = new course_category();
+        if (class_exists(\core_course\reportbuilder\local\entities\course_category::class)) {
+            // Class was renamed in Moodle LMS 4.1.
+            $coursecatentity = new \core_course\reportbuilder\local\entities\course_category();
+        } else {
+            $coursecatentity = new \core_course\local\entities\course_category();
+        }
         $coursecatentityname = $coursecatentity->get_entity_name();
         $coursecategories = $coursecatentity->get_table_alias('course_categories');
         $coursecategoryjoins = [
