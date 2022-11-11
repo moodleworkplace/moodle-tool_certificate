@@ -1,7 +1,7 @@
 image: moodlehq/moodle-workplace-plugin-ci:7.4
 
 services:
-- postgres:10
+- postgres:12
 #- mysql:5.7.26
 - name: selenium/standalone-chrome:3
   alias: selenium-standalone-chrome
