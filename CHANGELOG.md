@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.11.11 (2022031650)
+### Changed
+- Do not show user fields that were removed in 3.11 (ICQ, Twitter, etc)
+- Small automated tests and coding style changes
+
 ## 3.11.9 (2022031630)
 ### Changed
 - Add lock when generating certificate
