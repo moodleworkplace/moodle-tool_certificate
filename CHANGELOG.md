@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.5 - 2022-11-15
+### Changed
+- Compatibility with Moodle LMS 4.1
+
 ## 4.0.4+ (2022101400)
 ### Fixed
 - Removed no longer existing user profile fields from the element form (Twitter/ICQ/etc)
