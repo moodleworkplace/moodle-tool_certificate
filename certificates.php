@@ -63,7 +63,7 @@ $PAGE->set_secondarynav($secondarynav);
 $outputpage = new \tool_certificate\output\issues_page($template->get_id());
 
 $data = $outputpage->export_for_template($PAGE->get_renderer('core'));
-$data += ['heading' => get_string('template', 'tool_certificate')];
+$data += ['heading' => get_string('issuedcertificates', 'tool_certificate')];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
