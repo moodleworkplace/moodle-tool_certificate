@@ -45,6 +45,7 @@ $string['certificate:verify'] = 'Verify any certificate';
 $string['certificate:viewallcertificates'] = 'View all issued certificates and templates';
 $string['certificate_customfield'] = 'Certificate custom fields';
 $string['certificatecopy'] = '{$a} (copy)';
+$string['certificateelement'] = 'Certificate element';
 $string['certificateimages'] = 'Certificate images';
 $string['certificates'] = 'Certificates';
 $string['certificatesettings'] = 'Certificates settings';

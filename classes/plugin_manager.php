@@ -130,7 +130,7 @@ class plugin_manager {
 
             $exists = file_exists($CFG->dirroot . '/'. $CFG->admin . '/tool/certificate/element/' . $plugin . '/settings.php');
             if ($row[1] != '' && $exists) {
-                $row[] = html_writer::link(new \moodle_url('/admin/settings.php',
+                $row[] = \html_writer::link(new \moodle_url('/admin/settings.php',
                         array('section' => 'certificateelement_' . $plugin)), get_string('settings'));
             } else {
                 $row[] = '&nbsp;';
