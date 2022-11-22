@@ -17,12 +17,18 @@ Feature: Being able to view the certificates you have been issued
       | template | user |
       | Certificate 1 | student1 |
 
+  @javascript @_switch_window
   Scenario: View your issued site certificates on the my certificates page
     When I log in as "student1"
     And I follow "Profile" in the user menu
     And I click on "//a[contains(.,'My certificates') and contains(@href,'tool/certificate')]" "xpath_element"
     Then I should see "Certificate 1"
     And I should not see "Certificate 2"
+    And I click on "View" "link" in the "Certificate 1" "table_row"
+    # Ensure that at this point there are two windows
+    And I switch to a second window
+    And I switch to the main window
+    And I should see "Certificate 1"
 
   Scenario: View share certificate on LinkedIn
     When I log in as "student1"
