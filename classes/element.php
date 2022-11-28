@@ -156,7 +156,7 @@ abstract class element {
      * @return string
      */
     public function get_colour() {
-        return $this->persistent->get('colour');
+        return $this->persistent->get('colour') ?? '';
     }
 
     /**
