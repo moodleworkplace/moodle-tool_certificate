@@ -69,13 +69,6 @@ $functions = [
         'type'        => 'write',
         'ajax'        => true,
     ],
-    'tool_certificate_modal_form' => [
-        'classname' => \tool_certificate\external\modal_form::class,
-        'methodname' => 'execute',
-        'description' => 'process submission of a modal form',
-        'type' => 'write',
-        'ajax' => true,
-    ],
     'tool_certificate_potential_users_selector' => [
         'classname' => \tool_certificate\external\issues::class,
         'methodname' => 'potential_users_selector',

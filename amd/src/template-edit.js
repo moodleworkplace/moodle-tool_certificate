@@ -20,7 +20,7 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'jqueryui', 'tool_certificate/modal_form', 'core/notification', 'core/str', 'core/ajax', 'core/sortable_list'],
+define(['jquery', 'jqueryui', 'core_form/modalform', 'core/notification', 'core/str', 'core/ajax', 'core/sortable_list'],
 function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
 
     var deleteElement = function(e) {
@@ -54,11 +54,12 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
             args: {id: $(e.currentTarget).attr('data-id')},
             modalConfig: {title: Str.get_string('editelement', 'tool_certificate', $(e.currentTarget).attr('data-name'))},
             saveButtonText: Str.get_string('save'),
-            triggerElement: $(e.currentTarget),
+            returnFocus: $(e.currentTarget),
         });
-        modal.onSubmitSuccess = function() {
+        modal.addEventListener(modal.events.FORM_SUBMITTED, function() {
             window.location.reload();
-        };
+        });
+        modal.show();
     };
 
     var addElement = function(e) {
@@ -70,11 +71,12 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
             args: {pageid: pageid, element: type},
             modalConfig: {title: Str.get_string('addelementwithname', 'tool_certificate', $(e.currentTarget).text())},
             saveButtonText: Str.get_string('save'),
-            triggerElement: $(e.currentTarget),
+            returnFocus: $(e.currentTarget),
         });
-        modal.onSubmitSuccess = function() {
+        modal.addEventListener(modal.events.FORM_SUBMITTED, function() {
             window.location.reload();
-        };
+        });
+        modal.show();
     };
 
     var deletePage = function(e) {
@@ -98,11 +100,12 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
             args: {templateid: $('[data-region="template"][data-id]').attr('data-id')},
             modalConfig: {title: Str.get_string('addcertpage', 'tool_certificate')},
             saveButtonText: Str.get_string('save'),
-            triggerElement: $(e.currentTarget),
+            returnFocus: $(e.currentTarget),
         });
-        modal.onSubmitSuccess = function() {
+        modal.addEventListener(modal.events.FORM_SUBMITTED, function() {
             window.location.reload();
-        };
+        });
+        modal.show();
     };
 
     var editPage = function(e) {
@@ -112,11 +115,12 @@ function($, jqui, ModalForm, Notification, Str, Ajax, SortableList) {
             args: {id: $(e.currentTarget).attr('data-id')},
             modalConfig: {title: Str.get_string('editpage', 'tool_certificate', $(e.currentTarget).attr('data-pagenumber'))},
             saveButtonText: Str.get_string('save'),
-            triggerElement: $(e.currentTarget),
+            returnFocus: $(e.currentTarget),
         });
-        modal.onSubmitSuccess = function() {
+        modal.addEventListener(modal.events.FORM_SUBMITTED, function() {
             window.location.reload();
-        };
+        });
+        modal.show();
     };
 
     var initSorting = function() {

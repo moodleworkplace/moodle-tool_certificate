@@ -3,6 +3,10 @@
 ## Unreleased
 ### Changed
 - Certificates PDFs now always open in a new tab
+### Removed
+- Removed "Modal forms" functionality since it is now implemented in core -
+  web service `tool_certificate_modal_form`, JS modules: `tool_certificate/modal_form`,
+  class `tool_certificate/modal_form`
 
 ## 4.0.5 - 2022-11-15
 ### Changed

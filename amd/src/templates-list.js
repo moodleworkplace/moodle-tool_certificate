@@ -20,8 +20,8 @@
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'tool_certificate/modal_form', 'core_form/modalform', 'core/notification', 'core/str', 'core/ajax', 'core/toast'],
-function($, ModalForm, CoreModalForm, Notification, Str, Ajax, {add: addToast}) {
+define(['jquery', 'core_form/modalform', 'core/notification', 'core/str', 'core/ajax', 'core/toast'],
+function($, ModalForm, Notification, Str, Ajax, {add: addToast}) {
 
     /**
      * Display modal form
@@ -29,10 +29,10 @@ function($, ModalForm, CoreModalForm, Notification, Str, Ajax, {add: addToast}) 
      * @param {jQuery} triggerElement
      * @param {String} title
      * @param {Object} args
-     * @return {CoreModalForm}
+     * @return {ModalForm}
      */
     var displayModal = function(triggerElement, title, args) {
-        const modal = new CoreModalForm({
+        const modal = new ModalForm({
             formClass: 'tool_certificate\\form\\details',
             args: args,
             modalConfig: {title: title},
@@ -70,10 +70,10 @@ function($, ModalForm, CoreModalForm, Notification, Str, Ajax, {add: addToast}) 
             args: {tid: target.attr('data-tid')},
             modalConfig: {title: Str.get_string('issuecertificates', 'tool_certificate'), scrollable: false},
             saveButtonText: Str.get_string('save'),
-            triggerElement: target,
+            returnFocus: target,
         });
-        modal.onSubmitSuccess = function(data) {
-            data = parseInt(data, 10);
+        modal.addEventListener(modal.events.FORM_SUBMITTED, event => {
+            const data = parseInt(event.detail, 10);
             if (data) {
                 Str.get_strings([
                     {key: 'oneissuewascreated', component: 'tool_certificate'},
@@ -89,7 +89,8 @@ function($, ModalForm, CoreModalForm, Notification, Str, Ajax, {add: addToast}) 
                     return null;
                 }).catch(Notification.exception);
             }
-        };
+        });
+        modal.show();
     };
 
     var duplicateMulticategory = function(e) {
@@ -101,11 +102,12 @@ function($, ModalForm, CoreModalForm, Notification, Str, Ajax, {add: addToast}) 
             args: {id: templateId},
             modalConfig: {title: Str.get_string('confirm')},
             saveButtonText: Str.get_string('duplicate', 'tool_certificate'),
-            triggerElement: target,
+            returnFocus: target,
         });
-        modal.onSubmitSuccess = function() {
+        modal.addEventListener(modal.events.FORM_SUBMITTED, function() {
             window.location.reload();
-        };
+        });
+        modal.show();
     };
 
     var duplicateSinglecategory = function(e) {
