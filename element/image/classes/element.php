@@ -263,7 +263,7 @@ class element extends \tool_certificate\element {
      * @return null|\stored_file
      */
     public function get_shared_file() : ?\stored_file {
-        $imageinfo = json_decode($this->get_data());
+        $imageinfo = json_decode($this->get_data() ?? '');
         if (!empty($imageinfo->filename) &&
                 $file = get_file_storage()->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea,
                     $imageinfo->itemid, $imageinfo->filepath, $imageinfo->filename)) {
