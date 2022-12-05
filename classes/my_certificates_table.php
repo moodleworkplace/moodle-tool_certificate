@@ -162,7 +162,7 @@ class my_certificates_table extends \table_sql {
         $icon = new \pix_icon('download', get_string('view'), 'tool_certificate');
         $link = template::view_url($issue->code);
 
-        return $OUTPUT->action_link($link, '', null, null, $icon);
+        return $OUTPUT->action_link($link, '', null, ['target' => '_blank'], $icon);
     }
 
     /**

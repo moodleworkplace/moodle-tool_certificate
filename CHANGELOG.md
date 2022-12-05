@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Certificates PDFs now always open in a new tab
+
 ## 4.0.5 - 2022-11-15
 ### Changed
 - Compatibility with Moodle LMS 4.1
