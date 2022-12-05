@@ -24,8 +24,10 @@
 
 namespace tool_certificate\form;
 
+use context;
+use core_form\dynamic_form;
+use moodle_url;
 use tool_certificate\template;
-use tool_certificate\modal_form;
 
 /**
  * Select category when duplicating a template.
@@ -34,7 +36,7 @@ use tool_certificate\modal_form;
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class category_selector extends modal_form {
+class category_selector extends dynamic_form {
 
     /** @var template */
     protected $template;
@@ -93,23 +95,31 @@ class category_selector extends modal_form {
     }
 
     /**
+     * Returns context where this form is used
+     * @return context
+     */
+    protected function get_context_for_dynamic_submission(): context {
+        return \context_system::instance();
+    }
+
+    /**
      * Check if current user has access to this form, otherwise throw exception
      *
      * Sometimes permission check may depend on the action and/or id of the entity.
-     * If necessary, form data is available in $this->_ajaxformdata
+     * If necessary, form data is available in $this->_ajaxformdata or
+     * by calling $this->optional_param()
      */
-    public function require_access() {
+    protected function check_access_for_dynamic_submission(): void {
         $this->get_template()->require_can_manage();
     }
 
     /**
-     * Process the form submission
+     * Process the form submission, used if form was submitted via AJAX
      *
      * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
-     *
-     * @param \stdClass $data
      */
-    public function process(\stdClass $data) {
+    public function process_dynamic_submission(): void {
+        $data = $this->get_data();
         $context = !empty($data->categoryid) ? \context_coursecat::instance($data->categoryid) : null;
         $this->get_template()->duplicate($context);
     }
@@ -120,11 +130,22 @@ class category_selector extends modal_form {
      * Can be overridden to retrieve existing values from db by entity id and also
      * to preprocess editor and filemanager elements
      */
-    public function set_data_for_modal() {
+    public function set_data_for_dynamic_submission(): void {
         $data = $this->get_template()->to_record();
         if ($this->get_template()->get_context()->contextlevel == CONTEXT_COURSECAT) {
             $data->categoryid = $this->get_template()->get_context()->instanceid;
         }
         $this->set_data($data);
+    }
+
+    /**
+     * Returns url to set in $PAGE->set_url() when form is being rendered or submitted via AJAX
+     *
+     * This is used in the form elements sensitive to the page url, such as Atto autosave in 'editor'
+     *
+     * @return moodle_url
+     */
+    protected function get_page_url_for_dynamic_submission(): moodle_url {
+        return new moodle_url('/admin/tool/certificate/manage_templates.php');
     }
 }

@@ -24,7 +24,7 @@
 import Notification from 'core/notification';
 import {get_strings as getStrings, get_string as getString} from 'core/str';
 import Ajax from 'core/ajax';
-import ModalForm from 'tool_certificate/modal_form';
+import ModalForm from 'core_form/modalform';
 import {add as toastAdd} from 'core/toast';
 import {refreshTableContent, getFilters, setFilters} from 'core_table/dynamic';
 import * as DynamicTableSelectors from 'core_table/local/dynamic/selectors';
@@ -48,10 +48,10 @@ const addIssue = function(element) {
         args: {tid: element.dataset.tid},
         modalConfig: {title: getString('issuecertificates', 'tool_certificate'), scrollable: false},
         saveButtonText: getString('save'),
-        triggerElement: element,
+        returnFocus: element,
     });
-    modal.onSubmitSuccess = (issuescreated) => {
-        issuescreated = parseInt(issuescreated, 10);
+    modal.addEventListener(modal.events.FORM_SUBMITTED, event => {
+        const issuescreated = parseInt(event.detail, 10);
         if (issuescreated > 1) {
             toastAdd(getString('aissueswerecreated', 'tool_certificate', issuescreated));
             reloadReport();
@@ -61,7 +61,8 @@ const addIssue = function(element) {
         } else {
             toastAdd(getString('noissueswerecreated', 'tool_certificate'));
         }
-    };
+    });
+    modal.show();
 };
 
 /**
