@@ -11,7 +11,7 @@ variables:
   MOODLE_BRANCH_WORKPLACE: master
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_BRANCH_LMS400: MOODLE_400_STABLE
-  MOODLE_BRANCH_LMS401: master # TODO WP-3904 change to MOODLE_401_STABLE
+  MOODLE_BRANCH_LMS401: MOODLE_401_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""

@@ -37,7 +37,7 @@ jobs:
             database: mariadb
             extensions: xmlrpc-beta
           - php: '7.4'
-            moodle-branch: 'master' # TODO WP-3904 change to MOODLE_401_STABLE
+            moodle-branch: 'MOODLE_401_STABLE'
             database: pgsql
 
     steps:
