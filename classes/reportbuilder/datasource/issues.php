@@ -124,6 +124,15 @@ class issues extends datasource {
         if ($categorypath = $this->get_column('course_category:path')) {
             $categorypath->set_callback([formatter::class, 'course_category_path']);
         }
+
+        // Add Tenant entity.
+        if ($tenantentity = component_class_callback('\tool_tenant\reportbuilder\local\entities\tenant',
+            'prepare_for_user_datasource', [$user])) {
+            $this->add_entity($tenantentity);
+            $this->add_columns_from_entity($tenantentity->get_entity_name());
+            $this->add_filters_from_entity($tenantentity->get_entity_name());
+            $this->add_conditions_from_entity($tenantentity->get_entity_name());
+        }
     }
 
     /**
