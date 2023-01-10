@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // This plugin is part of Moodle Workplace product.
 $plugin->component    = 'certificateelement_userfield';
-$plugin->release      = '4.0.5';
-$plugin->version      = 2022111500;
+$plugin->release      = '4.0.5+';
+$plugin->version      = 2023011100;
 $plugin->requires     = 2022041900.00;
 $plugin->maturity     = MATURITY_STABLE;

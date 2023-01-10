@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.0.5+ - 2023-01-11
 ### Changed
 - Certificates PDFs now always open in a new tab
 ### Removed
