@@ -9,26 +9,32 @@ Feature: Being able to view the certificates you have been issued
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | manager1 | Manager   | 1        | manager1@example.com |
+    And the following "courses" exist:
+      | shortname | fullname |
+      | C1        | Course 1 |
     And the following certificate templates exist:
       | name |
       | Certificate 1 |
       | Certificate 2 |
+      | Certificate 3 |
     And the following certificate issues exist:
-      | template | user |
-      | Certificate 1 | student1 |
+      | template      | user      | course |
+      | Certificate 1 | student1  |        |
+      | Certificate 2 | student1  | C1     |
 
   @javascript @_switch_window
   Scenario: View your issued site certificates on the my certificates page
     When I log in as "student1"
     And I follow "Profile" in the user menu
     And I click on "//a[contains(.,'My certificates') and contains(@href,'tool/certificate')]" "xpath_element"
-    Then I should see "Certificate 1"
-    And I should not see "Certificate 2"
+    And I should see "Certificate 1" in the "generaltable" "table"
+    And I should see "Certificate 2 - Course 1" in the "generaltable" "table"
+    And I should not see "Certificate 3" in the "generaltable" "table"
     And I click on "View" "link" in the "Certificate 1" "table_row"
     # Ensure that at this point there are two windows
     And I switch to a second window
     And I switch to the main window
-    And I should see "Certificate 1"
+    And I should see "Certificate 1" in the "generaltable" "table"
 
   Scenario: View share certificate on LinkedIn
     When I log in as "student1"
