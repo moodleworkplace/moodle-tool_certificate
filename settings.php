@@ -84,5 +84,10 @@ if ($hassiteconfig) {
     ));
     $settings->hide_if('tool_certificate/linkedinorganizationid', 'tool_certificate/show_shareonlinkedin');
 
+    $settings->add(new admin_setting_pickfilters('tool_certificate/allowfilters',
+        new lang_string('allowfilters', 'tool_certificate'),
+        new lang_string('allowfilters_desc', 'tool_certificate'),
+        ['multilang' => 1]));
+
     $ADMIN->add('certificates', $settings);
 }

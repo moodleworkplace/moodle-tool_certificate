@@ -1,6 +1,8 @@
 # Changelog
 
 ## Unreleased
+### Added
+- Setting to skip some text filters when generating PDFs
 ### Changed
 - Added a new integer parameter to `tool_certificate_generator::issue` to specify the certificate issue courseid
 
