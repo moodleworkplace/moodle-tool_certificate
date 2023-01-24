@@ -16,6 +16,8 @@
 
 namespace tool_certificate;
 
+use tool_certificate_generator;
+
 /**
  * Tests for functions in /classes/my_certificates_table.php
  *
@@ -30,6 +32,34 @@ class my_certificates_table_test extends \advanced_testcase {
      */
     public function setUp(): void {
         $this->resetAfterTest();
+    }
+
+    /**
+     * Test Name column
+     */
+    public function test_col_name(): void {
+        /** @var tool_certificate_generator $certificategenerator */
+        $certificategenerator = $this->getDataGenerator()->get_plugin_generator('tool_certificate');
+        $user = self::getDataGenerator()->create_user();
+        $course = self::getDataGenerator()->create_course();
+
+        $template = $certificategenerator->create_template((object)['name' => 'Certificate 1']);
+        // Generate row data with a certificate issue without courseid.
+        $rowdata1 = $certificategenerator->issue($template, $user, null, []);
+        // Generate row data with a certificate issue with courseid of a non-existing course.
+        $rowdata2 = $certificategenerator->issue($template, $user, null, [], 'tool_certificate', 999);
+        // Generate row data with a certificate issue with correct courseid.
+        $rowdata3 = $certificategenerator->issue($template, $user, null, [], 'tool_certificate', $course->id);
+        // Add extra attributes needed for rowdata.
+        foreach ([$rowdata1, $rowdata2, $rowdata3] as $rowdata) {
+            $rowdata->name = $template->get_formatted_name();
+            $rowdata->contextid = \context_system::instance()->id;
+        }
+
+        $table = new my_certificates_table($user->id);
+        $this->assertEquals($template->get_formatted_name(), $table->col_name($rowdata1));
+        $this->assertEquals($template->get_formatted_name(), $table->col_name($rowdata2));
+        $this->assertEquals($template->get_formatted_name() . ' - ' . $course->fullname, $table->col_name($rowdata3));
     }
 
     /**

@@ -120,9 +120,11 @@ class tool_certificate_generator extends component_generator_base {
      * @param int $expires
      * @param array $data
      * @param string $component
+     * @param int|null $courseid
      * @return stdClass
      */
-    public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate') {
+    public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate',
+                          ?int $courseid = null): stdClass {
         global $DB;
         if (is_int($certificate)) {
             $certificate = \tool_certificate\template::instance($certificate);
@@ -130,7 +132,7 @@ class tool_certificate_generator extends component_generator_base {
             $certificate = \tool_certificate\template::instance(0, $certificate);
         }
         $userid = is_object($user) ? $user->id : $user;
-        $issueid = $certificate->issue_certificate($userid, $expires, $data, $component);
+        $issueid = $certificate->issue_certificate($userid, $expires, $data, $component, $courseid);
         return $DB->get_record('tool_certificate_issues', ['id' => $issueid], '*', MUST_EXIST);
     }
 

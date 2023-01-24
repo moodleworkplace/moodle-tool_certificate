@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Added a new integer parameter to `tool_certificate_generator::issue` to specify the certificate issue courseid
+
 ## 4.1.1 - 2023-01-17
 ### Changed
 - Automated tests fixes
