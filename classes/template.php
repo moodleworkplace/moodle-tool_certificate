@@ -677,6 +677,9 @@ class template {
     /**
      * Issues a certificate to a user.
      *
+     * @uses \tool_tenant\config::push_for_user()
+     * @uses \tool_tenant\config::pop()
+     *
      * @param int $userid The ID of the user to issue the certificate to
      * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
      * @param array $data Additional data that will json_encode'd and stored with the issue.
@@ -688,6 +691,8 @@ class template {
     public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate',
             $courseid = null, ?\core\lock\lock $lock = null) {
         global $DB;
+
+        component_class_callback(\tool_tenant\config::class, 'push_for_user', [$userid]);
 
         $issue = new \stdClass();
         $issue->userid = $userid;
@@ -717,6 +722,8 @@ class template {
 
         // Trigger event.
         \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
+
+        component_class_callback(\tool_tenant\config::class, 'pop', []);
 
         return $issue->id;
     }
