@@ -3,6 +3,7 @@
 ## Unreleased
 ### Added
 - Setting to skip some text filters when generating PDFs
+- Added support for certificate elements plugins settings
 ### Changed
 - Added a new integer parameter to `tool_certificate_generator::issue` to specify the certificate issue courseid
 - Moved certificate issuing event before email is sent, so event processor can make changes (CONTRIB-8867).

@@ -92,9 +92,8 @@ if ($hassiteconfig) {
     $ADMIN->add('certificates', $settings);
 
     // Add Certificate Element plugins settings.
-
-    $ADMIN->add('certificates', new admin_category('certificateelement', new lang_string('certificateelement',
-            'tool_certificate')));
+    $ADMIN->add('modules', new admin_category('certificateelement',
+        new lang_string('subplugintype_certificateelement_plural', 'tool_certificate')));
 
     // Now add various certificateelement.
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('certificateelement');
