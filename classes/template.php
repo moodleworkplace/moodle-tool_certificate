@@ -707,12 +707,15 @@ class template {
         }
         issue_handler::create()->save_additional_data($issue, $data);
 
+        // Trigger event.
+        \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
+
+        // Reload issue from DB in case the event handlers modified it.
+        $issue = $this->get_issue_from_code($issue->code);
+
         // Create the issue file and send notification.
         $issuefile = $this->create_issue_file($issue);
         self::send_issue_notification($issue, $issuefile);
-
-        // Trigger event.
-        \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
 
         return $issue->id;
     }

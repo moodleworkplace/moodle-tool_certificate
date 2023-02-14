@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Moved certificate issuing event before email is sent, so event processor can make changes (CONTRIB-8867)
+
 ## 3.11.11 (2022031650)
 ### Changed
 - Do not show user fields that were removed in 3.11 (ICQ, Twitter, etc)
