@@ -109,14 +109,14 @@ class page extends dynamic_form {
         $group[] =& $mform->createElement('text', 'leftmargin', get_string('leftmargin', 'tool_certificate'));
         $group[] =& $mform->createElement('static', 'leftmarginmetric', '', get_string('milimeter', 'tool_certificate'));
         $mform->addElement('group', 'leftmargingroup', get_string('leftmargin', 'tool_certificate'), $group, ' ', false);
-        $mform->setType('leftmargingroup', PARAM_INT);
+        $mform->setType('leftmargin', PARAM_INT);
         $mform->addHelpButton('leftmargingroup', 'leftmargin', 'tool_certificate');
 
         $group = [];
         $group[] =& $mform->createElement('text', 'rightmargin', get_string('rightmargin', 'tool_certificate'));
         $group[] =& $mform->createElement('static', 'rightmarginmetric', '', get_string('milimeter', 'tool_certificate'));
         $mform->addElement('group', 'rightmargingroup', get_string('rightmargin', 'tool_certificate'), $group, ' ', false);
-        $mform->setType('rightmargingroup', PARAM_INT);
+        $mform->setType('rightmargin', PARAM_INT);
         $mform->addHelpButton('rightmargingroup', 'rightmargin', 'tool_certificate');
 
         $mform->addFormRule(function($data, $files) {
