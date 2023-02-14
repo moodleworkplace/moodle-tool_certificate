@@ -330,7 +330,7 @@ class template_test extends advanced_testcase {
 
         // There are two events: notification_viewed and certificate_issued.
         $this->assertCount(2, $events);
-        $event = array_pop($events);
+        $event = array_shift($events);
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\tool_certificate\event\certificate_issued', $event);

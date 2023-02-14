@@ -3,6 +3,7 @@
 ## Unreleased
 ### Changed
 - Added a new integer parameter to `tool_certificate_generator::issue` to specify the certificate issue courseid
+- Moved certificate issuing event before email is sent, so event processor can make changes (CONTRIB-8867).
 ### Fixed
 - Fix exception on view certificate templates page due to duplicated alias (CONTRIB-9211)
 
