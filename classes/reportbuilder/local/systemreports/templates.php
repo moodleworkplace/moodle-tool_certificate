@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace tool_certificate\reportbuilder\local\systemreports;
 
 use core\output\inplace_editable;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\system_report;
 use html_writer;
@@ -66,7 +67,7 @@ class templates extends system_report {
             $coursecatentity = new \core_course\local\entities\course_category();
         }
         $coursecatentityalias = $coursecatentity->get_table_alias('course_categories');
-        $contextalias = $coursecatentity->get_table_alias('context');
+        $contextalias = database::generate_alias();
 
         $this->add_join("JOIN {context} {$contextalias} ON {$contextalias}.id = {$entitymainalias}.contextid");
         $this->add_join("LEFT JOIN {course_categories} {$coursecatentityalias}

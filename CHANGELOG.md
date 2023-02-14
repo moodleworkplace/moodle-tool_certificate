@@ -3,6 +3,8 @@
 ## Unreleased
 ### Changed
 - Added a new integer parameter to `tool_certificate_generator::issue` to specify the certificate issue courseid
+### Fixed
+- Fix exception on view certificate templates page due to duplicated alias (CONTRIB-9211)
 
 ## 4.1.1 - 2023-01-17
 ### Changed
