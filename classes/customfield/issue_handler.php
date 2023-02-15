@@ -161,22 +161,6 @@ class issue_handler extends handler {
     }
 
     /**
-     * Set up page customfield/edit.php
-     *
-     * @param field_controller $field
-     * @return string page heading
-     */
-    public function setup_edit_page(field_controller $field) : string {
-        global $CFG, $PAGE;
-        require_once($CFG->libdir.'/adminlib.php');
-
-        $title = parent::setup_edit_page($field);
-        admin_externalpage_setup('tool_certificate_customfield');
-        $PAGE->navbar->add($title);
-        return $title;
-    }
-
-    /**
      * Finds a field by its shortname
      *
      * @param string $shortname

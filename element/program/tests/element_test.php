@@ -74,14 +74,17 @@ class element_test extends advanced_testcase {
         \tool_certificate\customfield\issue_handler::create()->ensure_field_exists('programname', 'text',
             'Program name preview', true, 'Program name preview');
         $element->data = json_encode(['display' => 'programname']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
         $this->assertTrue(strpos($e->format_preview_data(), 'Program name preview') >= 0);
 
         $element->data = json_encode(['display' => 'completiondate']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
         $this->assertFalse(empty($e->format_preview_data()));
 
         $element->data = json_encode(['display' => 'completedcourses']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
         $this->assertFalse(empty($e->format_preview_data()));
     }
@@ -122,14 +125,17 @@ class element_test extends advanced_testcase {
         $this->assertEquals($data['certificationname'], $e->format_issue_data($issue));
 
         $element->data = json_encode(['display' => 'programname']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
         $this->assertEquals($data['programname'], $e->format_issue_data($issue));
 
         $element->data = json_encode(['display' => 'programcompletiondate']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
         $this->assertEquals('1/2/12', $e->format_issue_data($issue));
 
         $element->data = json_encode(['display' => 'programcompletedcourses']);
+        /** @var \certificateelement_program\element $e */
         $e = $this->get_generator()->new_element($pageid, 'program', $element);
         $this->assertEquals('<p>Course1,<br />Course2</p>', $e->format_issue_data($issue));
     }

@@ -78,7 +78,7 @@ class issues extends \external_api {
     /**
      * Returns the revoke_issue result value.
      *
-     * @return \external_value
+     * @return null
      */
     public static function revoke_issue_returns() {
         return null;
@@ -131,7 +131,7 @@ class issues extends \external_api {
     /**
      * Returns the regenerate_issue_file result value.
      *
-     * @return \external_value
+     * @return null
      */
     public static function regenerate_issue_file_returns() {
         return null;
