@@ -700,4 +700,50 @@ class element_helper {
         $mform->addElement('select', 'fileid', get_string('selectsharedimage', 'certificateelement_image'), $arrfiles);
         return true;
     }
+
+    /**
+     * Filters that are allowed to apply when generating PDFs
+     *
+     * @return array
+     */
+    public static function get_allowed_filters(): array {
+        $value = get_config('tool_certificate', 'allowfilters') ?? '';
+        return array_filter(preg_split('/\s*,\s*/', trim($value)));
+    }
+
+    /**
+     * Context of certificate issue
+     *
+     * @param int $courseid
+     * @return \context
+     */
+    protected static function get_issue_context(int $courseid): \context {
+        $context = \context_system::instance();
+        // If the issue was generated in a course, use course context instead.
+        if ($courseid) {
+            $context = \context_course::instance($courseid, IGNORE_MISSING) ?: $context;
+        }
+        return $context;
+    }
+
+    /**
+     * Similar to {@see format_text()} but applies only allowed filters (if enabled)
+     *
+     * @param string $text
+     * @param int $courseid
+     * @return string
+     */
+    public static function format_text(string $text, int $courseid = 0) {
+        global $PAGE;
+        $context = self::get_issue_context($courseid);
+        $text = format_text($text, FORMAT_HTML, ['context' => $context, 'filter' => false]);
+        if ($allowedfilters = self::get_allowed_filters()) {
+            $skippedfilters = array_diff(array_values(filter_get_globally_enabled()), $allowedfilters);
+            $filtermanager = \filter_manager::instance();
+            $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
+            $filteroptions = ['originalformat' => FORMAT_HTML, 'noclean' => false];
+            return $filtermanager->filter_text($text, $context, $filteroptions, $skippedfilters);
+        }
+        return $text;
+    }
 }
