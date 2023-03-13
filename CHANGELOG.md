@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.1.2 - 2023-03-14
 ### Added
 - Setting to skip some text filters when generating PDFs
 - Added support for certificate elements plugins settings
