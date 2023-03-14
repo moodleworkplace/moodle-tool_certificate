@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.11.13 - 2023-03-14
 ### Changed
 - Moved certificate issuing event before email is sent, so event processor can make changes (CONTRIB-8867)
 
