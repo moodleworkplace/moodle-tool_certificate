@@ -68,7 +68,7 @@ class elements extends \external_api {
     /**
      * Returns the delete_element result value.
      *
-     * @return \external_value
+     * @return null
      */
     public static function delete_element_returns() {
         return null;

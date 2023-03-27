@@ -40,7 +40,15 @@ class permission_test extends advanced_testcase {
     /**
      * @var \tool_certificate\template
      */
+    private $template2;
+    /**
+     * @var \tool_certificate\template
+     */
     private $template3;
+    /**
+     * @var \tool_certificate\template
+     */
+    private $template4;
     /**
      * @var \tool_certificate\template
      */

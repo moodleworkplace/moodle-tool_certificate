@@ -73,7 +73,6 @@ abstract class element {
      */
     protected static function instance_from_persistent(\tool_certificate\persistent\element $persistent) :? element {
         // Get the class name.
-        /** @var element $classname */
         $classname = '\\certificateelement_' . $persistent->get('element') . '\\element';
 
         // Ensure the necessary class exists.

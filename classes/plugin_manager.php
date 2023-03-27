@@ -37,6 +37,9 @@ require_once($CFG->dirroot.'/lib/adminlib.php');
  */
 class plugin_manager {
 
+    /** @var \moodle_url */
+    protected $pageurl;
+
     /**
      * Constructor
      */
@@ -49,7 +52,7 @@ class plugin_manager {
      *
      * @param string $action - The action to perform
      * @param string $plugin - Optional name of a plugin type to perform the action on
-     * @return None
+     * @return void
      */
     public function execute($action, $plugin) {
         global $OUTPUT;
@@ -82,7 +85,7 @@ class plugin_manager {
     /**
      * Write the HTML for the submission plugins table.
      *
-     * @return None
+     * @return void
      */
     private function view_plugins_table() {
         global $OUTPUT, $CFG;
@@ -147,7 +150,7 @@ class plugin_manager {
     /**
      * Check this user has permission to edit the list of installed plugins
      *
-     * @return None
+     * @return void
      */
     private function check_permissions() {
         // Check permissions.

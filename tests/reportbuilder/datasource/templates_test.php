@@ -41,6 +41,8 @@ class templates_test extends core_reportbuilder_testcase {
 
     /** @var core_reportbuilder_generator */
     protected $rbgenerator;
+    /** @var \tool_certificate_generator */
+    protected $certgenerator;
 
     /**
      * setUp.
