@@ -221,7 +221,7 @@ class element extends \certificateelement_image\element {
      */
     public function render($pdf, $preview, $user, $issue) {
 
-        $imageinfo = json_decode($this->get_data());
+        $imageinfo = json_decode($this->get_data() ?? '');
 
         if ($file = $this->get_file()) {
             element_helper::render_image($pdf, $this, $file, [], $imageinfo->width, $imageinfo->height);
