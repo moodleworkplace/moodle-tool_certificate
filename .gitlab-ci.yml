@@ -1,7 +1,7 @@
-image: moodlehq/moodle-workplace-plugin-ci:7.4
+image: moodlehq/moodle-workplace-plugin-ci:8.0
 
 services:
-- postgres:12
+- postgres:13
 #- mysql:5.7.26
 - name: selenium/standalone-chrome:3
   alias: selenium-standalone-chrome
@@ -14,6 +14,7 @@ variables:
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_BRANCH_LMS400: MOODLE_400_STABLE
   MOODLE_BRANCH_LMS401: MOODLE_401_STABLE
+  MOODLE_BRANCH_LMS402: master # TODO replace with MOODLE_402_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -150,6 +151,15 @@ lms401:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
     - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS401
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+
+lms402:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS402
   <<: *scriptshorttest
   except:
     - master
