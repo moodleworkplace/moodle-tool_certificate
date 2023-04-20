@@ -230,8 +230,8 @@ class certificate_test extends advanced_testcase {
 
         $template1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         // Create a dummy assignment to test groupmode.
-        $module = $this->getDataGenerator()->create_module('assignment', ['course' => $course1->id]);
-        $cm = get_coursemodule_from_instance('assignment', $module->id);
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id]);
+        $cm = get_coursemodule_from_instance('assign', $module->id);
         // Using dummy component name.
         $component = 'mod_myawesomecert';
 
@@ -268,8 +268,8 @@ class certificate_test extends advanced_testcase {
 
         $template1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         // Create a dummy assignment to test groupmode.
-        $module = $this->getDataGenerator()->create_module('assignment', ['course' => $course1->id]);
-        $cm = get_coursemodule_from_instance('assignment', $module->id);
+        $module = $this->getDataGenerator()->create_module('assign', ['course' => $course1->id]);
+        $cm = get_coursemodule_from_instance('assign', $module->id);
         // Using dummy component name.
         $component = 'mod_myawesomecert';
 
