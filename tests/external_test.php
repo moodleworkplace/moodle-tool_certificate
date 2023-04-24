@@ -22,6 +22,8 @@ use tool_certificate_generator;
 /**
  * Unit tests for the webservices.
  *
+ * @runTestsInSeparateProcesses
+ *
  * @package    tool_certificate
  * @group      tool_certificate
  * @category   test
@@ -147,7 +149,8 @@ class external_test extends advanced_testcase {
      * Test regenerate_issue_file
      */
     public function test_regenerate_issue_file() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         $this->setAdminUser();
 
