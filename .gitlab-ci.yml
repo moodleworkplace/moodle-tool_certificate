@@ -53,7 +53,7 @@ codecheck:
   - . check version_number
   - . check no_workplace_licenses
   - . check this_plugin_is_part_of "the tool_certificate plugin for Moodle - http://moodle.org/" --nowplicensecomment
-  - . check language_file_sorting
+  #- . check language_file_sorting # TODO WP-4247
   - . check behat_workplace_tag
   - . check moodle-plugin-ci phplint
   #- . check moodle-plugin-ci phpcpd

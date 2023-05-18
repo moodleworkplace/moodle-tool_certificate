@@ -36,7 +36,7 @@ admin_externalpage_setup('tool_certificate/managetemplates', '', null, '', ['nos
 $context = context_system::instance();
 
 if (!\tool_certificate\permission::can_view_admin_tree()) {
-    throw new moodle_exception('managenotallowed', 'tool_certificate');
+    throw new moodle_exception('issueormangenotallowed', 'tool_certificate');
 }
 
 $PAGE->set_secondary_navigation(false);
