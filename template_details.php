@@ -37,7 +37,7 @@ if ($coursecontext = $template->get_context()->get_course_context(false)) {
 }
 
 if (!$template->can_view_issues()) {
-    throw new moodle_exception('issueormanagenotallowed', 'tool_certificate');
+    throw new moodle_exception('issueormangenotallowed', 'tool_certificate');
 }
 
 $heading = $title = $template->get_formatted_name();
