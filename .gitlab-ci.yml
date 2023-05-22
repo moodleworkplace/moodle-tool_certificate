@@ -65,7 +65,7 @@ codecheck:
   - . check moodle-plugin-ci mustache
   - . check moodle-plugin-ci grunt --max-lint-warnings 0
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
-  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
+  - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter test_all_external_info
   - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
   - . check moodle-plugin-ci phpunit --coverage-text --fail-on-warning
   - . check-finish
