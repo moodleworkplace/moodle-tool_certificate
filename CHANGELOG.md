@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.2 - 2023-05-30
+### Changed
+- Some unused strings were removed and some deprecated
+
 ## 4.1.3 - 2023-04-25
 ### Added
 - Compatibility with Moodle LMS 4.2
