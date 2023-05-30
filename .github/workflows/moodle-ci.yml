@@ -32,6 +32,7 @@ jobs:
             moodle-branch: 'MOODLE_400_STABLE'
             database: pgsql
             extensions:
+            civersion: 3
           - php: '8.0'
             moodle-branch: 'MOODLE_400_STABLE'
             database: mariadb
@@ -65,7 +66,8 @@ jobs:
 
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          civersion=$(if [[ "${{ matrix.civersion }}" == "3" ]]; then echo "^3"; else echo "^4"; fi)
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci $civersion
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
@@ -97,7 +99,8 @@ jobs:
 
       - name: Moodle PHPDoc Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci phpdoc
+        # Skip for ci^3 since it may give different results on the old version and --max-warnings is not supported
+        run: if [[ "${{ matrix.civersion }}" == "3" ]]; then true; else moodle-plugin-ci phpdoc --max-warnings 0; fi
 
       - name: Validating
         if: ${{ always() }}

@@ -1,5 +1,13 @@
 # Changelog
 
+## 4.2 - 2023-05-30
+### Changed
+- Removed strings: entitycertificateissues, errornopermissionissuecertificate, expires,
+  issuedon, issuenewcertificates, mappingerrorcertificateheader, mappingerrorcertificatelog,
+  nopermissionform, outcomecertificate, outcomecertificatedescription, point, receiveddate,
+  selectcertificate, toomanycertificatestoshow, type
+- Deprecated strings: editcertificate, issuenewcertificate, nopermissionform
+
 ## 4.1.3 - 2023-04-25
 ### Added
 - Compatibility with Moodle LMS 4.2
