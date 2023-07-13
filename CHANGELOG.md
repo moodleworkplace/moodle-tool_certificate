@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Reportbuilder source "Certificate issues" no longer automatically checks
+  current user permission to access the certificate templates. The similar
+  manual condition was added in the upgrade script to all existing reports
+  to prevent change in behaviour. New reports will not have this condition.
+
+  This allows to create reports such as "My certificates" visible to any
+  users including those who can not view or edit the templates.
+
 ## 4.2 - 2023-05-30
 ### Changed
 - Removed strings: entitycertificateissues, errornopermissionissuecertificate, expires,

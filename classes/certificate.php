@@ -447,7 +447,7 @@ class certificate {
      *
      * If tool_tenant is installed - adds a tenant filter
      *
-     * @uses \tool_tenant\tenancy::get_users_subquery
+     * @uses \tool_tenant\tenancy::get_users_subquery()
      *
      * @param string $usertablealias
      * @param bool $canseeall do not add tenant check if user has capability 'tool/tenant:manage'
