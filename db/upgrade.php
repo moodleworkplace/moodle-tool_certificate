@@ -242,5 +242,10 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2022051800, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2023071300) {
+        tool_certificate_upgrade_add_permission_condition_to_reports();
+        upgrade_plugin_savepoint(true, 2023071300, 'tool', 'certificate');
+    }
+
     return true;
 }

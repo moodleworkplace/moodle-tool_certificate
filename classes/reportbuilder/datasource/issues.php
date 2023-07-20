@@ -19,10 +19,13 @@ declare(strict_types=1);
 namespace tool_certificate\reportbuilder\datasource;
 
 use core_reportbuilder\datasource;
+use core_reportbuilder\local\report\filter;
+use lang_string;
 use tool_certificate\certificate;
 use tool_certificate\reportbuilder\local\entities\issue;
 use core_reportbuilder\local\entities\user;
 use tool_certificate\reportbuilder\local\entities\template;
+use tool_certificate\reportbuilder\local\filters\templatepermission;
 use tool_certificate\reportbuilder\local\formatters\certificate as formatter;
 
 /**
@@ -63,7 +66,7 @@ class issues extends datasource {
         $this->add_entity($userentity);
 
         // Add users join and only apply to not deleted.
-        $this->add_join("LEFT JOIN {user} {$user} ON {$user}.id = {$certificateissue}.userid");
+        $this->add_join("JOIN {user} {$user} ON {$user}.id = {$certificateissue}.userid");
         $this->add_base_condition_simple("{$user}.deleted", 0);
 
         // Add categories/tool_certificate_templates entity.
@@ -86,10 +89,6 @@ class issues extends datasource {
         $this->add_join("JOIN {tool_certificate_templates} {$certificatetempl}
             ON {$certificatetempl}.id = {$certificateissue}.templateid");
 
-        // Add report base condition where templates are present and visible to user.
-        [$sql, $params] = certificate::get_visible_categories_contexts_sql("{$certificatetempl}.contextid");
-        $this->add_base_condition_sql($sql, $params);
-
         // Add callback for tenant feature.
         $this->add_base_condition_sql(certificate::get_users_subquery($user, false));
 
@@ -99,6 +98,19 @@ class issues extends datasource {
         $this->add_columns_from_entity($certificatetemplentityname);
         $this->add_filters_from_entity($certificatetemplentityname);
         $this->add_conditions_from_entity($certificatetemplentityname);
+
+        // Condition to check access to the certificate template, for backward-compatibility.
+        // Before version 2023071300 this was hardcoded in the report source, in this version
+        // the hardcoded base condition was removed but a similar condition was added to all
+        // existing reports in the upgrade script.
+        $condition = new filter(
+            templatepermission::class,
+            'templatepermission',
+            new lang_string('templatepermission', 'tool_certificate'),
+            $certificatetemplentityname,
+            "{$certificatetempl}.contextid"
+        );
+        $this->add_condition($condition);
 
         // Add course category entity columns/filters/conditions.
         $this->add_columns_from_entity($coursecatentityname);

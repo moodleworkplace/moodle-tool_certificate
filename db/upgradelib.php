@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_certificate\reportbuilder\datasource\issues;
+
 /**
  * Set contextid instead of tenantid for the templates
  *
@@ -212,5 +214,24 @@ function tool_certificate_fix_orphaned_template_element_files() {
             $fs->move_area_files_to_new_context($record->contextid, $record->templatecontextid, 'tool_certificate',
                 $record->filearea, $record->itemid);
         }
+    }
+}
+
+/**
+ * Upgrade script adding condition 'templatepermission' to all existing issues reports
+ */
+function tool_certificate_upgrade_add_permission_condition_to_reports() {
+    global $DB, $USER;
+
+    $reports = \core_reportbuilder\local\models\report::get_records_select('source = ?', [issues::class]);
+    foreach ($reports as $report) {
+        // Insert new condition (we can safely use core API in the plugins upgrade script).
+        \core_reportbuilder\local\helpers\report::add_report_condition(
+            $report->get('id'), 'template:templatepermission');
+
+        $reportobj = \core_reportbuilder\manager::get_report_from_persistent($report);
+        $values = $reportobj->get_condition_values();
+        $values['template:templatepermission_operator'] = 1;
+        $reportobj->set_condition_values($values);
     }
 }
