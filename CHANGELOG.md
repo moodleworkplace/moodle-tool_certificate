@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.2.2 - 2023-08-22
 ### Changed
 - Reportbuilder source "Certificate issues" no longer automatically checks
   current user permission to access the certificate templates. The similar
