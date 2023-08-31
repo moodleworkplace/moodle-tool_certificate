@@ -217,7 +217,7 @@ class my_certificates_table extends \table_sql {
             'issueYear' => date('Y', $issue->timecreated),
             'issueMonth' => date('m', $issue->timecreated),
             'certId' => $issue->code,
-            'certUrl' => template::verification_url($issue->code)
+            'certUrl' => template::view_url($issue->code)
         ];
 
         if ($issue->expires !== '0') {

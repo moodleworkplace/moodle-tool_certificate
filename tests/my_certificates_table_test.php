@@ -111,7 +111,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'issueYear' => '2021',
                 'issueMonth' => '10',
                 'certId' => '0123456789SS',
-                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS'
+                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/view.php?code=0123456789SS'
             ], null],
             [(object)[
                 'id' => '6',
@@ -126,7 +126,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'issueYear' => '2017',
                 'issueMonth' => '07',
                 'certId' => '0123456789SS',
-                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS',
+                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/view.php?code=0123456789SS',
                 'organizationId' => '123',
             ], 123],
             [(object)[
@@ -142,7 +142,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'issueYear' => '2019',
                 'issueMonth' => '09',
                 'certId' => '0123456789SS',
-                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS',
+                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/view.php?code=0123456789SS',
                 'expirationYear' => '1970',
                 'expirationMonth' => '01'
             ], null],
@@ -159,7 +159,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'issueYear' => '2024',
                 'issueMonth' => '01',
                 'certId' => '0123456789SS',
-                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS',
+                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/view.php?code=0123456789SS',
                 'expirationYear' => '1970',
                 'expirationMonth' => '01',
                 'organizationId' => '123',
