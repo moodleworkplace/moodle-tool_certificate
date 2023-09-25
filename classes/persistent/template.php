@@ -45,17 +45,17 @@ class template extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'name' => array(
-                'type' => PARAM_TEXT
-            ),
-            'contextid' => array(
-                'type' => PARAM_INT
-            ),
-            'shared' => array(
-                'type' => PARAM_BOOL
-            ),
-        );
+        return [
+            'name' => [
+                'type' => PARAM_TEXT,
+            ],
+            'contextid' => [
+                'type' => PARAM_INT,
+            ],
+            'shared' => [
+                'type' => PARAM_BOOL,
+            ],
+        ];
     }
 
     /**

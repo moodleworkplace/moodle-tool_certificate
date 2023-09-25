@@ -80,10 +80,10 @@ class template_deleted extends \core\event\base {
      * @return template_deleted
      */
     public static function create_from_template(template $template) : template_deleted {
-        $data = array(
+        $data = [
             'context' => $template->get_context(),
             'objectid' => $template->get_id(),
-        );
+        ];
         $event = self::create($data);
         $event->add_record_snapshot('tool_certificate_templates', $template->to_record());
         return $event;

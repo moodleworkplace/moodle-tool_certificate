@@ -86,7 +86,7 @@ class templates_test extends core_reportbuilder_testcase {
         // Set all expected certificate template values.
         $contentcerts = [
             [$cert1['name'], $newcategory->name, 0],
-            [$cert2['name'], '', 0]
+            [$cert2['name'], '', 0],
         ];
         $this->assertEqualsCanonicalizing($contentcerts, $content);
 

@@ -126,7 +126,7 @@ class provider implements \core_privacy\local\metadata\provider,
             ];
 
             writer::with_context($context)->export_data(array_merge($contextpath, [
-                clean_param($record->certificatename, PARAM_FILE)
+                clean_param($record->certificatename, PARAM_FILE),
             ]), $data);
         }
 

@@ -256,10 +256,10 @@ class template_test extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $pagedata = (object)['tid' => $certificate1->get_id(),
                              'pagewidth_'.$pageid => 333, 'pageheight_'.$pageid => 444,
-                             'pageleftmargin_'.$pageid => 333, 'pagerightmargin_'.$pageid => 444];
+                             'pageleftmargin_'.$pageid => 333, 'pagerightmargin_'.$pageid => 444, ];
         $certificate1->save_page($pagedata);
         $this->assertTrue($DB->record_exists('tool_certificate_pages', ['templateid' => $certificate1->get_id(),
-            'width' => 333, 'height' => 444]));
+            'width' => 333, 'height' => 444, ]));
     }
 
     /**
@@ -359,19 +359,19 @@ class template_test extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id()]));
 
         $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
-            'userid' => $user1->id]));
+            'userid' => $user1->id, ]));
         $this->assertEquals(1, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
-            'userid' => $user2->id]));
+            'userid' => $user2->id, ]));
 
         $certificate1->issue_certificate($user1->id);
         $this->assertEquals(2, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
-            'userid' => $user1->id]));
+            'userid' => $user1->id, ]));
 
         $certificate1->issue_certificate($user2->id);
         $certificate1->issue_certificate($user2->id);
 
         $this->assertEquals(3, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
-            'userid' => $user2->id]));
+            'userid' => $user2->id, ]));
 
         // Test issue_certificate with courseid.
         $course = $this->getDataGenerator()->create_course();
@@ -383,7 +383,7 @@ class template_test extends advanced_testcase {
         $this->assertEquals($course->id, $issue->courseid);
 
         $this->assertEquals(4, $DB->count_records('tool_certificate_issues', ['templateid' => $certificate1->get_id(),
-            'userid' => $user2->id]));
+            'userid' => $user2->id, ]));
     }
 
     /**
@@ -498,11 +498,11 @@ class template_test extends advanced_testcase {
         $cat3 = $this->getDataGenerator()->create_category();
 
         $this->get_generator()->create_template((object)['name' => 'Template 1',
-            'contextid' => context_coursecat::instance($cat1->id)->id]);
+            'contextid' => context_coursecat::instance($cat1->id)->id, ]);
         $this->get_generator()->create_template((object)['name' => 'Template 2',
-            'contextid' => context_coursecat::instance($cat2->id)->id]);
+            'contextid' => context_coursecat::instance($cat2->id)->id, ]);
         $this->get_generator()->create_template((object)['name' => 'Template 2',
-            'contextid' => context_system::instance()->id]);
+            'contextid' => context_system::instance()->id, ]);
 
         [$sql, $params] = \tool_certificate\template::get_visible_categories_contexts_sql();
 
@@ -524,7 +524,7 @@ class template_test extends advanced_testcase {
         $cat1 = $this->getDataGenerator()->create_category();
         $cat1context = context_coursecat::instance($cat1->id);
         $template1 = $this->get_generator()->create_template((object)['name' => 'Template 1',
-            'contextid' => context_coursecat::instance($cat1->id)->id]);
+            'contextid' => context_coursecat::instance($cat1->id)->id, ]);
         $page1 = $this->get_generator()->create_page($template1);
         $imageelement = $this->get_generator()->create_element($page1->get_id(), 'image');
 
@@ -536,7 +536,7 @@ class template_test extends advanced_testcase {
             'filearea' => 'element',
             'itemid' => $imageelement->get_id(),
             'filepath' => '/',
-            'filename' => 'image.png'
+            'filename' => 'image.png',
         ];
         $file = $fs->create_file_from_string($filerecord, 'Awesome photography');
         $filecontent = $file->get_content();

@@ -53,7 +53,7 @@ class element_test extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $formdata = ['name' => 'Date element', 'dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
-            'dateformat' => 'strftimedateshort'];
+            'dateformat' => 'strftimedateshort', ];
         $e = $this->get_generator()->create_element($pageid, 'date', $formdata);
         $this->assertNotEmpty($e->render_html());
 
@@ -83,7 +83,7 @@ class element_test extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'date');
         $newdata = (object)['dateitem' => \certificateelement_date\element::CUSTOMCERT_DATE_ISSUE,
-                            'dateformat' => 'strftimedate'];
+                            'dateformat' => 'strftimedate', ];
         $expected = json_encode($newdata);
         $e->save_form_data($newdata);
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);

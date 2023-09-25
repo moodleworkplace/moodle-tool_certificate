@@ -46,9 +46,9 @@ class elements extends \external_api {
      */
     public static function delete_element_parameters() {
         return new \external_function_parameters(
-            array(
-                'id' => new \external_value(PARAM_INT, 'Element id')
-            )
+            [
+                'id' => new \external_value(PARAM_INT, 'Element id'),
+            ]
         );
     }
 
@@ -81,12 +81,12 @@ class elements extends \external_api {
      */
     public static function update_element_parameters() {
         return new \external_function_parameters(
-            array(
+            [
                 'id' => new \external_value(PARAM_INT, 'Element id'),
                 'sequence' => new \external_value(PARAM_INT, 'Sequence', VALUE_DEFAULT, null),
                 'posx' => new \external_value(PARAM_INT, 'X position', VALUE_DEFAULT, null),
                 'posy' => new \external_value(PARAM_INT, 'Y position', VALUE_DEFAULT, null),
-            )
+            ]
         );
     }
 

@@ -46,10 +46,10 @@ class templates extends \external_api {
      */
     public static function duplicate_template_parameters() {
         return new \external_function_parameters(
-            array(
+            [
                 'id' => new \external_value(PARAM_INT, 'Template id'),
-                'categoryid' => new \external_value(PARAM_INT, 'Category id', VALUE_DEFAULT, 0)
-            )
+                'categoryid' => new \external_value(PARAM_INT, 'Category id', VALUE_DEFAULT, 0),
+            ]
         );
     }
 
@@ -86,9 +86,9 @@ class templates extends \external_api {
      */
     public static function delete_template_parameters() {
         return new \external_function_parameters(
-            array(
-                'id' => new \external_value(PARAM_INT, 'Template id')
-            )
+            [
+                'id' => new \external_value(PARAM_INT, 'Template id'),
+            ]
         );
     }
 

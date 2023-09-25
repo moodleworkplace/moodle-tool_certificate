@@ -46,7 +46,7 @@ class template extends base {
      */
     protected function get_default_table_aliases(): array {
         return [
-            'tool_certificate_templates' => 'tct'
+            'tool_certificate_templates' => 'tct',
         ];
     }
 

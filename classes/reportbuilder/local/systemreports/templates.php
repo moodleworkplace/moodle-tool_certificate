@@ -163,7 +163,7 @@ class templates extends system_report {
             new moodle_url('/admin/tool/certificate/view.php', ['templateid' => ':id', 'preview' => 1, 'code' => 'previewing']),
             new pix_icon('i/search', ''),
             [
-                'target' => '_blank'
+                'target' => '_blank',
             ],
             false,
             new lang_string('preview')

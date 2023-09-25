@@ -210,7 +210,7 @@ class issue_handler extends handler {
         try {
             $config = ['visible' => $visible, 'previewvalue' => $previewvalue] + $config;
             $record = (object)['type' => $type, 'shortname' => $shortname, 'name' => $displayname ?: $shortname,
-                'descriptionformat' => FORMAT_HTML, 'configdata' => json_encode($config)];
+                'descriptionformat' => FORMAT_HTML, 'configdata' => json_encode($config), ];
             $field = \core_customfield\field_controller::create(0, $record, $category);
         } catch (\moodle_exception $e) {
             return null;

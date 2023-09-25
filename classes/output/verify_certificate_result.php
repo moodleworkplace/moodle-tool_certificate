@@ -88,7 +88,7 @@ class verify_certificate_result implements templatable, renderable {
      */
     public function __construct($issue) {
         $this->viewurl = template::view_url($issue->code);
-        $this->userprofileurl = new \moodle_url('/user/view.php', array('id' => $issue->userid));
+        $this->userprofileurl = new \moodle_url('/user/view.php', ['id' => $issue->userid]);
         $this->userfullname = @json_decode($issue->data, true)['userfullname'];
         $this->certificatename = $issue->certificatename;
         $strftimedatetime = get_string("strftimedatetime", "langconfig");
@@ -112,24 +112,24 @@ class verify_certificate_result implements templatable, renderable {
         $table->attributes['class'] = 'admintable generaltable mb-2';
         $fullnamerow = new html_table_row([
             new html_table_cell(get_string('fullname')),
-            new html_table_cell($this->userfullname)
+            new html_table_cell($this->userfullname),
         ]);
         $certificaterow = new html_table_row([
             new html_table_cell(get_string('certificate', 'tool_certificate')),
-            new html_table_cell($this->certificatename)
+            new html_table_cell($this->certificatename),
         ]);
         $issuedrow = new html_table_row([
             new html_table_cell(get_string('issueddate', 'tool_certificate')),
-            new html_table_cell($this->timecreated)
+            new html_table_cell($this->timecreated),
         ]);
         $expiresrow = new html_table_row([
             new html_table_cell(get_string('expirydate', 'tool_certificate')),
-            new html_table_cell($this->expires)
+            new html_table_cell($this->expires),
         ]);
         $statusrow = new html_table_row([
             new html_table_cell(get_string('status')),
             new html_table_cell($this->expired ? get_string('expired', 'tool_certificate') :
-                get_string('valid', 'tool_certificate'))
+                get_string('valid', 'tool_certificate')),
         ]);
 
         $table->data = [

@@ -67,9 +67,9 @@ class element_test extends advanced_testcase {
         $this->assertTrue(strpos($e->render_html(), '@') !== false);
 
         // Add a custom field of textarea type.
-        $id1 = $DB->insert_record('user_info_field', array(
+        $id1 = $DB->insert_record('user_info_field', [
                 'shortname' => 'frogdesc', 'name' => 'Description of frog', 'categoryid' => 1,
-                'datatype' => 'textarea'));
+                'datatype' => 'textarea', ]);
 
         $formdata = (object)['name' => 'User custom field element', 'userfield' => $id1];
         $e = $this->get_generator()->create_element($pageid, 'userfield', $formdata);

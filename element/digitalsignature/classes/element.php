@@ -30,7 +30,7 @@ class element extends \certificateelement_image\element {
     /**
      * @var array The file manager options for the certificate.
      */
-    protected $signaturefilemanageroptions = array();
+    protected $signaturefilemanageroptions = [];
 
     /**
      * Constructor.
@@ -42,7 +42,7 @@ class element extends \certificateelement_image\element {
             'maxbytes' => $COURSE->maxbytes,
             'subdirs' => 0,
             'accepted_types' => ['.crt'],
-            'maxfiles' => 1
+            'maxfiles' => 1,
         ];
 
         parent::__construct();
@@ -131,7 +131,7 @@ class element extends \certificateelement_image\element {
             $size = element_helper::calculate_image_size('none', ['width' => 140, 'height' => 140],
                 (float)$imageinfo['width'], (float)$imageinfo['height']);
             return \html_writer::div('&nbsp;', 'm-0 p-0', ['style' => 'border: 1px dotted black;',
-                'data-width' => $size['width'], 'data-height' => $size['height']]);
+                'data-width' => $size['width'], 'data-height' => $size['height'], ]);
         } else {
             // Link to the file.
             $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
@@ -178,7 +178,7 @@ class element extends \certificateelement_image\element {
             'signaturereason' => $data->signaturereason,
             'signaturecontactinfo' => $data->signaturecontactinfo,
             'width' => !empty($data->width) ? (int) $data->width : 0,
-            'height' => !empty($data->height) ? (int) $data->height : 0
+            'height' => !empty($data->height) ? (int) $data->height : 0,
         ];
 
         // Array of data we will be storing in the database.
@@ -203,7 +203,7 @@ class element extends \certificateelement_image\element {
                     'signaturefilearea' => $signaturefile->get_filearea(),
                     'signatureitemid' => $signaturefile->get_itemid(),
                     'signaturefilepath' => $signaturefile->get_filepath(),
-                    'signaturefilename' => $signaturefile->get_filename()
+                    'signaturefilename' => $signaturefile->get_filename(),
                 ];
             }
         }
@@ -234,7 +234,7 @@ class element extends \certificateelement_image\element {
                 'Name' => $imageinfo->signaturename,
                 'Location' => $imageinfo->signaturelocation,
                 'Reason' => $imageinfo->signaturereason,
-                'ContactInfo' => $imageinfo->signaturecontactinfo
+                'ContactInfo' => $imageinfo->signaturecontactinfo,
             ];
             $pdf->setSignature('file://' . $location, '', $imageinfo->signaturepassword, '', 2, $info);
             $size = element_helper::calculate_image_size($file, [], $imageinfo->width, $imageinfo->height);

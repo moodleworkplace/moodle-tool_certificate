@@ -190,7 +190,7 @@ class certificate {
         $params = [
             'templateid' => $templateid,
             'courseid' => $courseid,
-            'component' => $component
+            'component' => $component,
         ];
 
         if ($groupmode) {
@@ -323,7 +323,7 @@ class certificate {
                     ON t.id = ci.templateid
                  WHERE ci.userid = :userid
               ORDER BY {$sort}";
-            return $DB->get_records_sql($sql, array('userid' => $userid), $limitfrom, $limitnum);
+            return $DB->get_records_sql($sql, ['userid' => $userid], $limitfrom, $limitnum);
     }
 
     /**
@@ -499,81 +499,81 @@ class certificate {
         // Create template elements.
         $str = get_string('demotmplbackground', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'image',
-            'data' => json_encode(['width' => 0, 'height' => 0, 'isbackground' => true]), 'sequence' => 1];
+            'data' => json_encode(['width' => 0, 'height' => 0, 'isbackground' => true]), 'sequence' => 1, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
         self::create_demo_element_file($element->get('id'), "{$CFG->dirroot}/{$CFG->admin}/tool/certificate/pix/background.jpg");
 
         $str = get_string('demotmplawardedto', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'text', 'data' => $str, 'font' => 'freesans',
-            'fontsize' => 12, 'colour' => '#fff', 'posx' => 25, 'posy' => 25, 'sequence' => 2, 'refpoint' => 0];
+            'fontsize' => 12, 'colour' => '#fff', 'posx' => 25, 'posy' => 25, 'sequence' => 2, 'refpoint' => 0, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplusername', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'userfield', 'data' => 'fullname',
             'font' => 'freesansb', 'fontsize' => 26, 'colour' => '#fff', 'posx' => 25, 'posy' => 30, 'sequence' => 3,
-            'refpoint' => 0];
+            'refpoint' => 0, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplforcompleting', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'text', 'data' => $str, 'font' => 'freesans',
-            'fontsize' => 12, 'colour' => '#fff', 'posx' => 25, 'posy' => 52, 'sequence' => 4, 'refpoint' => 0];
+            'fontsize' => 12, 'colour' => '#fff', 'posx' => 25, 'posy' => 52, 'sequence' => 4, 'refpoint' => 0, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplcoursefullname', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'program', 'font' => 'freesansb',
             'fontsize' => 26, 'data' => json_encode(['display' => 'coursefullname']), 'colour' => '#fff', 'posx' => 25,
-            'posy' => 57, 'sequence' => 5, 'refpoint' => 0];
+            'posy' => 57, 'sequence' => 5, 'refpoint' => 0, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplawardedon', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'text', 'data' => $str,
             'font' => 'freesans', 'fontsize' => 12, 'colour' => '#fff', 'posx' => 25, 'posy' => 80, 'sequence' => 6,
-            'refpoint' => 0];
+            'refpoint' => 0, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplissueddate', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'date', 'font' => 'freesansb',
             'fontsize' => 12, 'data' => json_encode(['dateitem' => -1, 'dateformat' => 'strftimedate']), 'colour' => '#fff',
-            'posx' => 49, 'posy' => 80, 'sequence' => 7, 'refpoint' => 0];
+            'posx' => 49, 'posy' => 80, 'sequence' => 7, 'refpoint' => 0, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplqrcode', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'code', 'font' => 'freesans',
             'fontsize' => 12, 'data' => json_encode(['display' => 4]), 'colour' => '#000000',
-            'posx' => 44, 'posy' => 157, 'width' => 35, 'sequence' => 8, 'refpoint' => 1];
+            'posx' => 44, 'posy' => 157, 'width' => 35, 'sequence' => 8, 'refpoint' => 1, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmplsignature', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'image', 'posx' => 118, 'posy' => 157,
-            'data' => json_encode(['width' => 50, 'height' => 0, 'isbackground' => false]), 'sequence' => 9];
+            'data' => json_encode(['width' => 50, 'height' => 0, 'isbackground' => false]), 'sequence' => 9, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
         self::create_demo_element_file($element->get('id'), "{$CFG->dirroot}/{$CFG->admin}/tool/certificate/pix/signature.png");
 
         $elementrecord = ['pageid' => $page->get_id(), 'name' => 'Mary Jones', 'element' => 'text', 'font' => 'freesansb',
             'fontsize' => 12, 'data' => 'Mary Jones', 'colour' => '#000000', 'posx' => 141, 'posy' => 181, 'sequence' => 10,
-            'refpoint' => 1];
+            'refpoint' => 1, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('demotmpldirector', 'tool_certificate');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'text', 'font' => 'freesans',
             'fontsize' => 12, 'data' => $str, 'colour' => '#000000', 'posx' => 141, 'posy' => 187, 'sequence' => 11,
-            'refpoint' => 1];
+            'refpoint' => 1, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
 
         $str = get_string('logo', 'admin');
         $elementrecord = ['pageid' => $page->get_id(), 'name' => $str, 'element' => 'image', 'posx' => 223, 'posy' => 179,
-            'data' => json_encode(['width' => 50, 'height' => 0, 'isbackground' => false]), 'sequence' => 12];
+            'data' => json_encode(['width' => 50, 'height' => 0, 'isbackground' => false]), 'sequence' => 12, ];
         $element = new \tool_certificate\persistent\element(0, (object)$elementrecord);
         $element->save();
         $wplogo = "{$CFG->dirroot}/{$CFG->admin}/tool/wp/pix/workplacelogo.png";
@@ -622,7 +622,7 @@ class certificate {
         $group[] =& $mform->createElement('date_time_selector', 'expirydateabsolute', '');
         // TODO: Missing here "month" and "year" options. See MDL-61624.
         $group[] =& $mform->createElement('duration', 'expirydaterelative', '', ['defaulunit' => DAYSECS,
-            'units' => [DAYSECS, WEEKSECS]]);
+            'units' => [DAYSECS, WEEKSECS], ]);
         $mform->addGroup($group, 'expirydateformgroup', get_string('expirydate', 'tool_certificate'), ' ', false);
         $mform->setDefault('expirydatetype', self::DATE_EXPIRATION_NEVER);
         $mform->hideIf('expirydateabsolute', 'expirydatetype', 'noteq', self::DATE_EXPIRATION_ABSOLUTE);

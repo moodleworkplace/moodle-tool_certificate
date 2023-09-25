@@ -63,7 +63,7 @@ class element_test extends advanced_testcase {
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $e = $this->get_generator()->new_element($pageid, 'text');
         $formdata = (object)['name' => 'Text element', 'text' => 'Here is <script>XSS</script>the text',
-            'element' => 'text', 'pageid' => $pageid];
+            'element' => 'text', 'pageid' => $pageid, ];
         $e->save_form_data($formdata);
         $html = $e->render_html();
         $this->assertStringContainsString('Here is the text', $html);

@@ -44,31 +44,31 @@ class page extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'templateid' => array(
-                'type' => PARAM_INT
-            ),
-            'width' => array(
+        return [
+            'templateid' => [
+                'type' => PARAM_INT,
+            ],
+            'width' => [
                 'type' => PARAM_INT,
                 'default' => 297,
-            ),
-            'height' => array(
+            ],
+            'height' => [
                 'type' => PARAM_INT,
                 'default' => 210,
-            ),
-            'leftmargin' => array(
+            ],
+            'leftmargin' => [
                 'type' => PARAM_INT,
                 'default' => 0,
-            ),
-            'rightmargin' => array(
+            ],
+            'rightmargin' => [
                 'type' => PARAM_INT,
                 'default' => 0,
-            ),
-            'sequence' => array(
+            ],
+            'sequence' => [
                 'type' => PARAM_INT,
-                'default' => 0
-            ),
-        );
+                'default' => 0,
+            ],
+        ];
     }
 
     /**

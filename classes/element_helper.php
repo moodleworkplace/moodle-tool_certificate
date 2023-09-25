@@ -115,7 +115,7 @@ class element_helper {
         } else if ($element->get_refpoint() == self::CUSTOMCERT_REF_POINT_TOPCENTER) {
             $style .= ' text-align: center;';
         }
-        return \html_writer::div($content, '', array('style' => $style));
+        return \html_writer::div($content, '', ['style' => $style]);
     }
 
     /**
@@ -291,7 +291,7 @@ class element_helper {
      * @param \MoodleQuickForm $mform the edit_form instance.
      */
     public static function render_form_element_refpoint($mform) {
-        $refpointoptions = array();
+        $refpointoptions = [];
         $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPLEFT] = get_string('alignleft', 'tool_certificate');
         $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPCENTER] = get_string('aligncentre', 'tool_certificate');
         $refpointoptions[self::CUSTOMCERT_REF_POINT_TOPRIGHT] = get_string('alignright', 'tool_certificate');
@@ -308,7 +308,7 @@ class element_helper {
      * @return array the validation errors
      */
     public static function validate_form_element_colour($data) {
-        $errors = array();
+        $errors = [];
         // Validate the colour.
         if (!self::validate_colour($data['colour'])) {
             $errors['colour'] = get_string('invalidcolour', 'tool_certificate');
@@ -323,7 +323,7 @@ class element_helper {
      * @return array the validation errors
      */
     public static function validate_form_element_position($data) {
-        $errors = array();
+        $errors = [];
 
         // Check if posx is not set, or not numeric or less than 0.
         if (!empty($data['posx']) && !is_numeric($data['posx'])) {
@@ -368,7 +368,7 @@ class element_helper {
             $font = substr($font, 0, -1);
             $attr .= 'B';
         }
-        return array($font, $attr);
+        return [$font, $attr];
     }
 
     /**
@@ -379,7 +379,7 @@ class element_helper {
      */
     public static function validate_colour($colour) {
         // List of valid HTML colour names.
-        $colournames = array(
+        $colournames = [
             'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure',
             'beige', 'bisque', 'black', 'blanchedalmond', 'blue',
             'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse',
@@ -410,8 +410,8 @@ class element_helper {
             'seagreen', 'seashell', 'sienna', 'silver', 'skyblue', 'slateblue',
             'slategray', 'slategrey', 'snow', 'springgreen', 'steelblue', 'tan',
             'teal', 'thistle', 'tomato', 'turquoise', 'violet', 'wheat', 'white',
-            'whitesmoke', 'yellow', 'yellowgreen'
-        );
+            'whitesmoke', 'yellow', 'yellowgreen',
+        ];
 
         if (preg_match('/^#?([[:xdigit:]]{3}){1,2}$/', $colour)) {
             return true;
@@ -439,7 +439,7 @@ class element_helper {
                   FROM {tool_certificate_elements}
                  WHERE pageid = :id";
         // Get the current max sequence on this page and add 1 to get the new sequence.
-        if ($maxseq = $DB->get_record_sql($sql, array('id' => $pageid))) {
+        if ($maxseq = $DB->get_record_sql($sql, ['id' => $pageid])) {
             $sequence = $maxseq->maxsequence + 1;
         }
 
@@ -455,7 +455,7 @@ class element_helper {
         global $CFG;
 
         // Array to store the element types.
-        $options = array();
+        $options = [];
 
         $plugins = self::get_enabled_plugins();
 
@@ -486,11 +486,11 @@ class element_helper {
         $manager = new plugin_manager();
         $plugins = $manager->get_sorted_plugins_list();
         if (!$plugins) {
-            return array();
+            return [];
         }
 
         // Check they are enabled using get_config (which is cached and hopefully fast).
-        $enabled = array();
+        $enabled = [];
         foreach ($plugins as $plugin) {
             $disabled = get_config('certificateelement_' . $plugin, 'disabled');
             if (empty($disabled)) {
@@ -553,7 +553,7 @@ class element_helper {
      */
     private static function get_font_sizes() {
         // Array to store the sizes.
-        $sizes = array();
+        $sizes = [];
 
         for ($i = 1; $i <= 200; $i++) {
             $sizes[$i] = $i;
@@ -660,7 +660,7 @@ class element_helper {
         $fs = get_file_storage();
 
         // The array used to store the images.
-        $arrfiles = array();
+        $arrfiles = [];
         if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
             'image', false, 'filename', false)) {
             foreach ($files as $hash => $file) {
@@ -670,7 +670,7 @@ class element_helper {
 
         if (count($arrfiles)) {
             \core_collator::asort($arrfiles);
-            $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+            $arrfiles = ['0' => get_string('noimage', 'tool_certificate')] + $arrfiles;
         }
 
         return $arrfiles;
@@ -683,7 +683,7 @@ class element_helper {
      * @return bool whether the element was added (it would not be added if there are no shared images)
      */
     public static function render_shared_image_picker_element($mform) {
-        $arrfiles = array();
+        $arrfiles = [];
         if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
             'image', false, 'filename', false)) {
             foreach ($files as $hash => $file) {
@@ -696,7 +696,7 @@ class element_helper {
         }
 
         \core_collator::asort($arrfiles);
-        $arrfiles = array('0' => get_string('noimage', 'tool_certificate')) + $arrfiles;
+        $arrfiles = ['0' => get_string('noimage', 'tool_certificate')] + $arrfiles;
         $mform->addElement('select', 'fileid', get_string('selectsharedimage', 'certificateelement_image'), $arrfiles);
         return true;
     }

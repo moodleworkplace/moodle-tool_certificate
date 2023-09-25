@@ -33,7 +33,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::ISSUES_PER_PAGE, PARAM_INT);
 
-$pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', array('templateid' => $templateid));
+$pageurl = $url = new moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $templateid]);
 $PAGE->set_url($pageurl);
 $template = \tool_certificate\template::instance($templateid);
 if ($coursecontext = $template->get_context()->get_course_context(false)) {
@@ -67,7 +67,7 @@ $data += ['heading' => get_string('issuedcertificates', 'tool_certificate')];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-tid', 'value' => $template->get_id()],
-        'addbuttonicon' => true];
+        'addbuttonicon' => true, ];
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
 

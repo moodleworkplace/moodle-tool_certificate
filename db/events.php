@@ -28,6 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 $observers = [
     [
         'eventname' => '\core\event\course_content_deleted',
-        'callback' => tool_certificate_observer::class . '::on_course_content_deleted'
+        'callback' => tool_certificate_observer::class . '::on_course_content_deleted',
     ],
 ];

@@ -173,10 +173,10 @@ class element extends \tool_certificate\element {
             'border' => 0,
             'vpadding' => 'auto',
             'hpadding' => 'auto',
-            'fgcolor' => array(0, 0, 0),
-            'bgcolor' => array(255, 255, 255),
+            'fgcolor' => [0, 0, 0],
+            'bgcolor' => [255, 255, 255],
             'module_width' => 1,
-            'module_height' => 1
+            'module_height' => 1,
         ];
 
         $codeurl = new \moodle_url("/admin/tool/certificate/index.php", ['code' => $code]);

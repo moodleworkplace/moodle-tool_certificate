@@ -44,9 +44,9 @@ class issues extends \external_api {
      */
     public static function revoke_issue_parameters() {
         return new \external_function_parameters(
-            array(
+            [
                 'id' => new \external_value(PARAM_INT, 'The issue id'),
-            )
+            ]
         );
     }
 
@@ -91,9 +91,9 @@ class issues extends \external_api {
      */
     public static function regenerate_issue_file_parameters() {
         return new \external_function_parameters(
-            array(
+            [
                 'id' => new \external_value(PARAM_INT, 'The issue id'),
-            )
+            ]
         );
     }
 

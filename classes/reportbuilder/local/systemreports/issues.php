@@ -203,7 +203,7 @@ class issues extends system_report {
             new moodle_url('/admin/tool/certificate/view.php', ['code' => ':code']),
             new pix_icon('i/search', ''),
             [
-                'target' => '_blank'
+                'target' => '_blank',
             ],
             false,
             new lang_string('view')

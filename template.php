@@ -35,11 +35,11 @@ if ($pageid && $action) {
     $template = \tool_certificate\template::instance($templateid);
 }
 
-$pageurl = new moodle_url('/admin/tool/certificate/template.php', array('id' => $template->get_id()));
+$pageurl = new moodle_url('/admin/tool/certificate/template.php', ['id' => $template->get_id()]);
 if ($template->get_context()->contextlevel == CONTEXT_COURSE) {
     $courseid = $template->get_context()->instanceid;
     require_login($courseid);
-    $manageurl = new moodle_url('/admin/tool/certificate/manage_templates.php', array('courseid' => $courseid));
+    $manageurl = new moodle_url('/admin/tool/certificate/manage_templates.php', ['courseid' => $courseid]);
     $PAGE->navbar->add(get_string('managetemplates', 'tool_certificate'), $manageurl);
     $PAGE->set_url($pageurl);
 } else {

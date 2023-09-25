@@ -73,7 +73,7 @@ class edit_element_form extends dynamic_form {
                 $this->element = element::instance($this->_ajaxformdata['id']);
             } else {
                 $this->element = element::instance(0, (object)['pageid' => $this->_ajaxformdata['pageid'],
-                    'element' => $this->_ajaxformdata['element']]);
+                    'element' => $this->_ajaxformdata['element'], ]);
             }
         }
         return $this->element;

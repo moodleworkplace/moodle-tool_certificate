@@ -44,63 +44,63 @@ class element extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'pageid' => array(
-                'type' => PARAM_INT
-            ),
-            'name' => array(
+        return [
+            'pageid' => [
+                'type' => PARAM_INT,
+            ],
+            'name' => [
                 'type' => PARAM_TEXT,
-                'default' => ''
-            ),
-            'element' => array(
-                'type' => PARAM_ALPHANUMEXT
-            ),
-            'data' => array(
+                'default' => '',
+            ],
+            'element' => [
+                'type' => PARAM_ALPHANUMEXT,
+            ],
+            'data' => [
                 'type' => PARAM_RAW,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'font' => array(
+                'default' => null,
+            ],
+            'font' => [
                 'type' => PARAM_NOTAGS,
                 'null' => NULL_ALLOWED,
                 'default' => 'freesans',
-            ),
-            'fontsize' => array(
+            ],
+            'fontsize' => [
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'colour' => array(
+                'default' => null,
+            ],
+            'colour' => [
                 'type' => PARAM_NOTAGS,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'posx' => array(
+                'default' => null,
+            ],
+            'posx' => [
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'posy' => array(
+                'default' => null,
+            ],
+            'posy' => [
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'width' => array(
+                'default' => null,
+            ],
+            'width' => [
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'refpoint' => array(
+                'default' => null,
+            ],
+            'refpoint' => [
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-            'sequence' => array(
+                'default' => null,
+            ],
+            'sequence' => [
                 'type' => PARAM_INT,
                 'null' => NULL_ALLOWED,
-                'default' => null
-            ),
-        );
+                'default' => null,
+            ],
+        ];
     }
 
     /**
