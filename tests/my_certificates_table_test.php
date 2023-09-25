@@ -96,7 +96,7 @@ class my_certificates_table_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function col_linkedin_provider(): array {
+    public static function col_linkedin_provider(): array {
         return [
             [(object)[
                 'id' => '6',

@@ -306,7 +306,7 @@ class template {
     /**
      * Duplicates the template into a new one
      *
-     * @param \context $context
+     * @param \context|null $context
      * @return template
      */
     public function duplicate(?\context $context = null) {
@@ -684,7 +684,7 @@ class template {
      * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
      * @param array $data Additional data that will json_encode'd and stored with the issue.
      * @param string $component The component the certificate was issued by.
-     * @param null $courseid
+     * @param int|null $courseid
      * @param \core\lock\lock|null $lock optional lock to release after a record was inserted into the DB
      * @return int The ID of the issue
      */

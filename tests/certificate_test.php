@@ -500,7 +500,7 @@ class certificate_test extends advanced_testcase {
      *
      * @return array
      */
-    public function calculate_expirydate_provider(): array {
+    public static function calculate_expirydate_provider(): array {
         return [
             'Expires never' => [
                 certificate::DATE_EXPIRATION_NEVER, null, null, null,
