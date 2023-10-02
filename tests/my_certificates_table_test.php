@@ -96,7 +96,7 @@ class my_certificates_table_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function col_linkedin_provider(): array {
+    public static function col_linkedin_provider(): array {
         return [
             [(object)[
                 'id' => '6',
@@ -105,14 +105,14 @@ class my_certificates_table_test extends \advanced_testcase {
                 'timecreated' => 1634376554,
                 'templateid' => '1',
                 'contextid' => '1',
-                'name' => 'Certificate demo template'
+                'name' => 'Certificate demo template',
             ], [
                 'name' => 'Certificate demo template',
                 'issueYear' => '2021',
                 'issueMonth' => '10',
                 'certId' => '0123456789SS',
-                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS'
-            ], null],
+                'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS',
+            ], null, ],
             [(object)[
                 'id' => '6',
                 'expires' => '0',
@@ -120,7 +120,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'timecreated' => 1500370154,
                 'templateid' => '1',
                 'contextid' => '1',
-                'name' => 'Certificate demo template'
+                'name' => 'Certificate demo template',
             ], [
                 'name' => 'Certificate demo template',
                 'issueYear' => '2017',
@@ -128,7 +128,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'certId' => '0123456789SS',
                 'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS',
                 'organizationId' => '123',
-            ], 123],
+            ], 123, ],
             [(object)[
                 'id' => '6',
                 'expires' => '123',
@@ -136,7 +136,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'timecreated' => 1568626154,
                 'templateid' => '1',
                 'contextid' => '1',
-                'name' => 'Certificate demo template'
+                'name' => 'Certificate demo template',
             ], [
                 'name' => 'Certificate demo template',
                 'issueYear' => '2019',
@@ -144,8 +144,8 @@ class my_certificates_table_test extends \advanced_testcase {
                 'certId' => '0123456789SS',
                 'certUrl' => 'https://www.example.com/moodle/admin/tool/certificate/index.php?code=0123456789SS',
                 'expirationYear' => '1970',
-                'expirationMonth' => '01'
-            ], null],
+                'expirationMonth' => '01',
+            ], null, ],
             [(object)[
                 'id' => '6',
                 'expires' => '123',
@@ -153,7 +153,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'timecreated' => 1705573754,
                 'templateid' => '1',
                 'contextid' => '1',
-                'name' => 'Certificate demo template'
+                'name' => 'Certificate demo template',
             ], [
                 'name' => 'Certificate demo template',
                 'issueYear' => '2024',
@@ -163,7 +163,7 @@ class my_certificates_table_test extends \advanced_testcase {
                 'expirationYear' => '1970',
                 'expirationMonth' => '01',
                 'organizationId' => '123',
-            ], 123]
+            ], 123, ],
         ];
     }
 

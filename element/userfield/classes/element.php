@@ -51,7 +51,7 @@ class element extends \tool_certificate\element {
         };
 
         // Get the user profile fields.
-        $userfields = array(
+        $userfields = [
             'fullname' => $displayname('fullname'),
             'firstname' => $displayname('firstname'),
             'lastname' => $displayname('lastname'),
@@ -64,11 +64,11 @@ class element extends \tool_certificate\element {
             'department' => $displayname('department'),
             'phone1' => $displayname('phone1'),
             'phone2' => $displayname('phone2'),
-            'address' => $displayname('address')
-        );
+            'address' => $displayname('address'),
+        ];
         // Get the user custom fields.
         $arrcustomfields = \availability_profile\condition::get_custom_profile_fields();
-        $customfields = array();
+        $customfields = [];
         foreach ($arrcustomfields as $key => $customfield) {
             $customfields[$customfield->id] = $key;
         }
@@ -108,7 +108,7 @@ class element extends \tool_certificate\element {
         if ($field === 'fullname') {
             return fullname($user);
         } else if (is_number($field)) { // Must be a custom user profile field.
-            if ($record = $DB->get_record('user_info_field', array('id' => $field))) {
+            if ($record = $DB->get_record('user_info_field', ['id' => $field])) {
                 $file = $CFG->dirroot . '/user/profile/field/' . $record->datatype . '/field.class.php';
                 if (file_exists($file)) {
                     require_once($CFG->dirroot . '/user/profile/lib.php');

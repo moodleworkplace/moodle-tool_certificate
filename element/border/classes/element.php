@@ -60,7 +60,7 @@ class element extends \tool_certificate\element {
     public function render($pdf, $preview, $user, $issue) {
         $colour = \TCPDF_COLORS::convertHTMLColorToDec($this->get_colour(), $colour);
         // Set double width because half of the width will be outside of the page.
-        $pdf->SetLineStyle(array('width' => 2 * $this->get_data(), 'color' => $colour));
+        $pdf->SetLineStyle(['width' => 2 * $this->get_data(), 'color' => $colour]);
         $pdf->Line(0, 0, $pdf->getPageWidth(), 0);
         $pdf->Line($pdf->getPageWidth(), 0, $pdf->getPageWidth(), $pdf->getPageHeight());
         $pdf->Line(0, $pdf->getPageHeight(), $pdf->getPageWidth(), $pdf->getPageHeight());
@@ -82,16 +82,16 @@ class element extends \tool_certificate\element {
         $style = 'position: absolute; background-color: ' . $this->get_colour() . '';
         $html .= \html_writer::tag('div', '',
             ['data-width' => $width, 'data-height' => $page->height, 'style' => $style,
-                'data-posx' => 0, 'data-posy' => 0]);
+                'data-posx' => 0, 'data-posy' => 0, ]);
         $html .= \html_writer::tag('div', '',
             ['data-width' => $width, 'data-height' => $page->height, 'style' => $style,
-                'data-posx' => $page->width - $width, 'data-posy' => 0]);
+                'data-posx' => $page->width - $width, 'data-posy' => 0, ]);
         $html .= \html_writer::tag('div', '',
             ['data-width' => $page->width, 'data-height' => $width, 'style' => $style,
-                'data-posx' => 0, 'data-posy' => 0]);
+                'data-posx' => 0, 'data-posy' => 0, ]);
         $html .= \html_writer::tag('div', '',
             ['data-width' => $page->width, 'data-height' => $width, 'style' => $style,
-                'data-posx' => 0, 'data-posy' => $page->height - $width]);
+                'data-posx' => 0, 'data-posy' => $page->height - $width, ]);
 
         return $html;
     }

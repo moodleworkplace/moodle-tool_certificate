@@ -28,8 +28,8 @@ $userid = optional_param('userid', 0, PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::ISSUES_PER_PAGE, PARAM_INT);
-$pageurl = $url = new moodle_url('/admin/tool/certificate/my.php', array('userid' => $userid,
-    'page' => $page, 'perpage' => $perpage));
+$pageurl = $url = new moodle_url('/admin/tool/certificate/my.php', ['userid' => $userid,
+    'page' => $page, 'perpage' => $perpage, ]);
 
 // Requires a login.
 require_login();
@@ -56,7 +56,7 @@ $PAGE->set_title(get_string('mycertificates', 'tool_certificate'));
 
 $PAGE->set_pagelayout('standard');
 
-$PAGE->navbar->add(get_string('profile'), new moodle_url('/user/profile.php', array('id' => $user->id)));
+$PAGE->navbar->add(get_string('profile'), new moodle_url('/user/profile.php', ['id' => $user->id]));
 $PAGE->navbar->add(get_string('mycertificates', 'tool_certificate'));
 
 echo $OUTPUT->header();

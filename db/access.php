@@ -24,52 +24,52 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
 
-    'tool/certificate:manage' => array(
+    'tool/certificate:manage' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
-    'tool/certificate:image' => array(
+    'tool/certificate:image' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'clonepermissionsfrom' => 'tool/certificate:imageforalltenants'
-    ),
+        'clonepermissionsfrom' => 'tool/certificate:imageforalltenants',
+    ],
 
-    'tool/certificate:issue' => array(
+    'tool/certificate:issue' => [
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
-    'tool/certificate:viewallcertificates' => array(
+    'tool/certificate:viewallcertificates' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-        )
-    ),
+        ],
+    ],
 
-    'tool/certificate:verify' => array(
+    'tool/certificate:verify' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
+        'archetypes' => [
             'guest' => CAP_ALLOW,
             'user' => CAP_ALLOW,
-        )
-    ),
-);
+        ],
+    ],
+];

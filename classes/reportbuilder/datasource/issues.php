@@ -80,7 +80,7 @@ class issues extends datasource {
         $coursecatentityalias = $coursecatentity->get_table_alias('course_categories');
         $coursecategoryjoins = [
             "JOIN {context} ctx ON ctx.id = {$certificatetempl}.contextid",
-            "LEFT JOIN {course_categories} {$coursecatentityalias} ON {$coursecatentityalias}.id = ctx.instanceid"
+            "LEFT JOIN {course_categories} {$coursecatentityalias} ON {$coursecatentityalias}.id = ctx.instanceid",
         ];
         $this->add_entity($coursecatentity
             ->add_joins($coursecategoryjoins));
@@ -167,7 +167,7 @@ class issues extends datasource {
             'issue:timecreated',
             'issue:expires',
             'issue:codewithlink',
-            'user:fullnamewithlink'
+            'user:fullnamewithlink',
         ];
     }
 
@@ -181,7 +181,7 @@ class issues extends datasource {
             'template:templateselector',
             'issue:timecreated',
             'issue:expires',
-            'user:fullname'
+            'user:fullname',
         ];
     }
 

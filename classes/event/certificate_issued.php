@@ -58,8 +58,8 @@ class certificate_issued extends \core\event\base {
             'objectid' => $issue->id,
             'relateduserid' => $issue->userid,
             'other' => [
-                'code' => $issue->code
-            ]
+                'code' => $issue->code,
+            ],
         ];
         $event = self::create($data);
         $event->add_record_snapshot('tool_certificate_issues', $issue);

@@ -57,16 +57,16 @@ class my_certificates_table extends \table_sql {
         parent::__construct('tool_certificate_my_certificates_table');
         $this->userid = $userid;
 
-        $columns = array(
+        $columns = [
             'name',
             'timecreated',
             'expires',
-        );
-        $headers = array(
+        ];
+        $headers = [
             get_string('name'),
             get_string('issueddate', 'tool_certificate'),
             get_string('expirydate', 'tool_certificate'),
-        );
+        ];
 
         if (permission::can_verify()) {
             $columns[] = 'code';
@@ -217,7 +217,7 @@ class my_certificates_table extends \table_sql {
             'issueYear' => date('Y', $issue->timecreated),
             'issueMonth' => date('m', $issue->timecreated),
             'certId' => $issue->code,
-            'certUrl' => template::verification_url($issue->code)
+            'certUrl' => template::verification_url($issue->code),
         ];
 
         if ($issue->expires !== '0') {
@@ -235,7 +235,7 @@ class my_certificates_table extends \table_sql {
 
         return $OUTPUT->action_link($link, '', null, [
             'target' => '_blank',
-            'class' => 'd-flex'
+            'class' => 'd-flex',
         ], $icon);
     }
 

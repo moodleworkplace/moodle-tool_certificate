@@ -1,4 +1,4 @@
-image: moodlehq/moodle-workplace-plugin-ci:8.0
+image: moodlehq/moodle-workplace-plugin-ci:8.0-ci4.1.5
 
 services:
 - postgres:13

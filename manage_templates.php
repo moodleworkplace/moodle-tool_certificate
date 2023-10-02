@@ -50,7 +50,7 @@ $data = $outputpage->export_for_template($PAGE->get_renderer('core'));
 if (\tool_certificate\permission::can_create()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('createtemplate', 'tool_certificate'),
         'addbuttonurl' => null, 'addbuttonattrs' => ['name' => 'data-contextid', 'value' => $context->id],
-        'addbuttonicon' => true];
+        'addbuttonicon' => true, ];
 }
 $PAGE->requires->js_call_amd('tool_certificate/templates-list', 'init');
 

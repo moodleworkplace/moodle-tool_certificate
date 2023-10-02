@@ -95,7 +95,7 @@ class issues_test extends core_reportbuilder_testcase {
         $issuecode2 = $DB->get_record('tool_certificate_issues', ['id' => $issueid2]);
         $contentcerts = [
             [$cert1['name'], $issuecode1->code, $user1->firstname . ' '.$user1->lastname],
-            [$cert2['name'], $issuecode2->code, $user2->firstname . ' '.$user2->lastname]
+            [$cert2['name'], $issuecode2->code, $user2->firstname . ' '.$user2->lastname],
         ];
         $this->assertEqualsCanonicalizing($contentcerts, $content);
     }

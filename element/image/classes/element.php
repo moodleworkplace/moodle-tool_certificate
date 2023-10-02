@@ -38,7 +38,7 @@ class element extends \tool_certificate\element {
     /**
      * @var array The file manager options.
      */
-    protected $filemanageroptions = array();
+    protected $filemanageroptions = [];
 
     /**
      * Constructor.
@@ -46,12 +46,12 @@ class element extends \tool_certificate\element {
     protected function __construct() {
         global $COURSE;
 
-        $this->filemanageroptions = array(
+        $this->filemanageroptions = [
             'maxbytes' => $COURSE->maxbytes,
             'subdirs' => 0,
             'accepted_types' => 'web_image',
-            'maxfiles' => 1
-        );
+            'maxfiles' => 1,
+        ];
 
         parent::__construct();
     }
@@ -129,7 +129,7 @@ class element extends \tool_certificate\element {
     private function calculate_additional_data($data) {
         $arrtostore = [
             'width' => !empty($data->width) ? (int) $data->width : 0,
-            'height' => !empty($data->height) ? (int) $data->height : 0
+            'height' => !empty($data->height) ? (int) $data->height : 0,
         ];
         if ($this->can_be_used_as_a_background()) {
             $arrtostore['isbackground'] = !empty($data->isbackground);

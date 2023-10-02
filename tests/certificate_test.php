@@ -93,7 +93,7 @@ class certificate_test extends advanced_testcase {
 
             $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_template($certificate3->get_id()));
 
-            $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+            $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
             $manager = $this->getDataGenerator()->create_user();
             $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
 
@@ -128,7 +128,7 @@ class certificate_test extends advanced_testcase {
         $this->assertEquals('Certificate 1', $issue->name);
 
         // Now test with manager with no permission on all tenants.
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
         $manager = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
 
@@ -344,7 +344,7 @@ class certificate_test extends advanced_testcase {
         $this->assertEquals($result->issue->id, $issueid1);
 
         // Now test with manager with no permission on all tenants.
-        $managerrole = $DB->get_record('role', array('shortname' => 'manager'));
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
         $manager = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->role_assign($managerrole->id, $manager->id);
 
@@ -399,13 +399,13 @@ class certificate_test extends advanced_testcase {
         $category4 = $this->getDataGenerator()->create_category(['name' => 'Cat4', 'parent' => $category2->id]);
 
         $template1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1',
-            'contextid' => $category1->get_context()->id]);
+            'contextid' => $category1->get_context()->id, ]);
         $template2 = $this->get_generator()->create_template((object)['name' => 'Certificate 2',
-            'contextid' => $category2->get_context()->id]);
+            'contextid' => $category2->get_context()->id, ]);
         $template3 = $this->get_generator()->create_template((object)['name' => 'Certificate 3',
-            'contextid' => $category4->get_context()->id]);
+            'contextid' => $category4->get_context()->id, ]);
         $template4 = $this->get_generator()->create_template((object)['name' => 'Certificate 4',
-            'contextid' => $category4->get_context()->id]);
+            'contextid' => $category4->get_context()->id, ]);
 
         /*
          * Now we have
@@ -500,19 +500,19 @@ class certificate_test extends advanced_testcase {
      *
      * @return array
      */
-    public function calculate_expirydate_provider(): array {
+    public static function calculate_expirydate_provider(): array {
         return [
             'Expires never' => [
-                certificate::DATE_EXPIRATION_NEVER, null, null, null
+                certificate::DATE_EXPIRATION_NEVER, null, null, null,
             ],
             'Expires on 10 September 2022' => [
-                certificate::DATE_EXPIRATION_ABSOLUTE, '10 September 2022', null, '10 September 2022'
+                certificate::DATE_EXPIRATION_ABSOLUTE, '10 September 2022', null, '10 September 2022',
             ],
             'Expires after 2 weeks from now' => [
-                certificate::DATE_EXPIRATION_AFTER, null, 2 * WEEKSECS, '+2 week'
+                certificate::DATE_EXPIRATION_AFTER, null, 2 * WEEKSECS, '+2 week',
             ],
             'Expires after 5 days from now' => [
-                certificate::DATE_EXPIRATION_AFTER, null, 5 * DAYSECS, '+5 day'
+                certificate::DATE_EXPIRATION_AFTER, null, 5 * DAYSECS, '+5 day',
             ],
         ];
     }

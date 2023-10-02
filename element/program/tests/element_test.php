@@ -115,7 +115,7 @@ class element_test extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
 
         $data = ['certificationname' => 'Certification 1', 'programname' => 'Program 1', 'programcompletiondate' => '1/2/12',
-                 'programcompletedcourses' => '<p>Course1,<br>Course2</p>'];
+                 'programcompletedcourses' => '<p>Course1,<br>Course2</p>', ];
         $issueid = $certificate1->issue_certificate($user1->id, null, $data, 'tool_program');
         $issue = (object)['id' => $issueid];
 
@@ -175,7 +175,7 @@ class element_test extends advanced_testcase {
         // Generate PDF for issue.
         $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(),
             null, ['programname' => 'P', 'certificationname' => 'C', 'programcompletiondate' => '1/1/11',
-                'programcompletedcourses' => 'list'], 'tool_certification');
+                'programcompletedcourses' => 'list', ], 'tool_certification');
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
         $filesize = core_text::strlen($filecontents);
         $this->assertTrue($filesize > 30000 && $filesize < 90000);

@@ -213,7 +213,7 @@ class permission {
         }
         return has_any_capability(['tool/certificate:issue',
             'tool/certificate:manage',
-            'tool/certificate:viewallcertificates'], $context);
+            'tool/certificate:viewallcertificates', ], $context);
     }
 
     /**
@@ -303,7 +303,7 @@ class permission {
         }
 
         return has_any_capability(['tool/certificate:issue', 'tool/certificate:viewallcertificates',
-                'tool/certificate:manage'] , $context) &&
+                'tool/certificate:manage', ] , $context) &&
             !self::is_user_hidden_by_tenancy($issue->userid);
     }
 

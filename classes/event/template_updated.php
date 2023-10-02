@@ -70,7 +70,7 @@ class template_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/admin/tool/certificate/template.php', array('id' => $this->objectid));
+        return new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->objectid]);
     }
 
     /**
@@ -80,10 +80,10 @@ class template_updated extends \core\event\base {
      * @return template_updated
      */
     public static function create_from_template(template $template): template_updated {
-        $data = array(
+        $data = [
             'context' => $template->get_context(),
             'objectid' => $template->get_id(),
-        );
+        ];
         $event = self::create($data);
         $event->add_record_snapshot('tool_certificate_templates', $template->to_record());
         return $event;

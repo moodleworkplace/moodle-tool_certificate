@@ -59,7 +59,7 @@ class templates extends datasource {
         $coursecategories = $coursecatentity->get_table_alias('course_categories');
         $coursecategoryjoins = [
             "JOIN {context} ctx ON ctx.id = {$certificatetempl}.contextid",
-            "LEFT JOIN {course_categories} {$coursecategories} ON {$coursecategories}.id = ctx.instanceid"
+            "LEFT JOIN {course_categories} {$coursecategories} ON {$coursecategories}.id = ctx.instanceid",
         ];
         $this->add_entity($coursecatentity
             ->add_joins($coursecategoryjoins));
@@ -107,7 +107,7 @@ class templates extends datasource {
         return [
             'template:name',
             'course_category:name',
-            'template:timecreated'
+            'template:timecreated',
         ];
     }
 
@@ -120,7 +120,7 @@ class templates extends datasource {
         return [
             'template:name',
             'course_category:name',
-            'template:timecreated'
+            'template:timecreated',
         ];
     }
 

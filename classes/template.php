@@ -133,7 +133,7 @@ class template {
         $time = time();
 
         // Get the existing pages and save the page data.
-        if ($pages = $DB->get_records('tool_certificate_pages', array('templateid' => $data->tid))) {
+        if ($pages = $DB->get_records('tool_certificate_pages', ['templateid' => $data->tid])) {
             // Loop through existing pages.
             foreach ($pages as $page) {
                 // Get the name of the fields we want from the form.
@@ -196,7 +196,7 @@ class template {
                    SET sequence = sequence - 1
                  WHERE templateid = :templateid
                    AND sequence > :sequence";
-        $DB->execute($sql, array('templateid' => $this->get_id(), 'sequence' => $sequence));
+        $DB->execute($sql, ['templateid' => $this->get_id(), 'sequence' => $sequence]);
         $this->pages = null;
     }
 
@@ -209,7 +209,7 @@ class template {
         global $DB;
 
         // Ensure element exists and delete it.
-        $element = $DB->get_record('tool_certificate_elements', array('id' => $elementid), '*', MUST_EXIST);
+        $element = $DB->get_record('tool_certificate_elements', ['id' => $elementid], '*', MUST_EXIST);
         if (!array_key_exists($element->pageid, $this->get_pages())) {
             return;
         }
@@ -219,7 +219,7 @@ class template {
             \tool_certificate\element::instance(0, $element)->delete();
         } catch (\moodle_exception $e) {
             // The plugin files are missing, so just remove the entry from the DB.
-            $DB->delete_records('tool_certificate_elements', array('id' => $elementid));
+            $DB->delete_records('tool_certificate_elements', ['id' => $elementid]);
         }
 
         // Now we want to decrease the sequence numbers of the elements
@@ -228,7 +228,7 @@ class template {
                    SET sequence = sequence - 1
                  WHERE pageid = :pageid
                    AND sequence > :sequence";
-        $DB->execute($sql, array('pageid' => $element->pageid, 'sequence' => $element->sequence));
+        $DB->execute($sql, ['pageid' => $element->pageid, 'sequence' => $element->sequence]);
     }
 
     /**
@@ -278,7 +278,7 @@ class template {
                 } else {
                     $orientation = 'P';
                 }
-                $pdf->AddPage($orientation, array($pagerecord->width, $pagerecord->height));
+                $pdf->AddPage($orientation, [$pagerecord->width, $pagerecord->height]);
                 $pdf->SetMargins($pagerecord->leftmargin, 0, $pagerecord->rightmargin);
                 // Get the elements for the page.
                 if ($elements = $page->get_elements()) {
@@ -306,7 +306,7 @@ class template {
     /**
      * Duplicates the template into a new one
      *
-     * @param \context $context
+     * @param \context|null $context
      * @return template
      */
     public function duplicate(?\context $context = null) {
@@ -684,7 +684,7 @@ class template {
      * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
      * @param array $data Additional data that will json_encode'd and stored with the issue.
      * @param string $component The component the certificate was issued by.
-     * @param null $courseid
+     * @param int|null $courseid
      * @param \core\lock\lock|null $lock optional lock to release after a record was inserted into the DB
      * @return int The ID of the issue
      */
@@ -747,7 +747,7 @@ class template {
             'filearea'  => 'issues',
             'itemid'    => $issue->id,
             'filepath'  => '/',
-            'filename'  => $issue->code . '.pdf'
+            'filename'  => $issue->code . '.pdf',
         ];
         $fs = get_file_storage();
 

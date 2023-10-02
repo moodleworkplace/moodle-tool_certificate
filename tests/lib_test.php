@@ -28,9 +28,9 @@ namespace tool_certificate;
 use advanced_testcase;
 use tool_certificate_generator;
 use context_coursecat;
-use \tool_certificate\persistent\element;
-use \tool_certificate\persistent\page;
-use \tool_certificate\persistent\template;
+use tool_certificate\persistent\element;
+use tool_certificate\persistent\page;
+use tool_certificate\persistent\template;
 
 /**
  * Tests for functions in lib.php
@@ -71,9 +71,9 @@ class lib_test extends advanced_testcase {
         $cat4 = $this->getDataGenerator()->create_category(['name' => 'Cat4', 'parent' => $cat1->id]);
 
         $template1 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 1',
-            'contextid' => $cat1->get_context()->id]);
+            'contextid' => $cat1->get_context()->id, ]);
         $template2 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 2',
-            'contextid' => $cat3->get_context()->id]);
+            'contextid' => $cat3->get_context()->id, ]);
 
         /*
          * Now we have
@@ -112,9 +112,9 @@ class lib_test extends advanced_testcase {
         $cat4 = $this->getDataGenerator()->create_category(['name' => 'Cat4', 'parent' => $cat1->id]);
 
         $template1 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 1',
-            'contextid' => $cat1->get_context()->id]);
+            'contextid' => $cat1->get_context()->id, ]);
         $template2 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 2',
-            'contextid' => $cat3->get_context()->id]);
+            'contextid' => $cat3->get_context()->id, ]);
 
         /*
          * Now we have
@@ -183,7 +183,7 @@ class lib_test extends advanced_testcase {
             'filearea' => 'element',
             'itemid' => $certificateelement2->get_id(),
             'filepath' => '/',
-            'filename' => 'image.png'
+            'filename' => 'image.png',
         ];
         $fs->create_file_from_string($filerecord, 'Cat');
 

@@ -32,7 +32,7 @@ $functions = [
         'description' => 'Revoke an issue for a certificate',
         'type'        => 'write',
         'ajax'        => true,
-        'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'tool_certificate_regenerate_issue_file' => [
         'classname'   => \tool_certificate\external\issues::class,

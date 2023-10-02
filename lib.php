@@ -162,7 +162,7 @@ function tool_certificate_inplace_editable($itemtype, $itemid, $newvalue) {
 function tool_certificate_get_fontawesome_icon_map() {
     return [
         'tool_certificate:download' => 'fa-download',
-        'tool_certificate:linkedin' => 'fa-linkedin-square'
+        'tool_certificate:linkedin' => 'fa-linkedin-square',
     ];
 }
 
@@ -277,7 +277,7 @@ function tool_certificate_theme_workplace_menu_items(): array {
             'url' => new moodle_url("/admin/tool/certificate/manage_templates.php"),
             'name' => get_string('certificates', 'tool_certificate'),
             'imageurl' => $OUTPUT->image_url('icon', 'tool_certificate')->out(false),
-            'isglobal' => component_class_callback('\tool_tenant\permission', 'can_switch_tenant', [], false)
+            'isglobal' => component_class_callback('\tool_tenant\permission', 'can_switch_tenant', [], false),
         ];
     }
     return $menuitems;

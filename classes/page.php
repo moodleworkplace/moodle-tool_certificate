@@ -64,7 +64,7 @@ class page {
      * New instance of the page
      *
      * @param int $id
-     * @param \stdClass $obj
+     * @param \stdClass|null $obj
      * @return page
      */
     public static function instance(int $id = 0, ?\stdClass $obj = null) {
