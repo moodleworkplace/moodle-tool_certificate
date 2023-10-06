@@ -36,10 +36,12 @@ jobs:
             moodle-branch: 'MOODLE_39_STABLE'
             database: pgsql
             extensions:
+            civersion: 3
           - php: '7.3'
             moodle-branch: 'MOODLE_311_STABLE'
             database: pgsql
             extensions:
+            civersion: 3
           - php: '8.0'
             moodle-branch: 'MOODLE_311_STABLE'
             database: mariadb
@@ -47,7 +49,7 @@ jobs:
 
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: plugin
 
@@ -61,7 +63,8 @@ jobs:
 
       - name: Initialise moodle-plugin-ci
         run: |
-          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^3
+          civersion=$(if [[ "${{ matrix.civersion }}" == "3" ]]; then echo "3.4.12"; else echo "4.1.0"; fi)
+          composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci $civersion
           echo $(cd ci/bin; pwd) >> $GITHUB_PATH
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
