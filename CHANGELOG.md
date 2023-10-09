@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.11.17 - 2023-10-10
+### Fixed
+- Lock the moodle-plugin-ci, this version is supported for security fixes only and we will
+  not keep it up-to-date with new coding style requirements
+
 ## 3.11.14 - 2023-04-25
 ### Fixed
 - Prevent debugging messages about missing leftmargin and rightmargin field types
