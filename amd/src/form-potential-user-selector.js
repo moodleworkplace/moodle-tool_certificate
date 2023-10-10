@@ -72,6 +72,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
                     });
 
                     // Apply the label to the results.
+                    /* eslint-disable-next-line promise/no-nesting */
                     return $.when.apply($.when, promises).then(function() {
                         var args = arguments;
                         $.each(results, function(index, user) {
@@ -83,6 +84,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
                     });
 
                 } else {
+                    /* eslint-disable-next-line promise/no-nesting */
                     return Str.get_string('toomanyuserstoshow', 'core', '>' + MAXUSERS).then(function(toomanyuserstoshow) {
                         success(toomanyuserstoshow);
                         return;
