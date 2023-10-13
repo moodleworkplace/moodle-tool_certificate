@@ -72,6 +72,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
                     });
 
                     // Apply the label to the results.
+                    // TODO WP-4426 fix properly.
                     /* eslint-disable-next-line promise/no-nesting */
                     return $.when.apply($.when, promises).then(function() {
                         var args = arguments;
@@ -84,6 +85,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
                     });
 
                 } else {
+                    // TODO WP-4426 fix properly.
                     /* eslint-disable-next-line promise/no-nesting */
                     return Str.get_string('toomanyuserstoshow', 'core', '>' + MAXUSERS).then(function(toomanyuserstoshow) {
                         success(toomanyuserstoshow);
