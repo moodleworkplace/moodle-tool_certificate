@@ -22,6 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use tool_certificate\my_certificates_table;
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/adminlib.php');
@@ -72,17 +74,28 @@ if ($hassiteconfig) {
         new lang_string('issuelangdesc', 'tool_certificate'),
         false
     ));
-    $settings->add(new admin_setting_configcheckbox('tool_certificate/show_shareonlinkedin',
+    $settings->add(new admin_setting_configselect('tool_certificate/show_shareonlinkedin',
         new lang_string('show_shareonlinkedin', 'tool_certificate'),
         new lang_string('show_shareonlinkedin_desc', 'tool_certificate'),
-        false
+        my_certificates_table::DO_NOT_SHOW,
+        [
+            my_certificates_table::DO_NOT_SHOW => new lang_string('do_not_show', 'tool_certificate'),
+            my_certificates_table::SHOW_LINK_TO_VERIFICATION_PAGE => new lang_string('show_link_to_verification_page',
+                'tool_certificate'),
+            my_certificates_table::SHOW_LINK_TO_CERTIFICATE_PAGE => new lang_string('show_link_to_certificate_page',
+                'tool_certificate'),
+        ]
     ));
     $settings->add(new admin_setting_configtext('tool_certificate/linkedinorganizationid',
         new lang_string('linkedinorganizationid', 'tool_certificate'),
         new lang_string('linkedinorganizationid_desc', 'tool_certificate'),
         ''
     ));
-    $settings->hide_if('tool_certificate/linkedinorganizationid', 'tool_certificate/show_shareonlinkedin');
+    $settings->hide_if(
+        'tool_certificate/linkedinorganizationid',
+        'tool_certificate/show_shareonlinkedin',
+        'eq',
+        my_certificates_table::DO_NOT_SHOW);
 
     $settings->add(new admin_setting_pickfilters('tool_certificate/allowfilters',
         new lang_string('allowfilters', 'tool_certificate'),
