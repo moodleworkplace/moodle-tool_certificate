@@ -36,6 +36,22 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class my_certificates_table extends \table_sql {
+    /**
+     * The value of the show share on linkedin setting, when the share on linkedin column should not be shown
+     */
+    public const DO_NOT_SHOW = 0;
+
+    /**
+     * The value of the show share on linkedin setting, when the share on linkedin column should be shown
+     * and the link should go to the certificate verification page
+     */
+    public const SHOW_LINK_TO_VERIFICATION_PAGE = 1;
+
+    /**
+     * The value of the show share on linkedin setting, when the share on linkedin column should be shown
+     * and the link should go to the certificate page
+     */
+    public const SHOW_LINK_TO_CERTIFICATE_PAGE = 2;
 
     /**
      * @var int $userid The user id
@@ -204,6 +220,24 @@ class my_certificates_table extends \table_sql {
     }
 
     /**
+     * Get the certificate url to show
+     *
+     * @param string $issuecode
+     * @return string
+     */
+    private function get_shareonlinkedincerturl($issuecode) {
+        $showshareonlinkedin = (int)get_config('tool_certificate', 'show_shareonlinkedin');
+        switch ($showshareonlinkedin) {
+            case self::SHOW_LINK_TO_VERIFICATION_PAGE:
+                return template::verification_url($issuecode);
+            case self::SHOW_LINK_TO_CERTIFICATE_PAGE:
+                return template::view_url($issuecode);
+            default:
+                return '';
+        }
+    }
+
+    /**
      * Generate the LinkedIn column
      *
      * @param \stdClass $issue
@@ -217,7 +251,7 @@ class my_certificates_table extends \table_sql {
             'issueYear' => date('Y', $issue->timecreated),
             'issueMonth' => date('m', $issue->timecreated),
             'certId' => $issue->code,
-            'certUrl' => template::verification_url($issue->code),
+            'certUrl' => $this->get_shareonlinkedincerturl($issue->code),
         ];
 
         if ($issue->expires !== '0') {

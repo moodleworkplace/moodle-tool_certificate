@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+### Added
+- When creating a link for LinkedIn allow to choose whether it's a link to
+  the certificate verification page or the certificate PDF itself.
+
 ## 4.3 - 2023-11-09
 ### Added
 - Testing on Workplace 4.3
