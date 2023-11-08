@@ -1,5 +1,12 @@
 # Changelog
 
+## 4.3 - 2023-11-09
+### Added
+- Testing on Workplace 4.3
+- Added missing SVG icons
+### Changed
+- Coding style fixes
+
 ## 4.2.3 - 2023-10-10
 ### Changed
 - Coding style fixes
