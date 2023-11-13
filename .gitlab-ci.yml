@@ -9,9 +9,9 @@ services:
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_BRANCH_WORKPLACE403R: WORKPLACE_ROLLING_403
+  MOODLE_BRANCH_WORKPLACE403S: WORKPLACE_403
   MOODLE_BRANCH_WORKPLACE402R: WORKPLACE_ROLLING_402
   MOODLE_BRANCH_WORKPLACE402S: WORKPLACE_402
-  MOODLE_BRANCH_WORKPLACE401R: WORKPLACE_ROLLING_401
   MOODLE_BRANCH_WORKPLACE401S: WORKPLACE_401
   MOODLE_BRANCH_WORKPLACE400: WORKPLACE_400
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
@@ -120,6 +120,17 @@ behat:
     - . check moodle-plugin-ci behat --suite $SUITE --profile chrome
     - . check-finish
 
+wp403s:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE403S
+    - export CLONEWPPLUGINS=1
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
 wp402r:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
@@ -135,17 +146,6 @@ wp402s:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
     - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE402S
-    - export CLONEWPPLUGINS=1
-  <<: *scriptshorttest
-  except:
-    - master
-    - tags
-    - /^WORKPLACE_\d+$/
-
-wp401r:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE401R
     - export CLONEWPPLUGINS=1
   <<: *scriptshorttest
   except:
