@@ -127,7 +127,7 @@ jobs:
           moodle-plugin-ci phpunit
           cd moodle
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
-          vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter "test_all_external_info .*tool_certificate"
+          vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter "test_all_external_info@tool_certificate.*"
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
 
       - name: Behat features
