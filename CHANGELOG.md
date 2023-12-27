@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.2 - 2023-12-28
 ### Added
 - When creating a link for LinkedIn allow to choose whether it's a link to
   the certificate verification page or the certificate PDF itself.
