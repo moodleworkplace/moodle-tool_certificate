@@ -126,6 +126,9 @@ class issues extends \external_api {
             $issue->data = json_encode($issuedata);
             $DB->update_record('tool_certificate_issues', $issue);
         }
+
+        // Trigger event.
+        \tool_certificate\event\certificate_regenerated::create_from_issue($issue)->trigger();
     }
 
     /**

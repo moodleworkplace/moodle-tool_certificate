@@ -93,6 +93,7 @@ $string['elementwidth_help'] = 'Specify the width of the element. Zero (0) means
 $string['entitycertificate'] = 'Certificate';
 $string['entitycertificateissue'] = 'Issued certificate';
 $string['eventcertificateissued'] = 'Certificate issued';
+$string['eventcertificateregenerated'] = 'Certificate regenerated';
 $string['eventcertificaterevoked'] = 'Certificate revoked';
 $string['eventcertificateverified'] = 'Certificate verified';
 $string['eventtemplatecreated'] = 'Template created';
