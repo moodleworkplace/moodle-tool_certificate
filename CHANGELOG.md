@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added a new issued certificate regenerated event.
+
 ## 4.3.2 - 2023-12-28
 ### Added
 - When creating a link for LinkedIn allow to choose whether it's a link to
@@ -114,7 +118,7 @@
 
 ## 3.11.1 (2021072000)
 ### Changed
-- Shared image types are now limited to "web_image". Non "web_image" images previously uploaded 
+- Shared image types are now limited to "web_image". Non "web_image" images previously uploaded
   did not work properly.
 
 ## 3.11 (2021060800)

@@ -81,8 +81,14 @@ class certificate_verified extends \core\event\base {
      * @return certificate_issued
      */
     public static function create_from_issue(\stdClass $issue) {
+        global $DB;
+
+        $context = \context_system::instance();
+        if ($DB->record_exists('course', ['id' => $issue->courseid])) {
+            $context = \context_course::instance($issue->courseid);
+        }
         $data = [
-            'context' => \context_system::instance(),
+            'context' => $context,
             'objectid' => $issue->id,
             'relateduserid' => $issue->userid,
             'other' => [

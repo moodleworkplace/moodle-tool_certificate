@@ -14,34 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The tool_certificate certificate issued event.
- *
- * @package    tool_certificate
- * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_certificate\event;
 
 use tool_certificate\template;
 
 /**
- * The tool_certificate certificate issued event class.
+ * The tool_certificate certificate regenerated event class.
  *
  * @package    tool_certificate
- * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
+ * @copyright  2024 Odei Alba <odei.alba@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @property-read array $other {
+ *      Extra information about the event.
+ *
+ *      - string    code:   The code of the issued certificate
+ * }
  */
-class certificate_issued extends \core\event\base {
+class certificate_regenerated extends \core\event\base {
 
     /**
      * Init method.
-     *
-     * @return void
      */
     protected function init() {
-        $this->data['crud'] = 'c';
+        $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'tool_certificate_issues';
     }
@@ -50,7 +46,7 @@ class certificate_issued extends \core\event\base {
      * Create instance of event.
      *
      * @param \stdClass $issue
-     * @return certificate_issued
+     * @return certificate_regenerated
      */
     public static function create_from_issue(\stdClass $issue) {
         global $DB;
@@ -78,7 +74,7 @@ class certificate_issued extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The certificate issue with id '$this->objectid' has been created for user with id '$this->relateduserid'.";
+        return "The issued certificate with id '$this->objectid' has been regenerated for user with id '$this->relateduserid'.";
     }
 
     /**
@@ -87,7 +83,7 @@ class certificate_issued extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventcertificateissued', 'tool_certificate');
+        return get_string('eventcertificateregenerated', 'tool_certificate');
     }
 
     /**
