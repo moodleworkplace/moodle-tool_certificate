@@ -44,7 +44,7 @@ class details extends dynamic_form {
      * Template getter
      * @return template
      */
-    protected function get_template() : template {
+    protected function get_template(): template {
         $id = $this->optional_param('id', 0, PARAM_INT);
         if ($this->template === null) {
             $obj = null;

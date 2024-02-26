@@ -58,7 +58,7 @@ class edit_element_form extends dynamic_form {
      *
      * @return template
      */
-    protected function get_template() : template {
+    protected function get_template(): template {
         return $this->get_element()->get_template();
     }
 
@@ -67,7 +67,7 @@ class edit_element_form extends dynamic_form {
      *
      * @return element
      */
-    protected function get_element() : element {
+    protected function get_element(): element {
         if ($this->element === null) {
             if (!empty($this->_ajaxformdata['id'])) {
                 $this->element = element::instance($this->_ajaxformdata['id']);

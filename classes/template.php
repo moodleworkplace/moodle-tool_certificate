@@ -59,7 +59,7 @@ class template {
      * @param null|\stdClass $obj
      * @return template
      */
-    public static function instance(int $id = 0, ?\stdClass $obj = null) : template {
+    public static function instance(int $id = 0, ?\stdClass $obj = null): template {
         $data = new \stdClass();
         if ($obj !== null) {
             // Ignore fields that are not properties.
@@ -538,7 +538,7 @@ class template {
      * @param int $id
      * @return template
      */
-    public static function find_by_element_id($id) : template {
+    public static function find_by_element_id($id): template {
         global $DB;
         $template = $DB->get_record_sql('SELECT t.* FROM {tool_certificate_templates} t
             JOIN {tool_certificate_pages} p ON p.templateid = t.id
@@ -871,7 +871,7 @@ class template {
      *
      * @return output\template
      */
-    public function get_exporter() : \tool_certificate\output\template {
+    public function get_exporter(): \tool_certificate\output\template {
         return new \tool_certificate\output\template($this->persistent, ['template' => $this]);
     }
 

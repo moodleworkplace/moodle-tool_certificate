@@ -75,7 +75,7 @@ class page_header_button implements \templatable, \renderable {
      * @param renderer_base $output
      * @return string
      */
-    public function render(renderer_base $output) : string {
+    public function render(renderer_base $output): string {
         return $output->render_from_template('tool_certificate/page_header_button', $this->export_for_template($output));
     }
 }

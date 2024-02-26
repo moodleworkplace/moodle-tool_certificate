@@ -275,7 +275,7 @@ class element extends \certificateelement_image\element {
      *
      * @return \stored_file|bool stored_file instance if exists, null if not
      */
-    public function get_signature_file() :? \stored_file {
+    public function get_signature_file(): ?\stored_file {
         $fs = get_file_storage();
 
         $files = $fs->get_area_files($this->get_template()->get_context()->id,

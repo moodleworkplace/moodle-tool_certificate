@@ -246,7 +246,7 @@ class element extends \tool_certificate\element {
      *
      * @return \stored_file|bool stored_file instance if exists, false if not
      */
-    public function get_file() : ?\stored_file {
+    public function get_file(): ?\stored_file {
 
         $files = get_file_storage()->get_area_files($this->get_template()->get_context()->id,
             'tool_certificate', 'element', $this->get_id(), '', false);
@@ -262,7 +262,7 @@ class element extends \tool_certificate\element {
      *
      * @return null|\stored_file
      */
-    public function get_shared_file() : ?\stored_file {
+    public function get_shared_file(): ?\stored_file {
         $imageinfo = json_decode($this->get_data() ?? '');
         if (!empty($imageinfo->filename) &&
                 $file = get_file_storage()->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea,
