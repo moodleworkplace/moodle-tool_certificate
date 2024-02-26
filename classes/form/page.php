@@ -45,7 +45,7 @@ class page extends dynamic_form {
      * Template getter
      * @return template
      */
-    protected function get_template() : template {
+    protected function get_template(): template {
         return $this->get_page()->get_template();
     }
 
@@ -54,7 +54,7 @@ class page extends dynamic_form {
      *
      * @return \tool_certificate\page
      */
-    protected function get_page() : \tool_certificate\page {
+    protected function get_page(): \tool_certificate\page {
         if ($this->page === null) {
             if (!empty($this->_ajaxformdata['id'])) {
                 $this->page = \tool_certificate\page::instance((int)$this->_ajaxformdata['id']);

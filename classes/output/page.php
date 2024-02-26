@@ -59,7 +59,7 @@ class page extends persistent_exporter {
      *
      * @return \tool_certificate\page
      */
-    protected function get_page() : \tool_certificate\page {
+    protected function get_page(): \tool_certificate\page {
         return $this->related['page'];
     }
 

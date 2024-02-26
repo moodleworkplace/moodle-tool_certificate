@@ -453,7 +453,7 @@ class certificate {
      * @param bool $canseeall do not add tenant check if user has capability 'tool/tenant:manage'
      * @return string
      */
-    public static function get_users_subquery(string $usertablealias = 'u', bool $canseeall = true) : string {
+    public static function get_users_subquery(string $usertablealias = 'u', bool $canseeall = true): string {
         return component_class_callback('tool_tenant\\tenancy', 'get_users_subquery',
             [$canseeall, false, $usertablealias.'.id'], '1=1');
     }

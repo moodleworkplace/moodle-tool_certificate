@@ -62,7 +62,7 @@ class template extends persistent_exporter {
      *
      * @return \tool_certificate\template
      */
-    protected function get_template() : \tool_certificate\template {
+    protected function get_template(): \tool_certificate\template {
         return $this->related['template'];
     }
 

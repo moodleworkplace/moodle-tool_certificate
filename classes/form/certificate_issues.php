@@ -47,7 +47,7 @@ class certificate_issues extends dynamic_form {
      *
      * @return template
      */
-    protected function get_template() : template {
+    protected function get_template(): template {
         if ($this->template === null) {
             $this->template = template::instance($this->_ajaxformdata['tid']);
         }

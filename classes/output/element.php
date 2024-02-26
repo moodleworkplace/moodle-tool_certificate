@@ -59,7 +59,7 @@ class element extends persistent_exporter {
      * Get related element
      * @return \tool_certificate\element
      */
-    protected function get_element() : \tool_certificate\element {
+    protected function get_element(): \tool_certificate\element {
         return $this->related['element'];
     }
 
