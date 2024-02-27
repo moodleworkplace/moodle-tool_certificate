@@ -3,6 +3,8 @@
 ## Unreleased
 ### Added
 - Added a new issued certificate regenerated event.
+### Fixed
+- Coding style fixes to comply with moodle-plugin-ci 4.4.0
 
 ## 4.3.2 - 2023-12-28
 ### Added
