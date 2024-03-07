@@ -265,6 +265,9 @@ class template {
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
             $pdf->SetTitle($this->get_formatted_name());
+            $pdf->setViewerPreferences([
+                'DisplayDocTitle' => true,
+            ]);
             $pdf->SetAutoPageBreak(true, 0);
             // Remove full-stop at the end, if it exists, to avoid "..pdf" being created and being filtered by clean_filename.
             $filename = rtrim($this->get_formatted_name(), '.');
