@@ -51,6 +51,15 @@ class template extends base {
     }
 
     /**
+     * Database tables that this entity uses
+     *
+     * @return string[]
+     */
+    protected function get_default_tables(): array {
+        return array_keys($this->get_default_table_aliases());
+    }
+
+    /**
      * The default title for this entity in the list of columns/conditions/filters in the report builder
      *
      * @return lang_string
