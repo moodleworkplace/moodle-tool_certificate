@@ -184,6 +184,7 @@ $string['show_link_to_verification_page'] = 'Show link to verification page';
 $string['show_shareonlinkedin'] = 'Show share on LinkedIn';
 $string['show_shareonlinkedin_desc'] = 'If the "Share on LinkedIn" button should be shown on the my certificates page. Linking to the certificate PDF directly is more visual but may show errors for expired certificates.';
 $string['status'] = 'Status';
+$string['subplugintype_certificateelement'] = 'Certificate element plugin';
 $string['subplugintype_certificateelement_plural'] = 'Certificate element plugins';
 $string['template'] = 'Template';
 $string['templatepermission'] = 'Permission to access template';
