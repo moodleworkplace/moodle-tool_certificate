@@ -167,8 +167,12 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
         $data = $writer->get_data($contextpath);
 
         $this->assertEquals($data->name, $templates[0]->get_name());
-        $this->assertObjectHasAttribute('code', $data);
-        $this->assertObjectHasAttribute('timecreated', $data);
+
+        // Added this new property validation instead of assertObjectHasProperty for
+        // now because of the PHPUnit upgrade.
+        // Once we have the upgrade in place, we are good to use assertObjectHasProperty.
+        $this->assertTrue(property_exists($data, 'code'));
+        $this->assertTrue(property_exists($data, 'timecreated'));
         $this->assertEquals(['courseid' => SITEID], $data->data);
         $this->assertNull($data->expires);
 
@@ -177,8 +181,12 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
         $data = $writer->get_data($contextpath);
 
         $this->assertEquals($data->name, $templates[1]->get_name());
-        $this->assertObjectHasAttribute('code', $data);
-        $this->assertObjectHasAttribute('timecreated', $data);
+
+        // Added this new property validation instead of assertObjectHasProperty for
+        // now because of the PHPUnit upgrade.
+        // Once we have the upgrade in place, we are good to use assertObjectHasProperty.
+        $this->assertTrue(property_exists($data, 'code'));
+        $this->assertTrue(property_exists($data, 'timecreated'));
         $this->assertEmpty($data->data);
         $this->assertNull($data->expires);
     }
