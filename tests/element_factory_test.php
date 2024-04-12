@@ -29,7 +29,7 @@ use moodle_exception;
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element_factory_test extends advanced_testcase {
+final class element_factory_test extends advanced_testcase {
     /**
      * Test set up.
      */
@@ -48,7 +48,7 @@ class element_factory_test extends advanced_testcase {
     /**
      * Test render_html
      */
-    public function test_get_element_instance_with_invalid_element() {
+    public function test_get_element_instance_with_invalid_element(): void {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         try {

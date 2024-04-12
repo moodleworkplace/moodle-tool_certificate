@@ -31,7 +31,7 @@ use context_system;
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class capabilities_test extends advanced_testcase {
+final class capabilities_test extends advanced_testcase {
 
     /** @var tool_certificate_generator */
     protected $certgenerator;
@@ -47,7 +47,7 @@ class capabilities_test extends advanced_testcase {
     /**
      * Test the can_manage
      */
-    public function test_can_manage() {
+    public function test_can_manage(): void {
         global $DB;
         $cat1 = self::getDataGenerator()->create_category();
         $cat2 = self::getDataGenerator()->create_category();
@@ -83,7 +83,7 @@ class capabilities_test extends advanced_testcase {
     /**
      * Test can_verify. By default, users can verify certificates.
      */
-    public function test_can_verify() {
+    public function test_can_verify(): void {
         $manager = $this->getDataGenerator()->create_user();
 
         $this->setUser($manager);
@@ -94,7 +94,7 @@ class capabilities_test extends advanced_testcase {
     /**
      * Test can_view_admin_tree. For default, manager are able to view the admin tree, but guests are not.
      */
-    public function test_can_view_admin_tree() {
+    public function test_can_view_admin_tree(): void {
         global $DB;
 
         $guest = $DB->get_record('user', ['username' => 'guest']);
@@ -114,7 +114,7 @@ class capabilities_test extends advanced_testcase {
     /**
      * Test the can_issue with users within the same tenant
      */
-    public function test_can_issue_same_tenant() {
+    public function test_can_issue_same_tenant(): void {
         global $DB;
 
         // Skip tests if tool_tenant is not present.
@@ -162,7 +162,7 @@ class capabilities_test extends advanced_testcase {
     /**
      * Test the can_issue with user allocated to non-default tenant
      */
-    public function test_can_issue_other_tenant() {
+    public function test_can_issue_other_tenant(): void {
         global $DB;
 
         // Skip tests if not using Postgres.

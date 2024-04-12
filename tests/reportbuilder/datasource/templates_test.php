@@ -37,7 +37,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @author     2022 Carlos Castillo <carlos.castillo@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class templates_test extends core_reportbuilder_testcase {
+final class templates_test extends core_reportbuilder_testcase {
 
     /** @var core_reportbuilder_generator */
     protected $rbgenerator;

@@ -39,7 +39,7 @@ use core_privacy\local\request\writer;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class privacy_provider_test extends \core_privacy\tests\provider_testcase {
+final class privacy_provider_test extends \core_privacy\tests\provider_testcase {
 
     /** @var tool_certificate_generator */
     protected $certgenerator;
@@ -56,7 +56,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test provider::get_metadata
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new collection('tool_certificate');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -77,7 +77,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::get_contexts_for_userid().
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
 
         // Add a template to the site.
         $template1 = $this->certgenerator->create_template((object)['name' => 'Site template']);
@@ -103,7 +103,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test that only users within a context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'tool_certificate';
 
         $this->setAdminUser();
@@ -132,7 +132,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::export_user_data().
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         /** @var \tool_certificate\template[] $templates */
         $templates = [
             $this->certgenerator->create_template((object) ['name' => 'Site template']),
@@ -196,7 +196,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         // Add a template to the site.
@@ -236,7 +236,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $template = $this->certgenerator->create_template((object)['name' => 'Site template']);
@@ -285,7 +285,7 @@ class privacy_provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
 
         $component = 'tool_certificate';
 

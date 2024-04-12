@@ -31,7 +31,7 @@ use tool_certificate_generator;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_test extends advanced_testcase {
+final class external_test extends advanced_testcase {
 
     /** @var tool_certificate_generator */
     protected $certgenerator;
@@ -47,7 +47,7 @@ class external_test extends advanced_testcase {
     /**
      * Test the delete_issue web service.
      */
-    public function test_delete_issue() {
+    public function test_delete_issue(): void {
         global $DB;
 
         $this->setAdminUser();
@@ -84,7 +84,7 @@ class external_test extends advanced_testcase {
     /**
      * Test the delete_issue web service.
      */
-    public function test_delete_issue_no_login() {
+    public function test_delete_issue_no_login(): void {
         global $DB;
 
         // Create a course.
@@ -115,7 +115,7 @@ class external_test extends advanced_testcase {
     /**
      * Test the delete_issue web service.
      */
-    public function test_delete_issue_no_capability() {
+    public function test_delete_issue_no_capability(): void {
         global $DB;
 
         // Create a course.
@@ -148,7 +148,7 @@ class external_test extends advanced_testcase {
     /**
      * Test regenerate_issue_file
      */
-    public function test_regenerate_issue_file() {
+    public function test_regenerate_issue_file(): void {
         global $DB, $CFG;
         require_once($CFG->libdir . '/externallib.php');
 

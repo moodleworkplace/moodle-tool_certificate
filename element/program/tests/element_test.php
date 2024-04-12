@@ -39,7 +39,7 @@ use stdClass;
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element_test extends advanced_testcase {
+final class element_test extends advanced_testcase {
 
     /**
      * Test set up.
@@ -60,7 +60,7 @@ class element_test extends advanced_testcase {
     /**
      * Test format_preview_data
      */
-    public function test_format_preview_data() {
+    public function test_format_preview_data(): void {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
@@ -92,7 +92,7 @@ class element_test extends advanced_testcase {
     /**
      * Test format_issue_data
      */
-    public function test_format_issue_data() {
+    public function test_format_issue_data(): void {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $element = new stdClass();
@@ -143,7 +143,7 @@ class element_test extends advanced_testcase {
     /**
      * Test save_unique_data
      */
-    public function test_save_unique_data() {
+    public function test_save_unique_data(): void {
         global $DB;
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
@@ -158,7 +158,7 @@ class element_test extends advanced_testcase {
     /**
      * Test rendering
      */
-    public function test_render_content() {
+    public function test_render_content(): void {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         foreach (['programname', 'certificationname', 'completiondate', 'programcompletedcourses'] as $displaytype) {
@@ -184,7 +184,7 @@ class element_test extends advanced_testcase {
     /**
      * Tests that the edit element form can be initiated without any errors
      */
-    public function test_edit_element_form() {
+    public function test_edit_element_form(): void {
         $this->setAdminUser();
 
         preg_match('|^certificateelement_(\w*)\\\\|', get_class($this), $matches);

@@ -29,7 +29,7 @@ use core_text;
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class element_test extends advanced_testcase {
+final class element_test extends advanced_testcase {
 
     /**
      * Test set up.
@@ -49,7 +49,7 @@ class element_test extends advanced_testcase {
     /**
      * Test render_html
      */
-    public function test_render_html() {
+    public function test_render_html(): void {
         global $USER, $DB, $CFG;
 
         require_once($CFG->dirroot.'/user/profile/lib.php');
@@ -93,7 +93,7 @@ class element_test extends advanced_testcase {
     /**
      * Tests that the edit element form can be initiated without any errors
      */
-    public function test_edit_element_form() {
+    public function test_edit_element_form(): void {
         $this->setAdminUser();
 
         preg_match('|^certificateelement_(\w*)\\\\|', get_class($this), $matches);
