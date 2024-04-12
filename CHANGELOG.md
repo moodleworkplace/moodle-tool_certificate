@@ -3,6 +3,7 @@
 ## Unreleased
 ### Added
 - Added a new issued certificate regenerated event.
+- Compatibility with Moodle 4.4, added to the testing matrix
 ### Fixed
 - Coding style fixes to comply with moodle-plugin-ci 4.4.0
 
