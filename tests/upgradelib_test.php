@@ -30,7 +30,7 @@ use xmldb_table;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class upgradelib_test extends advanced_testcase {
+final class upgradelib_test extends advanced_testcase {
 
     /** @var string */
     protected $temptable = null;
@@ -74,7 +74,7 @@ class upgradelib_test extends advanced_testcase {
      *
      * @covers ::tool_certificate_upgrade_remove_tenant_field
      */
-    public function test_tool_certificate_upgrade_remove_tenant_field() {
+    public function test_tool_certificate_upgrade_remove_tenant_field(): void {
         global $DB;
 
         // Skip tests if tool_tenant is not present.
@@ -115,7 +115,7 @@ class upgradelib_test extends advanced_testcase {
      *
      * @covers ::tool_certificate_upgrade_move_data_to_customfields
      */
-    public function test_tool_certificate_upgrade_move_data_to_customfields() {
+    public function test_tool_certificate_upgrade_move_data_to_customfields(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -181,7 +181,7 @@ class upgradelib_test extends advanced_testcase {
      *
      * @covers ::tool_certificate_upgrade_store_fullname_in_data
      */
-    public function test_tool_certificate_upgrade_store_fullname_in_data() {
+    public function test_tool_certificate_upgrade_store_fullname_in_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -219,7 +219,7 @@ class upgradelib_test extends advanced_testcase {
      *
      * @covers ::tool_certificate_delete_certificates_with_missing_context
      */
-    public function test_tool_certificate_delete_certificates_with_missing_context() {
+    public function test_tool_certificate_delete_certificates_with_missing_context(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -261,7 +261,7 @@ class upgradelib_test extends advanced_testcase {
      *
      * @covers ::tool_certificate_delete_orphaned_issue_files
      */
-    public function test_tool_certificate_delete_orphaned_issue_files() {
+    public function test_tool_certificate_delete_orphaned_issue_files(): void {
         global $DB;
         $this->resetAfterTest();
         $systemcontext = \context_system::instance();
@@ -299,7 +299,7 @@ class upgradelib_test extends advanced_testcase {
      *
      * @covers ::tool_certificate_fix_orphaned_template_element_files
      */
-    public function test_tool_certificate_fix_orphaned_template_element_files() {
+    public function test_tool_certificate_fix_orphaned_template_element_files(): void {
         $this->resetAfterTest();
 
         $fs = get_file_storage();

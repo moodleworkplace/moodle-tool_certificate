@@ -37,7 +37,7 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @author     2022 Carlos Castillo <carlos.castillo@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class issues_test extends core_reportbuilder_testcase {
+final class issues_test extends core_reportbuilder_testcase {
 
     /** @var core_reportbuilder_generator */
     protected $rbgenerator;
@@ -178,7 +178,7 @@ class issues_test extends core_reportbuilder_testcase {
         $this->assertCount(1, $content);
     }
 
-    public function test_upgrade_add_permission_condition_to_reports() {
+    public function test_upgrade_add_permission_condition_to_reports(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/db/upgradelib.php');
 

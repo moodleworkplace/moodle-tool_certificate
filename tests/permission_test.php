@@ -28,7 +28,7 @@ use context_course;
  * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class permission_test extends advanced_testcase {
+final class permission_test extends advanced_testcase {
     /**
      * @var \stdClass
      */
@@ -103,7 +103,7 @@ class permission_test extends advanced_testcase {
      * Test for get_visible_templates as admin user.
      * @covers \tool_certificate\permission::get_visible_categories_contexts
      */
-    public function test_get_visible_templates_as_admin() {
+    public function test_get_visible_templates_as_admin(): void {
         $this->setAdminUser();
 
         // Check admin user can see all the templates.
@@ -115,7 +115,7 @@ class permission_test extends advanced_testcase {
      * Test for get_visible_templates as teacher user.
      * @covers \tool_certificate\permission::get_visible_categories_contexts
      */
-    public function test_get_visible_templates_as_teacher() {
+    public function test_get_visible_templates_as_teacher(): void {
         // Creater user with role 'editingteacher'.
         $user1 = $this->getDataGenerator()->create_and_enrol($this->course1, 'editingteacher');
         $this->setUser($user1);

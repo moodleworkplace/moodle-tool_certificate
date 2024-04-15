@@ -26,7 +26,7 @@ use tool_certificate_generator;
  * @copyright  2022 Frederik Pytlick
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class my_certificates_table_test extends \advanced_testcase {
+final class my_certificates_table_test extends \advanced_testcase {
     /**
      * Test set up.
      */
