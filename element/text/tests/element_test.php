@@ -70,12 +70,12 @@ final class element_test extends advanced_testcase {
 
         // Generate PDF for preview.
         $filecontents = $this->get_generator()->generate_pdf($certificate1, true);
-        $this->assertGreaterThan(30000, core_text::strlen($filecontents));
+        $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
 
         // Generate PDF for issue.
         $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user());
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
-        $this->assertGreaterThan(30000, core_text::strlen($filecontents));
+        $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
     }
 
     /**
