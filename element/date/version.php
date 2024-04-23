@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // This plugin is part of Moodle Workplace product.
 $plugin->component    = 'certificateelement_date';
-$plugin->release      = '4.3.2';
-$plugin->version      = 2023122800;
+$plugin->release      = '4.3.4';
+$plugin->version      = 2024042300;
 $plugin->requires     = 2022041900.00;
 $plugin->maturity     = MATURITY_STABLE;

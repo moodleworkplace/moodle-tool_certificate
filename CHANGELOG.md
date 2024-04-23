@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.3.4 - 2024-04-23
 ### Added
 - Added a new issued certificate regenerated event.
 - Compatibility with Moodle 4.4, added to the testing matrix
