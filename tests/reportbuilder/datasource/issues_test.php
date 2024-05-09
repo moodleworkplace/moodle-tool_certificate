@@ -74,6 +74,10 @@ final class issues_test extends core_reportbuilder_testcase {
         $user2 = self::getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => 'Cert 2']);
         $issueid2 = $certificate2->issue_certificate((int)$user2->id);
 
+        // Add some cohort data.
+        $cohort = $this->getDataGenerator()->create_cohort(['name' => 'My cohort']);
+        cohort_add_member($cohort->id, $user1->id);
+
         $report = $this->rbgenerator->create_report([
             'name' => 'RB certificate issues',
             'source' => issuesource::class,
@@ -86,6 +90,8 @@ final class issues_test extends core_reportbuilder_testcase {
         $this->rbgenerator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'issue:code']);
         // Add template numberofpages column to the report.
         $this->rbgenerator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
+        // Add cohort name column to the report.
+        $this->rbgenerator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name']);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(2, $content);
@@ -94,8 +100,8 @@ final class issues_test extends core_reportbuilder_testcase {
         $issuecode1 = $DB->get_record('tool_certificate_issues', ['id' => $issueid1]);
         $issuecode2 = $DB->get_record('tool_certificate_issues', ['id' => $issueid2]);
         $contentcerts = [
-            [$cert1['name'], $issuecode1->code, $user1->firstname . ' '.$user1->lastname],
-            [$cert2['name'], $issuecode2->code, $user2->firstname . ' '.$user2->lastname],
+            [$cert1['name'], $issuecode1->code, $user1->firstname . ' '.$user1->lastname, $cohort->name],
+            [$cert2['name'], $issuecode2->code, $user2->firstname . ' '.$user2->lastname, ''],
         ];
         $this->assertEqualsCanonicalizing($contentcerts, $content);
     }
@@ -114,6 +120,10 @@ final class issues_test extends core_reportbuilder_testcase {
         // Create user and issue a certificate.
         $user = self::getDataGenerator()->create_user(['firstname' => 'User', 'lastname' => 'Cert 1']);
         $certificate->issue_certificate((int)$user->id);
+
+        // Add some cohort data.
+        $cohort = $this->getDataGenerator()->create_cohort(['name' => 'My cohort']);
+        cohort_add_member($cohort->id, $user->id);
 
         $this->datasource_stress_test_columns(issues::class);
         $this->datasource_stress_test_columns_aggregation(issues::class);
