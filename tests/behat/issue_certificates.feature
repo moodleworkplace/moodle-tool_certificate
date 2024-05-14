@@ -136,3 +136,47 @@ Feature: Being able to manually issue a certificate to a user
     And I click on "Regenerate" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
     And I log out
+
+  Scenario: Filter issued certificates datasource by cohort
+    Given the following certificate issues exist:
+      | template      | user   |
+      | Certificate 1 | user11 |
+      | Certificate 1 | user12 |
+    And the following "cohorts" exist:
+      | name     | idnumber | contextlevel | reference |
+      | Cohort 1 | CH1      | System       |           |
+      | Cohort 2 | CH2      | System       |           |
+    And the following "cohort members" exist:
+      | user    | cohort |
+      | user11  | CH2    |
+      | user12  | CH1    |
+    When I log in as "admin"
+    And I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "New report" "button"
+    And I set the following fields in the "New report" "dialogue" to these values:
+      | Name                  | Report1              |
+      | Report source         | Issued certificates  |
+      | Include default setup | 1                    |
+    And I click on "Save" "button" in the "New report" "dialogue"
+    And I click on "Add column 'Name'" "link"
+    And the following "core_reportbuilder > Filter" exists:
+      | report           | Report1     |
+      | uniqueidentifier | cohort:name |
+    And I click on "Switch to preview mode" "button"
+    Then I should see "User 11" in the "reportbuilder-table" "table"
+    And I should see "Cohort 2" in the "reportbuilder-table" "table"
+    And I should see "User 12" in the "reportbuilder-table" "table"
+    And I should see "Cohort 1" in the "reportbuilder-table" "table"
+    And I click on "Filters" "button"
+    And I set the following fields in the "Name" "core_reportbuilder > Filter" to these values:
+      | Name operator | Is equal to   |
+      | Name value    | Cohort 2      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User 11" in the "reportbuilder-table" "table"
+    And I should see "Cohort 2" in the "reportbuilder-table" "table"
+    And I set the following fields in the "Name" "core_reportbuilder > Filter" to these values:
+      | Name operator | Is equal to   |
+      | Name value    | Cohort 1      |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User 12" in the "reportbuilder-table" "table"
+    And I should see "Cohort 1" in the "reportbuilder-table" "table"
