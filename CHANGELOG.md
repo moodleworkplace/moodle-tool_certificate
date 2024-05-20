@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.4 - 2024-05-21
+### Added
+- Add cohort entity to issued certificates datasource
+
 ## 4.3.4 - 2024-04-23
 ### Added
 - Added a new issued certificate regenerated event.
