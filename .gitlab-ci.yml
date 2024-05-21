@@ -9,6 +9,7 @@ services:
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_BRANCH_WORKPLACE404R: WORKPLACE_ROLLING_404
+  MOODLE_BRANCH_WORKPLACE404S: WORKPLACE_404
   MOODLE_BRANCH_WORKPLACE403R: WORKPLACE_ROLLING_403
   MOODLE_BRANCH_WORKPLACE403S: WORKPLACE_403
   MOODLE_BRANCH_WORKPLACE402S: WORKPLACE_402
@@ -140,6 +141,18 @@ behat:
     when: on_failure
     paths:
       - ${CI_PROJECT_DIR}/faildumps/
+
+wp404s:
+  image: moodlehq/moodle-workplace-plugin-ci:8.1
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE404S
+    - export CLONEWPPLUGINS=1
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
 
 wp403r:
   before_script:
