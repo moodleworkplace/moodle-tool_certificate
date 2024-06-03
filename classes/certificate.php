@@ -353,7 +353,7 @@ class certificate {
      * @param \stdClass|null $user
      * @return string
      */
-    private static function generate_code_string(\stdClass $user = null): string {
+    private static function generate_code_string(?\stdClass $user = null): string {
         $code = '';
         for ($i = 1; $i <= 10; $i++) {
             $code .= mt_rand(0, 9);
