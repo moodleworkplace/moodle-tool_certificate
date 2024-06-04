@@ -117,7 +117,7 @@ class template extends persistent {
      * @param \context|null $context
      * @return bool
      */
-    public function can_issue_to_anybody(\context $context = null): bool {
+    public function can_issue_to_anybody(?\context $context = null): bool {
         return $this->get('id') && permission::can_issue_to_anybody($context ?? $this->get_context());
     }
 }
