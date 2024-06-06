@@ -27,7 +27,6 @@ variables:
   POSTGRES_HOST_AUTH_METHOD: "trust"
   MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   DB: "pgsql"
-  REFRESH_MOODLE_PLUGIN_CI: "4.5.0"
 #  DB: "mysqli"
 
 # Gitlab-ci does not have matrixes, so we have these hidden jobs .setupworkplace and .setuplms to do the set up.
