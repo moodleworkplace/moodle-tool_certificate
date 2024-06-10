@@ -357,6 +357,23 @@ final class certificate_test extends advanced_testcase {
     }
 
     /**
+     * Verify a certificate issued with a custom name uses that custom name
+     */
+    public function test_can_set_certificate_name(): void {
+        $testname = 'Test Certificate 1';
+
+        $this->setAdminUser();
+        $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
+        $user1 = $this->getDataGenerator()->create_user();
+        $certificate1->issue_certificate($user1->id, null, [], 'tool_certificate', null, $testname);
+
+        $issues = certificate::get_issues_for_template($certificate1->get_id(), 0, 100);
+        $this->assertCount(1, $issues);
+        $issue = reset($issues);
+        $this->assertEquals($testname, $issue->name);
+    }
+
+    /**
      * Test generate code.
      */
     public function test_generate_code(): void {

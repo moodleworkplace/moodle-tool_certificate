@@ -121,6 +121,7 @@ $string['issuedcertificates'] = 'Issued certificates';
 $string['issueddate'] = 'Date issued';
 $string['issuelang'] = 'Issue certificates in user language';
 $string['issuelangdesc'] = 'On multi-lingual sites when user language is different from the site language the certificates will be generated in the user\'s language, otherwise all certificates will be generated in the site default language.';
+$string['issuename'] = 'Name (issued)';
 $string['issuenotallowed'] = 'You are not allowed to issue certificates from this template.';
 $string['issueormangenotallowed'] = 'You are not allowed to issue certificates from or manage this template.';
 $string['leftmargin'] = 'Left margin';
