@@ -90,7 +90,7 @@ class verify_certificate_result implements templatable, renderable {
         $this->viewurl = template::view_url($issue->code);
         $this->userprofileurl = new \moodle_url('/user/view.php', ['id' => $issue->userid]);
         $this->userfullname = @json_decode($issue->data, true)['userfullname'];
-        $this->certificatename = $issue->certificatename;
+        $this->certificatename = $issue->name ?? $issue->certificatename;
         $strftimedatetime = get_string("strftimedatetime", "langconfig");
         $this->timecreated = userdate($issue->timecreated, $strftimedatetime);
         $this->expires = $issue->expires > 0

@@ -247,5 +247,18 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023071300, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2024061000) {
+        $table = new xmldb_table('tool_certificate_issues');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255');
+
+        // Conditionally add field name to tool_certificate_issues.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2024061000, 'tool', 'certificate');
+    }
+
     return true;
 }

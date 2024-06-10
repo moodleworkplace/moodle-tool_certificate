@@ -120,6 +120,17 @@ class issue extends base {
 
         // Column certificate issue timecreated.
         $columns[] = (new column(
+            'name',
+            new lang_string('issuename', 'tool_certificate'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->set_is_sortable(true)
+            ->add_field("{$certificateissuealias}.name");
+
+        // Column certificate issue timecreated.
+        $columns[] = (new column(
             'timecreated',
             new lang_string('issueddate', 'tool_certificate'),
             $this->get_entity_name()
