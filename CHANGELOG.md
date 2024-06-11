@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.4.1 - 2024-06-11
 ### Fixed
 - fixed implicit nullable parameter declaration deprecated in PHP 8.4
   (new coding style check)
