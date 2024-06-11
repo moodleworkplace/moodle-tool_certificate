@@ -264,13 +264,13 @@ class template {
 
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
-            $pdf->SetTitle($this->get_formatted_name());
+            $pdf->SetTitle($this->get_formatted_name($issue));
             $pdf->setViewerPreferences([
                 'DisplayDocTitle' => true,
             ]);
             $pdf->SetAutoPageBreak(true, 0);
             // Remove full-stop at the end, if it exists, to avoid "..pdf" being created and being filtered by clean_filename.
-            $filename = rtrim($this->get_formatted_name(), '.');
+            $filename = rtrim($this->get_formatted_name($issue), '.');
             $filename = clean_filename($filename . '.pdf');
             // Loop through the pages and display their content.
             foreach ($pages as $page) {
@@ -446,9 +446,13 @@ class template {
     /**
      * Returns the formatted name of the template.
      *
+     * @param \stdClass $issue The issued certificate we want to view
      * @return string the name of the template
      */
-    public function get_formatted_name() {
+    public function get_formatted_name(\stdClass $issue = null) {
+        if ($issue && $issue->name) {
+            return format_string($issue->name, true, ['escape' => false, 'context' => $this->get_context()]);
+        }
         return $this->persistent->get_formatted_name();
     }
 
@@ -688,11 +692,12 @@ class template {
      * @param array $data Additional data that will json_encode'd and stored with the issue.
      * @param string $component The component the certificate was issued by.
      * @param int|null $courseid
+     * @param string $name Override the name for a certificate to display in the user's list
      * @param \core\lock\lock|null $lock optional lock to release after a record was inserted into the DB
      * @return int The ID of the issue
      */
     public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate',
-            $courseid = null, ?\core\lock\lock $lock = null) {
+            $courseid = null, $name = null, ?\core\lock\lock $lock = null) {
         global $DB;
 
         component_class_callback(\tool_tenant\config::class, 'push_for_user', [$userid]);
@@ -707,6 +712,7 @@ class template {
         $issue->component = $component;
         $issue->courseid = $courseid;
         $issue->archived = 0;
+        $issue->name = $name;
 
         // Store user fullname.
         $data['userfullname'] = fullname($DB->get_record('user', ['id' => $userid]));

@@ -110,7 +110,7 @@ class certificate {
         $userfields = self::get_extra_user_fields($context);
 
         $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, ci.data, {$userfields}
+                       COALESCE(ci.name, t.name) AS name, ci.data, {$userfields}
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
                     ON (ci.templateid = t.id)
@@ -245,7 +245,7 @@ class certificate {
         $userfields = self::get_extra_user_fields($context);
 
         $sql = "SELECT ci.id as issueid, ci.code, ci.emailed, ci.timecreated, ci.userid, ci.templateid, ci.expires,
-                       t.name, ci.courseid, ci.archived, $userfields,
+                       COALESCE(ci.name, t.name) AS name, ci.courseid, ci.archived, $userfields,
                   CASE WHEN ci.expires > 0  AND ci.expires < :now THEN 0
                   ELSE 1
                   END AS status
@@ -317,7 +317,7 @@ class certificate {
         }
 
         $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated, ci.userid, ci.courseid,
-                       t.id as templateid, t.contextid, t.name
+                       t.id as templateid, t.contextid, COALESCE(ci.name, t.name) AS name
                   FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
@@ -388,7 +388,8 @@ class certificate {
         $sql = "SELECT ci.id, ci.templateid, ci.code, ci.emailed, ci.timecreated,
                        ci.expires, ci.data, ci.component, ci.courseid,
                        ci.userid, ci.archived,
-                       t.name as certificatename,
+                       t.name AS certificatename,
+                       ci.name,
                        t.contextid
                   FROM {tool_certificate_templates} t
                   JOIN {tool_certificate_issues} ci
