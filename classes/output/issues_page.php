@@ -34,6 +34,11 @@ class issues_page implements \templatable, \renderable {
     protected $templateid;
 
     /**
+     * @var \stdClass[] The rows that were displayed in the table
+     */
+    public array $rows;
+
+    /**
      * templates_page constructor.
      *
      * @param int $templateid
@@ -53,6 +58,76 @@ class issues_page implements \templatable, \renderable {
         $report = system_report_factory::create(issues::class, $context,
             '', '', 0, ['templateid' => $this->templateid]);
 
-        return ['content' => $report->output()];
+        $result = ['content' => $report->output()];
+        $this->rows = $report->rows;
+        return $result;
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     */
+    public function output_issues_pdf(template $template, string $type): void {
+        global $CFG;
+        $files = [];
+        $handles = [];
+        foreach ($this->rows as $row) {
+            $file = $template->get_issue_file($row);
+            $files[] = $file;
+            $handles[$file->get_id()] = $file->get_content_file_handle();
+        }
+
+        require_once($CFG->libdir . '/pdflib.php');
+        require_once($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/autoload.php');
+
+        try {
+            $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
+
+            if ($type == 'pdf') {
+                foreach ($files as $file) {
+                    $filePages = $pdf->setSourceFile($handles[$file->get_id()]);
+                    for ($pageNumber = 1; $pageNumber <= $filePages; $pageNumber++) {
+                        $sourcePage = $pdf->importPage($pageNumber);
+                        $size = $pdf->getTemplateSize($sourcePage);
+                        $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
+
+                        $pdf->useTemplate($sourcePage);
+                    }
+                }
+
+                $pdf->Output('certificates.pdf');
+            }
+            else if ($type == 'pdfdecollate') {
+                $pageCount = 1;
+                for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+                    foreach ($files as $file) {
+                        $filePages = $pdf->setSourceFile($handles[$file->get_id()]);
+                        if ($pageNumber > $filePages) {
+                            continue;
+                        }
+                        if ($filePages > $pageCount) {
+                            $pageCount = $filePages;
+                        }
+
+                        $sourcePage = $pdf->importPage($pageNumber);
+                        $size = $pdf->getTemplateSize($sourcePage);
+                        $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
+
+                        $pdf->useTemplate($sourcePage);
+                    }
+                }
+
+                $pdf->Output('certificates - ordered.pdf');
+            }
+            else {
+                throw new \InvalidArgumentException("Unknown download type: $type");
+            }
+        }
+        finally {
+            foreach ($handles as $handle) {
+                fclose($handle);
+            }
+        }
     }
 }

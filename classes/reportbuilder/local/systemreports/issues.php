@@ -245,7 +245,17 @@ class issues extends system_report {
      */
     public function row_callback(stdClass $row): void {
         $this->userid = (int) $row->userid;
+
+        if (!isset($this->rows)) {
+            $this->rows = [];
+        }
+        $this->rows[] = $row;
     }
+
+    /**
+     * @var stdClass[]
+     */
+    public array $rows;
 
     /**
      * Callback for the fullname to display badge for archived issues.
