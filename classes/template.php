@@ -819,6 +819,8 @@ class template {
         $userfullname = fullname($user, true);
         $mycertificatesurl = new moodle_url('/admin/tool/certificate/my.php');
         $subject = get_string('notificationsubjectcertificateissued', 'tool_certificate');
+        $name = $issue->name ?? $this->get_name();
+        $subject = "$name - $subject";
         $fullmessage = get_string(
             'notificationmsgcertificateissued',
             'tool_certificate',
