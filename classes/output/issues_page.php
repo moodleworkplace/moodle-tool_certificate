@@ -102,7 +102,7 @@ class issues_page implements \templatable, \renderable {
                     }
                 }
 
-                $pdf->Output('certificates.pdf');
+                $pdf->Output('certificates.pdf', 'D');
             }
             else if ($type == 'pdfdecollate') {
                 $pageCount = 1;
@@ -124,7 +124,7 @@ class issues_page implements \templatable, \renderable {
                     }
                 }
 
-                $pdf->Output('certificates - ordered.pdf');
+                $pdf->Output('certificates - ordered.pdf', 'D');
             }
             else {
                 throw new \InvalidArgumentException("Unknown download type: $type");
