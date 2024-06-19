@@ -34,6 +34,11 @@ class issues_page implements \templatable, \renderable {
     protected $templateid;
 
     /**
+     * @var \stdClass[] The rows that were displayed in the table
+     */
+    public array $rows;
+
+    /**
      * templates_page constructor.
      *
      * @param int $templateid
@@ -53,6 +58,112 @@ class issues_page implements \templatable, \renderable {
         $report = system_report_factory::create(issues::class, $context,
             '', '', 0, ['templateid' => $this->templateid]);
 
-        return ['content' => $report->output()];
+        $result = ['content' => $report->output()];
+        if (isset($report->rows)) {
+            $this->rows = $report->rows;
+        }
+        else
+        {
+            $this->rows = [];
+        }
+        return $result;
+    }
+
+    /**
+     * @throws \InvalidArgumentException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     * @throws \setasign\Fpdi\PdfParser\PdfParserException
+     */
+    public function output_issues_pdf(template $template, string $type): void {
+        global $CFG;
+        $files = [];
+        $handles = [];
+        foreach ($this->rows as $row) {
+            $file = $template->get_issue_file($row);
+            $files[] = $file;
+            $handles[$file->get_id()] = $file->get_content_file_handle();
+        }
+
+        $debug = optional_param('debug', false, PARAM_BOOL);
+
+        require_once($CFG->libdir . '/pdflib.php');
+        require_once($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/autoload.php');
+
+        // end all output buffers if any
+        while (ob_get_level())
+        {
+            ob_get_clean();
+        }
+
+        try {
+            $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
+            $count = count($files);
+            $name = clean_filename($template->get_name());
+            $at = date('Y-m-d H-i-s');
+            $name = "$name - $count certificate(s) - $at";
+
+            if ($type == 'pdf') {
+                $position = 0;
+                foreach ($files as $file) {
+                    $position++;
+                    $filePages = $pdf->setSourceFile($handles[$file->get_id()]);
+                    for ($pageNumber = 1; $pageNumber <= $filePages; $pageNumber++) {
+                        $sourcePage = $pdf->importPage($pageNumber);
+                        $size = $pdf->getTemplateSize($sourcePage);
+                        $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
+
+                        $pdf->useTemplate($sourcePage);
+
+                        if ($debug) {
+                            $pdf->SetFont('Helvetica');
+                            $pdf->SetTextColor(200, 0, 0);
+                            $pdf->SetXY(5, 5);
+                            $pdf->Write(2, "PDF $position/$count, Page $pageNumber/$filePages");
+                        }
+                    }
+                }
+
+                $pdf->Output("$name.pdf");
+            }
+            else if ($type == 'pdfdecollate') {
+                $pageCount = 1;
+                for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+                    $position = 0;
+                    foreach ($files as $file) {
+                        $position++;
+                        $filePages = $pdf->setSourceFile($handles[$file->get_id()]);
+                        if ($pageNumber > $filePages) {
+                            continue;
+                        }
+                        if ($filePages > $pageCount) {
+                            $pageCount = $filePages;
+                        }
+
+                        $sourcePage = $pdf->importPage($pageNumber);
+                        $size = $pdf->getTemplateSize($sourcePage);
+                        $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
+
+                        $pdf->useTemplate($sourcePage);
+
+                        if ($debug) {
+                            $pdf->SetFont('Helvetica');
+                            $pdf->SetTextColor(200, 0, 0);
+                            $pdf->SetXY(5, 5);
+                            $pdf->Write(2, "PDF $position/$count, Page $pageNumber/$filePages");
+                        }
+                    }
+                }
+
+                $pdf->Output("$name - ordered.pdf");
+            }
+            else {
+                throw new \InvalidArgumentException("Unknown download type: $type");
+            }
+        }
+        finally {
+            foreach ($handles as $handle) {
+                fclose($handle);
+            }
+        }
     }
 }
