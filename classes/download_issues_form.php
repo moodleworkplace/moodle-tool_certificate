@@ -13,8 +13,9 @@ class download_issues_form {
         return <<<HTML
 <form method="post" target="_blank" class="dataformatselector m-1">
     <div class="form-inline text-xs-right">
-        <input type="hidden" name="templateid" value="$this->templateid">
-        <label for="downloadissues_select" class="mr-1">Download issued PDFs as</label>
+        <input type="hidden" name="templateid" value="$this->templateid" />
+        <input type="hidden" name="perpage" value="5000" />
+        <label for="downloadissues_select" class="mr-1">Download all filtered issued PDFs as</label>
         <select name="downloadissues" id="downloadissues_select" class="form-control custom-select mr-1">
                 <option value="pdf">Merged PDF</option>
                 <option value="pdfdecollate">Merged PDF (De-collated)</option>
