@@ -84,14 +84,28 @@ class issues_page implements \templatable, \renderable {
             $handles[$file->get_id()] = $file->get_content_file_handle();
         }
 
+        $debug = optional_param('debug', false, PARAM_BOOL);
+
         require_once($CFG->libdir . '/pdflib.php');
         require_once($CFG->dirroot . '/mod/assign/feedback/editpdf/fpdi/autoload.php');
 
+        // end all output buffers if any
+        while (ob_get_level())
+        {
+            ob_get_clean();
+        }
+
         try {
             $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
+            $count = count($files);
+            $name = clean_filename($template->get_name());
+            $at = date('Y-m-d H-i-s');
+            $name = "$name - $count certificate(s) - $at";
 
             if ($type == 'pdf') {
+                $position = 0;
                 foreach ($files as $file) {
+                    $position++;
                     $filePages = $pdf->setSourceFile($handles[$file->get_id()]);
                     for ($pageNumber = 1; $pageNumber <= $filePages; $pageNumber++) {
                         $sourcePage = $pdf->importPage($pageNumber);
@@ -99,15 +113,24 @@ class issues_page implements \templatable, \renderable {
                         $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
 
                         $pdf->useTemplate($sourcePage);
+
+                        if ($debug) {
+                            $pdf->SetFont('Helvetica');
+                            $pdf->SetTextColor(200, 0, 0);
+                            $pdf->SetXY(5, 5);
+                            $pdf->Write(2, "PDF $position/$count, Page $pageNumber/$filePages");
+                        }
                     }
                 }
 
-                $pdf->Output('certificates.pdf', 'D');
+                $pdf->Output("$name.pdf");
             }
             else if ($type == 'pdfdecollate') {
                 $pageCount = 1;
                 for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+                    $position = 0;
                     foreach ($files as $file) {
+                        $position++;
                         $filePages = $pdf->setSourceFile($handles[$file->get_id()]);
                         if ($pageNumber > $filePages) {
                             continue;
@@ -121,10 +144,17 @@ class issues_page implements \templatable, \renderable {
                         $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
 
                         $pdf->useTemplate($sourcePage);
+
+                        if ($debug) {
+                            $pdf->SetFont('Helvetica');
+                            $pdf->SetTextColor(200, 0, 0);
+                            $pdf->SetXY(5, 5);
+                            $pdf->Write(2, "PDF $position/$count, Page $pageNumber/$filePages");
+                        }
                     }
                 }
 
-                $pdf->Output('certificates - ordered.pdf', 'D');
+                $pdf->Output("$name - ordered.pdf");
             }
             else {
                 throw new \InvalidArgumentException("Unknown download type: $type");
