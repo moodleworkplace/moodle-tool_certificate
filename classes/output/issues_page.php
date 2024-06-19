@@ -59,7 +59,13 @@ class issues_page implements \templatable, \renderable {
             '', '', 0, ['templateid' => $this->templateid]);
 
         $result = ['content' => $report->output()];
-        $this->rows = $report->rows;
+        if (isset($report->rows)) {
+            $this->rows = $report->rows;
+        }
+        else
+        {
+            $this->rows = [];
+        }
         return $result;
     }
 
