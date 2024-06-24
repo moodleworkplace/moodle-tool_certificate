@@ -112,7 +112,7 @@ function tool_certificate_pluginfile($course, $cm, $context, $filearea, $args, $
  */
 function tool_certificate_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     global $USER;
-    if (permission::can_view_list($user->id)) {
+    if (permission::can_view_list($user->id, \context_user::instance($user->id))) {
         if ($USER->id == $user->id) {
             $link = get_string('mycertificates', 'tool_certificate');
         } else {
