@@ -89,11 +89,10 @@ class element extends persistent_exporter {
      */
     protected function get_other_values(\renderer_base $output): array {
         $element = $this->get_element();
-        $pluginname = 'certificateelement_' . $this->persistent->get('element');
         return [
             'displayname' => $element->get_display_name(),
             'editablename' => $element->get_inplace_editable()->export_for_template($output),
-            'elementtype' => get_string('pluginname', $pluginname),
+            'elementtype' => $element::get_element_type_name(),
             'movetitle' => get_string('changeelementsequence', 'tool_certificate'),
             'icon' => $output->render($this->get_element()->get_element_type_image(true)),
             'html' => $this->get_element()->render_html(),
