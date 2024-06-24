@@ -69,18 +69,19 @@ abstract class element {
      * Helper method to create an instance from persistent
      *
      * @param \tool_certificate\persistent\element $persistent
-     * @return element
+     * @return element|null
      */
     protected static function instance_from_persistent(\tool_certificate\persistent\element $persistent): ?element {
-        // Get the class name.
-        $classname = '\\certificateelement_' . $persistent->get('element') . '\\element';
+        $elementclasses = element_helper::get_element_classes();
 
-        // Ensure the necessary class exists.
-        if (!class_exists($classname) || !is_subclass_of($classname, self::class)) {
+        $shortname = $persistent->get('element');
+        if (!isset($elementclasses[$shortname])) {
             return null;
         }
 
-        /** @var self $el */
+        /** @var class-string<element> $classname */
+        $classname = $elementclasses[$shortname];
+
         $el = new $classname($persistent);
         $el->persistent = $persistent;
         return $el;

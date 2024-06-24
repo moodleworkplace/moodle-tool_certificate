@@ -447,28 +447,57 @@ class element_helper {
     }
 
     /**
+     * Returns all enabled element classes.
+     *
+     * @return array<string, class-string<\tool_certificate\element>>
+     */
+    public static function get_element_classes(): array {
+        $plugins = self::get_enabled_plugins();
+
+        if (!class_exists(\core\hook\manager::class)) {
+            // Legacy code for 4.2.x and older.
+            $options = [];
+            foreach ($plugins as $plugin) {
+                /** @var element $classname */
+                $classname = '\\certificateelement_' . $plugin. '\\element';
+                // Ensure the necessary class exists.
+                if (class_exists($classname) && is_subclass_of($classname, element::class)) {
+                    $options[$plugin] = $classname;
+                }
+            }
+            return $options;
+        }
+
+        $hook = new hook\element_classes();
+
+        // Loop through the enabled plugins.
+        foreach ($plugins as $plugin) {
+            $classname = 'certificateelement_' . $plugin. '\\element';
+            $hook->add_class($plugin, $classname);
+        }
+
+        // Ask other plugins if they define more elements.
+        \core\hook\manager::get_instance()->dispatch($hook);
+
+        return $hook->get_classes();
+    }
+
+    /**
      * Return the list of possible elements to add.
      *
      * @return array the list of element types that can be used.
      */
-    public static function get_available_element_types() {
-        global $CFG;
-
+    public static function get_available_element_types(): array {
         // Array to store the element types.
         $options = [];
 
-        $plugins = self::get_enabled_plugins();
+        $classes = self::get_element_classes();
 
         // Loop through the enabled plugins.
-        foreach ($plugins as $plugin) {
-            /** @var element $classname */
-            $classname = '\\certificateelement_' . $plugin. '\\element';
-            // Ensure the necessary class exists.
-            if (class_exists($classname) && is_subclass_of($classname, element::class)) {
-                // Additionally, check if the user is allowed to add the element at all.
-                if ($classname::can_add()) {
-                    $options[$plugin] = $classname::get_element_type_name();
-                }
+        foreach ($classes as $shortname => $classname) {
+            // Additionally, check if the user is allowed to add the element at all.
+            if ($classname::can_add()) {
+                $options[$shortname] = $classname::get_element_type_name();
             }
         }
 
