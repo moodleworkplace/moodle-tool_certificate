@@ -55,6 +55,9 @@ class template extends persistent {
             'shared' => [
                 'type' => PARAM_BOOL,
             ],
+            'maxissuances' => [
+                'type' => PARAM_INT,
+            ]
         ];
     }
 

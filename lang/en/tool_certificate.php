@@ -199,6 +199,9 @@ $string['verify'] = 'Verify';
 $string['verifycertificates'] = 'Verify certificates';
 $string['verifynotallowed'] = 'You are not allowed to verify certificates.';
 $string['viewcertificate'] = 'View certificate';
+$string['maxissuances'] = 'Maximum issuances per user';
+$string['maxissuances_help'] = 'The maximum number of times this certificate can be issued to a single user. If 0 there is no limit.';
+$string['maxissuancesreached'] = 'You have reached the maximum number of times this certificate can be issued to you.';
 
 // Deprecated since 4.2.
 $string['editcertificate'] = 'Edit certificate template \'{$a}\'';

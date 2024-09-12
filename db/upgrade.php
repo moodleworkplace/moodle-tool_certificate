@@ -30,7 +30,7 @@
  */
 function xmldb_tool_certificate_upgrade($oldversion) {
     global $DB, $CFG;
-    require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/certificate/db/upgradelib.php');
+    require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/db/upgradelib.php');
 
     $dbman = $DB->get_manager();
 
@@ -53,8 +53,10 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         foreach ($elements as $element) {
             $data = @json_decode($element->data, true);
             $data['isbackground'] = 1;
-            $DB->update_record('tool_certificate_elements',
-                ['id' => $element->id, 'element' => 'image', 'data' => json_encode($data)]);
+            $DB->update_record(
+                'tool_certificate_elements',
+                ['id' => $element->id, 'element' => 'image', 'data' => json_encode($data)]
+            );
         }
 
         upgrade_plugin_savepoint(true, 2019030707, 'tool', 'certificate');
@@ -62,24 +64,30 @@ function xmldb_tool_certificate_upgrade($oldversion) {
 
     if ($oldversion < 2019030708) {
         // Change instances of studentname to userfield.
-        $DB->execute("UPDATE {tool_certificate_elements} SET element = ?, data = ? WHERE element = ?",
-            ['userfield', 'fullname', 'studentname']);
+        $DB->execute(
+            "UPDATE {tool_certificate_elements} SET element = ?, data = ? WHERE element = ?",
+            ['userfield', 'fullname', 'studentname']
+        );
 
         upgrade_plugin_savepoint(true, 2019030708, 'tool', 'certificate');
     }
 
     if ($oldversion < 2019030710) {
         // Change refpoint of all images.
-        $DB->execute("UPDATE {tool_certificate_elements} SET refpoint = null WHERE element IN (?, ?, ?)",
-            ['image', 'userpicture', 'digitalsignature']);
+        $DB->execute(
+            "UPDATE {tool_certificate_elements} SET refpoint = null WHERE element IN (?, ?, ?)",
+            ['image', 'userpicture', 'digitalsignature']
+        );
 
         upgrade_plugin_savepoint(true, 2019030710, 'tool', 'certificate');
     }
 
     if ($oldversion < 2019030711) {
         // Change refpoint of all images.
-        $DB->execute("DELETE FROM {config_plugins} WHERE name = ? AND plugin IN (?, ?)",
-            ['version', 'certificateelement_bgimage', 'certificateelement_studentname']);
+        $DB->execute(
+            "DELETE FROM {config_plugins} WHERE name = ? AND plugin IN (?, ?)",
+            ['version', 'certificateelement_bgimage', 'certificateelement_studentname']
+        );
 
         upgrade_plugin_savepoint(true, 2019030711, 'tool', 'certificate');
     }
@@ -205,12 +213,21 @@ function xmldb_tool_certificate_upgrade($oldversion) {
             $duplicatecounter = 1;
 
             // For each duplicate code, retrieve all subsequent duplicates after the initial one and append counter.
-            $records = $DB->get_records_select('tool_certificate_issues', 'id <> :id AND code = :code',
-                ['id' => $duplicatecode->minid, 'code' => $duplicatecode->code], 'id', 'id');
+            $records = $DB->get_records_select(
+                'tool_certificate_issues',
+                'id <> :id AND code = :code',
+                ['id' => $duplicatecode->minid, 'code' => $duplicatecode->code],
+                'id',
+                'id'
+            );
 
             foreach ($records as $record) {
-                $DB->set_field('tool_certificate_issues', 'code', $duplicatecode->code . $duplicatecounter++,
-                    ['id' => $record->id]);
+                $DB->set_field(
+                    'tool_certificate_issues',
+                    'code',
+                    $duplicatecode->code . $duplicatecounter++,
+                    ['id' => $record->id]
+                );
             }
         }
 
@@ -245,6 +262,21 @@ function xmldb_tool_certificate_upgrade($oldversion) {
     if ($oldversion < 2023071300) {
         tool_certificate_upgrade_add_permission_condition_to_reports();
         upgrade_plugin_savepoint(true, 2023071300, 'tool', 'certificate');
+    }
+
+    if ($oldversion < 2024081902) {
+
+        // Define field maxissuances to be added to tool_certificate_templates.
+        $table = new xmldb_table('tool_certificate_templates');
+        $field = new xmldb_field('maxissuances', XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, '0', 'timemodified');
+
+        // Conditionally launch add field maxissuances.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2024081902, 'tool', 'certificate');
     }
 
     return true;
