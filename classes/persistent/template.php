@@ -57,6 +57,9 @@ class template extends persistent {
             ],
             'maxissuances' => [
                 'type' => PARAM_INT,
+            ],
+            'notify' => [
+                'type' => PARAM_BOOL
             ]
         ];
     }

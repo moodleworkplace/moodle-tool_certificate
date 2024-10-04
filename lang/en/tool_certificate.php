@@ -202,6 +202,8 @@ $string['viewcertificate'] = 'View certificate';
 $string['maxissuances'] = 'Maximum issuances per user';
 $string['maxissuances_help'] = 'The maximum number of times this certificate can be issued to a single user. If 0 there is no limit.';
 $string['maxissuancesreached'] = 'You have reached the maximum number of times this certificate can be issued to you.';
+$string['notify'] = 'Notify users';
+$string['notify_help'] = 'Notify users that they received a new certificate.';
 
 // Deprecated since 4.2.
 $string['editcertificate'] = 'Edit certificate template \'{$a}\'';

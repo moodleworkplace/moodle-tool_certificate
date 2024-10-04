@@ -279,5 +279,20 @@ function xmldb_tool_certificate_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024081902, 'tool', 'certificate');
     }
 
+    if ($oldversion < 2024100401) {
+
+        // Define field notify to be added to tool_certificate_templates.
+        $table = new xmldb_table('tool_certificate_templates');
+        $field = new xmldb_field('notify', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'maxissuances');
+
+        // Conditionally launch add field notify.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Certificate savepoint reached.
+        upgrade_plugin_savepoint(true, 2024100401, 'tool', 'certificate');
+    }
+
     return true;
 }

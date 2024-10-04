@@ -99,6 +99,10 @@ class details extends dynamic_form {
         $mform->setDefault('maxissuances', 0);
         $mform->addHelpButton('maxissuances', 'maxissuances', 'tool_certificate');
 
+        $mform->addElement('advcheckbox', 'notify', get_string('notify', 'tool_certificate'));
+        $mform->addHelpButton('notify', 'notify', 'tool_certificate');
+        $mform->setDefault('notify', 1);
+
         if (!$this->get_template()->get_id()) {
             page::add_page_elements($mform);
         } else {
@@ -194,6 +198,7 @@ class details extends dynamic_form {
                 'shared' => $this->template->get_shared(),
                 'categoryid' => $this->template->get_category_id(),
                 'maxissuances' => $this->template->get_maxissuances(),
+                'notify' => $this->template->get_notify(),
             ]);
         } else {
             $data = template::instance()->new_page()->to_record();
