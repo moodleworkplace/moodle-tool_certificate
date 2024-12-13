@@ -52,6 +52,7 @@ class element extends \tool_certificate\element {
 
         // Get the user profile fields.
         $userfields = [
+            'username' => $displayname('username'),
             'fullname' => $displayname('fullname'),
             'firstname' => $displayname('firstname'),
             'lastname' => $displayname('lastname'),
