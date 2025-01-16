@@ -117,15 +117,20 @@ class issues extends \external_api {
             throw new \required_capability_exception($template->get_context(), 'tool/certificate:issue', 'nopermissions', 'error');
         }
 
-        // Regenerate the issue file.
-        $template->create_issue_file($issue, true);
-        // Update issue userfullname data.
+        // Update issue userfullname and course data.
         if ($user = $DB->get_record('user', ['id' => $issue->userid])) {
             $issuedata = @json_decode($issue->data, true);
+            if ($course = $DB->get_record('course', ['id' => $issue->courseid])) {
+                $issuedata = \mod_coursecertificate\helper::get_issue_data($course, $user);
+            }
             $issuedata['userfullname'] = fullname($user);
             $issue->data = json_encode($issuedata);
             $DB->update_record('tool_certificate_issues', $issue);
         }
+        \tool_certificate\customfield\issue_handler::create()->save_additional_data($issue, $issuedata);
+
+        // Regenerate the issue file.
+        $template->create_issue_file($issue, true);
 
         // Trigger event.
         \tool_certificate\event\certificate_regenerated::create_from_issue($issue)->trigger();
