@@ -44,7 +44,7 @@
 <div class="card mb-3" data-region="page" data-id="{{id}}">
     <div class="card-header p-0" id="page-{{id}}-heading">
         <div class="mb-0 d-flex">
-            <button class="btn btn-link text-left ws-toggle nomargin ml-1" data-toggle="collapse" data-target="#page-{{id}}" aria-expanded="true" aria-controls="page-{{id}}">
+            <button class="btn btn-link text-start ws-toggle nomargin ms-1" data-bs-toggle="collapse" data-bs-target="#page-{{id}}" aria-expanded="true" aria-controls="page-{{id}}">
                 <span class="togglesectionicon collapsed-icon-container">
                     <span class="dir-rtl-hide">{{#pix}} t/collapsed, core, {{#str}} expand, moodle {{/str}} {{/pix}}</span>
                     <span class="dir-ltr-hide">{{#pix}} t/collapsed_rtl, core, {{#str}} expand, moodle {{/str}} {{/pix}}</span>
@@ -54,7 +54,7 @@
                 </span>
                 {{title}}
             </button>
-            <span class="ml-auto my-auto">
+            <span class="ms-auto my-auto">
                 {{#moveupurl}}
                 <a class="btn btn-link p-0" data-action="moveup" href="{{moveupurl}}" data-id="{{id}}" title="{{#str}}moveup{{/str}}">
                     {{#pix}} i/up, core {{/pix}}
@@ -82,7 +82,7 @@
                 <div>
                     {{> tool_certificate/edit_layout_elementlist}}
                     <div class="dropdown">
-                        <button id="addelement{{id}}" class="btn btn-primary iconlarge nomargin" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button id="addelement{{id}}" class="btn btn-primary iconlarge nomargin" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             {{#str}}addelement, tool_certificate{{/str}}
                         </button>
                         <div class="dropdown-menu" aria-labelledby="addelement{{id}}" data-region="elementtypeslist">
@@ -92,7 +92,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="ml-4" data-region="pagelayout" data-id="{{id}}">
+                <div class="ms-4" data-region="pagelayout" data-id="{{id}}">
                     {{> tool_certificate/edit_layout_pdf }}
                 </div>
             </div>

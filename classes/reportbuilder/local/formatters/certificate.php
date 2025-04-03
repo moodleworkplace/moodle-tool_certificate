@@ -127,7 +127,7 @@ class certificate {
 
         if ($row->shared) {
             $badge = html_writer::tag('span', get_string('shared', 'tool_certificate'),
-                ['class' => 'badge badge-secondary ml-1']);
+                ['class' => 'badge bg-secondary text-dark ms-1']);
         }
 
         return $fullname . ' ' . $badge;
