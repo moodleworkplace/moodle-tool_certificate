@@ -33,7 +33,6 @@ variables:
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch WP-5390
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git --branch WP-5390
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git --branch WP-5390
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git --branch WP-5390
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git --branch WP-5390
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git --branch WP-5390
   - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git --branch WP-5390
@@ -104,7 +103,6 @@ behat:
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git --branch $MOODLE_BRANCH
-        moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git --branch $MOODLE_BRANCH
