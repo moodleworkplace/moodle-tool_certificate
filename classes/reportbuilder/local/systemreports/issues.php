@@ -256,7 +256,8 @@ class issues extends system_report {
      */
     public function apply_archived_label($userfullname, stdClass $row) {
         if ($row->archived) {
-            $userfullname .= html_writer::span(get_string('archived', 'tool_certificate'), 'ml-1 badge badge-pill badge-secondary');
+            $userfullname .= html_writer::span(get_string('archived', 'tool_certificate'),
+                'ms-1 badge rounded-pill bg-secondary text-dark');
         }
         return $userfullname;
     }

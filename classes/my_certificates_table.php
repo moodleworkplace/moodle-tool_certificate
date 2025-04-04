@@ -158,7 +158,8 @@ class my_certificates_table extends \table_sql {
         }
         $column = userdate($certificate->expires);
         if ($certificate->expires && $certificate->expires <= time()) {
-            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'), ['class' => 'badge badge-secondary']);
+            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'),
+                ['class' => 'badge bg-secondary text-dark']);
         }
         return $column;
     }
