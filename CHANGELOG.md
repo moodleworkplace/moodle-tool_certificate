@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0 - 2025-04-14
+### Added
+- Added support for Moodle 5.0
+
 ## 4.5.3 - 2025-03-18
 ### Fixed
 - behat tests checking that certificate opens in a new window failing with selenium/standalone-chrome:4
