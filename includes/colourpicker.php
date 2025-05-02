@@ -80,6 +80,7 @@ class moodlequickform_tool_certificate_colourpicker extends moodlequickform_edit
     public function export_for_template(renderer_base $output) {
         $context = $this->export_for_template_base($output);
         $context['html'] = $this->toHtml();
+        $context['type'] = "tool_certificate_colourpicker";
 
         return $context;
     }
