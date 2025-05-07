@@ -30,10 +30,9 @@ Feature: Being able to manage elements in a certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Border" in the "[data-region='elementlist']" "css_element"
     And I click on "Edit 'Border'" "link" in the "Border" "list_item"
-    # TODO WP-5401 uncomment all colour checks in this test
     And the following fields match these values:
       | Width | 2 |
-      # | Colour | #045ECD |
+      | Colour | #045ECD |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     # Code.
     And I add the element "Code" to page "1" of the "Certificate 1" site certificate template
@@ -52,7 +51,7 @@ Feature: Being able to manage elements in a certificate template
     And the following fields match these values:
       | Font                     | Times - Italic |
       | Size                     | 20        |
-      # | Colour                   | #045ECD   |
+      | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
@@ -75,7 +74,7 @@ Feature: Being able to manage elements in a certificate template
       | Date format              | strftimedateshort |
       | Font                     | Times - Italic         |
       | Size                     | 20                |
-      # | Colour                   | #045ECD           |
+      | Colour                   | #045ECD           |
       | Width                    | 20                |
       | Text alignment           | Left              |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
@@ -134,7 +133,7 @@ Feature: Being able to manage elements in a certificate template
       | Text                     | Test this |
       | Font                     | Times - Italic |
       | Size                     | 20        |
-      # | Colour                   | #045ECD   |
+      | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
@@ -155,7 +154,7 @@ Feature: Being able to manage elements in a certificate template
       | User field               | Country   |
       | Font                     | Times - Italic |
       | Size                     | 20        |
-      # | Colour                   | #045ECD   |
+      | Colour                   | #045ECD   |
       | Width                    | 20        |
       | Text alignment           | Left      |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
