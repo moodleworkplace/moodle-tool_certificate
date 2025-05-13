@@ -129,16 +129,15 @@ behat:
     paths:
       - ${CI_PROJECT_DIR}/faildumps/
 
-# wp500s:
-#   before_script:
-#     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-#     - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE500S
-#     - export CLONEWPPLUGINS=1
-#   <<: *scriptshorttest
-#   except:
-#     - master
-#     - tags
-#     - /^WORKPLACE_(ROLLING_)?\d+$/
+wp500s:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE500S
+    - export CLONEWPPLUGINS=1
+  <<: *scriptshorttest
+  except:
+    - tags
+    - /^MOODLE_\d+_STABLE$/
 
 lms500:
   before_script:
@@ -146,5 +145,5 @@ lms500:
     - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS500
   <<: *scriptshorttest
   except:
-    - master
     - tags
+    - /^MOODLE_\d+_STABLE$/
