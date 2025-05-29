@@ -28,11 +28,16 @@ use tool_certificate\reportbuilder\local\systemreports\templates;
  * @author    2022 Odei Alba <odei.alba@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class templates_page implements \templatable, \renderable {
+class templates_page implements \renderable, \templatable {
     /**
      * templates_page constructor.
+     *
+     * @param int $courseid
      */
-    public function __construct() {
+    public function __construct(
+        /** @var int course id */
+        protected int $courseid = SITEID
+    ) {
     }
 
     /**
@@ -44,7 +49,8 @@ class templates_page implements \templatable, \renderable {
      * @throws \coding_exception
      */
     public function export_for_template(renderer_base $output) {
-        $report = system_report_factory::create(templates::class, \context_system::instance());
+        $context = $this->courseid !== SITEID ? \context_course::instance($this->courseid) : \context_system::instance();
+        $report = system_report_factory::create(templates::class, $context);
 
         return ['content' => $report->output()];
     }
