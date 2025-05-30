@@ -29,15 +29,17 @@ use tool_certificate\reportbuilder\local\systemreports\templates;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class templates_page implements \renderable, \templatable {
+
+    /** @var int course id */
+    protected $courseid;
+
     /**
      * templates_page constructor.
      *
      * @param int $courseid
      */
-    public function __construct(
-        /** @var int course id */
-        protected int $courseid = SITEID
-    ) {
+    public function __construct(int $courseid = SITEID) {
+        $this->courseid = $courseid;
     }
 
     /**
