@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.0.1 - 2025-06-10
+### Fixed
+- Fixed an issue where course navigation was not working correctly when viewing a certificate
+
 ## 5.0 - 2025-04-14
 ### Added
 - Added support for Moodle 5.0
