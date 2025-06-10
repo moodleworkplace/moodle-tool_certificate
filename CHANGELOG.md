@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.5.5 - 2025-06-10
+### Fixed
+- Fixed an issue where course navigation was not working correctly when viewing a certificate
+
 ## 4.5.4 - 2025-05-15
 ### Changed
 - Only changes to automatic testing scripts
