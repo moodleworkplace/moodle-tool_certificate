@@ -634,19 +634,18 @@ class element_helper {
         list($width, $height) = array_values(self::calculate_image_size($file, $fileinfo, $width, $height));
 
         if ($file instanceof \stored_file) {
-            $location = make_request_directory() . '/target';
-            $file->copy_content_to($location);
-
+            // To pass an image as a data string, the PDF library requires the string to be prefixed with '@'.
+            $img = '@' . $file->get_content();
             $mimetype = $file->get_mimetype();
         } else {
-            $location = $file;
+            $img = $file;
             $mimetype = 'image/jpg';
         }
 
         if ($mimetype == 'image/svg+xml') {
-            $pdf->ImageSVG($location, $element->get_posx(), $element->get_posy(), $width, $height);
+            $pdf->ImageSVG($img, $element->get_posx(), $element->get_posy(), $width, $height);
         } else {
-            $pdf->Image($location, $element->get_posx(), $element->get_posy(), $width, $height);
+            $pdf->Image($img, $element->get_posx(), $element->get_posy(), $width, $height);
         }
     }
 
