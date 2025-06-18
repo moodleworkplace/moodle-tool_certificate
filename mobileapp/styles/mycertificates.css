@@ -1,0 +1,18 @@
+.tool-certificate-mycertificates-tablet {
+    --ion-grid-padding: 0;
+    --ion-grid-column-padding: 8px;
+}
+
+.tool-certificate-mycertificates-tablet ion-row:nth-child(even) {
+    background-color: var(--light);
+}
+
+ .tool-certificate-mycertificates-tablet ion-col[role=columnheader] {
+    font-weight: bold;
+}
+
+.tool-certificate-mycertificates-tablet ion-col[role=gridcell] {
+    display: flex;
+    overflow-wrap: anywhere;
+    align-items: center;
+}
