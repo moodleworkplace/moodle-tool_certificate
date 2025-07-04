@@ -58,6 +58,7 @@ $addons = [
             ['file', 'moodle'],
             ['shareonlinkedin', 'tool_certificate'],
             ['view', 'moodle'],
+            ['viewmore', 'tool_certificate'],
         ],
     ],
 ];

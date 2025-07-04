@@ -121,18 +121,13 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_name($certificate) {
-        global $DB;
-
         $context = \context::instance_by_id($certificate->contextid);
         $name = format_string($certificate->name, true, ['context' => $context]);
 
-        if ($certificate->courseid) {
-            // Obtain course directly from DB to allow missing courses.
-            if ($course = $DB->get_record('course', ['id' => $certificate->courseid])) {
-                $context = \context_course::instance($course->id);
-                $name .= " - " . format_string($course->fullname, true, ['context' => $context]);
-            }
+        if ($certificate->coursename !== null) {
+            $name .= " - " . format_string($certificate->coursename, true, ['context' => $context]);
         }
+
         return $name;
     }
 
@@ -221,24 +216,6 @@ class my_certificates_table extends \table_sql {
     }
 
     /**
-     * Get the certificate url to show
-     *
-     * @param string $issuecode
-     * @return string
-     */
-    private function get_shareonlinkedincerturl($issuecode) {
-        $showshareonlinkedin = (int)get_config('tool_certificate', 'show_shareonlinkedin');
-        switch ($showshareonlinkedin) {
-            case self::SHOW_LINK_TO_VERIFICATION_PAGE:
-                return template::verification_url($issuecode);
-            case self::SHOW_LINK_TO_CERTIFICATE_PAGE:
-                return template::view_url($issuecode);
-            default:
-                return '';
-        }
-    }
-
-    /**
      * Generate the LinkedIn column
      *
      * @param \stdClass $issue
@@ -252,7 +229,7 @@ class my_certificates_table extends \table_sql {
             'issueYear' => date('Y', $issue->timecreated),
             'issueMonth' => date('m', $issue->timecreated),
             'certId' => $issue->code,
-            'certUrl' => $this->get_shareonlinkedincerturl($issue->code),
+            'certUrl' => template::get_shareonlinkedincerturl($issue->code),
         ];
 
         if ($issue->expires !== '0') {

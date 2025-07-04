@@ -316,11 +316,13 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated, ci.userid, ci.courseid,
-                       t.id as templateid, t.contextid, t.name
+        $sql = "SELECT ci.id, ci.expires, ci.code, ci.timecreated, ci.userid,
+                       t.id as templateid, t.contextid, t.name, c.fullname as coursename
                   FROM {tool_certificate_templates} t
             INNER JOIN {tool_certificate_issues} ci
                     ON t.id = ci.templateid
+             LEFT JOIN {course} c
+                    ON ci.courseid = c.id
                  WHERE ci.userid = :userid
               ORDER BY {$sort}";
             return $DB->get_records_sql($sql, ['userid' => $userid], $limitfrom, $limitnum);

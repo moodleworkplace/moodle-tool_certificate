@@ -23,42 +23,25 @@
     {
         "certificates": [
             {
-                id: 1,
-                name: 'First Certificate',
-                coursename: 'Course 1',
-                timecreated: 1747297694,
-                expires: 0,
-                isexpired: false,
-                code: '1234567890AB',
-                verifyurl: 'https://example.com/admin/tool/certificate/index.php?code=1234567890AB',
-                fileurl: 'https://example.com/pluginfile.php/1/tool_certificate/issues/1747297694/1234567890AB.pdf',
-                shareurl: 'https://www.linkedin.com/...',
-            },
+                "id": 1,
+                "name": "First Certificate",
+                "coursename": "Course 1",
+                "timecreated": 1747297694,
+                "expires": 0,
+                "isexpired": false,
+                "code": "1234567890AB",
+                "verifyurl": "https://example.com/admin/tool/certificate/index.php?code=1234567890AB",
+                "fileurl": "https://example.com/pluginfile.php/1/tool_certificate/issues/1747297694/1234567890AB.pdf",
+                "shareurl": "https://www.linkedin.com/..."
+            }
         ],
-        "hascertificates": "true",
-        "canverify": "true",
-        "showshareonlinkedin": "true",
-        "iscurrentuser": "false",
-        "userid": 2,
-        "userpictureurl": "https://example.com/pluginfile.php/25/user/icon/boost/f1?rev=8466",
-        "userfullname": "John Doe",
-        "userfirstname": "John",
-        "userlastname": "Doe"
+        "hascertificates": true,
+        "canverify": true,
+        "showshareonlinkedin": true,
+        "viewmore": "https://example.com/admin/tool/certificate/my.php"
     }
 }}
 {{=<% %>=}}
-
-<%^iscurrentuser%>
-<ion-card>
-    <ion-item class="ion-text-wrap">
-        <core-user-avatar slot="start" [user]="{ userid: <% userid %>, userpictureurl: '<% userpictureurl %>',
-            fullname: '<% userfullname %>', firstname: '<% userfirstname %>', lastname: '<% userlastname %>' }" />
-        <ion-label>
-            <p class="item-heading"><% userfullname %></p>
-        </ion-label>
-    </ion-item>
-</ion-card>
-<%/iscurrentuser%>
 
 <ion-item class="ion-text-wrap">
     <ion-label>
@@ -113,13 +96,13 @@
                 <%/canverify%>
             </ion-item-group>
             <ion-button class="ion-margin" expand="block" [core-download-file]="{ fileurl: '<% fileurl %>' }">
-                <ion-icon slot="start" name="fas-download" aria-hidden="true" />
+                <ion-icon slot="start" name="fas-download" aria-hidden="true"></ion-icon>
                 {{ 'plugin.tool_certificate.view' | translate }}
             </ion-button>
             <%#showshareonlinkedin%>
             <ion-button class="ion-margin" fill="outline" expand="block" href="<% shareurl %>" core-link
                 [showBrowserWarning]="false">
-                <ion-icon slot="start" name="fas-share-nodes" aria-hidden="true" />
+                <ion-icon slot="start" name="fas-share-nodes" aria-hidden="true"></ion-icon>
                 {{ 'plugin.tool_certificate.shareonlinkedin' | translate }}
             </ion-button>
             <%/showshareonlinkedin%>
@@ -177,14 +160,14 @@
             <ion-col role="gridcell" class="ion-justify-content-center ion-text-center">
                 <ion-button class="ion-margin" [attr.aria-label]="'plugin.tool_certificate.view' | translate" fill="outline"
                     [core-download-file]="{ fileurl: '<% fileurl %>' }">
-                    <ion-icon slot="icon-only" name="fas-download" aria-hidden="true" />
+                    <ion-icon slot="icon-only" name="fas-download" aria-hidden="true"></ion-icon>
                 </ion-button>
             </ion-col>
             <%#showshareonlinkedin%>
             <ion-col role="gridcell" class="ion-justify-content-center ion-text-center">
                 <ion-button class="ion-margin" [attr.aria-label]="'plugin.tool_certificate.shareonlinkedin' | translate"
                     fill="outline" href="<% shareurl %>" core-link [showBrowserWarning]="false">
-                    <ion-icon slot="icon-only" name="fas-share-nodes" aria-hidden="true" />
+                    <ion-icon slot="icon-only" name="fas-share-nodes" aria-hidden="true"></ion-icon>
                 </ion-button>
             </ion-col>
             <%/showshareonlinkedin%>
@@ -196,3 +179,11 @@
 <%^hascertificates%>
 <core-empty-box message="{{ 'plugin.tool_certificate.nothingtodisplay' | translate }}" icon="fas-medal" />
 <%/hascertificates%>
+
+<%#viewmore%>
+<ion-button class="ion-margin" fill="outline" expand="block" href="<% viewmore %>" core-link
+    [showBrowserWarning]="false">
+    <ion-icon slot="start" name="fas-up-right-from-square" aria-hidden="true"></ion-icon>
+    {{ 'plugin.tool_certificate.viewmore' | translate }}
+</ion-button>
+<%/viewmore%>

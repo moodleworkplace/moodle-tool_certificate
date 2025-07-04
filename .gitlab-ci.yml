@@ -19,6 +19,7 @@ variables:
   MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   DB: "pgsql"
 #  DB: "mysqli"
+  MUSTACHE_IGNORE_NAMES: 'mobile*.mustache'
 
 # Gitlab-ci does not have matrixes, so we have these hidden jobs .setupworkplace and .setuplms to do the set up.
 .setupworkplace: &setupworkplace

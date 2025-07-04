@@ -925,4 +925,19 @@ class template {
             return ['1=0', []];
         }
     }
+
+    /**
+     * Get the certificate url to show
+     *
+     * @param string $issuecode
+     * @return moodle_url|string
+     */
+    public static function get_shareonlinkedincerturl(string $issuecode): moodle_url|string {
+        $showshareonlinkedin = (int)get_config('tool_certificate', 'show_shareonlinkedin');
+        return match ($showshareonlinkedin) {
+            my_certificates_table::SHOW_LINK_TO_VERIFICATION_PAGE => self::verification_url($issuecode),
+            my_certificates_table::SHOW_LINK_TO_CERTIFICATE_PAGE => self::view_url($issuecode),
+            default => '',
+        };
+    }
 }
