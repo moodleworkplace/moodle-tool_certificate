@@ -39,28 +39,12 @@ final class my_certificates_table_test extends \advanced_testcase {
      * Test Name column
      */
     public function test_col_name(): void {
-        /** @var tool_certificate_generator $certificategenerator */
-        $certificategenerator = $this->getDataGenerator()->get_plugin_generator('tool_certificate');
         $user = self::getDataGenerator()->create_user();
-        $course = self::getDataGenerator()->create_course();
-
-        $template = $certificategenerator->create_template((object)['name' => 'Certificate 1']);
-        // Generate row data with a certificate issue without courseid.
-        $rowdata1 = $certificategenerator->issue($template, $user, null, []);
-        // Generate row data with a certificate issue with courseid of a non-existing course.
-        $rowdata2 = $certificategenerator->issue($template, $user, null, [], 'tool_certificate', 999);
-        // Generate row data with a certificate issue with correct courseid.
-        $rowdata3 = $certificategenerator->issue($template, $user, null, [], 'tool_certificate', $course->id);
-        // Add extra attributes needed for rowdata.
-        foreach ([$rowdata1, $rowdata2, $rowdata3] as $rowdata) {
-            $rowdata->name = $template->get_formatted_name();
-            $rowdata->contextid = \context_system::instance()->id;
-        }
-
+        $certificate1 = (object)['contextid' => 1, 'name' => 'Certificate 1', 'coursename' => null];
+        $certificate2 = (object)['contextid' => 1, 'name' => 'Certificate 2', 'coursename' => 'Test course 1'];
         $table = new my_certificates_table($user->id);
-        $this->assertEquals($template->get_formatted_name(), $table->col_name($rowdata1));
-        $this->assertEquals($template->get_formatted_name(), $table->col_name($rowdata2));
-        $this->assertEquals($template->get_formatted_name() . ' - ' . $course->fullname, $table->col_name($rowdata3));
+        $this->assertEquals('Certificate 1', $table->col_name($certificate1));
+        $this->assertEquals('Certificate 2 - Test course 1', $table->col_name($certificate2));
     }
 
     /**

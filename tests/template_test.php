@@ -598,4 +598,37 @@ final class template_test extends advanced_testcase {
         $langconfig = "<?php\n\$string['parentlanguage'] = 'en';";
         file_put_contents($langfolder . '/langconfig.php', $langconfig);
     }
+
+    /**
+     * Test get_shareonlinkedincerturl method
+     *
+     * @dataProvider get_shareonlinkedincerturl_provider
+     * @param int $configvalue The value for show_shareonlinkedin config
+     * @param string $url The expected url
+     */
+    public function test_get_shareonlinkedincerturl(int $configvalue, string $url): void {
+        set_config('show_shareonlinkedin', $configvalue, 'tool_certificate');
+        $result = template::get_shareonlinkedincerturl('TEST123');
+        $this->assertEquals($url, (string)$result);
+    }
+
+    /**
+     * Data provider for test_get_shareonlinkedincerturl
+     *
+     * @return array
+     */
+    public static function get_shareonlinkedincerturl_provider(): array {
+        return [
+            'verification page' => [
+                my_certificates_table::SHOW_LINK_TO_VERIFICATION_PAGE,
+                'https://www.example.com/moodle/admin/tool/certificate/index.php?code=TEST123',
+                ],
+            'certificate page' => [
+                my_certificates_table::SHOW_LINK_TO_CERTIFICATE_PAGE,
+                'https://www.example.com/moodle/admin/tool/certificate/view.php?code=TEST123',
+                ],
+            'default case' => [99, ''],
+            'zero value' => [0, ''],
+        ];
+    }
 }

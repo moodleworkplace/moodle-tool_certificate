@@ -199,6 +199,7 @@ $string['verify'] = 'Verify';
 $string['verifycertificates'] = 'Verify certificates';
 $string['verifynotallowed'] = 'You are not allowed to verify certificates.';
 $string['viewcertificate'] = 'View certificate';
+$string['viewmore'] = 'View more on the web';
 
 // Deprecated since 4.2.
 $string['editcertificate'] = 'Edit certificate template \'{$a}\'';
