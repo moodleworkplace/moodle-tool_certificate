@@ -3,6 +3,8 @@
 ## Unreleased
 ### Added
 - Added mobile app version of "My certificates"
+### Fixed
+- Fixed issue where bulk PDF generation could fill up local temporary directory
 
 ## 5.0.1 - 2025-06-10
 ### Fixed
