@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.2 - 2025-08-12
 ### Added
 - Added mobile app version of "My certificates"
 ### Fixed
