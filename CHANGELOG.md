@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed issue where bulk PDF generation could fill up local temporary directory
+
 ## 4.5.5 - 2025-06-10
 ### Fixed
 - Fixed an issue where course navigation was not working correctly when viewing a certificate
