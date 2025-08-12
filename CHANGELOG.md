@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 4.5.6 - 2025-08-12
 ### Fixed
 - Fixed issue where bulk PDF generation could fill up local temporary directory
 

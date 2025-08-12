@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component    = 'tool_certificate';
-$plugin->release      = '4.5.5';
-$plugin->version      = 2025031802; // Version can only be increased by 1, it is no longer the current date.
+$plugin->release      = '4.5.6';
+$plugin->version      = 2025031803; // Version can only be increased by 1, it is no longer the current date.
 $plugin->requires     = 2022041900.00;
 $plugin->maturity     = MATURITY_STABLE;
 $plugin->supported    = [400, 405];
