@@ -96,7 +96,7 @@ class verify_certificate_result implements templatable, renderable {
         $this->expires = $issue->expires > 0
             ? userdate($issue->expires, $strftimedatetime)
             : get_string('never');
-        $this->expired = ($issue->expires > 0) && ($issue->expires <= time());
+        $this->expired = ($issue->expires > 0) && ($issue->expires <= \core\di::get(\core\clock::class)->time());
     }
 
     /**

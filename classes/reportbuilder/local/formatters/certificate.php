@@ -67,7 +67,7 @@ class certificate {
      * @return string
      */
     public static function certificate_issued_status(?string $value, stdClass $row): string {
-        $status = $row->expires && $row->expires <= time() ? 'expired' : 'valid';
+        $status = $row->expires && $row->expires <= \core\di::get(\core\clock::class)->time() ? 'expired' : 'valid';
         return get_string($status, 'tool_certificate');
     }
 

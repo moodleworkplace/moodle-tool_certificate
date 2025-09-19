@@ -233,7 +233,12 @@ class certificate {
             $sort = 'ci.timecreated DESC';
         }
 
-        $params = ['templateid' => $templateid, 'courseid' => $courseid, 'component' => $component, 'now' => time()];
+        $params = [
+            'templateid' => $templateid,
+            'courseid' => $courseid,
+            'component' => $component,
+            'now' => \core\di::get(\core\clock::class)->time(),
+        ];
         $groupmodequery = '';
         if ($groupmode) {
             [$groupmodequery, $groupmodeparams] = self::get_groupmode_subquery($groupmode, $groupid);
@@ -655,7 +660,7 @@ class certificate {
                 if ($duration === null) {
                     throw new coding_exception('duration parameter expected but not found');
                 }
-                $expirydate = time() + $duration;
+                $expirydate = \core\di::get(\core\clock::class)->time() + $duration;
                 break;
             default:
                 throw new coding_exception('unexpected expiry date type');

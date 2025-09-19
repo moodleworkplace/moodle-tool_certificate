@@ -19,6 +19,7 @@ namespace certificateelement_image;
 use advanced_testcase;
 use tool_certificate_generator;
 use core_text;
+use core\clock;
 
 /**
  * Unit tests for image element.
@@ -31,11 +32,15 @@ use core_text;
  */
 final class element_test extends advanced_testcase {
 
+    /** @var clock $clock */
+    private readonly clock $clock;
+
     /**
      * Test set up.
      */
     public function setUp(): void {
         parent::setUp();
+        $this->clock = $this->mock_clock_with_frozen();
         $this->resetAfterTest();
     }
 
@@ -59,7 +64,8 @@ final class element_test extends advanced_testcase {
         $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
 
         // Generate PDF for issue.
-        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(), time() + YEARSECS);
+        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(),
+            $this->clock->time() + YEARSECS);
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
         $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
     }

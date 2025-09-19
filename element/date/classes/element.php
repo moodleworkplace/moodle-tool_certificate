@@ -93,7 +93,7 @@ class element extends \tool_certificate\element {
 
         // If we are previewing this certificate then just show a demonstration date.
         if ($preview) {
-            $date = time();
+            $date = \core\di::get(\core\clock::class)->time();
         } else if ($dateinfo['dateitem'] == self::CUSTOMCERT_DATE_EXPIRY) {
             $date = $issue->expires;
         } else {
@@ -119,7 +119,7 @@ class element extends \tool_certificate\element {
         // Decode the information stored in the database.
         $dateinfo = @json_decode($this->get_data(), true) + ['dateformat' => ''];
         return \tool_certificate\element_helper::render_html_content($this,
-            $this->get_date_format_string(time(), $dateinfo['dateformat']));
+            $this->get_date_format_string(\core\di::get(\core\clock::class)->time(), $dateinfo['dateformat']));
     }
 
     /**

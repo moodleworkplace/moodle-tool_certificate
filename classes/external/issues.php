@@ -173,7 +173,7 @@ class issues extends \external_api {
 
         $params = [];
         $params['templateid'] = $itemid;
-        $params['now'] = time();
+        $params['now'] = \core\di::get(\core\clock::class)->time();
 
         if ($CFG->version < 2021050700) {
             // Moodle 3.9-3.10.
