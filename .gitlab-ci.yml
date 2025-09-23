@@ -2,7 +2,7 @@ image: moodlehq/moodle-workplace-plugin-ci:8.4
 
 services:
 - postgres:15
-- name: selenium/standalone-chrome:3
+- name: selenium/standalone-chrome:4
   alias: selenium-standalone-chrome
 
 variables:
