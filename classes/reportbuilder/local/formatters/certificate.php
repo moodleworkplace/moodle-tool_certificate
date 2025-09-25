@@ -60,34 +60,6 @@ class certificate {
     }
 
     /**
-     * Formats a course category name
-     *
-     * @param string|null $name
-     * @param stdClass $category
-     * @return string
-     */
-    public static function course_category_name(?string $name, stdClass $category): string {
-        if ($name === null || empty(trim($category->id))) {
-            return '';
-        }
-        return core_course_category::get($category->id, MUST_EXIST, true)->get_formatted_name();
-    }
-
-    /**
-     * Formats a course category path
-     *
-     * @param string|null $name
-     * @param stdClass $category
-     * @return string
-     */
-    public static function course_category_path(?string $name, stdClass $category): string {
-        if ($name === null || empty(trim($category->id))) {
-            return '';
-        }
-        return core_course_category::get($category->id, MUST_EXIST, true)->get_nested_name(false);
-    }
-
-    /**
      * Format the status column.
      *
      * @param string|null $value

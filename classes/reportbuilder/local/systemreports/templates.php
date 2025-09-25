@@ -129,10 +129,11 @@ class templates extends system_report {
         }
 
         // Add link to category name column.
+        $categoryentity = $this->get_entity('course_category');
         if ($column = $this->get_column('course_category:name')) {
             $column
                 ->set_title(new lang_string('coursecategory'))
-                ->set_callback([certificateformatter::class, 'course_category_name'])
+                ->add_field($categoryentity->get_table_alias('course_categories') . '.id')
                 ->add_callback([$this, 'coursecategoryname']);
         }
     }
@@ -262,7 +263,7 @@ class templates extends system_report {
      * @return string
      */
     public function coursecategoryname(string $catname, stdClass $category): string {
-        if (empty($catname) || empty(trim($category->id))) {
+        if ($catname === '') {
             return get_string('none');
         }
         $url = new moodle_url('/course/index.php', ['categoryid' => $category->id]);
