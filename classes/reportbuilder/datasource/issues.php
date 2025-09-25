@@ -87,12 +87,7 @@ class issues extends datasource {
         );
 
         // Add categories/tool_certificate_templates entity.
-        if (class_exists(\core_course\reportbuilder\local\entities\course_category::class)) {
-            // Class was renamed in Moodle LMS 4.1.
-            $coursecatentity = new \core_course\reportbuilder\local\entities\course_category();
-        } else {
-            $coursecatentity = new \core_course\local\entities\course_category();
-        }
+        $coursecatentity = new \core_course\reportbuilder\local\entities\course_category();
         $coursecatentityname = $coursecatentity->get_entity_name();
         $coursecatentityalias = $coursecatentity->get_table_alias('course_categories');
         $coursecategoryjoins = [
@@ -160,16 +155,6 @@ class issues extends datasource {
         $this->add_columns_from_entity($cohortentity->get_entity_name(), $columnstoinclude);
         $this->add_filters_from_entity($cohortentity->get_entity_name(), $filterconditionstoinclude);
         $this->add_conditions_from_entity($cohortentity->get_entity_name(), $filterconditionstoinclude);
-
-        // Change course_category:name/path entity default callback,
-        // since in certificate template category isn't mandatory.
-        if ($categoryname = $this->get_column('course_category:name')) {
-            $categoryname->set_callback([formatter::class, 'course_category_name']);
-        }
-
-        if ($categorypath = $this->get_column('course_category:path')) {
-            $categorypath->set_callback([formatter::class, 'course_category_path']);
-        }
 
         // Add Tenant entity.
         if ($tenantentity = component_class_callback('\tool_tenant\reportbuilder\local\entities\tenant',
