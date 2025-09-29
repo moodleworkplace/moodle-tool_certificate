@@ -1,30 +1,27 @@
-image: moodlehq/moodle-workplace-plugin-ci:8.2
+image: moodlehq/moodle-workplace-plugin-ci:8.4
 
 services:
-- postgres:14
-#- mysql:5.7.26
+- postgres:15
 - name: selenium/standalone-chrome:3
   alias: selenium-standalone-chrome
 
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
-  MOODLE_BRANCH_WORKPLACE500R: WORKPLACE_ROLLING_500
-  MOODLE_BRANCH_WORKPLACE500S: WORKPLACE_500
+  MOODLE_BRANCH_WORKPLACE_LOWER: WORKPLACE_500
+  MOODLE_BRANCH_WORKPLACE_UPPER: WORKPLACE_ROLLING_501
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
-  MOODLE_BRANCH_LMS500: MOODLE_500_STABLE
+  MOODLE_BRANCH_MOODLE_LOWER: MOODLE_500_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
   POSTGRES_HOST_AUTH_METHOD: "trust"
-  MYSQL_ALLOW_EMPTY_PASSWORD: "true"
   DB: "pgsql"
-#  DB: "mysqli"
   MUSTACHE_IGNORE_NAMES: 'mobile*.mustache'
 
 .setupworkplace: &setupworkplace
   before_script:
   - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE500R
+  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE_UPPER
   - . prepare-workplace $cibot_sshkey
   - export PLUGINNAME=$(grep 'plugin->component' $CI_PROJECT_DIR/version.php | awk -F\' '{ print $2; }')
   - cd $CI_PROJECT_DIR/..
@@ -48,12 +45,13 @@ variables:
 codecheck:
   <<: *setupworkplace
   script:
-  - php admin/tool/phpunit/cli/init.php
-  - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+  - php public/admin/tool/phpunit/cli/util.php --install
+  - php public/admin/tool/phpunit/cli/util.php --buildconfig
+  - php public/admin/tool/phpunit/cli/util.php --buildcomponentconfigs
   - . check-start
-  - . check version_number
   - . check no_workplace_licenses
   - . check this_plugin_is_part_of "the tool_certificate plugin for Moodle - http://moodle.org/" --nowplicensecomment
+  - . check version_number
   - . check language_file_sorting
   - . check behat_workplace_tag
   - . check moodle-plugin-ci phplint
@@ -77,8 +75,8 @@ behat:
   <<: *setupworkplace
   script:
   - *setupfaildumps
-  - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
-  - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@$PLUGINNAME --scss-deprecations
+  - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle/public > /dev/null 2>&1 &
+  - php public/admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@$PLUGINNAME --scss-deprecations
   - . check-start
   - . check moodle-plugin-ci behat --suite workplace --profile chrome
   - . check-finish
@@ -114,7 +112,8 @@ behat:
       fi
     - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
     - cd moodle
-    - php admin/tool/phpunit/cli/init.php
+    - php admin/tool/phpunit/cli/util.php --install
+    - php admin/tool/phpunit/cli/util.php --buildconfig
     - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
     - *setupfaildumps
     - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
@@ -125,20 +124,20 @@ behat:
     - . check-finish
   artifacts: *artifacts
 
-wp500s:
+workplace-lower:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE500S
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE_LOWER
     - export CLONEWPPLUGINS=1
   <<: *scriptshorttest
   except:
     - tags
     - /^MOODLE_\d+_STABLE$/
 
-lms500:
+moodle-lower:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS500
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_MOODLE_LOWER
   <<: *scriptshorttest
   except:
     - tags
