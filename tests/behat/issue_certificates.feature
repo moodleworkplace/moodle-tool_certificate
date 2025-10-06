@@ -38,7 +38,7 @@ Feature: Being able to manually issue a certificate to a user
   Scenario: Issue a certificate as issuer user, from the list of templates
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Actions" "icon" in the "Certificate 0" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 0" "table_row"
     And I choose "Issue certificates" in the open action menu
     And I set the field "Select users to issue certificate to" to "User 11"
     And I press "Save"
@@ -79,7 +79,7 @@ Feature: Being able to manually issue a certificate to a user
     When I log in as "issuer0"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     # Issue a certificate for user11 with absolute expiry date.
-    And I click on "Actions" "icon" in the "Certificate 0" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 0" "table_row"
     And I choose "Issue certificates" in the open action menu
     And the field "expirydatetype" matches value "Never"
     And I set the following fields to these values:
@@ -90,7 +90,7 @@ Feature: Being able to manually issue a certificate to a user
       | expirydateabsolute[year]              | ##tomorrow##%Y##        |
     And I press "Save"
     # Issue a certificate for user11 with relative expiry date.
-    And I click on "Actions" "icon" in the "Certificate 0" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 0" "table_row"
     And I choose "Issue certificates" in the open action menu
     And I set the following fields to these values:
       | Select users to issue certificate to  | User 12 |
