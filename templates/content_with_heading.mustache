@@ -34,3 +34,20 @@
 }}
 {{> tool_certificate/content_heading }}
 {{{content}}}
+
+{{#bulkactionsselect}}
+<form id="cert-bulk-action-form" action="" method="post" class="row">
+    <div class="col-md-3 col-form-label">
+        <p class="word-break" aria-hidden="true">
+            {{#str}}withselectedusers, core{{/str}}
+        </p>
+    </div>
+    <div class="col-md-9">
+        <label class="visually-hidden" for="id_action">{{#str}}withselectedusers, core{{/str}}</label>
+        <select class="form-control form-select" name="action" id="id_action" disabled="disabled">
+            <option value="0">{{#str}}choosedots, core{{/str}}</option>
+            <option value="regenerateall">{{#str}}regenerateissuedcertificates, tool_certificate{{/str}}</option>
+        </select>
+    </div>
+</form>
+{{/bulkactionsselect}}

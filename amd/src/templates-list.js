@@ -152,6 +152,31 @@ function($, ModalForm, Notification, Str, Ajax, {add: addToast}) {
         }).fail(Notification.exception);
     };
 
+    const regenerateAll = function(event) {
+        event.preventDefault();
+
+        const templateid = event.target.closest('a').dataset.id;
+
+        const modal = new ModalForm({
+            formClass: 'tool_certificate\\form\\certificate_renew',
+            args: {templateid: templateid, actiontype: 'regenerateall'},
+            modalConfig: {title: Str.get_string('regenerateall', 'tool_certificate'), scrollable: false},
+            saveButtonText: Str.get_string('regenerate', 'tool_certificate'),
+            returnFocus: event.target,
+        });
+
+        modal.addEventListener(modal.events.FORM_SUBMITTED, () => {
+            Str.get_string('regeneratenotification', 'tool_certificate').then(string => {
+                return Notification.addNotification({
+                    type: 'success',
+                    message: string
+                });
+            }).catch(Notification.exception);
+        });
+
+        modal.show();
+    };
+
     return {
         /**
          * Init page
@@ -163,8 +188,8 @@ function($, ModalForm, Notification, Str, Ajax, {add: addToast}) {
                 .on('click', '[data-action="issue"]', displayIssue)
                 .on('click', '[data-action="duplicate"][data-selectcategory="1"]', duplicateMulticategory)
                 .on('click', '[data-action="duplicate"][data-selectcategory="0"]', duplicateSinglecategory)
+                .on('click', '[data-action="issueall"]', regenerateAll)
                 .on('click', '[data-action="delete"]', deleteTemplate);
         }
     };
 });
-

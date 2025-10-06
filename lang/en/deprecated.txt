@@ -1,3 +1,4 @@
 editcertificate,tool_certificate
 issuenewcertificate,tool_certificate
 nopermissionform,tool_certificate
+regeneratefileconfirm,tool_certificate
