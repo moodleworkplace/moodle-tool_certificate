@@ -11,6 +11,7 @@ variables:
   MOODLE_BRANCH_WORKPLACE_UPPER: WORKPLACE_ROLLING_501
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_BRANCH_MOODLE_LOWER: MOODLE_500_STABLE
+  MOODLE_BRANCH_MOODLE_UPPER: MOODLE_501_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -111,13 +112,18 @@ behat:
         SUITE=workplace
       fi
     - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
+    - |
+      PUBLICROOT="public"
+      if [ ! -d "moodle/${PUBLICROOT}" ]; then
+        PUBLICROOT="."
+      fi
     - cd moodle
-    - php admin/tool/phpunit/cli/util.php --install
-    - php admin/tool/phpunit/cli/util.php --buildconfig
-    - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
+    - php ${PUBLICROOT}/admin/tool/phpunit/cli/util.php --install
+    - php ${PUBLICROOT}/admin/tool/phpunit/cli/util.php --buildconfig
+    - php ${PUBLICROOT}/admin/tool/phpunit/cli/util.php --buildcomponentconfigs
     - *setupfaildumps
-    - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
-    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@$PLUGINNAME --scss-deprecations
+    - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle/${PUBLICROOT} > /dev/null 2>&1 &
+    - php ${PUBLICROOT}/admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@$PLUGINNAME --scss-deprecations
     - . check-start
     - . check moodle-plugin-ci phpunit --coverage-text --fail-on-warning
     - . check moodle-plugin-ci behat --suite $SUITE --profile chrome
@@ -138,6 +144,15 @@ moodle-lower:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
     - export MOODLE_BRANCH=$MOODLE_BRANCH_MOODLE_LOWER
+  <<: *scriptshorttest
+  except:
+    - tags
+    - /^MOODLE_\d+_STABLE$/
+
+moodle-upper:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_MOODLE_UPPER
   <<: *scriptshorttest
   except:
     - tags

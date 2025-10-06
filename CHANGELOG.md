@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added support for Moodle 5.1
+
 ## 5.0.2 - 2025-08-12
 ### Added
 - Added mobile app version of "My certificates"
