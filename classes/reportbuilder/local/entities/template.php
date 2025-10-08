@@ -40,23 +40,14 @@ use tool_certificate\template as certificate_template;
 class template extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
-     *
-     * @return array
-     */
-    protected function get_default_table_aliases(): array {
-        return [
-            'tool_certificate_templates' => 'tct',
-        ];
-    }
-
-    /**
      * Database tables that this entity uses
      *
      * @return string[]
      */
     protected function get_default_tables(): array {
-        return array_keys($this->get_default_table_aliases());
+        return [
+            'tool_certificate_templates',
+        ];
     }
 
     /**
