@@ -37,6 +37,7 @@ const SELECTORS = {
     REGENERATEFILE: "[data-action='regenerate']",
     REVOKEISSUE: "[data-action='revoke']",
     GROUPFORM: ".groupselector form",
+    GROUPSELECTOR: "select[name='group']",
     BULKACTIONSFORM: 'form#cert-bulk-action-form',
     // The data-toggle attribute was renamed in version 5.1.
     // Retain support for both the new and legacy selectors to ensure compatibility.
