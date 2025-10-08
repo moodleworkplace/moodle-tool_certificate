@@ -202,6 +202,20 @@ class templates extends system_report {
             return $this->lasttemplate->can_manage();
         }));
 
+        // Regenerate all issued certificates.
+        $this->add_action((new action(
+            new moodle_url('#'),
+            new pix_icon('a/refresh', ''),
+            [
+                'data-action' => 'issueall',
+                'data-id' => ':id',
+            ],
+            false,
+            new lang_string('regenerateall', 'tool_certificate')
+        ))->add_callback(function() {
+            return $this->lasttemplate->can_issue_to_anybody();
+        }));
+
         // Delete.
         $this->add_action((new action(
             new moodle_url('#'),

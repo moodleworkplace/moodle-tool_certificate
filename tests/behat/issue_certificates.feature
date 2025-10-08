@@ -129,9 +129,32 @@ Feature: Being able to manually issue a certificate to a user
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "Certificate 1"
     And I navigate to "Issued certificates" in current page administration
-    And I press "Regenerate issue file" action in the "User 11" report row
-    And I click on "Regenerate" "button" in the "Confirm" "dialogue"
+    And I press "Regenerate issued certificate" action in the "User 11" report row
     And I should see "User 11"
+    And I log out
+
+  Scenario: Regenerate selected issued certificates as issuer user
+    Given the following certificate issues exist:
+      | template      | user   |
+      | Certificate 1 | user11 |
+      | Certificate 1 | user12 |
+    When I log in as "issuer0"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I follow "Certificate 1"
+    And I navigate to "Issued certificates" in current page administration
+    And I click on "input[name='report-select-row[]']" "css_element" in the "User 11" "table_row"
+    And I click on "input[name='report-select-row[]']" "css_element" in the "User 12" "table_row"
+    And I set the field "With selected users..." to "Regenerate issued certificates"
+    And I click on "Regenerate" "button" in the "Regenerate all issued certificates" "dialogue"
+    And I should see "The issued certificates are being regenerated"
+    And I log out
+
+  Scenario: Regenerate all certificate as issuer user, from the list of templates
+    When I log in as "issuer0"
+    And I navigate to "Certificates > Manage certificate templates" in site administration
+    And I press "Regenerate all issued certificates" action in the "Certificate 0" report row
+    And I click on "Regenerate" "button" in the "Regenerate all issued certificates" "dialogue"
+    And I should see "The issued certificates are being regenerated"
     And I log out
 
   Scenario: Filter issued certificates datasource by cohort

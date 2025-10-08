@@ -119,6 +119,6 @@ Feature: Being able to view the certificates that have been issued
     And I navigate to "Issued certificates" in current page administration
     And I open the action menu in "User 12" "table_row"
     # Make sure only viewing is permitted.
-    And I should not see "Revoke"
-    And I should not see "Regenerate issue file"
+    And the "Revoke" item should not exist in the "Actions" action menu of the "User 12" "table_row"
+    And the "Regenerate issued certificate" item should not exist in the "Actions" action menu of the "User 12" "table_row"
     And I should see "View"

@@ -71,6 +71,8 @@ if ($template->can_issue_to_anybody()) {
 }
 $PAGE->requires->js_call_amd('tool_certificate/issues-list', 'init');
 
+$data['bulkactionsselect'] = true;
+
 echo $OUTPUT->header();
 echo $OUTPUT->render_from_template('tool_certificate/content_with_heading', $data);
 echo $OUTPUT->footer();

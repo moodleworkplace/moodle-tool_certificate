@@ -743,9 +743,12 @@ class template {
      *
      * @param \stdClass $issue
      * @param bool $regenerate
+     * @param bool $sendnotification
      * @return \stored_file
      */
-    public function create_issue_file(\stdClass $issue, bool $regenerate = false): \stored_file {
+    public function create_issue_file(\stdClass $issue, bool $regenerate = false, bool $sendnotification = false): \stored_file {
+        global $DB;
+        $isaregeneration = false;
         // Generate issue pdf contents.
         $filecontents = $this->generate_pdf(false, $issue, true);
         // Create a file instance.
@@ -764,11 +767,28 @@ class template {
             $file->filename);
         if ($storedfile && $regenerate) {
             $storedfile->delete();
+            $isaregeneration = true;
         } else if ($storedfile && !$regenerate) {
             return $storedfile;
         }
 
-        return $fs->create_file_from_string($file, $filecontents);
+        $filecreated = $fs->create_file_from_string($file, $filecontents);
+
+        if ($isaregeneration && $user = $DB->get_record('user', ['id' => $issue->userid])) {
+            $issuedata = @json_decode($issue->data, true);
+            $issuedata['userfullname'] = fullname($user);
+            $issue->data = json_encode($issuedata);
+            $DB->update_record('tool_certificate_issues', $issue);
+
+            // Trigger event.
+            \tool_certificate\event\certificate_regenerated::create_from_issue($issue)->trigger();
+        }
+
+        if ($sendnotification) {
+            self::send_issue_notification($issue, $filecreated);
+        }
+
+        return $filecreated;
     }
 
     /**

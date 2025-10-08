@@ -119,16 +119,6 @@ class issues extends \external_api {
 
         // Regenerate the issue file.
         $template->create_issue_file($issue, true);
-        // Update issue userfullname data.
-        if ($user = $DB->get_record('user', ['id' => $issue->userid])) {
-            $issuedata = @json_decode($issue->data, true);
-            $issuedata['userfullname'] = fullname($user);
-            $issue->data = json_encode($issuedata);
-            $DB->update_record('tool_certificate_issues', $issue);
-        }
-
-        // Trigger event.
-        \tool_certificate\event\certificate_regenerated::create_from_issue($issue)->trigger();
     }
 
     /**
