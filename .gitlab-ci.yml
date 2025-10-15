@@ -9,7 +9,7 @@ variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_BRANCH_WORKPLACE_LOWER: WORKPLACE_500
   MOODLE_BRANCH_WORKPLACE_UPPER: WORKPLACE_ROLLING_501
-  MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
+  MOODLE_REPO_MOODLE: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_BRANCH_MOODLE_LOWER: MOODLE_500_STABLE
   MOODLE_BRANCH_MOODLE_UPPER: MOODLE_501_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
@@ -91,14 +91,20 @@ behat:
   - tags
   - /^MOODLE_\d+_STABLE$/
 
-.scriptshorttest: &scriptshorttest
+shorttest:
+  parallel:
+    matrix:
+      - MOODLE_REPO: $MOODLE_REPO_WORKPLACE
+        MOODLE_BRANCH: $MOODLE_BRANCH_WORKPLACE_LOWER
+      - MOODLE_REPO: $MOODLE_REPO_MOODLE
+        MOODLE_BRANCH: [$MOODLE_BRANCH_MOODLE_LOWER, $MOODLE_BRANCH_MOODLE_UPPER]
   script:
     - . prepare-workplace $cibot_sshkey
     - export PLUGINNAME=$(grep 'plugin->component' $CI_PROJECT_DIR/version.php | awk -F\' '{ print $2; }')
     - cd $CI_PROJECT_DIR/..
     - |
       SUITE=default
-      if [ "$CLONEWPPLUGINS" == "1" ]; then
+      if [ "$MOODLE_REPO" == "$MOODLE_REPO_WORKPLACE" ]; then
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git --branch $MOODLE_BRANCH
         moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch $MOODLE_BRANCH
@@ -129,31 +135,6 @@ behat:
     - . check moodle-plugin-ci behat --suite $SUITE --profile chrome
     - . check-finish
   artifacts: *artifacts
-
-workplace-lower:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE_LOWER
-    - export CLONEWPPLUGINS=1
-  <<: *scriptshorttest
-  except:
-    - tags
-    - /^MOODLE_\d+_STABLE$/
-
-moodle-lower:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_LMS
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_MOODLE_LOWER
-  <<: *scriptshorttest
-  except:
-    - tags
-    - /^MOODLE_\d+_STABLE$/
-
-moodle-upper:
-  before_script:
-    - export MOODLE_REPO=$MOODLE_REPO_LMS
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_MOODLE_UPPER
-  <<: *scriptshorttest
   except:
     - tags
     - /^MOODLE_\d+_STABLE$/
