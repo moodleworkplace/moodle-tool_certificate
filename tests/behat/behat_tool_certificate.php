@@ -232,8 +232,9 @@ class behat_tool_certificate extends behat_base {
      */
     public function i_should_see_a_share_on_linkedin_link_for(string $certificatename) {
         $certificatename = str_replace(' ', '%20', $certificatename);
-        $year = (new DateTime())->format('Y');
-        $month = (new DateTime())->format('m');
+        $dt = \core\di::get(\core\clock::class)->now();
+        $year = $dt->format('Y');
+        $month = $dt->format('m');
 
         $url = my_certificates_table::LINKEDIN_ADD_TO_PROFILE_URL . "?name=$certificatename&issueYear=$year&issueMonth=$month";
 
@@ -252,8 +253,9 @@ class behat_tool_certificate extends behat_base {
      */
     public function i_should_not_see_a_share_on_linkedin_link_for(string $certificatename) {
         $certificatename = str_replace(' ', '%20', $certificatename);
-        $year = (new DateTime())->format('Y');
-        $month = (new DateTime())->format('m');
+        $dt = \core\di::get(\core\clock::class)->now();
+        $year = $dt->format('Y');
+        $month = $dt->format('m');
 
         $url = my_certificates_table::LINKEDIN_ADD_TO_PROFILE_URL . "?name=$certificatename&issueYear=$year&issueMonth=$month";
 

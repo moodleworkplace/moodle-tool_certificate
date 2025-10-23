@@ -175,7 +175,7 @@ class issue extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_field_sql("(CASE WHEN ({$certificateissuealias}.expires > 0 AND
-                {$certificateissuealias}.expires <= " . time() . ") THEN 1 ELSE 0 END)");
+                {$certificateissuealias}.expires <= " . \core\di::get(\core\clock::class)->time() . ") THEN 1 ELSE 0 END)");
 
         // Filter issue time created.
         $filters[] = (new filter(

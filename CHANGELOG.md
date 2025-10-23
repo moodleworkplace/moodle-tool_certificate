@@ -3,6 +3,8 @@
 ## Unreleased
 ### Added
 - Added bulk certificate regeneration
+### Changed
+- Updated all time and date handling to use the new Clock API
 
 ## 5.0.3 - 2025-10-07
 ### Added

@@ -130,7 +130,7 @@ class template {
         // TODO will be split into one form per page.
 
         // Set the time to a variable.
-        $time = time();
+        $time = \core\di::get(\core\clock::class)->time();
 
         // Get the existing pages and save the page data.
         if ($pages = $DB->get_records('tool_certificate_pages', ['templateid' => $data->tid])) {
@@ -705,7 +705,7 @@ class template {
         $issue->templateid = $this->get_id();
         $issue->code = \tool_certificate\certificate::generate_code($issue->userid);
         $issue->emailed = 0;
-        $issue->timecreated = time();
+        $issue->timecreated = \core\di::get(\core\clock::class)->time();
         $issue->expires = $expires;
         $issue->component = $component;
         $issue->courseid = $courseid;

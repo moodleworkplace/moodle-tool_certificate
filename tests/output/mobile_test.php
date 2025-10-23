@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace tool_certificate\output;
 
+use core\clock;
 use tool_certificate\my_certificates_table;
 
 /**
@@ -30,6 +31,17 @@ use tool_certificate\my_certificates_table;
  * @covers     \tool_certificate\output\mobile
  */
 final class mobile_test extends \advanced_testcase {
+
+    /** @var clock $clock */
+    private readonly clock $clock;
+
+    /**
+     * setUp.
+     */
+    public function setUp(): void {
+        parent::setUp();
+        $this->clock = $this->mock_clock_with_frozen();
+    }
 
     /**
      * Test for mobile_my_certificates_data()
@@ -46,8 +58,8 @@ final class mobile_test extends \advanced_testcase {
         // Create a certificate template.
         $template = (object)[
             'name' => 'Test template',
-            'timecreated' => time(),
-            'timemodified' => time(),
+            'timecreated' => $this->clock->time(),
+            'timemodified' => $this->clock->time(),
             'contextid' => \context_system::instance()->id,
         ];
         $templateid = $DB->insert_record('tool_certificate_templates', dataobject: $template);
@@ -59,7 +71,7 @@ final class mobile_test extends \advanced_testcase {
             'code' => 'TESTCODE',
             'expires' => 0,
             'templateid' => $templateid,
-            'timecreated' => time(),
+            'timecreated' => $this->clock->time(),
             'contextid' => \context_system::instance()->id,
         ];
         $issue2 = (object)[
@@ -67,7 +79,7 @@ final class mobile_test extends \advanced_testcase {
             'code' => 'TESTCODE2',
             'expires' => 946684800,
             'templateid' => $templateid,
-            'timecreated' => time(),
+            'timecreated' => $this->clock->time(),
             'contextid' => \context_system::instance()->id,
         ];
         $DB->insert_record('tool_certificate_issues', $issue);
@@ -122,8 +134,8 @@ final class mobile_test extends \advanced_testcase {
         // Create a certificate template.
         $template = (object)[
             'name' => 'Test template',
-            'timecreated' => time(),
-            'timemodified' => time(),
+            'timecreated' => $this->clock->time(),
+            'timemodified' => $this->clock->time(),
             'contextid' => \context_system::instance()->id,
         ];
         $templateid = $DB->insert_record('tool_certificate_templates', $template);
@@ -134,7 +146,7 @@ final class mobile_test extends \advanced_testcase {
                 'code' => 'TESTCODE' . $i,
                 'expires' => 0,
                 'templateid' => $templateid,
-                'timecreated' => time(),
+                'timecreated' => $this->clock->time(),
                 'contextid' => \context_system::instance()->id,
             ];
             $DB->insert_record('tool_certificate_issues', $issue);
