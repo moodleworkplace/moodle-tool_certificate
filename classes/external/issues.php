@@ -149,7 +149,7 @@ class issues extends \external_api {
      * @return array
      */
     public static function potential_users_selector(string $search, int $itemid): array {
-        global $DB, $CFG;
+        global $DB;
 
         $params = self::validate_parameters(self::potential_users_selector_parameters(),
             ['search' => $search, 'itemid' => $itemid]);
@@ -175,19 +175,9 @@ class issues extends \external_api {
         $params['templateid'] = $itemid;
         $params['now'] = \core\di::get(\core\clock::class)->time();
 
-        if ($CFG->version < 2021050700) {
-            // Moodle 3.9-3.10.
-            $fields = get_all_user_name_fields(true, 'u');
-            $extrasearchfields = [];
-            if (!empty($CFG->showuseridentity) && has_capability('moodle/site:viewuseridentity', $context)) {
-                $extrasearchfields = explode(',', $CFG->showuseridentity);
-            }
-        } else {
-            // Moodle 3.11 and above.
-            $fields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
-            // TODO Does not support custom user profile fields (MDL-70456).
-            $extrasearchfields = \core_user\fields::get_identity_fields($context, false);
-        }
+        $fields = \core_user\fields::for_name()->get_sql('u', false, '', '', false)->selects;
+        // TODO Does not support custom user profile fields (MDL-70456).
+        $extrasearchfields = \core_user\fields::get_identity_fields($context, false);
 
         if (in_array('email', $extrasearchfields)) {
             $fields .= ', u.email';

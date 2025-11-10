@@ -14,15 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * This file contains the certificate element userfield's core interaction API.
- *
- * @package    certificateelement_userfield
- * @copyright  2013 Mark Nelson <markn@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace certificateelement_userfield;
+
+use core_user\fields;
 
 /**
  * The certificate element userfield's core interaction API.
@@ -39,39 +33,30 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $displayname = function($field) {
-            global $CFG;
-            if ($CFG->version < 2021050700) {
-                // Moodle 3.9-3.10.
-                return get_user_field_name($field);
-            } else {
-                // Moodle 3.11 and above.
-                return \core_user\fields::get_display_name($field);
-            }
-        };
-
         // Get the user profile fields.
         $userfields = [
-            'fullname' => $displayname('fullname'),
-            'firstname' => $displayname('firstname'),
-            'lastname' => $displayname('lastname'),
-            'email' => $displayname('email'),
-            'city' => $displayname('city'),
-            'country' => $displayname('country'),
-            'url' => $displayname('url'),
-            'idnumber' => $displayname('idnumber'),
-            'institution' => $displayname('institution'),
-            'department' => $displayname('department'),
-            'phone1' => $displayname('phone1'),
-            'phone2' => $displayname('phone2'),
-            'address' => $displayname('address'),
+            'fullname' => fields::get_display_name('fullname'),
+            'firstname' => fields::get_display_name('firstname'),
+            'lastname' => fields::get_display_name('lastname'),
+            'email' => fields::get_display_name('email'),
+            'city' => fields::get_display_name('city'),
+            'country' => fields::get_display_name('country'),
+            'url' => fields::get_display_name('url'),
+            'idnumber' => fields::get_display_name('idnumber'),
+            'institution' => fields::get_display_name('institution'),
+            'department' => fields::get_display_name('department'),
+            'phone1' => fields::get_display_name('phone1'),
+            'phone2' => fields::get_display_name('phone2'),
+            'address' => fields::get_display_name('address'),
         ];
+
         // Get the user custom fields.
         $arrcustomfields = \availability_profile\condition::get_custom_profile_fields();
         $customfields = [];
         foreach ($arrcustomfields as $key => $customfield) {
             $customfields[$customfield->id] = $key;
         }
+
         // Combine the two.
         $fields = $userfields + $customfields;
 

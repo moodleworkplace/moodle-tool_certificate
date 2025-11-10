@@ -130,21 +130,11 @@ class certificate {
      * @return array
      */
     public static function get_user_extra_field_names(\context $context): array {
-        global $CFG;
-
         $extrafieldnames = [];
-        if ($CFG->version < 2021050700) {
-            // Moodle 3.9-3.10.
-            $extrafields = get_extra_user_fields($context);
-            foreach ($extrafields as $extrafield) {
-                $extrafieldnames += [$extrafield => get_user_field_name($extrafield)];
-            }
-        } else {
-            // Moodle 3.11 and above.
-            $extrafields = \core_user\fields::for_identity($context, false)->get_required_fields();
-            foreach ($extrafields as $extrafield) {
-                $extrafieldnames += [$extrafield => \core_user\fields::get_display_name($extrafield)];
-            }
+
+        $extrafields = \core_user\fields::for_identity($context, false)->get_required_fields();
+        foreach ($extrafields as $extrafield) {
+            $extrafieldnames += [$extrafield => \core_user\fields::get_display_name($extrafield)];
         }
 
         return $extrafieldnames;
@@ -157,18 +147,9 @@ class certificate {
      * @return string
      */
     public static function get_extra_user_fields(\context $context): string {
-        global $CFG;
-
-        if ($CFG->version < 2021050700) {
-            // Moodle 3.9-3.10.
-            $extrafields = get_extra_user_fields($context);
-            $userfields = \user_picture::fields('u', $extrafields);
-        } else {
-            // Moodle 3.11 and above.
-            $extrafields = \core_user\fields::for_identity($context, false)->get_required_fields();
-            $userfields = \core_user\fields::for_userpic()->including(...$extrafields)
-                ->get_sql('u', false, '', '', false)->selects;
-        }
+        $extrafields = \core_user\fields::for_identity($context, false)->get_required_fields();
+        $userfields = \core_user\fields::for_userpic()->including(...$extrafields)
+            ->get_sql('u', false, '', '', false)->selects;
 
         return str_replace(' ', '', $userfields);
     }
