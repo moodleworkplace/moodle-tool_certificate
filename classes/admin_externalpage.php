@@ -37,7 +37,6 @@ require_once($CFG->libdir . '/adminlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_externalpage extends \admin_externalpage {
-
     /** @var callable */
     protected $accesscheckcallback;
 
@@ -51,8 +50,13 @@ class admin_externalpage extends \admin_externalpage {
      *     to access this item. The instance of this setting ($this) is passed as an argument to this callback.
      * @param bool $hidden
      */
-    public function __construct(string $name, string $visiblename, string $url, callable $accesscheckcallback,
-                                bool $hidden = false) {
+    public function __construct(
+        string $name,
+        string $visiblename,
+        string $url,
+        callable $accesscheckcallback,
+        bool $hidden = false
+    ) {
         parent::__construct($name, $visiblename, $url, [], $hidden);
         $this->accesscheckcallback = $accesscheckcallback;
     }

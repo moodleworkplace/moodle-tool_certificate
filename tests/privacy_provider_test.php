@@ -40,7 +40,6 @@ use core_privacy\local\request\writer;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class privacy_provider_test extends \core_privacy\tests\provider_testcase {
-
     /** @var tool_certificate_generator */
     protected $certgenerator;
 
@@ -142,8 +141,13 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
 
         // Define courseid issue customfield.
         $handler = \tool_certificate\customfield\issue_handler::create();
-        $handler->ensure_field_exists('courseid', 'numeric',
-            'Course id', false, 1);
+        $handler->ensure_field_exists(
+            'courseid',
+            'numeric',
+            'Course id',
+            false,
+            1
+        );
 
         // Create users who will be issued a certificate.
         $user1 = $this->getDataGenerator()->create_user();

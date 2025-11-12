@@ -31,7 +31,6 @@ use xmldb_table;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class upgradelib_test extends advanced_testcase {
-
     /** @var string */
     protected $temptable = null;
 
@@ -107,7 +106,7 @@ final class upgradelib_test extends advanced_testcase {
 
         tool_certificate_upgrade_remove_tenant_field($tablename);
 
-        $results = $DB->get_fieldset_sql("SELECT contextid FROM {".$tablename."} ORDER BY id", []);
+        $results = $DB->get_fieldset_sql("SELECT contextid FROM {" . $tablename . "} ORDER BY id", []);
         $this->assertEquals([$syscontextid, $catcontextid, $syscontextid], $results);
     }
 
@@ -147,9 +146,19 @@ final class upgradelib_test extends advanced_testcase {
         if (!class_exists('\\tool_program\\program')) {
             $handler = \tool_certificate\customfield\issue_handler::create();
             $handler->ensure_field_exists('programname', 'text', 'Program name', true, 'Program name preview');
-            $handler->ensure_field_exists('programcompletiondate', 'date', 'Program completion date', true,
-                userdate(strtotime(date('Y-01-01')), get_string('strftimedatefullshort')), ['includetime' => false]);
-            $handler->ensure_field_exists('programcompletedcourses', 'textarea', 'Courses completed in program', true,
+            $handler->ensure_field_exists(
+                'programcompletiondate',
+                'date',
+                'Program completion date',
+                true,
+                userdate(strtotime(date('Y-01-01')), get_string('strftimedatefullshort')),
+                ['includetime' => false]
+            );
+            $handler->ensure_field_exists(
+                'programcompletedcourses',
+                'textarea',
+                'Courses completed in program',
+                true,
                 '<ul><li>C01</li><li>C02</li><li>C03</li></ul>'
             );
         }
@@ -322,8 +331,14 @@ final class upgradelib_test extends advanced_testcase {
         $file1content = $file1->get_content();
 
         // Sanity check. image file1 is in wrong category1 context.
-        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement1->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat1context->id,
+            'tool_certificate',
+            'element',
+            $imageelement1->get_id(),
+            '',
+            false
+        );
         $this->assertEquals($file1content, reset($imageelementfiles)->get_content());
 
         $imageelement2 = $this->get_generator()->create_element($page1->get_id(), 'image');
@@ -345,21 +360,45 @@ final class upgradelib_test extends advanced_testcase {
         tool_certificate_fix_orphaned_template_element_files();
 
         // Check element1 image file is not in category1 context.
-        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement1->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat1context->id,
+            'tool_certificate',
+            'element',
+            $imageelement1->get_id(),
+            '',
+            false
+        );
         $this->assertEmpty($imageelementfiles);
         // Check element1 image file is now in category2 context.
-        $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
-            $imageelement1->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat2context->id,
+            'tool_certificate',
+            'element',
+            $imageelement1->get_id(),
+            '',
+            false
+        );
         $this->assertEquals($file1content, reset($imageelementfiles)->get_content());
 
         // Check element2 image file was removed from category1 context.
-        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement2->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat1context->id,
+            'tool_certificate',
+            'element',
+            $imageelement2->get_id(),
+            '',
+            false
+        );
         $this->assertEmpty($imageelementfiles);
         // Check element2 image file is still in category2 context.
-        $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
-            $imageelement2->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat2context->id,
+            'tool_certificate',
+            'element',
+            $imageelement2->get_id(),
+            '',
+            false
+        );
         $this->assertEquals($file3content, reset($imageelementfiles)->get_content());
     }
 }

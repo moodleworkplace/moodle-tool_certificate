@@ -35,15 +35,19 @@ function tool_certificate_upgrade_remove_tenant_field($tablename = 'tool_certifi
 
     $params = ['coursecat' => CONTEXT_COURSECAT, 'syscontext' => context_system::instance()->id];
     if ($dbman->table_exists(new xmldb_table('tool_tenant'))) {
-        $contextids = $DB->get_records_sql_menu('SELECT DISTINCT ct.tenantid, ctx.id AS contextid
+        $contextids = $DB->get_records_sql_menu(
+            'SELECT DISTINCT ct.tenantid, ctx.id AS contextid
             FROM {' . $tablename . '} ct
             LEFT JOIN {tool_tenant} t ON ct.tenantid = t.id
             LEFT JOIN {context} ctx ON t.categoryid = ctx.instanceid AND ctx.contextlevel = :coursecat',
-            $params);
+            $params
+        );
 
         foreach ($contextids as $tenantid => $contextid) {
-            $DB->execute('UPDATE {' . $tablename . '} SET contextid = ? WHERE tenantid = ?',
-                [$contextid ?: $params['syscontext'], $tenantid]);
+            $DB->execute(
+                'UPDATE {' . $tablename . '} SET contextid = ? WHERE tenantid = ?',
+                [$contextid ?: $params['syscontext'], $tenantid]
+            );
         }
     } else {
         $sql = 'UPDATE {' . $tablename . '} SET contextid = :syscontext';
@@ -71,25 +75,33 @@ function tool_certificate_upgrade_move_data_to_customfields($tablename = 'tool_c
     foreach ($records as $record) {
         $data = @json_decode($record->data, true);
         $issuedata = [];
-        if (isset($data['certificationname']) && is_string($data['certificationname'])
-            && in_array('certificationname', $allfields)) {
+        if (
+            isset($data['certificationname']) && is_string($data['certificationname'])
+            && in_array('certificationname', $allfields)
+        ) {
             $issuedata['certificationname'] = $data['certificationname'];
             unset($data['certificationname']);
         }
-        if (isset($data['programname']) && is_string($data['programname'])
-            && in_array('programname', $allfields)) {
+        if (
+            isset($data['programname']) && is_string($data['programname'])
+            && in_array('programname', $allfields)
+        ) {
             $issuedata['programname'] = $data['programname'];
             unset($data['programname']);
         }
-        if (!empty($data['completiondate']) && is_numeric($data['completiondate'])
-                && in_array('programcompletiondate', $allfields)) {
+        if (
+            !empty($data['completiondate']) && is_numeric($data['completiondate'])
+                && in_array('programcompletiondate', $allfields)
+        ) {
             $issuedata['programcompletiondate'] = userdate($data['completiondate'], get_string('strftimedatefullshort'));
             unset($data['completiondate']);
         } else if (isset($data['completiondate']) && empty($data['completiondate'])) {
             unset($data['completiondate']);
         }
-        if (!empty($data['completedcourses']) && is_array($data['completedcourses'])
-                && in_array('programcompletedcourses', $allfields)) {
+        if (
+            !empty($data['completedcourses']) && is_array($data['completedcourses'])
+                && in_array('programcompletedcourses', $allfields)
+        ) {
             $issuedata['programcompletedcourses'] = '<ul><li>' . join('</li><li>', $data['completedcourses']) . '</li></ul>';
             unset($data['completedcourses']);
         } else if (isset($data['completedcourses']) && empty($data['completedcourses'])) {
@@ -211,8 +223,13 @@ function tool_certificate_fix_orphaned_template_element_files() {
         if (!empty($fs->get_area_files($record->templatecontextid, 'tool_certificate', $record->filearea, $record->itemid))) {
             $fs->delete_area_files($record->contextid, 'tool_certificate', $record->filearea, $record->itemid);
         } else {
-            $fs->move_area_files_to_new_context($record->contextid, $record->templatecontextid, 'tool_certificate',
-                $record->filearea, $record->itemid);
+            $fs->move_area_files_to_new_context(
+                $record->contextid,
+                $record->templatecontextid,
+                'tool_certificate',
+                $record->filearea,
+                $record->itemid
+            );
         }
     }
 }
@@ -227,7 +244,9 @@ function tool_certificate_upgrade_add_permission_condition_to_reports() {
     foreach ($reports as $report) {
         // Insert new condition (we can safely use core API in the plugins upgrade script).
         \core_reportbuilder\local\helpers\report::add_report_condition(
-            $report->get('id'), 'template:templatepermission');
+            $report->get('id'),
+            'template:templatepermission'
+        );
 
         $reportobj = \core_reportbuilder\manager::get_report_from_persistent($report);
         $values = $reportobj->get_condition_values();

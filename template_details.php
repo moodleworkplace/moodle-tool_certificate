@@ -23,7 +23,7 @@
  */
 
 require_once('../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $templateid = required_param('id', PARAM_INT);
 
@@ -42,8 +42,11 @@ if (!$template->can_view_issues()) {
 
 $heading = $title = $template->get_formatted_name();
 if ($template->get_shared()) {
-    $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
-        ['class' => 'badge rounded-pill bg-secondary text-dark font-small ms-2 align-middle']);
+    $heading .= html_writer::tag(
+        'div',
+        get_string('shared', 'tool_certificate'),
+        ['class' => 'badge rounded-pill bg-secondary text-dark font-small ms-2 align-middle']
+    );
 }
 $PAGE->navbar->add($title, $pageurl);
 $PAGE->set_title($title);

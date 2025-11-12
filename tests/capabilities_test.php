@@ -32,7 +32,6 @@ use context_system;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class capabilities_test extends advanced_testcase {
-
     /** @var tool_certificate_generator */
     protected $certgenerator;
 

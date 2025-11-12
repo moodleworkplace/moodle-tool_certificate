@@ -29,7 +29,7 @@ use tool_certificate\template;
  * @author    2022 Odei Alba <odei.alba@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class issues_page implements \templatable, \renderable {
+class issues_page implements \renderable, \templatable {
     /** @var int */
     protected $templateid;
 
@@ -50,8 +50,14 @@ class issues_page implements \templatable, \renderable {
      */
     public function export_for_template(renderer_base $output): array {
         $context = template::instance($this->templateid)->get_context();
-        $report = system_report_factory::create(issues::class, $context,
-            '', '', 0, ['templateid' => $this->templateid]);
+        $report = system_report_factory::create(
+            issues::class,
+            $context,
+            '',
+            '',
+            0,
+            ['templateid' => $this->templateid]
+        );
 
         return ['content' => $report->output()];
     }

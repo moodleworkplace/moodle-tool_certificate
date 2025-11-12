@@ -34,7 +34,6 @@ use tool_certificate\element_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element extends \tool_certificate\element {
-
     /**
      * This function renders the form elements when adding a certificate element.
      *
@@ -80,18 +79,38 @@ class element extends \tool_certificate\element {
         $page = $this->get_page()->to_record();
         $width = $this->get_data();
         $style = 'position: absolute; background-color: ' . $this->get_colour() . '';
-        $html .= \html_writer::tag('div', '',
+        $html .= \html_writer::tag(
+            'div',
+            '',
             ['data-width' => $width, 'data-height' => $page->height, 'style' => $style,
-                'data-posx' => 0, 'data-posy' => 0, ]);
-        $html .= \html_writer::tag('div', '',
+            'data-posx' => 0,
+            'data-posy' => 0,
+            ]
+        );
+        $html .= \html_writer::tag(
+            'div',
+            '',
             ['data-width' => $width, 'data-height' => $page->height, 'style' => $style,
-                'data-posx' => $page->width - $width, 'data-posy' => 0, ]);
-        $html .= \html_writer::tag('div', '',
+            'data-posx' => $page->width - $width,
+            'data-posy' => 0,
+            ]
+        );
+        $html .= \html_writer::tag(
+            'div',
+            '',
             ['data-width' => $page->width, 'data-height' => $width, 'style' => $style,
-                'data-posx' => 0, 'data-posy' => 0, ]);
-        $html .= \html_writer::tag('div', '',
+            'data-posx' => 0,
+            'data-posy' => 0,
+            ]
+        );
+        $html .= \html_writer::tag(
+            'div',
+            '',
             ['data-width' => $page->width, 'data-height' => $width, 'style' => $style,
-                'data-posx' => 0, 'data-posy' => $page->height - $width, ]);
+            'data-posx' => 0,
+            'data-posy' => $page->height - $width,
+            ]
+        );
 
         return $html;
     }

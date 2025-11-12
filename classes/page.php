@@ -32,7 +32,6 @@ namespace tool_certificate;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page {
-
     /** @var persistent\page */
     protected $persistent;
 
@@ -109,7 +108,10 @@ class page {
     public static function get_pages_in_template(template $template) {
         /** @var \tool_certificate\persistent\page[] $instances */
         $instances = \tool_certificate\persistent\page::get_records(
-            ['templateid' => $template->get_id()], 'sequence', 'ASC');
+            ['templateid' => $template->get_id()],
+            'sequence',
+            'ASC'
+        );
         $pages = [];
         foreach ($instances as $instance) {
             $page = self::instance_from_persistent($instance);

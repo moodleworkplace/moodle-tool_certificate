@@ -26,7 +26,7 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/lib/adminlib.php');
+require_once($CFG->dirroot . '/lib/adminlib.php');
 
 /**
  * Manage element plugins
@@ -36,7 +36,6 @@ require_once($CFG->dirroot.'/lib/adminlib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_manager {
-
     /** @var \moodle_url */
     protected $pageurl;
 
@@ -72,7 +71,6 @@ class plugin_manager {
         } else if ($action == 'movedown' && $plugin != null) {
             $action = $this->move_plugin($plugin, 'down');
         } else if ($action == 'view') {
-
             echo $OUTPUT->header();
             echo $OUTPUT->heading(get_string('manageelementplugins', 'tool_certificate'));
 
@@ -131,10 +129,12 @@ class plugin_manager {
             }
             $row[] = $movelinks;
 
-            $exists = file_exists($CFG->dirroot . '/'. $CFG->admin . '/tool/certificate/element/' . $plugin . '/settings.php');
+            $exists = file_exists($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/element/' . $plugin . '/settings.php');
             if ($row[1] != '' && $exists) {
-                $row[] = \html_writer::link(new \moodle_url('/admin/settings.php',
-                        ['section' => 'certificateelement_' . $plugin]), get_string('settings'));
+                $row[] = \html_writer::link(new \moodle_url(
+                    '/admin/settings.php',
+                    ['section' => 'certificateelement_' . $plugin]
+                ), get_string('settings'));
             } else {
                 $row[] = '&nbsp;';
             }
@@ -221,17 +221,22 @@ class plugin_manager {
         $url = $this->pageurl;
 
         if ($action === 'delete') {
-            $url = \core_plugin_manager::instance()->get_uninstall_url('certificateelement_'.$plugin, 'manage');
+            $url = \core_plugin_manager::instance()->get_uninstall_url('certificateelement_' . $plugin, 'manage');
             if (!$url) {
                 return '&nbsp;';
             }
             return \html_writer::link($url, get_string('uninstallplugin', 'core_admin'));
         }
 
-        return $OUTPUT->action_icon(new \moodle_url($url,
-                ['action' => $action, 'plugin' => $plugin, 'sesskey' => \sesskey()]),
-                new \pix_icon($icon, $alt, 'moodle', ['title' => $alt]),
-                null, ['title' => $alt]) . ' ';
+        return $OUTPUT->action_icon(
+            new \moodle_url(
+                $url,
+                ['action' => $action, 'plugin' => $plugin, 'sesskey' => \sesskey()]
+            ),
+            new \pix_icon($icon, $alt, 'moodle', ['title' => $alt]),
+            null,
+            ['title' => $alt]
+        ) . ' ';
     }
 
     /**

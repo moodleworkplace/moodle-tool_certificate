@@ -23,7 +23,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_certificate_generator extends component_generator_base {
-
     /**
      * Creates new certificate template
      *
@@ -59,8 +58,13 @@ class tool_certificate_generator extends component_generator_base {
         if ($DB->record_exists(\tool_certificate\persistent\template::TABLE, ['id' => (int) $nameorid])) {
             return $nameorid;
         }
-        return $DB->get_field_select(\tool_certificate\persistent\template::TABLE, 'id',
-            'name = ?', [$nameorid, $nameorid], MUST_EXIST);
+        return $DB->get_field_select(
+            \tool_certificate\persistent\template::TABLE,
+            'id',
+            'name = ?',
+            [$nameorid, $nameorid],
+            MUST_EXIST
+        );
     }
 
     /**
@@ -123,8 +127,14 @@ class tool_certificate_generator extends component_generator_base {
      * @param int|null $courseid
      * @return stdClass
      */
-    public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate',
-                          ?int $courseid = null): stdClass {
+    public function issue(
+        $certificate,
+        $user,
+        $expires = null,
+        $data = [],
+        $component = 'tool_certificate',
+        ?int $courseid = null
+    ): stdClass {
         global $DB;
         if (is_int($certificate)) {
             $certificate = \tool_certificate\template::instance($certificate);

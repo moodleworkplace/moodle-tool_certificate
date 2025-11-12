@@ -30,7 +30,6 @@ use context_system;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class template_test extends advanced_testcase {
-
     /** @var tool_certificate_generator */
     protected $certgenerator;
 
@@ -256,8 +255,8 @@ final class template_test extends advanced_testcase {
         $certificate1 = $this->get_generator()->create_template((object)['name' => $certname]);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
         $pagedata = (object)['tid' => $certificate1->get_id(),
-                             'pagewidth_'.$pageid => 333, 'pageheight_'.$pageid => 444,
-                             'pageleftmargin_'.$pageid => 333, 'pagerightmargin_'.$pageid => 444, ];
+                             'pagewidth_' . $pageid => 333, 'pageheight_' . $pageid => 444,
+                             'pageleftmargin_' . $pageid => 333, 'pagerightmargin_' . $pageid => 444, ];
         $certificate1->save_page($pagedata);
         $this->assertTrue($DB->record_exists('tool_certificate_pages', ['templateid' => $certificate1->get_id(),
             'width' => 333, 'height' => 444, ]));
@@ -342,8 +341,14 @@ final class template_test extends advanced_testcase {
 
         // Check issue file was created.
         $fs = get_file_storage();
-        $this->assertTrue($fs->file_exists(\context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue1->id, '/', $issue1->code . '.pdf'));
+        $this->assertTrue($fs->file_exists(
+            \context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue1->id,
+            '/',
+            $issue1->code . '.pdf'
+        ));
 
         $certificate1->issue_certificate($user2->id);
 
@@ -433,8 +438,14 @@ final class template_test extends advanced_testcase {
 
         // Check issue file already exists after issuing certificate.
         $fs = get_file_storage();
-        $file = $fs->get_file(context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue->id, '/', $issue->code . '.pdf');
+        $file = $fs->get_file(
+            context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        );
         $this->assertNotFalse($file);
 
         $file->delete();
@@ -457,8 +468,14 @@ final class template_test extends advanced_testcase {
         $file2 = $certificate->create_issue_file($issue, true);
 
         // Check new file was created for issue.
-        $issuefile = $fs->get_file(context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue->id, '/', $issue->code . '.pdf');
+        $issuefile = $fs->get_file(
+            context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        );
         $this->assertEquals($issue->id, $file2->get_itemid());
         $this->assertEquals($issuefile->get_id(), $file2->get_id());
 
@@ -527,16 +544,28 @@ final class template_test extends advanced_testcase {
 
         // Check issue file already exists after issuing certificate.
         $fs = get_file_storage();
-        $this->assertTrue($fs->file_exists(\context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue->id, '/', $issue->code . '.pdf'));
+        $this->assertTrue($fs->file_exists(
+            \context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        ));
 
         $issuefile = $certificate->get_issue_file($issue);
         $this->assertEquals($issue->id, $issuefile->get_itemid());
 
         // Check issue file is recreated after deletion.
         $issuefile->delete();
-        $this->assertFalse($fs->file_exists(\context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue->id, '/', $issue->code . '.pdf'));
+        $this->assertFalse($fs->file_exists(
+            \context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        ));
         $issuefile = $certificate->get_issue_file($issue);
         $this->assertEquals($issue->id, $issuefile->get_itemid());
     }
@@ -595,8 +624,14 @@ final class template_test extends advanced_testcase {
         $filecontent = $file->get_content();
 
         // Sanity check. image file is in category1 context.
-        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat1context->id,
+            'tool_certificate',
+            'element',
+            $imageelement->get_id(),
+            '',
+            false
+        );
         $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
 
         // Move template files to category2 context.
@@ -606,12 +641,24 @@ final class template_test extends advanced_testcase {
         $template->move_files_to_new_context($cat2context->id);
 
         // Check image file is not in category1 context.
-        $imageelementfiles = $fs->get_area_files($cat1context->id, 'tool_certificate', 'element',
-            $imageelement->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat1context->id,
+            'tool_certificate',
+            'element',
+            $imageelement->get_id(),
+            '',
+            false
+        );
         $this->assertEmpty($imageelementfiles);
         // Check image file is now in category2 context.
-        $imageelementfiles = $fs->get_area_files($cat2context->id, 'tool_certificate', 'element',
-            $imageelement->get_id(), '', false);
+        $imageelementfiles = $fs->get_area_files(
+            $cat2context->id,
+            'tool_certificate',
+            'element',
+            $imageelement->get_id(),
+            '',
+            false
+        );
         $this->assertEquals($filecontent, reset($imageelementfiles)->get_content());
     }
 

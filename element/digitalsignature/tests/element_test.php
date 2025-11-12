@@ -31,7 +31,6 @@ use core\clock;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class element_test extends advanced_testcase {
-
     /** @var clock $clock */
     private readonly clock $clock;
 
@@ -64,8 +63,11 @@ final class element_test extends advanced_testcase {
         $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
 
         // Generate PDF for issue.
-        $issue = $this->get_generator()->issue($certificate1, $this->getDataGenerator()->create_user(),
-            $this->clock->time() + YEARSECS);
+        $issue = $this->get_generator()->issue(
+            $certificate1,
+            $this->getDataGenerator()->create_user(),
+            $this->clock->time() + YEARSECS
+        );
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
         $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
     }

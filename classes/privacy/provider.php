@@ -39,11 +39,11 @@ use tool_certificate\customfield\issue_handler;
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider,
-                          \core_privacy\local\request\subsystem\plugin_provider,
-                          \core_privacy\local\request\core_user_data_provider,
-                          \core_privacy\local\request\core_userlist_provider {
-
+class provider implements
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\core_user_data_provider,
+    \core_privacy\local\request\subsystem\plugin_provider,
+    \core_privacy\local\metadata\provider {
     /**
      * Return the fields which contain personal data.
      *
@@ -211,7 +211,7 @@ class provider implements \core_privacy\local\metadata\provider,
         if (!$context instanceof \context_system) {
             return;
         }
-        list($userinsql, $userinparams) = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
+        [$userinsql, $userinparams] = $DB->get_in_or_equal($userlist->get_userids(), SQL_PARAMS_NAMED);
 
         // Delete issue files.
         $fs = get_file_storage();

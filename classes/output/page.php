@@ -109,8 +109,10 @@ class page extends persistent_exporter {
             'pagecentreoffset' => ($this->data->width - $this->data->rightmargin + $this->data->leftmargin) / 2,
             'widthbetweenmargins' => $this->data->width - $this->data->rightmargin - $this->data->leftmargin,
         ];
-        $baseurl = new \moodle_url('/admin/tool/certificate/template.php',
-            ['pageid' => $this->get_page()->get_id(), 'sesskey' => sesskey()]);
+        $baseurl = new \moodle_url(
+            '/admin/tool/certificate/template.php',
+            ['pageid' => $this->get_page()->get_id(), 'sesskey' => sesskey()]
+        );
         if ($sequence) {
             $rv['moveupurl'] = (new \moodle_url($baseurl, ['action' => 'moveuppage']))->out(false);
         }
@@ -122,5 +124,4 @@ class page extends persistent_exporter {
         }
         return $rv;
     }
-
 }

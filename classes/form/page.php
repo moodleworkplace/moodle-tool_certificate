@@ -37,7 +37,6 @@ use tool_certificate\template;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page extends dynamic_form {
-
     /** @var \tool_certificate\page */
     protected $page;
 
@@ -119,7 +118,7 @@ class page extends dynamic_form {
         $mform->setType('rightmargin', PARAM_INT);
         $mform->addHelpButton('rightmargingroup', 'rightmargin', 'tool_certificate');
 
-        $mform->addFormRule(function($data, $files) {
+        $mform->addFormRule(function ($data, $files) {
             $errors = [];
             if (!is_numeric($data['width']) || (int)$data['width'] <= 0) {
                 $errors['widthgroup'] = get_string('invalidwidth', 'tool_certificate');

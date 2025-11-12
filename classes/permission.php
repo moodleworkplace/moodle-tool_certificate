@@ -32,8 +32,6 @@ namespace tool_certificate;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class permission {
-
-
     /**
      * If a user can manage this template.
      *
@@ -128,8 +126,12 @@ class permission {
      */
     public static function require_can_create() {
         if (!self::can_create()) {
-            throw new \required_capability_exception(\context_system::instance(),
-                'tool/certificate:manage', 'nopermission', 'error');
+            throw new \required_capability_exception(
+                \context_system::instance(),
+                'tool/certificate:manage',
+                'nopermission',
+                'error'
+            );
         }
     }
 
@@ -151,9 +153,11 @@ class permission {
         }
         $ctxsql = \context_helper::get_preload_record_columns_sql('ctx');
         $ctxparams = ['coursecat' => CONTEXT_COURSECAT, 'contextsys' => CONTEXT_SYSTEM];
-        $records = $DB->get_records_sql("SELECT DISTINCT ctx.id, $ctxsql FROM {tool_certificate_templates} ct
+        $records = $DB->get_records_sql(
+            "SELECT DISTINCT ctx.id, $ctxsql FROM {tool_certificate_templates} ct
             JOIN {context} ctx ON (ctx.contextlevel = :coursecat OR ctx.contextlevel = :contextsys) AND ctx.id = ct.contextid",
-            $ctxparams);
+            $ctxparams
+        );
         $ids = [];
         foreach ($records as $record) {
             \context_helper::preload_from_record($record);
@@ -207,8 +211,10 @@ class permission {
             // Category is not visible.
             return false;
         }
-        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
-                && $context->contextlevel != CONTEXT_COURSE) {
+        if (
+            $context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
+                && $context->contextlevel != CONTEXT_COURSE
+        ) {
             return false;
         }
         return has_any_capability(['tool/certificate:issue',
@@ -234,8 +240,10 @@ class permission {
         if (!$context) {
             $context = \context_system::instance();
         }
-        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
-                && $context->contextlevel != CONTEXT_COURSE) {
+        if (
+            $context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
+                && $context->contextlevel != CONTEXT_COURSE
+        ) {
             return false;
         }
         if (class_exists('\\tool_organisation\\organisation')) {
@@ -269,8 +277,10 @@ class permission {
         if (!$context) {
             $context = \context_system::instance();
         }
-        if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSE
-                && $context->contextlevel != CONTEXT_COURSECAT) {
+        if (
+            $context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSE
+                && $context->contextlevel != CONTEXT_COURSECAT
+        ) {
             return false;
         }
         return has_capability('tool/certificate:viewallcertificates', $context);
@@ -303,8 +313,7 @@ class permission {
         }
 
         return has_any_capability(['tool/certificate:issue', 'tool/certificate:viewallcertificates',
-                'tool/certificate:manage', ] , $context) &&
+                'tool/certificate:manage', ], $context) &&
             !self::is_user_hidden_by_tenancy($issue->userid);
     }
-
 }

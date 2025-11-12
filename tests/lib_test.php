@@ -218,8 +218,14 @@ final class lib_test extends advanced_testcase {
         $certificatemoved = new template($certificate2->get_id());
         $this->assertEquals($cat3context->id, $certificatemoved->get('contextid'));
 
-        $certificatemovedfiles = $fs->get_area_files($cat3context->id, 'tool_certificate', 'element',
-            $certificateelement2->get_id(), 'filename', false);
+        $certificatemovedfiles = $fs->get_area_files(
+            $cat3context->id,
+            'tool_certificate',
+            'element',
+            $certificateelement2->get_id(),
+            'filename',
+            false
+        );
         $this->assertCount(1, $certificatemovedfiles);
     }
 

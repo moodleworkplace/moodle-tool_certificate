@@ -32,9 +32,11 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php');
 
-\MoodleQuickForm::registerElementType('certificate_colourpicker',
+\MoodleQuickForm::registerElementType(
+    'certificate_colourpicker',
     $CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/colourpicker.php',
-    'moodlequickform_tool_certificate_colourpicker');
+    'moodlequickform_tool_certificate_colourpicker'
+);
 
 /**
  * The form for handling editing a certificate element.
@@ -44,7 +46,6 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/includes/col
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class edit_element_form extends dynamic_form {
-
     /**
      * @var \tool_certificate\element The element object.
      */

@@ -153,8 +153,11 @@ class my_certificates_table extends \table_sql {
         }
         $column = userdate($certificate->expires);
         if ($certificate->expires && $certificate->expires <= \core\di::get(\core\clock::class)->time()) {
-            $column .= \html_writer::tag('span', get_string('expired', 'tool_certificate'),
-                ['class' => 'badge bg-secondary text-dark']);
+            $column .= \html_writer::tag(
+                'span',
+                get_string('expired', 'tool_certificate'),
+                ['class' => 'badge bg-secondary text-dark']
+            );
         }
         return $column;
     }
@@ -166,8 +169,11 @@ class my_certificates_table extends \table_sql {
      * @return string
      */
     public function col_code($issue) {
-        return \html_writer::link(new \moodle_url('/admin/tool/certificate/index.php', ['code' => $issue->code]),
-                                  $issue->code, ['title' => get_string('verify', 'tool_certificate')]);
+        return \html_writer::link(
+            new \moodle_url('/admin/tool/certificate/index.php', ['code' => $issue->code]),
+            $issue->code,
+            ['title' => get_string('verify', 'tool_certificate')]
+        );
     }
 
     /**
@@ -196,8 +202,12 @@ class my_certificates_table extends \table_sql {
 
         $this->pagesize($pagesize, $total);
 
-        $this->rawdata = certificate::get_issues_for_user($this->userid, $this->get_page_start(),
-            $this->get_page_size(), $this->get_sql_sort());
+        $this->rawdata = certificate::get_issues_for_user(
+            $this->userid,
+            $this->get_page_start(),
+            $this->get_page_size(),
+            $this->get_sql_sort()
+        );
 
         // Set initial bars.
         if ($useinitialsbar) {

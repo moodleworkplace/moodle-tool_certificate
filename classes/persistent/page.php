@@ -34,7 +34,6 @@ use core\persistent;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class page extends persistent {
-
     /** @var string */
     const TABLE = 'tool_certificate_pages';
 
@@ -84,5 +83,4 @@ class page extends persistent {
         }
         return $this->raw_set('templateid', $value);
     }
-
 }

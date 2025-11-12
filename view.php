@@ -37,14 +37,15 @@ if ($preview) {
     if ($template->can_manage()) {
         $template->generate_pdf(true);
     }
-
 } else {
     $issue = \tool_certificate\template::get_issue_from_code($issuecode);
     $context = \context_course::instance($issue->courseid, IGNORE_MISSING) ?: null;
 
     $template = $issue ? \tool_certificate\template::instance($issue->templateid) : null;
-    if ($template && (\tool_certificate\permission::can_verify() ||
-            \tool_certificate\permission::can_view_issue($template, $issue, $context))) {
+    if (
+        $template && (\tool_certificate\permission::can_verify() ||
+            \tool_certificate\permission::can_view_issue($template, $issue, $context))
+    ) {
         $url = $template->get_issue_file_url($issue);
         redirect($url);
     } else {

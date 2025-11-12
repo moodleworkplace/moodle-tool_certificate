@@ -26,7 +26,6 @@ use tool_certificate\element_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element extends \certificateelement_image\element {
-
     /**
      * @var array The file manager options for the certificate.
      */
@@ -54,12 +53,17 @@ class element extends \certificateelement_image\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('filemanager', 'image', get_string('uploadimage', 'tool_certificate'), '',
-            $this->filemanageroptions);
+        $mform->addElement(
+            'filemanager',
+            'image',
+            get_string('uploadimage', 'tool_certificate'),
+            '',
+            $this->filemanageroptions
+        );
 
         // Ensure that user hasn't uploaded a file and selected a shared image (should be neither or just one).
         if (element_helper::render_shared_image_picker_element($mform)) {
-            $mform->addFormRule(function($data) {
+            $mform->addFormRule(function ($data) {
                 $draffiles = file_get_draft_area_info($data['image']);
                 if ($draffiles['filesize'] && $data['fileid']) {
                     return ['image' => get_string('errormultipleimages', 'certificateelement_digitalsignature')];
@@ -72,7 +76,7 @@ class element extends \certificateelement_image\element {
         element_helper::render_form_element_height($mform, 'certificateelement_digitalsignature');
 
         // If user isn't uploading a file or selecting a shared image, they must specify height and width.
-        $mform->addFormRule(function($data) {
+        $mform->addFormRule(function ($data) {
             $errors = [];
             $draftfiles = file_get_draft_area_info($data['image']);
             $noimage = !$draftfiles['filesize'] && empty($data['fileid']);
@@ -85,15 +89,23 @@ class element extends \certificateelement_image\element {
             return $errors;
         });
 
-        $mform->addElement('filemanager', 'signature', get_string('digitalsignature', 'certificateelement_digitalsignature'), '',
-            $this->signaturefilemanageroptions);
+        $mform->addElement(
+            'filemanager',
+            'signature',
+            get_string('digitalsignature', 'certificateelement_digitalsignature'),
+            '',
+            $this->signaturefilemanageroptions
+        );
 
         $mform->addElement('text', 'signaturename', get_string('signaturename', 'certificateelement_digitalsignature'));
         $mform->setType('signaturename', PARAM_TEXT);
         $mform->setDefault('signaturename', '');
 
-        $mform->addElement('passwordunmask', 'signaturepassword',
-            get_string('signaturepassword', 'certificateelement_digitalsignature'));
+        $mform->addElement(
+            'passwordunmask',
+            'signaturepassword',
+            get_string('signaturepassword', 'certificateelement_digitalsignature')
+        );
         $mform->setType('signaturepassword', PARAM_TEXT);
         $mform->setDefault('signaturepassword', '');
 
@@ -105,8 +117,11 @@ class element extends \certificateelement_image\element {
         $mform->setType('signaturereason', PARAM_TEXT);
         $mform->setDefault('signaturereason', '');
 
-        $mform->addElement('text', 'signaturecontactinfo',
-            get_string('signaturecontactinfo', 'certificateelement_digitalsignature'));
+        $mform->addElement(
+            'text',
+            'signaturecontactinfo',
+            get_string('signaturecontactinfo', 'certificateelement_digitalsignature')
+        );
         $mform->setType('signaturecontactinfo', PARAM_TEXT);
         $mform->setDefault('signaturecontactinfo', '');
 
@@ -128,19 +143,34 @@ class element extends \certificateelement_image\element {
 
         if (!$file = $this->get_file()) {
             // Outline of a box.
-            $size = element_helper::calculate_image_size('none', ['width' => 140, 'height' => 140],
-                (float)$imageinfo['width'], (float)$imageinfo['height']);
+            $size = element_helper::calculate_image_size(
+                'none',
+                ['width' => 140, 'height' => 140],
+                (float)$imageinfo['width'],
+                (float)$imageinfo['height']
+            );
             return \html_writer::div('&nbsp;', 'm-0 p-0', ['style' => 'border: 1px dotted black;',
                 'data-width' => $size['width'], 'data-height' => $size['height'], ]);
         } else {
             // Link to the file.
-            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-                $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            $url = \moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename()
+            );
             $fileimageinfo = $file->get_imageinfo();
         }
 
-        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height'],
-            $this->get_display_name());
+        return element_helper::render_image_html(
+            $url,
+            $fileimageinfo,
+            (float)$imageinfo['width'],
+            (float)$imageinfo['height'],
+            $this->get_display_name()
+        );
     }
 
     /**
@@ -156,11 +186,21 @@ class element extends \certificateelement_image\element {
         \tool_certificate\element::save_form_data($data);
 
         // Handle file uploads.
-        file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
-            'tool_certificate', 'element', $this->get_id());
+        file_save_draft_area_files(
+            $data->image,
+            $this->get_template()->get_context()->id,
+            'tool_certificate',
+            'element',
+            $this->get_id()
+        );
 
-        file_save_draft_area_files($data->signature, $this->get_template()->get_context()->id,
-            'tool_certificate', 'elementaux', $this->get_id());
+        file_save_draft_area_files(
+            $data->signature,
+            $this->get_template()->get_context()->id,
+            'tool_certificate',
+            'elementaux',
+            $this->get_id()
+        );
     }
 
     /**
@@ -263,8 +303,14 @@ class element extends \certificateelement_image\element {
             // Load signature file.
             $draftitemid = file_get_submitted_draft_itemid('signature');
             $context = $this->get_template()->get_context();
-            file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'elementaux',
-                $this->get_id(), $this->signaturefilemanageroptions);
+            file_prepare_draft_area(
+                $draftitemid,
+                $context->id,
+                'tool_certificate',
+                'elementaux',
+                $this->get_id(),
+                $this->signaturefilemanageroptions
+            );
             $record->signature = $draftitemid;
         }
         return $record;
@@ -278,8 +324,14 @@ class element extends \certificateelement_image\element {
     public function get_signature_file(): ?\stored_file {
         $fs = get_file_storage();
 
-        $files = $fs->get_area_files($this->get_template()->get_context()->id,
-            'tool_certificate', 'elementaux', $this->get_id(), '', false);
+        $files = $fs->get_area_files(
+            $this->get_template()->get_context()->id,
+            'tool_certificate',
+            'elementaux',
+            $this->get_id(),
+            '',
+            false
+        );
         if (count($files)) {
             return reset($files);
         }

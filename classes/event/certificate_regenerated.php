@@ -32,7 +32,6 @@ use tool_certificate\template;
  * }
  */
 class certificate_regenerated extends \core\event\base {
-
     /**
      * Init method.
      */

@@ -39,7 +39,6 @@ use tool_certificate\customfield\issue_handler;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class template {
-
     /** @var persistent\template */
     protected $persistent;
 
@@ -341,10 +340,20 @@ class template {
         $oldcontextid = $this->get_context()->id;
         foreach ($this->get_pages() as $page) {
             foreach ($page->get_elements() as $element) {
-                $fs->move_area_files_to_new_context($oldcontextid, $newcontextid, 'tool_certificate', 'element',
-                    $element->get_id());
-                $fs->move_area_files_to_new_context($oldcontextid, $newcontextid, 'tool_certificate', 'elementaux',
-                    $element->get_id());
+                $fs->move_area_files_to_new_context(
+                    $oldcontextid,
+                    $newcontextid,
+                    'tool_certificate',
+                    'element',
+                    $element->get_id()
+                );
+                $fs->move_area_files_to_new_context(
+                    $oldcontextid,
+                    $newcontextid,
+                    'tool_certificate',
+                    'elementaux',
+                    $element->get_id()
+                );
             }
         }
     }
@@ -466,11 +475,16 @@ class template {
         if ($editable) {
             $displayname = \html_writer::link($this->edit_url(), $displayname);
         }
-        return new \core\output\inplace_editable('tool_certificate',
-            'templatename', $this->get_id(), $editable,
-            $displayname, $this->get_name(),
+        return new \core\output\inplace_editable(
+            'tool_certificate',
+            'templatename',
+            $this->get_id(),
+            $editable,
+            $displayname,
+            $this->get_name(),
             get_string('edittemplatename', 'tool_certificate'),
-            get_string('newvaluefor', 'form', $this->get_formatted_name()));
+            get_string('newvaluefor', 'form', $this->get_formatted_name())
+        );
     }
 
     /**
@@ -694,8 +708,14 @@ class template {
      * @param \core\lock\lock|null $lock optional lock to release after a record was inserted into the DB
      * @return int The ID of the issue
      */
-    public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate',
-            $courseid = null, ?\core\lock\lock $lock = null) {
+    public function issue_certificate(
+        $userid,
+        $expires = null,
+        array $data = [],
+        $component = 'tool_certificate',
+        $courseid = null,
+        ?\core\lock\lock $lock = null
+    ) {
         global $DB;
 
         component_class_callback(\tool_tenant\config::class, 'push_for_user', [$userid]);
@@ -763,8 +783,14 @@ class template {
         $fs = get_file_storage();
 
         // If file exists and $regenerate=true, delete current issue file.
-        $storedfile = $fs->get_file($file->contextid, $file->component, $file->filearea, $file->itemid, $file->filepath,
-            $file->filename);
+        $storedfile = $fs->get_file(
+            $file->contextid,
+            $file->component,
+            $file->filearea,
+            $file->itemid,
+            $file->filepath,
+            $file->filename
+        );
         if ($storedfile && $regenerate) {
             $storedfile->delete();
             $isaregeneration = true;
@@ -823,8 +849,14 @@ class template {
         $file = $this->get_issue_file($issue);
         // We add timemodified instead of issue id to prevent caching of changed certificate.
         // The callback tool_certificate_pluginfile() ignores the itemid and only takes the code.
-        return moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-            $file->get_timemodified(), $file->get_filepath(), $issue->code . '.pdf');
+        return moodle_url::make_pluginfile_url(
+            $file->get_contextid(),
+            $file->get_component(),
+            $file->get_filearea(),
+            $file->get_timemodified(),
+            $file->get_filepath(),
+            $issue->code . '.pdf'
+        );
     }
 
     /**
@@ -913,7 +945,7 @@ class template {
     public static function get_visible_templates_list(): array {
         global $DB;
 
-        list($sql, $params) = self::get_visible_categories_contexts_sql();
+        [$sql, $params] = self::get_visible_categories_contexts_sql();
         $sql = "SELECT tct.id, tct.name, tct.contextid
                   FROM {tool_certificate_templates} tct
                   JOIN {context} ctx
@@ -939,8 +971,8 @@ class template {
         global $DB;
         $contextids = \tool_certificate\permission::get_visible_categories_contexts(false);
         if ($contextids) {
-            list($sql, $params) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'catparam2');
-            return ['ctx.id '.$sql, $params];
+            [$sql, $params] = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'catparam2');
+            return ['ctx.id ' . $sql, $params];
         } else {
             return ['1=0', []];
         }

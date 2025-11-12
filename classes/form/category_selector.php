@@ -37,7 +37,6 @@ use tool_certificate\template;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class category_selector extends dynamic_form {
-
     /** @var template */
     protected $template;
 
@@ -61,9 +60,16 @@ class category_selector extends dynamic_form {
         $mform->setDisableShortforms();
         $mform->addElement('header', 'hdr', '');
 
-        $mform->addElement('static', 'confirmmessage', '',
-            get_string('duplicatetemplateconfirm', 'tool_certificate',
-                $this->get_template()->get_formatted_name()));
+        $mform->addElement(
+            'static',
+            'confirmmessage',
+            '',
+            get_string(
+                'duplicatetemplateconfirm',
+                'tool_certificate',
+                $this->get_template()->get_formatted_name()
+            )
+        );
 
         if ($categoryoptions = $this->get_category_options()) {
             $mform->addElement('select', 'categoryid', get_string('coursecategory'), $categoryoptions);

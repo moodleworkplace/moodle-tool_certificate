@@ -36,7 +36,6 @@ use core\output\inplace_editable;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class element {
-
     /** @var persistent\element  */
     protected $persistent;
 
@@ -289,8 +288,10 @@ abstract class element {
         }
 
         if (!$this->persistent->get('id')) {
-            $this->persistent->set('sequence',
-                \tool_certificate\element_helper::get_element_sequence($this->persistent->get('pageid')));
+            $this->persistent->set(
+                'sequence',
+                \tool_certificate\element_helper::get_element_sequence($this->persistent->get('pageid'))
+            );
         }
 
         $this->persistent->save();
@@ -387,7 +388,10 @@ abstract class element {
     public static function get_elements_in_page(page $page) {
         /** @var \tool_certificate\persistent\element[] $instances */
         $instances = \tool_certificate\persistent\element::get_records(
-            ['pageid' => $page->get_id()], 'sequence', 'ASC');
+            ['pageid' => $page->get_id()],
+            'sequence',
+            'ASC'
+        );
         $els = [];
         foreach ($instances as $instance) {
             if ($element = self::instance_from_persistent($instance)) {
@@ -446,11 +450,16 @@ abstract class element {
      */
     public function get_inplace_editable(): inplace_editable {
         $formattedname = $this->get_display_name();
-        return new \core\output\inplace_editable('tool_certificate', 'elementname',
-            $this->get_id(), true,
-            $formattedname, $this->get_name(),
+        return new \core\output\inplace_editable(
+            'tool_certificate',
+            'elementname',
+            $this->get_id(),
+            true,
+            $formattedname,
+            $this->get_name(),
             get_string('editelementname', 'tool_certificate'),
-            get_string('newvaluefor', 'form', $formattedname));
+            get_string('newvaluefor', 'form', $formattedname)
+        );
     }
 
     /**
