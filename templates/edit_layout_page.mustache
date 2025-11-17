@@ -46,7 +46,8 @@
         <div class="mb-0 d-flex">
             <button class="btn btn-link text-left ws-toggle nomargin ml-1" data-toggle="collapse" data-target="#page-{{id}}" aria-expanded="true" aria-controls="page-{{id}}">
                 <span class="togglesectionicon collapsed-icon-container">
-                    {{#pix}} t/collapsedcaret, core, {{#str}} expand, moodle {{/str}}{{/pix}}
+                    <span class="dir-rtl-hide">{{#pix}} t/collapsed, core, {{#str}} expand, moodle {{/str}} {{/pix}}</span>
+                    <span class="dir-ltr-hide">{{#pix}} t/collapsed_rtl, core, {{#str}} expand, moodle {{/str}} {{/pix}}</span>
                 </span>
                 <span class="togglesectionicon expanded-icon-container">
                     {{#pix}} t/expanded, core, {{#str}} collapse, moodle {{/str}}{{/pix}}

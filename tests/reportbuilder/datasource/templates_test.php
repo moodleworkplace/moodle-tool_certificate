@@ -48,6 +48,7 @@ final class templates_test extends core_reportbuilder_testcase {
      * setUp.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->rbgenerator = self::getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $this->certgenerator = self::getDataGenerator()->get_plugin_generator('tool_certificate');
     }

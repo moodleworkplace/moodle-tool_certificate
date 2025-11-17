@@ -38,6 +38,7 @@ final class template_test extends advanced_testcase {
      * Test set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->certgenerator = self::getDataGenerator()->get_plugin_generator('tool_certificate');
     }
@@ -456,9 +457,9 @@ final class template_test extends advanced_testcase {
         $this->assertEquals($issue->id, $file2->get_itemid());
         $this->assertEquals($issuefile->get_id(), $file2->get_id());
 
-        // Try to create an existing issue file.
-        $this->expectException('stored_file_creation_exception');
-        $certificate->create_issue_file($issue);
+        // Check that when creating a file that already exists, it returns the file.
+        $existingfile = $certificate->create_issue_file($issue);
+        $this->assertEquals($file2->get_id(), $existingfile->get_id());
     }
 
     /**

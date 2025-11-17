@@ -188,7 +188,7 @@ class templates extends system_report {
         // Duplicate.
         $this->add_action((new action(
             new moodle_url('#'),
-            new pix_icon('e/manage_files', ''),
+            new pix_icon('t/copy', ''),
             [
                 'data-action' => 'duplicate',
                 'data-id' => ':id',

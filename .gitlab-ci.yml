@@ -8,6 +8,8 @@ services:
 
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
+  MOODLE_BRANCH_WORKPLACE405R: WORKPLACE_ROLLING_405
+  MOODLE_BRANCH_WORKPLACE405S: WORKPLACE_405
   MOODLE_BRANCH_WORKPLACE404R: WORKPLACE_ROLLING_404
   MOODLE_BRANCH_WORKPLACE404S: WORKPLACE_404
   MOODLE_BRANCH_WORKPLACE403R: WORKPLACE_ROLLING_403
@@ -21,6 +23,7 @@ variables:
   MOODLE_BRANCH_LMS402: MOODLE_402_STABLE
   MOODLE_BRANCH_LMS403: MOODLE_403_STABLE
   MOODLE_BRANCH_LMS404: MOODLE_404_STABLE
+  MOODLE_BRANCH_LMS405: MOODLE_405_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -33,21 +36,21 @@ variables:
 .setupworkplace: &setupworkplace
   before_script:
   - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE404R
+  - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE405R
   - . prepare-workplace $cibot_sshkey
   - export PLUGINNAME=$(grep 'plugin->component' $CI_PROJECT_DIR/version.php | awk -F\' '{ print $2; }')
   - cd $CI_PROJECT_DIR/..
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_custompage.git
-  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-block_myteams.git
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_tenant.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_dynamicrule.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_program.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_reportbuilder.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-enrol_program.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certification.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_organisation.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_custompage.git --branch $MOODLE_BRANCH
+  - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-block_myteams.git --branch $MOODLE_BRANCH
   - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
   - cd moodle
 
@@ -58,7 +61,7 @@ codecheck:
   - php admin/tool/phpunit/cli/init.php
   - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
   - . check-start
-  - . check version_number
+  - . check version_number 20250413
   - . check no_workplace_licenses
   - . check this_plugin_is_part_of "the tool_certificate plugin for Moodle - http://moodle.org/" --nowplicensecomment
   - . check language_file_sorting
@@ -141,6 +144,30 @@ behat:
     when: on_failure
     paths:
       - ${CI_PROJECT_DIR}/faildumps/
+
+wp405s:
+  image: moodlehq/moodle-workplace-plugin-ci:8.1
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE405S
+    - export CLONEWPPLUGINS=1
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_(ROLLING_)?\d+$/
+
+wp404r:
+  image: moodlehq/moodle-workplace-plugin-ci:8.1
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE404R
+    - export CLONEWPPLUGINS=1
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_(ROLLING_)?\d+$/
 
 wp404s:
   image: moodlehq/moodle-workplace-plugin-ci:8.1
@@ -250,6 +277,16 @@ lms404:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
     - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS404
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+
+lms405:
+  image: moodlehq/moodle-workplace-plugin-ci:8.1
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS405
   <<: *scriptshorttest
   except:
     - master

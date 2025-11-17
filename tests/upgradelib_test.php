@@ -39,6 +39,7 @@ final class upgradelib_test extends advanced_testcase {
         global $CFG;
 
         require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/certificate/db/upgradelib.php');
+        parent::setUpBeforeClass();
     }
 
     /**

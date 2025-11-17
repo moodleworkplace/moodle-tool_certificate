@@ -44,6 +44,7 @@ final class lib_test extends advanced_testcase {
      * Test set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

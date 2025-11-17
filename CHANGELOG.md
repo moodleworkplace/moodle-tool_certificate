@@ -1,5 +1,39 @@
 # Changelog
 
+## 4.5.7 - 2025-10-07
+### Changed
+- Only changes to automatic testing scripts
+
+## 4.5.6 - 2025-08-12
+### Fixed
+- Fixed issue where bulk PDF generation could fill up local temporary directory
+
+## 4.5.5 - 2025-06-10
+### Fixed
+- Fixed an issue where course navigation was not working correctly when viewing a certificate
+
+## 4.5.4 - 2025-05-15
+### Changed
+- Only changes to automatic testing scripts
+
+## 4.5.3 - 2025-03-18
+### Fixed
+- behat tests checking that certificate opens in a new window failing with selenium/standalone-chrome:4
+
+## 4.5.1 - 2024-12-10
+### Fixed
+- issuing scheduled task throws exception on already created file under a race condition
+
+## 4.5 - 2024-11-05
+### Fixed
+- Replaced icons that are no longer correct in Moodle 4.5 leaving compatibility with previous versions
+
+## 4.4.4 - 2024-10-08
+### Added
+- Compatibility with Moodle 4.5; Updates to version testing matrices
+### Fixed
+- Fixed memory leak when generating a lot of certificates
+
 ## 4.4.3 - 2024-09-03
 ### Changed
 - Only changes to automatic testing scripts

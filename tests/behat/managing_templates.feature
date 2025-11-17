@@ -141,11 +141,11 @@ Feature: Being able to manage site templates
     And I press "Save"
     And I wait until ".toast-message" "css_element" does not exist
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Delete" in the open action menu
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     Then I should not see "Certificate 1"
@@ -160,12 +160,12 @@ Feature: Being able to manage site templates
     And I add the element "User field" to page "1" of the "Certificate 1" site certificate template
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Duplicate" in the open action menu
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (copy)"
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Duplicate" in the open action menu
     And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 1"
@@ -184,12 +184,12 @@ Feature: Being able to manage site templates
       | Certificate 1 |           |
     And I log in as "manager"
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Duplicate" in the open action menu
     And I click on "Cancel" "button" in the ".modal.show .modal-footer" "css_element"
     And I should see "Certificate 1"
     And I should not see "Certificate 1 (copy)"
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Duplicate" in the open action menu
     And I set the following fields to these values:
       | Course category | Category2 |

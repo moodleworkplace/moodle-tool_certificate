@@ -53,7 +53,7 @@ Feature: View links on admin tree
     And I log in as "manager"
     And I am on site homepage
     When I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Actions" "icon" in the "Certificate 1" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate 1" "table_row"
     And I choose "Issue certificates" in the open action menu
     And I set the field "Select users to issue certificate to" to "User One"
     And I click on "Save" "button" in the "Issue certificates" "dialogue"

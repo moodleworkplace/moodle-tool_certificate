@@ -48,6 +48,7 @@ final class privacy_provider_test extends \core_privacy\tests\provider_testcase 
      * Test set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         \tool_certificate\customfield\issue_handler::reset_caches();
         $this->certgenerator = self::getDataGenerator()->get_plugin_generator('tool_certificate');

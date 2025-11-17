@@ -302,7 +302,10 @@ class template {
             force_current_language($currentlang);
 
             if ($return) {
-                return $pdf->Output('', 'S');
+                $output = $pdf->Output('', 'S');
+                // Destroys the created pdf object upon return to avoid memory exhaustion.
+                $pdf->_destroy(true);
+                return $output;
             }
             if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
                 // For some reason phpunit on travis-ci.com do not return 'cli' on php_sapi_name().
@@ -771,8 +774,10 @@ class template {
 
         return $issue->id;
     }
+
     /**
-     * Creates stored file for an issue.
+     * Creates stored file for an issue, if the file already exists and $regenerate is false,
+     * we return the existing file.
      *
      * @param \stdClass $issue
      * @param bool $regenerate
@@ -797,6 +802,8 @@ class template {
             $file->filename);
         if ($storedfile && $regenerate) {
             $storedfile->delete();
+        } else if ($storedfile && !$regenerate) {
+            return $storedfile;
         }
 
         return $fs->create_file_from_string($file, $filecontents);

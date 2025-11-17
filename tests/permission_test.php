@@ -66,6 +66,7 @@ final class permission_test extends advanced_testcase {
      * Set up
      */
     public function setUp(): void {
+        parent::setUp();
         // Create category tree.
         $cat1 = $this->getDataGenerator()->create_category();
         $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat1->id]);

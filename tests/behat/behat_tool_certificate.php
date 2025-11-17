@@ -271,4 +271,35 @@ class behat_tool_certificate extends behat_base {
             throw new \Behat\Mink\Exception\ExpectationException('Share on LinkedIn link was found', $this->getSession());
         }
     }
+
+    /**
+     * Checks that there is another window with a PDF certificate
+     *
+     * See also MDL-84679
+     * We can not use the existing steps because of the selenium bug https://github.com/SeleniumHQ/selenium/issues/15330
+     *
+     * @Then /^I can see a certificate in a new window$/
+     */
+    public function i_can_see_a_certificate_in_a_new_window() {
+        $names = $this->getSession()->getWindowNames();
+        if (count($names) === 1) {
+            throw new \Behat\Mink\Exception\ExpectationException('No new window was opened', $this->getSession());
+        }
+
+        $activewindowname = $this->getSession()->getWindowName();
+
+        $found = false;
+        foreach ($names as $windowname) {
+            $this->getSession()->switchToWindow($windowname);
+            $windowurl = $this->getSession()->getCurrentUrl();
+            $found = $found || preg_match('/\\.pdf$/', $windowurl);
+        }
+
+        $this->getSession()->switchToWindow($activewindowname);
+
+        if (!$found) {
+            throw new \Behat\Mink\Exception\ExpectationException('No PDF certificate was found in the new window',
+                $this->getSession());
+        }
+    }
 }

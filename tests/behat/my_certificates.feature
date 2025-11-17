@@ -31,9 +31,7 @@ Feature: Being able to view the certificates you have been issued
     And I should see "Certificate 2 - Course 1" in the "generaltable" "table"
     And I should not see "Certificate 3" in the "generaltable" "table"
     And I click on "View" "link" in the "Certificate 1" "table_row"
-    # Ensure that at this point there are two windows
-    And I switch to a second window
-    And I switch to the main window
+    Then I can see a certificate in a new window
     And I should see "Certificate 1" in the "generaltable" "table"
 
   Scenario: View share certificate on LinkedIn

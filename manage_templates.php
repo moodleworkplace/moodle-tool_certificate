@@ -23,28 +23,38 @@
  */
 
 require_once('../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
-$courseid = optional_param('courseid', null, PARAM_INT);
+$courseid = optional_param('courseid', SITEID, PARAM_INT);
 $download = optional_param('download', null, PARAM_ALPHA);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', \tool_certificate\certificate::TEMPLATES_PER_PAGE, PARAM_INT);
 $pageurl = new moodle_url('/admin/tool/certificate/manage_templates.php', ['page' => $page, 'perpage' => $perpage]);
+$iscoursepage = !empty($courseid) && $courseid !== SITEID;
 
-$title = get_string('managetemplates', 'tool_certificate');
-admin_externalpage_setup('tool_certificate/managetemplates', '', null, '', ['nosearch' => true]);
-$context = context_system::instance();
+if ($iscoursepage) {
+    $course = get_course($courseid);
+    $pageurl->param('courseid', $courseid);
+    $context = \context_course::instance($course->id);
+    $PAGE->set_course($course);
+    $PAGE->add_body_class('limitedwidth');
+} else {
+    $context = \context_system::instance();
+    $PAGE->set_secondary_navigation(false);
+    admin_externalpage_setup('tool_certificate/managetemplates', '', null, '', ['nosearch' => true]);
+}
 
 if (!\tool_certificate\permission::can_view_admin_tree()) {
     throw new moodle_exception('issueormangenotallowed', 'tool_certificate');
 }
 
-$PAGE->set_secondary_navigation(false);
+$title = get_string('managetemplates', 'tool_certificate');
+
+$PAGE->set_heading($iscoursepage ? $course->fullname : $title);
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
 $PAGE->set_url($pageurl);
 
-$outputpage = new \tool_certificate\output\templates_page();
+$outputpage = new \tool_certificate\output\templates_page($courseid);
 
 $data = $outputpage->export_for_template($PAGE->get_renderer('core'));
 if (\tool_certificate\permission::can_create()) {
@@ -55,5 +65,8 @@ if (\tool_certificate\permission::can_create()) {
 $PAGE->requires->js_call_amd('tool_certificate/templates-list', 'init');
 
 echo $OUTPUT->header();
+if ($iscoursepage) {
+    echo $OUTPUT->heading($title);
+}
 echo $OUTPUT->render_from_template('tool_certificate/content_with_heading', $data);
 echo $OUTPUT->footer();
