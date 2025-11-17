@@ -175,11 +175,21 @@ function tool_certificate_get_fontawesome_icon_map() {
  */
 function tool_certificate_extend_navigation_course($navigation, $course, $context) {
     if (permission::can_view_templates_in_context($context)) {
-        $certificatenode = $navigation->add(get_string('certificates', 'tool_certificate'),
-            null, navigation_node::TYPE_CONTAINER, null, 'tool_certificate');
+        $certificatenode = $navigation->add(
+            get_string('certificates', 'tool_certificate'),
+            null,
+            navigation_node::TYPE_CONTAINER,
+            null,
+            'tool_certificate'
+        );
         $url = new moodle_url('/admin/tool/certificate/manage_templates.php', ['courseid' => $course->id]);
-        $certificatenode->add(get_string('managetemplates', 'tool_certificate'), $url, navigation_node::TYPE_SETTING,
-            null, 'tool_certificate');
+        $certificatenode->add(
+            get_string('managetemplates', 'tool_certificate'),
+            $url,
+            navigation_node::TYPE_SETTING,
+            null,
+            'tool_certificate'
+        );
     }
 }
 
@@ -202,8 +212,10 @@ function tool_certificate_can_course_category_delete(\core_course_category $cate
  * @param \core_course_category $newcategory The new category record.
  * @return bool
  */
-function tool_certificate_can_course_category_delete_move(\core_course_category $category,
-        \core_course_category $newcategory): bool {
+function tool_certificate_can_course_category_delete_move(
+    \core_course_category $category,
+    \core_course_category $newcategory
+): bool {
     // Deletion with move requires certificates to move to be present and
     // permission to manage them at destination category.
     $certificatescount = \tool_certificate\certificate::count_templates_in_category($category);
@@ -246,8 +258,10 @@ function tool_certificate_pre_course_category_delete(\stdClass $category): void 
  * @param \core_course_category $category The category record.
  * @param \core_course_category $newcategory The new category record.
  */
-function tool_certificate_pre_course_category_delete_move(\core_course_category $category,
-          \core_course_category $newcategory): void {
+function tool_certificate_pre_course_category_delete_move(
+    \core_course_category $category,
+    \core_course_category $newcategory
+): void {
     $context = $category->get_context();
     $newcontext = $newcategory->get_context();
     $templates = \tool_certificate\persistent\template::get_records(['contextid' => $context->id]);

@@ -29,7 +29,6 @@ use tool_certificate\certificate;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class templatepermission extends base {
-
     /**
      * Return an array of operators available for this filter
      *

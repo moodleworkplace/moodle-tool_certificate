@@ -34,7 +34,6 @@ use tool_certificate\template;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class template_created extends \core\event\base {
-
     /**
      * Init method.
      *

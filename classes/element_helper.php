@@ -34,7 +34,6 @@ namespace tool_certificate;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element_helper {
-
     /**
      * @var int the top-left of element
      */
@@ -58,7 +57,7 @@ class element_helper {
      * @param string $content the content to render
      */
     public static function render_content($pdf, $element, $content) {
-        list($font, $attr) = self::get_font($element);
+        [$font, $attr] = self::get_font($element);
         $pdf->setFont($font, $attr, $element->get_fontsize());
         $fontcolour = \TCPDF_COLORS::convertHTMLColorToDec($element->get_colour(), $fontcolour);
         $pdf->SetTextColor($fontcolour['R'], $fontcolour['G'], $fontcolour['B']);
@@ -100,7 +99,7 @@ class element_helper {
      * @return string the html
      */
     public static function render_html_content($element, $content) {
-        list($font, $attr) = self::get_font($element);
+        [$font, $attr] = self::get_font($element);
         $fontstyle = 'font-family: ' . $font;
         if (strpos($attr, 'B') !== false) {
             $fontstyle .= '; font-weight: bold';
@@ -148,7 +147,7 @@ class element_helper {
         $mform->setDefault('colour', '#000000');
         $mform->addHelpButton('colour', 'fontcolour', 'tool_certificate');
 
-        $mform->addFormRule(function($data, $files) {
+        $mform->addFormRule(function ($data, $files) {
             return element_helper::validate_form_element_colour($data);
         });
     }
@@ -175,7 +174,7 @@ class element_helper {
         $mform->addHelpButton('posygroup', 'posy', 'tool_certificate');
         $mform->setAdvanced('posygroup');
 
-        $mform->addFormRule(function($data, $files) {
+        $mform->addFormRule(function ($data, $files) {
             return element_helper::validate_form_element_position($data);
         });
     }
@@ -223,7 +222,7 @@ class element_helper {
         $mform->addHelpButton('widthgroup', 'elementwidth', 'tool_certificate');
         $mform->setAdvanced('widthgroup');
 
-        $mform->addFormRule(function($data, $files) {
+        $mform->addFormRule(function ($data, $files) {
             $errors = [];
             // Check if width is less than 0.
             if (isset($data['width']) && $data['width'] < 0) {
@@ -249,7 +248,7 @@ class element_helper {
         $mform->setDefault('width', 0);
         $mform->addHelpButton('widthgroup', 'width', $stringcomponent);
 
-        $mform->addFormRule(function($data, $files) use ($stringcomponent) {
+        $mform->addFormRule(function ($data, $files) use ($stringcomponent) {
             $errors = [];
             // Check if width is not set, or not numeric or less than 0.
             if (isset($data['width']) && (!is_numeric($data['width']) || $data['width'] < 0)) {
@@ -275,7 +274,7 @@ class element_helper {
         $mform->setDefault('height', 0);
         $mform->addHelpButton('heightgroup', 'height', $stringcomponent);
 
-        $mform->addFormRule(function($data, $files) use ($stringcomponent) {
+        $mform->addFormRule(function ($data, $files) use ($stringcomponent) {
             $errors = [];
             // Check if height is not set, or not numeric or less than 0.
             if (isset($data['height']) && (!is_numeric($data['height']) || $data['height'] < 0)) {
@@ -462,7 +461,7 @@ class element_helper {
         // Loop through the enabled plugins.
         foreach ($plugins as $plugin) {
             /** @var element $classname */
-            $classname = '\\certificateelement_' . $plugin. '\\element';
+            $classname = '\\certificateelement_' . $plugin . '\\element';
             // Ensure the necessary class exists.
             if (class_exists($classname) && is_subclass_of($classname, element::class)) {
                 // Additionally, check if the user is allowed to add the element at all.
@@ -631,7 +630,7 @@ class element_helper {
      * @param int $height user specified height, in mm
      */
     public static function render_image(\pdf $pdf, element $element, $file, array $fileinfo, $width, $height) {
-        list($width, $height) = array_values(self::calculate_image_size($file, $fileinfo, $width, $height));
+        [$width, $height] = array_values(self::calculate_image_size($file, $fileinfo, $width, $height));
 
         if ($file instanceof \stored_file) {
             // To pass an image as a data string, the PDF library requires the string to be prefixed with '@'.
@@ -660,8 +659,16 @@ class element_helper {
 
         // The array used to store the images.
         $arrfiles = [];
-        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
-            'image', false, 'filename', false)) {
+        if (
+            $files = get_file_storage()->get_area_files(
+                \context_system::instance()->id,
+                'tool_certificate',
+                'image',
+                false,
+                'filename',
+                false
+            )
+        ) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
             }
@@ -683,8 +690,16 @@ class element_helper {
      */
     public static function render_shared_image_picker_element($mform) {
         $arrfiles = [];
-        if ($files = get_file_storage()->get_area_files(\context_system::instance()->id, 'tool_certificate',
-            'image', false, 'filename', false)) {
+        if (
+            $files = get_file_storage()->get_area_files(
+                \context_system::instance()->id,
+                'tool_certificate',
+                'image',
+                false,
+                'filename',
+                false
+            )
+        ) {
             foreach ($files as $hash => $file) {
                 $arrfiles[$file->get_id()] = $file->get_filename();
             }

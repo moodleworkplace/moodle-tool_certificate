@@ -41,7 +41,6 @@ use core_user\fields;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class issues extends system_report {
-
     /** @var template */
     protected $template;
     /** @var int */
@@ -127,8 +126,11 @@ class issues extends system_report {
         if ($context->contextlevel === CONTEXT_MODULE) {
             // This permission is validated when issues report is used in the mod_coursecertificate.
             $groupid = $this->get_parameter('groupid', 0, PARAM_INT);
-            $modulepermission = component_class_callback('mod_coursecertificate\permission', 'can_view_issues',
-                [$context, $groupid]) ?? true;
+            $modulepermission = component_class_callback(
+                'mod_coursecertificate\permission',
+                'can_view_issues',
+                [$context, $groupid]
+            ) ?? true;
             return $modulepermission && $this->get_template()->can_view_issues($context->get_course_context());
         }
         return $this->get_template()->can_view_issues($context);
@@ -222,7 +224,7 @@ class issues extends system_report {
             ],
             false,
             new lang_string('regenerateissuefile', 'tool_certificate')
-        ))->add_callback(function() {
+        ))->add_callback(function () {
             return $this->get_template()->can_issue($this->userid, $this->get_context());
         }));
 
@@ -236,7 +238,7 @@ class issues extends system_report {
             ],
             false,
             new lang_string('revoke', 'tool_certificate')
-        ))->add_callback(function() {
+        ))->add_callback(function () {
             return $this->get_template()->can_issue($this->userid, $this->get_context());
         }));
     }
@@ -259,8 +261,10 @@ class issues extends system_report {
      */
     public function apply_archived_label($userfullname, stdClass $row) {
         if ($row->archived) {
-            $userfullname .= html_writer::span(get_string('archived', 'tool_certificate'),
-                'ms-1 badge rounded-pill bg-secondary text-dark');
+            $userfullname .= html_writer::span(
+                get_string('archived', 'tool_certificate'),
+                'ms-1 badge rounded-pill bg-secondary text-dark'
+            );
         }
         return $userfullname;
     }

@@ -36,7 +36,6 @@ use core_form\dynamic_form;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class details extends dynamic_form {
-
     /** @var template */
     protected $template;
 
@@ -156,7 +155,7 @@ class details extends dynamic_form {
      */
     public function process_dynamic_submission() {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
         $data = $this->get_data();
 
         if (isset($data->categoryid)) {

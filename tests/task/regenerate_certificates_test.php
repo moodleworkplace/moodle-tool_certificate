@@ -29,7 +29,6 @@ use tool_certificate_generator;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class regenerate_certificates_test extends \advanced_testcase {
-
     /** @var tool_certificate_generator */
     protected $certgenerator;
 
@@ -79,7 +78,7 @@ final class regenerate_certificates_test extends \advanced_testcase {
         $out = ob_get_clean();
         $this->assertEquals(
             'Regenerating users certificates. Number of certificates: 3' . PHP_EOL,
-             $out
+            $out
         );
 
         // Run the adhoc task data for a list of users.
@@ -95,7 +94,7 @@ final class regenerate_certificates_test extends \advanced_testcase {
         $out = ob_get_clean();
         $this->assertEquals(
             'Regenerating users certificates. Number of certificates: 2' . PHP_EOL,
-             $out
+            $out
         );
 
         // Check user without permissions.
@@ -115,7 +114,7 @@ final class regenerate_certificates_test extends \advanced_testcase {
         $this->assertEquals(
             'Regenerating users certificates. Number of certificates: 1' . PHP_EOL .
             "Skipping issue $issue1->id: cannot issue certificate." . PHP_EOL,
-             $out
+            $out
         );
     }
 }

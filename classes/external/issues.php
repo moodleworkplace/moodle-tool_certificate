@@ -36,7 +36,6 @@ require_once("$CFG->libdir/externallib.php");
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class issues extends \external_api {
-
     /**
      * Returns the delete_issue() parameters.
      *
@@ -151,8 +150,10 @@ class issues extends \external_api {
     public static function potential_users_selector(string $search, int $itemid): array {
         global $DB;
 
-        $params = self::validate_parameters(self::potential_users_selector_parameters(),
-            ['search' => $search, 'itemid' => $itemid]);
+        $params = self::validate_parameters(
+            self::potential_users_selector_parameters(),
+            ['search' => $search, 'itemid' => $itemid]
+        );
         $search = $params['search'];
         $itemid = $params['itemid'];
 
@@ -185,20 +186,20 @@ class issues extends \external_api {
             $fields .= ', null AS email';
         }
 
-        list($wheresql, $whereparams) = users_search_sql($search, 'u', true, $extrasearchfields);
+        [$wheresql, $whereparams] = users_search_sql($search, 'u', true, $extrasearchfields);
         $query = "SELECT u.id, $fields
             FROM {user} u $join
             WHERE ($where) AND $wheresql";
         $params += $whereparams;
 
-        list($sortsql, $sortparams) = users_order_by_sql('u', $search, $context);
+        [$sortsql, $sortparams] = users_order_by_sql('u', $search, $context);
         $query .= " ORDER BY {$sortsql}";
         $params += $sortparams;
 
         $result = $DB->get_records_sql($query, $params);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $context);
         if ($result) {
-            $result = array_map(function($record) use ($viewfullnames) {
+            $result = array_map(function ($record) use ($viewfullnames) {
                 return (object)['id' => $record->id, 'fullname' => fullname($record, $viewfullnames), 'email' => $record->email];
             }, $result);
         }
@@ -213,13 +214,19 @@ class issues extends \external_api {
         global $CFG;
         require_once($CFG->dirroot . '/user/externallib.php');
         return new \external_multiple_structure(new \external_single_structure([
-            'id' => new \external_value(\core_user::get_property_type('id'),
-                'ID of the user'),
-            'fullname' => new \external_value(\core_user::get_property_type('firstname'),
-                'The fullname of the user'),
-            'email' => new \external_value(\core_user::get_property_type('email'),
-                'An email address', VALUE_OPTIONAL),
+            'id' => new \external_value(
+                \core_user::get_property_type('id'),
+                'ID of the user'
+            ),
+            'fullname' => new \external_value(
+                \core_user::get_property_type('firstname'),
+                'The fullname of the user'
+            ),
+            'email' => new \external_value(
+                \core_user::get_property_type('email'),
+                'An email address',
+                VALUE_OPTIONAL
+            ),
         ]));
     }
-
 }

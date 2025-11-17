@@ -34,7 +34,6 @@ use tool_certificate\template;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class certificate_revoked extends \core\event\base {
-
     /**
      * Init method.
      *
@@ -52,7 +51,7 @@ class certificate_revoked extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with '$this->userid' has revoked certificate issue with id '$this->objectid'".
+        return "The user with '$this->userid' has revoked certificate issue with id '$this->objectid'" .
                 " from user with id '$this->relateduserid'.";
     }
 

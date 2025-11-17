@@ -33,8 +33,7 @@ use renderer_base;
  * @copyright   2019 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class page_header_button implements \templatable, \renderable {
-
+class page_header_button implements \renderable, \templatable {
     /** @var string */
     protected $title;
     /** @var array */

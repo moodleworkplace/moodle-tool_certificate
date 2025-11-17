@@ -38,7 +38,6 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class issues_test extends core_reportbuilder_testcase {
-
     /** @var core_reportbuilder_generator */
     protected $rbgenerator;
     /** @var \tool_certificate_generator */
@@ -101,8 +100,8 @@ final class issues_test extends core_reportbuilder_testcase {
         $issuecode1 = $DB->get_record('tool_certificate_issues', ['id' => $issueid1]);
         $issuecode2 = $DB->get_record('tool_certificate_issues', ['id' => $issueid2]);
         $contentcerts = [
-            [$cert1['name'], $issuecode1->code, $user1->firstname . ' '.$user1->lastname, $cohort->name],
-            [$cert2['name'], $issuecode2->code, $user2->firstname . ' '.$user2->lastname, ''],
+            [$cert1['name'], $issuecode1->code, $user1->firstname . ' ' . $user1->lastname, $cohort->name],
+            [$cert2['name'], $issuecode2->code, $user2->firstname . ' ' . $user2->lastname, ''],
         ];
         $this->assertEqualsCanonicalizing($contentcerts, $content);
     }
@@ -173,7 +172,8 @@ final class issues_test extends core_reportbuilder_testcase {
         $this->rbgenerator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
         // Add condition to check permissions but do not set the value.
         $this->rbgenerator->create_condition(
-            ['reportid' => $report->get('id'), 'uniqueidentifier' => 'template:templatepermission']);
+            ['reportid' => $report->get('id'), 'uniqueidentifier' => 'template:templatepermission']
+        );
 
         // Manager will see both issues.
         $this->setUser($manager);

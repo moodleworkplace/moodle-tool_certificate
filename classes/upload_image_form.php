@@ -26,7 +26,7 @@ namespace tool_certificate;
 
 defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Handles uploading files.
@@ -36,7 +36,6 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upload_image_form extends \moodleform {
-
     /** @var array the filemanager options */
     protected $filemanageroptions = [];
 
@@ -51,8 +50,13 @@ class upload_image_form extends \moodleform {
             'maxbytes' => $CFG->maxbytes,
             'subdirs' => 1,
             'accepted_types' => 'web_image', ];
-        $mform->addElement('filemanager', 'certificateimage', get_string('uploadimage', 'tool_certificate'), '',
-            $this->filemanageroptions);
+        $mform->addElement(
+            'filemanager',
+            'certificateimage',
+            get_string('uploadimage', 'tool_certificate'),
+            '',
+            $this->filemanageroptions
+        );
 
         $this->add_action_buttons();
     }
@@ -65,8 +69,14 @@ class upload_image_form extends \moodleform {
 
         // Editing existing instance - copy existing files into draft area.
         $draftitemid = file_get_submitted_draft_itemid('certificateimage');
-        file_prepare_draft_area($draftitemid, \context_system::instance()->id, 'tool_certificate', 'image', 0,
-            $this->filemanageroptions);
+        file_prepare_draft_area(
+            $draftitemid,
+            \context_system::instance()->id,
+            'tool_certificate',
+            'image',
+            0,
+            $this->filemanageroptions
+        );
         $element = $mform->getElement('certificateimage');
         $element->setValue($draftitemid);
     }

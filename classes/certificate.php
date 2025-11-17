@@ -38,7 +38,6 @@ use MoodleQuickForm;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class certificate {
-
     /**
      * @var int the number of issues that will be displayed on each page in the report
      *      If you want to display all issues on a page set this to 0.
@@ -164,8 +163,13 @@ class certificate {
      * @param int|null $groupid
      * @return int the number of issues
      */
-    public static function count_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode,
-            ?int $groupid) {
+    public static function count_issues_for_course(
+        int $templateid,
+        int $courseid,
+        string $component,
+        ?int $groupmode,
+        ?int $groupid
+    ) {
         global $DB;
 
         $params = [
@@ -206,8 +210,16 @@ class certificate {
      * @param string $sort
      * @return array
      */
-    public static function get_issues_for_course(int $templateid, int $courseid, string $component, ?int $groupmode, ?int $groupid,
-            int $limitfrom, int $limitnum, string $sort = ''): array {
+    public static function get_issues_for_course(
+        int $templateid,
+        int $courseid,
+        string $component,
+        ?int $groupmode,
+        ?int $groupid,
+        int $limitfrom,
+        int $limitnum,
+        string $sort = ''
+    ): array {
         global $DB;
 
         if (empty($sort)) {
@@ -404,7 +416,7 @@ class certificate {
         if (!$ids) {
             return [];
         }
-        list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'catparam1');
+        [$sql, $params] = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'catparam1');
 
         $query = "SELECT *
                     FROM {tool_certificate_templates}
@@ -422,8 +434,11 @@ class certificate {
         // We apply format string to the name.
         if (!empty($result)) {
             foreach ($result as $res) {
-                $res->name = format_string($res->name, true,
-                    ['context' => \context_system::instance(), 'escape' => false]);
+                $res->name = format_string(
+                    $res->name,
+                    true,
+                    ['context' => \context_system::instance(), 'escape' => false]
+                );
             }
         }
 
@@ -442,8 +457,12 @@ class certificate {
      * @return string
      */
     public static function get_users_subquery(string $usertablealias = 'u', bool $canseeall = true): string {
-        return component_class_callback('tool_tenant\\tenancy', 'get_users_subquery',
-            [$canseeall, false, $usertablealias.'.id'], '1=1');
+        return component_class_callback(
+            'tool_tenant\\tenancy',
+            'get_users_subquery',
+            [$canseeall, false, $usertablealias . '.id'],
+            '1=1'
+        );
     }
 
     /**
@@ -457,11 +476,11 @@ class certificate {
 
         $ctx = $category->get_context();
 
-        $select = "(id = ? OR (".$DB->sql_like('path', '?').")) AND contextlevel = ?";
-        $params = [$ctx->id, $ctx->path.'/%', CONTEXT_COURSECAT];
+        $select = "(id = ? OR (" . $DB->sql_like('path', '?') . ")) AND contextlevel = ?";
+        $params = [$ctx->id, $ctx->path . '/%', CONTEXT_COURSECAT];
         $contexts = $DB->get_records_select('context', $select, $params);
 
-        list($insql, $inparams) = $DB->get_in_or_equal(array_keys($contexts));
+        [$insql, $inparams] = $DB->get_in_or_equal(array_keys($contexts));
         return \tool_certificate\persistent\template::count_records_select("contextid $insql", $inparams);
     }
 
@@ -605,8 +624,12 @@ class certificate {
             self::DATE_EXPIRATION_AFTER => get_string('after', 'tool_certificate'),
         ];
         $group = [];
-        $group[] =& $mform->createElement('select', 'expirydatetype', get_string('expirydatetype', 'tool_certificate'),
-            $expirydateoptions);
+        $group[] =& $mform->createElement(
+            'select',
+            'expirydatetype',
+            get_string('expirydatetype', 'tool_certificate'),
+            $expirydateoptions
+        );
         $group[] =& $mform->createElement('date_time_selector', 'expirydateabsolute', '');
         // TODO: Missing here "month" and "year" options. See MDL-61624.
         $group[] =& $mform->createElement('duration', 'expirydaterelative', '', ['defaulunit' => DAYSECS,

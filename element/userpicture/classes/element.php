@@ -34,7 +34,6 @@ use tool_certificate\element_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element extends \tool_certificate\element {
-
     /**
      * This function renders the form elements when adding a certificate element.
      *
@@ -80,8 +79,14 @@ class element extends \tool_certificate\element {
             element_helper::render_image($pdf, $this, $file, [], $imageinfo['width'], $imageinfo['height']);
         } else if ($preview) { // Can't find an image, but we are in preview mode then display default pic.
             $location = $CFG->dirroot . '/pix/u/f1.png';
-            element_helper::render_image($pdf, $this, $location,
-                ['width' => 100, 'height' => 100], $imageinfo['width'], $imageinfo['height']);
+            element_helper::render_image(
+                $pdf,
+                $this,
+                $location,
+                ['width' => 100, 'height' => 100],
+                $imageinfo['width'],
+                $imageinfo['height']
+            );
         }
     }
 
@@ -103,8 +108,13 @@ class element extends \tool_certificate\element {
         $url = $userpicture->get_url($PAGE)->out(false);
         $strpictureof = get_string('pictureof', '', fullname($userpicture->user, true));
 
-        return element_helper::render_image_html($url, ['width' => 100, 'height' => 100],
-            $imageinfo['width'], $imageinfo['height'], $strpictureof);
+        return element_helper::render_image_html(
+            $url,
+            ['width' => 100, 'height' => 100],
+            $imageinfo['width'],
+            $imageinfo['height'],
+            $strpictureof
+        );
     }
 
     /**

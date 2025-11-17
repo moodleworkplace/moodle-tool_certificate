@@ -38,7 +38,6 @@ use tool_certificate\certificate as certificate_manager;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class certificate_issues extends dynamic_form {
-
     /** @var template */
     protected $template;
 
@@ -111,8 +110,11 @@ class certificate_issues extends dynamic_form {
         $data = $this->get_data();
 
         $i = 0;
-        $expirydate = certificate_manager::calculate_expirydate($data->expirydatetype, $data->expirydateabsolute,
-            $data->expirydaterelative);
+        $expirydate = certificate_manager::calculate_expirydate(
+            $data->expirydatetype,
+            $data->expirydateabsolute,
+            $data->expirydaterelative
+        );
         foreach ($data->users as $userid) {
             if ($this->get_template()->can_issue($userid)) {
                 $result = $this->get_template()->issue_certificate($userid, $expirydate);

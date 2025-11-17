@@ -33,7 +33,6 @@ use core_reportbuilder\local\filters\boolean_select;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class status extends boolean_select {
-
     /**
      * Return an array of operators available for this filter
      *

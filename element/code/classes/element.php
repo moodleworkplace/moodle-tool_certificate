@@ -32,7 +32,6 @@ namespace certificateelement_code;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element extends \tool_certificate\element {
-
     /**
      * @var int Option to display only code
      */
@@ -151,8 +150,13 @@ class element extends \tool_certificate\element {
             $w = $this->get_width();
             $imageinfo = $data + ['width' => $w, 'height' => $w];
 
-            $html = \tool_certificate\element_helper::render_image_html($url, $imageinfo,
-                (float)$imageinfo['width'], (float)$imageinfo['height'], $this->get_display_name());
+            $html = \tool_certificate\element_helper::render_image_html(
+                $url,
+                $imageinfo,
+                (float)$imageinfo['width'],
+                (float)$imageinfo['height'],
+                $this->get_display_name()
+            );
         } else {
             $code = \tool_certificate\certificate::generate_code();
             $html = \tool_certificate\element_helper::render_html_content($this, $this->format_code($code));

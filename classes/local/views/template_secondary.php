@@ -28,7 +28,6 @@ use tool_certificate\template;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class template_secondary extends core_secondary {
-
     /** @var template */
     protected $template;
 
@@ -48,17 +47,29 @@ class template_secondary extends core_secondary {
      */
     public function initialise(): void {
         if ($this->template->can_manage()) {
-            $this->add(get_string('template', 'tool_certificate'),
+            $this->add(
+                get_string('template', 'tool_certificate'),
                 new \moodle_url('/admin/tool/certificate/template.php', ['id' => $this->template->get_id()]),
-                null, null, 'template');
-            $this->add(get_string('details'),
+                null,
+                null,
+                'template'
+            );
+            $this->add(
+                get_string('details'),
                 new \moodle_url('/admin/tool/certificate/template_details.php', ['id' => $this->template->get_id()]),
-                null, null, 'details');
+                null,
+                null,
+                'details'
+            );
         }
         if ($this->template->can_view_issues()) {
-            $this->add(get_string('issuedcertificates', 'tool_certificate'),
+            $this->add(
+                get_string('issuedcertificates', 'tool_certificate'),
                 new \moodle_url('/admin/tool/certificate/certificates.php', ['templateid' => $this->template->get_id()]),
-                null, null, 'issuedcertificates');
+                null,
+                null,
+                'issuedcertificates'
+            );
         }
     }
 }

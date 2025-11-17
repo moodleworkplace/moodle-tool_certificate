@@ -30,7 +30,6 @@ use core_text;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class element_test extends advanced_testcase {
-
     /**
      * Test set up.
      */
@@ -53,14 +52,17 @@ final class element_test extends advanced_testcase {
     public function test_render_html(): void {
         global $USER, $DB, $CFG;
 
-        require_once($CFG->dirroot.'/user/profile/lib.php');
+        require_once($CFG->dirroot . '/user/profile/lib.php');
 
         $this->setAdminUser();
 
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $element = $this->get_generator()->create_element($pageid, 'userfield',
-            ['userfield' => 'fullname']);
+        $element = $this->get_generator()->create_element(
+            $pageid,
+            'userfield',
+            ['userfield' => 'fullname']
+        );
 
         $formdata = (object)['name' => 'User email element', 'userfield' => 'email'];
         $e = $this->get_generator()->create_element($pageid, 'userfield', $formdata);

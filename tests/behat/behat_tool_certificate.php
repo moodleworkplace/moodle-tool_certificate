@@ -27,7 +27,7 @@
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
+use Behat\Gherkin\Node\TableNode;
 use tool_certificate\my_certificates_table;
 
 /**
@@ -39,7 +39,6 @@ use tool_certificate\my_certificates_table;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_tool_certificate extends behat_base {
-
     /**
      * Adds an element to the specified page of a template.
      *
@@ -56,20 +55,26 @@ class behat_tool_certificate extends behat_base {
         }
 
         // Click on "Add field" button.
-        $this->execute('behat_general::i_click_on_in_the',
+        $this->execute(
+            'behat_general::i_click_on_in_the',
             [get_string('addelement', 'tool_certificate'), "button",
-                "//*[@data-region='page'][{$pagenum}]", "xpath_element", ]);
+            "//*[@data-region='page'][{$pagenum}]",
+            "xpath_element",
+            ]
+        );
 
         // Wait until the respective element type selector has class .show .
-        $xpath = "//*[@data-region='page'][{$pagenum}]".
+        $xpath = "//*[@data-region='page'][{$pagenum}]" .
             "//*[@data-region='elementtypeslist' and contains(concat(' ', normalize-space(@class), ' '), ' show ')]";
         $this->execute("behat_general::wait_until_exists", [$this->escape($xpath), "xpath_element"]);
         // Wait for CSS transition to finish.
         $this->getSession()->wait(200);
 
         // Click on the link in the element type selector.
-        $this->execute('behat_general::i_click_on_in_the',
-            [$elementname, "link", $xpath, "xpath_element"]);
+        $this->execute(
+            'behat_general::i_click_on_in_the',
+            [$elementname, "link", $xpath, "xpath_element"]
+        );
     }
 
     /**
@@ -84,8 +89,12 @@ class behat_tool_certificate extends behat_base {
 
         $template = $DB->get_record('tool_certificate_templates', ['name' => $templatename], '*', MUST_EXIST);
         $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
-        $issue = $DB->get_record('tool_certificate_issues', ['userid' => $user->id, 'templateid' => $template->id],
-            '*', MUST_EXIST);
+        $issue = $DB->get_record(
+            'tool_certificate_issues',
+            ['userid' => $user->id, 'templateid' => $template->id],
+            '*',
+            MUST_EXIST
+        );
 
         $this->execute('behat_forms::i_set_the_field_to', [get_string('code', 'tool_certificate'), $issue->code]);
         $this->execute('behat_forms::press_button', get_string('verify', 'tool_certificate'));
@@ -124,8 +133,12 @@ class behat_tool_certificate extends behat_base {
 
         $template = $DB->get_record('tool_certificate_templates', ['name' => $templatename], '*', MUST_EXIST);
         $user = $DB->get_record('user', ['username' => $username], '*', MUST_EXIST);
-        $issue = $DB->get_record('tool_certificate_issues', ['userid' => $user->id, 'templateid' => $template->id],
-            '*', MUST_EXIST);
+        $issue = $DB->get_record(
+            'tool_certificate_issues',
+            ['userid' => $user->id, 'templateid' => $template->id],
+            '*',
+            MUST_EXIST
+        );
 
         $this->execute('behat_forms::i_set_the_field_to', [get_string('code', 'tool_certificate'), $issue->code]);
         $this->execute('behat_forms::press_button', get_string('verify', 'tool_certificate'));
@@ -153,8 +166,12 @@ class behat_tool_certificate extends behat_base {
         if (array_key_exists('category', $elementdata)) {
             if (!empty($elementdata['category'])) {
                 // Lookup category id by category name.
-                $categoryid = $DB->get_field('course_categories', 'id',
-                    ['name' => $elementdata['category']], MUST_EXIST);
+                $categoryid = $DB->get_field(
+                    'course_categories',
+                    'id',
+                    ['name' => $elementdata['category']],
+                    MUST_EXIST
+                );
                 $elementdata['contextid'] = context_coursecat::instance($categoryid)->id;
             }
             unset($elementdata['category']);
@@ -300,8 +317,10 @@ class behat_tool_certificate extends behat_base {
         $this->getSession()->switchToWindow($activewindowname);
 
         if (!$found) {
-            throw new \Behat\Mink\Exception\ExpectationException('No PDF certificate was found in the new window',
-                $this->getSession());
+            throw new \Behat\Mink\Exception\ExpectationException(
+                'No PDF certificate was found in the new window',
+                $this->getSession()
+            );
         }
     }
 }

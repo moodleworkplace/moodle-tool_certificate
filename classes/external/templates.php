@@ -38,7 +38,6 @@ use tool_certificate\certificate;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class templates extends \external_api {
-
     /**
      * Returns the duplicate_template() parameters.
      *
@@ -60,8 +59,10 @@ class templates extends \external_api {
      * @param int $categoryid
      */
     public static function duplicate_template($templateid, $categoryid) {
-        $params = self::validate_parameters(self::duplicate_template_parameters(),
-            ['id' => $templateid, 'categoryid' => $categoryid]);
+        $params = self::validate_parameters(
+            self::duplicate_template_parameters(),
+            ['id' => $templateid, 'categoryid' => $categoryid]
+        );
         self::validate_context(\context_system::instance());
         $template = \tool_certificate\template::instance($params['id']);
         $context = $params['categoryid'] ? \context_coursecat::instance($params['categoryid']) : $template->get_context();
@@ -98,8 +99,10 @@ class templates extends \external_api {
      * @param int $templateid
      */
     public static function delete_template($templateid) {
-        $params = self::validate_parameters(self::delete_template_parameters(),
-            ['id' => $templateid]);
+        $params = self::validate_parameters(
+            self::delete_template_parameters(),
+            ['id' => $templateid]
+        );
         self::validate_context(\context_system::instance());
         $template = \tool_certificate\template::instance($params['id']);
         $template->require_can_manage();

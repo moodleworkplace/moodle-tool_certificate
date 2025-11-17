@@ -62,8 +62,11 @@ if ($action && $pageid) {
 
 $heading = $title = $template->get_formatted_name();
 if ($template->get_shared()) {
-    $heading .= html_writer::tag('div', get_string('shared', 'tool_certificate'),
-        ['class' => 'badge rounded-pill bg-secondary text-dark font-small ms-2 align-middle']);
+    $heading .= html_writer::tag(
+        'div',
+        get_string('shared', 'tool_certificate'),
+        ['class' => 'badge rounded-pill bg-secondary text-dark font-small ms-2 align-middle']
+    );
 }
 $PAGE->navbar->add($title, $pageurl);
 

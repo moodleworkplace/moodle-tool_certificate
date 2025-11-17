@@ -38,7 +38,6 @@ use tool_certificate\permission;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class issue extends base {
-
     /**
      * Database tables that this entity uses and their default aliases
      *

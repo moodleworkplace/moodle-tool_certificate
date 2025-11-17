@@ -28,7 +28,6 @@ use tool_certificate_generator;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class element_helper_test extends advanced_testcase {
-
     /**
      * Get certificate generator
      * @return tool_certificate_generator

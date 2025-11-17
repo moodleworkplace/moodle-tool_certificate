@@ -40,7 +40,6 @@ use core_text;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class element_test extends advanced_testcase {
-
     /**
      * Test set up.
      */
@@ -63,14 +62,26 @@ final class element_test extends advanced_testcase {
     public function test_render_html_content(): void {
         $certificate1 = $this->get_generator()->create_template((object)['name' => 'Certificate 1']);
         $pageid = $this->get_generator()->create_page($certificate1)->get_id();
-        $e1 = $this->get_generator()->create_element($pageid, 'code',
-            ['display' => \certificateelement_code\element::DISPLAY_CODE]);
-        $e2 = $this->get_generator()->create_element($pageid, 'code',
-            ['display' => \certificateelement_code\element::DISPLAY_CODELINK]);
-        $e3 = $this->get_generator()->create_element($pageid, 'code',
-            ['display' => \certificateelement_code\element::DISPLAY_URL]);
-        $e4 = $this->get_generator()->create_element($pageid, 'code',
-            ['display' => \certificateelement_code\element::DISPLAY_QRCODE]);
+        $e1 = $this->get_generator()->create_element(
+            $pageid,
+            'code',
+            ['display' => \certificateelement_code\element::DISPLAY_CODE]
+        );
+        $e2 = $this->get_generator()->create_element(
+            $pageid,
+            'code',
+            ['display' => \certificateelement_code\element::DISPLAY_CODELINK]
+        );
+        $e3 = $this->get_generator()->create_element(
+            $pageid,
+            'code',
+            ['display' => \certificateelement_code\element::DISPLAY_URL]
+        );
+        $e4 = $this->get_generator()->create_element(
+            $pageid,
+            'code',
+            ['display' => \certificateelement_code\element::DISPLAY_QRCODE]
+        );
 
         // We don't know what the generated code will be, so match it's pattern.
         $coderegex = '([A-Za-z0-9]{12})';

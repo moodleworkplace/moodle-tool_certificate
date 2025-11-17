@@ -30,7 +30,6 @@ use tool_tenant_generator;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class certificate_test extends advanced_testcase {
-
     /**
      * Test set up.
      */
@@ -241,18 +240,43 @@ final class certificate_test extends advanced_testcase {
         $template1->issue_certificate($user3->id, null, [], $component, $course1->id);
         $template1->issue_certificate($user4->id, null, [], $component, $course1->id);
 
-        $this->assertEmpty(\tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course2->id, $component,
-            null, null));
-        $this->assertEquals(4, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, NOGROUPS, null));
-        $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, VISIBLEGROUPS, $group1->id));
-        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, VISIBLEGROUPS, $group2->id));
+        $this->assertEmpty(\tool_certificate\certificate::count_issues_for_course(
+            $template1->get_id(),
+            $course2->id,
+            $component,
+            null,
+            null
+        ));
+        $this->assertEquals(4, \tool_certificate\certificate::count_issues_for_course(
+            $template1->get_id(),
+            $course1->id,
+            $component,
+            NOGROUPS,
+            null
+        ));
+        $this->assertEquals(1, \tool_certificate\certificate::count_issues_for_course(
+            $template1->get_id(),
+            $course1->id,
+            $component,
+            VISIBLEGROUPS,
+            $group1->id
+        ));
+        $this->assertEquals(2, \tool_certificate\certificate::count_issues_for_course(
+            $template1->get_id(),
+            $course1->id,
+            $component,
+            VISIBLEGROUPS,
+            $group2->id
+        ));
 
         $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user1->id]);
-        $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_course($template1->get_id(), $course1->id,
-            $component, true, $group2->id));
+        $this->assertEquals(3, \tool_certificate\certificate::count_issues_for_course(
+            $template1->get_id(),
+            $course1->id,
+            $component,
+            true,
+            $group2->id
+        ));
     }
 
     /**
@@ -277,8 +301,16 @@ final class certificate_test extends advanced_testcase {
         $template1->issue_certificate($user1->id, null, [], $component, $course1->id);
         $template1->issue_certificate($user2->id, strtotime(' -1 day'), [], $component, $course1->id);
 
-        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component,
-            NOGROUPS, null, 0, 100, 'userid ASC');
+        $issues = \tool_certificate\certificate::get_issues_for_course(
+            $template1->get_id(),
+            $course1->id,
+            $component,
+            NOGROUPS,
+            null,
+            0,
+            100,
+            'userid ASC'
+        );
         $this->assertCount(2, $issues);
         $issue1 = reset($issues);
         $this->assertEquals($user1->id, $issue1->userid);
@@ -291,8 +323,16 @@ final class certificate_test extends advanced_testcase {
         $this->assertEquals($template1->get_id(), $issue2->templateid);
         $this->assertEquals(0, $issue2->status);
 
-        $issues = \tool_certificate\certificate::get_issues_for_course($template1->get_id(), $course1->id, $component,
-            VISIBLEGROUPS, $group1->id, 0, 100, '');
+        $issues = \tool_certificate\certificate::get_issues_for_course(
+            $template1->get_id(),
+            $course1->id,
+            $component,
+            VISIBLEGROUPS,
+            $group1->id,
+            0,
+            100,
+            ''
+        );
         $this->assertCount(1, $issues);
         $issue1 = reset($issues);
         $this->assertEquals($user2->id, $issue1->userid);
@@ -527,8 +567,12 @@ final class certificate_test extends advanced_testcase {
      * @param string|null $expirydatestr
      * @dataProvider calculate_expirydate_provider
      */
-    public function test_calculate_expirydate(int $datetype, ?string $absolutedatestr, ?int $duration,
-            ?string $expirydatestr): void {
+    public function test_calculate_expirydate(
+        int $datetype,
+        ?string $absolutedatestr,
+        ?int $duration,
+        ?string $expirydatestr
+    ): void {
         $absolutedate = isset($absolutedatestr) ? strtotime($absolutedatestr) : null;
         $expirydate = isset($expirydatestr) ? strtotime($expirydatestr) : 0;
         $date = certificate::calculate_expirydate($datetype, $absolutedate, $duration);

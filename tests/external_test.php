@@ -32,7 +32,6 @@ use tool_certificate_generator;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 final class external_test extends advanced_testcase {
-
     /** @var tool_certificate_generator */
     protected $certgenerator;
 
@@ -168,8 +167,14 @@ final class external_test extends advanced_testcase {
 
         // Check issue file already exists after issuing certificate.
         $fs = get_file_storage();
-        $file = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue->id, '/', $issue->code . '.pdf');
+        $file = $fs->get_file(
+            \context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        );
         $this->assertNotFalse($file);
 
         // Change user name.
@@ -195,8 +200,14 @@ final class external_test extends advanced_testcase {
         $sink->close();
 
         // Check new file was created for issue.
-        $newfile = $fs->get_file(\context_system::instance()->id, 'tool_certificate', 'issues',
-            $issue->id, '/', $issue->code . '.pdf');
+        $newfile = $fs->get_file(
+            \context_system::instance()->id,
+            'tool_certificate',
+            'issues',
+            $issue->id,
+            '/',
+            $issue->code . '.pdf'
+        );
         $this->assertNotEquals($file->get_id(), $newfile->get_id());
         $this->assertEquals($issue->id, $newfile->get_itemid());
 

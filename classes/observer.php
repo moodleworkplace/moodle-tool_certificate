@@ -47,6 +47,5 @@ class tool_certificate_observer {
         }
 
         $DB->delete_records('tool_certificate_issues', ['courseid' => $event->courseid]);
-
     }
 }

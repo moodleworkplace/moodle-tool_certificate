@@ -34,7 +34,6 @@ use tool_certificate\element_helper;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element extends \tool_certificate\element {
-
     /**
      * @var array The file manager options.
      */
@@ -70,11 +69,16 @@ class element extends \tool_certificate\element {
      * @param \MoodleQuickForm $mform the edit_form instance
      */
     public function render_form_elements($mform) {
-        $mform->addElement('filemanager', 'image', get_string('uploadimage', 'tool_certificate'), '',
-            $this->filemanageroptions);
+        $mform->addElement(
+            'filemanager',
+            'image',
+            get_string('uploadimage', 'tool_certificate'),
+            '',
+            $this->filemanageroptions
+        );
 
         if (element_helper::render_shared_image_picker_element($mform)) {
-            $mform->addFormRule(function($data) {
+            $mform->addFormRule(function ($data) {
                 $draffiles = file_get_draft_area_info($data['image']);
                 if ((!$draffiles['filesize'] && !$data['fileid']) || ($draffiles['filesize'] && $data['fileid'])) {
                     return ['image' => get_string('imagerequired', 'certificateelement_image')];
@@ -100,7 +104,6 @@ class element extends \tool_certificate\element {
             $mform->hideIf('posx', 'isbackground', 'checked');
             $mform->hideIf('posy', 'isbackground', 'checked');
         }
-
     }
 
     /**
@@ -115,8 +118,13 @@ class element extends \tool_certificate\element {
         parent::save_form_data($data);
 
         // Handle file uploads.
-        file_save_draft_area_files($data->image, $this->get_template()->get_context()->id,
-            'tool_certificate', 'element', $this->get_id());
+        file_save_draft_area_files(
+            $data->image,
+            $this->get_template()->get_context()->id,
+            'tool_certificate',
+            'element',
+            $this->get_id()
+        );
     }
 
     /**
@@ -199,13 +207,24 @@ class element extends \tool_certificate\element {
             $fileimageinfo = ['width' => 140, 'height' => 140];
         } else {
             // Link to the file.
-            $url = \moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(), $file->get_filearea(),
-                $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+            $url = \moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename()
+            );
             $fileimageinfo = $file->get_imageinfo();
         }
 
-        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height'],
-            $this->get_display_name());
+        return element_helper::render_image_html(
+            $url,
+            $fileimageinfo,
+            (float)$imageinfo['width'],
+            (float)$imageinfo['height'],
+            $this->get_display_name()
+        );
     }
 
     /**
@@ -229,8 +248,14 @@ class element extends \tool_certificate\element {
             // Load element image.
             $draftitemid = file_get_submitted_draft_itemid('image');
             $context = $this->get_template()->get_context();
-            file_prepare_draft_area($draftitemid, $context->id, 'tool_certificate', 'element',
-                $this->get_id(), $this->filemanageroptions);
+            file_prepare_draft_area(
+                $draftitemid,
+                $context->id,
+                'tool_certificate',
+                'element',
+                $this->get_id(),
+                $this->filemanageroptions
+            );
             $record->image = $draftitemid;
         }
 
@@ -248,8 +273,14 @@ class element extends \tool_certificate\element {
      */
     public function get_file(): ?\stored_file {
 
-        $files = get_file_storage()->get_area_files($this->get_template()->get_context()->id,
-            'tool_certificate', 'element', $this->get_id(), '', false);
+        $files = get_file_storage()->get_area_files(
+            $this->get_template()->get_context()->id,
+            'tool_certificate',
+            'element',
+            $this->get_id(),
+            '',
+            false
+        );
         if (count($files)) {
             return reset($files);
         }
@@ -264,10 +295,17 @@ class element extends \tool_certificate\element {
      */
     public function get_shared_file(): ?\stored_file {
         $imageinfo = json_decode($this->get_data() ?? '');
-        if (!empty($imageinfo->filename) &&
-                $file = get_file_storage()->get_file($imageinfo->contextid, 'tool_certificate', $imageinfo->filearea,
-                    $imageinfo->itemid, $imageinfo->filepath, $imageinfo->filename)) {
-
+        if (
+            !empty($imageinfo->filename) &&
+                $file = get_file_storage()->get_file(
+                    $imageinfo->contextid,
+                    'tool_certificate',
+                    $imageinfo->filearea,
+                    $imageinfo->itemid,
+                    $imageinfo->filepath,
+                    $imageinfo->filename
+                )
+        ) {
             return $file;
         }
         return null;

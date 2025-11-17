@@ -39,7 +39,6 @@ use tool_certificate\reportbuilder\local\formatters\certificate as formatter;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class issues extends datasource {
-
     /**
      * Initialise report
      */
@@ -83,8 +82,7 @@ class issues extends datasource {
             ->add_joins([
                 "LEFT JOIN {cohort_members} {$cohortmemberalias} ON {$cohortmemberalias}.userid = {$user}.id",
                 "LEFT JOIN {cohort} {$cohortalias} ON {$cohortalias}.id = {$cohortmemberalias}.cohortid",
-            ])
-        );
+            ]));
 
         // Add categories/tool_certificate_templates entity.
         $coursecatentity = new \core_course\reportbuilder\local\entities\course_category();
@@ -157,8 +155,13 @@ class issues extends datasource {
         $this->add_conditions_from_entity($cohortentity->get_entity_name(), $filterconditionstoinclude);
 
         // Add Tenant entity.
-        if ($tenantentity = component_class_callback('\tool_tenant\reportbuilder\local\entities\tenant',
-            'prepare_for_user_datasource', [$user])) {
+        if (
+            $tenantentity = component_class_callback(
+                '\tool_tenant\reportbuilder\local\entities\tenant',
+                'prepare_for_user_datasource',
+                [$user]
+            )
+        ) {
             $this->add_entity($tenantentity);
             $this->add_columns_from_entity($tenantentity->get_entity_name());
             $this->add_filters_from_entity($tenantentity->get_entity_name());

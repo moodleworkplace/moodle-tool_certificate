@@ -36,7 +36,6 @@ require_once($CFG->dirroot . '/lib/grade/constants.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class element extends \tool_certificate\element {
-
     /**
      * @var int Show creation date
      */
@@ -102,8 +101,11 @@ class element extends \tool_certificate\element {
 
         // Ensure that a date has been set.
         if (!empty($date)) {
-            \tool_certificate\element_helper::render_content($pdf, $this,
-                $this->get_date_format_string($date, $dateinfo['dateformat']));
+            \tool_certificate\element_helper::render_content(
+                $pdf,
+                $this,
+                $this->get_date_format_string($date, $dateinfo['dateformat'])
+            );
         }
     }
 
@@ -118,8 +120,10 @@ class element extends \tool_certificate\element {
     public function render_html() {
         // Decode the information stored in the database.
         $dateinfo = @json_decode($this->get_data(), true) + ['dateformat' => ''];
-        return \tool_certificate\element_helper::render_html_content($this,
-            $this->get_date_format_string(\core\di::get(\core\clock::class)->time(), $dateinfo['dateformat']));
+        return \tool_certificate\element_helper::render_html_content(
+            $this,
+            $this->get_date_format_string(\core\di::get(\core\clock::class)->time(), $dateinfo['dateformat'])
+        );
     }
 
     /**

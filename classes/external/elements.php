@@ -38,7 +38,6 @@ require_once("$CFG->libdir/externallib.php");
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class elements extends \external_api {
-
     /**
      * Returns the delete_element() parameters.
      *
@@ -99,8 +98,10 @@ class elements extends \external_api {
      * @param int $posy
      */
     public static function update_element($elementid, $sequence, $posx, $posy) {
-        $params = self::validate_parameters(self::update_element_parameters(),
-            ['id' => $elementid, 'sequence' => $sequence, 'posx' => $posx, 'posy' => $posy]);
+        $params = self::validate_parameters(
+            self::update_element_parameters(),
+            ['id' => $elementid, 'sequence' => $sequence, 'posx' => $posx, 'posy' => $posy]
+        );
         self::validate_context(\context_system::instance());
         $template = template::find_by_element_id($params['id']);
         $template->require_can_manage();

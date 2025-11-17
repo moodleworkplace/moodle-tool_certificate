@@ -31,7 +31,6 @@ use tool_certificate\my_certificates_table;
  * @covers     \tool_certificate\output\mobile
  */
 final class mobile_test extends \advanced_testcase {
-
     /** @var clock $clock */
     private readonly clock $clock;
 
@@ -111,7 +110,7 @@ final class mobile_test extends \advanced_testcase {
             $certificate['fileurl']
         );
         $expectedshareurl = "https://www.linkedin.com/profile/add?name=Test%20template&issueYear=" . date('Y')
-            . "&issueMonth=" .date('m') ."&certId=TESTCODE&certUrl=https%3A%2F%2Fwww.example.com%2Fmoodle%2Fadmin%2F"
+            . "&issueMonth=" . date('m') . "&certId=TESTCODE&certUrl=https%3A%2F%2Fwww.example.com%2Fmoodle%2Fadmin%2F"
             . "tool%2Fcertificate%2Findex.php%3Fcode%3DTESTCODE";
         $this->assertEquals($expectedshareurl, $certificate['shareurl']);
 

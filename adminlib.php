@@ -34,7 +34,6 @@ require_once($CFG->libdir . '/adminlib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_certificate_admin_page_manage_element_plugins extends admin_externalpage {
-
     /**
      * The constructor - calls parent constructor
      *
