@@ -94,6 +94,15 @@ class details extends dynamic_form {
         $mform->addHelpButton('shared', 'availableincourses', 'tool_certificate');
         $mform->setDefault('shared', 1);
 
+        $mform->addElement('text', 'maxissuances', get_string('maxissuances', 'tool_certificate'), array('size' => '3'));
+        $mform->setType('maxissuances', PARAM_INT);
+        $mform->setDefault('maxissuances', 0);
+        $mform->addHelpButton('maxissuances', 'maxissuances', 'tool_certificate');
+
+        $mform->addElement('advcheckbox', 'notify', get_string('notify', 'tool_certificate'));
+        $mform->addHelpButton('notify', 'notify', 'tool_certificate');
+        $mform->setDefault('notify', 1);
+
         if (!$this->get_template()->get_id()) {
             page::add_page_elements($mform);
         } else {
@@ -156,7 +165,7 @@ class details extends dynamic_form {
      */
     public function process_dynamic_submission() {
         global $CFG;
-        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot . '/course/lib.php');
         $data = $this->get_data();
 
         if (isset($data->categoryid)) {
@@ -187,7 +196,10 @@ class details extends dynamic_form {
                 'id' => $this->template->get_id(),
                 'name' => $this->template->get_name(),
                 'shared' => $this->template->get_shared(),
-                'categoryid' => $this->template->get_category_id(), ]);
+                'categoryid' => $this->template->get_category_id(),
+                'maxissuances' => $this->template->get_maxissuances(),
+                'notify' => $this->template->get_notify(),
+            ]);
         } else {
             $data = template::instance()->new_page()->to_record();
             unset($data->id, $data->templateid);

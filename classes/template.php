@@ -30,6 +30,7 @@ use core\output\inplace_editable;
 use core_user;
 use moodle_url;
 use tool_certificate\customfield\issue_handler;
+use moodle_exception;
 
 /**
  * Class represents a certificate template.
@@ -84,6 +85,12 @@ class template {
         if (isset($data->shared)) {
             $this->persistent->set('shared', $data->shared);
         }
+        if (isset($data->maxissuances)) {
+            $this->persistent->set('maxissuances', $data->maxissuances);
+        }
+        if (isset($data->notify)) {
+            $this->persistent->set('notify', $data->notify);
+        }        
         $this->persistent->save();
         \tool_certificate\event\template_updated::create_from_template($this)->trigger();
     }
@@ -447,6 +454,24 @@ class template {
     }
 
     /**
+     * Returns the maxissuances setting of the template.
+     *
+     * @return string the shared setting of the template
+     */
+    public function get_maxissuances() {
+        return $this->persistent->get('maxissuances');
+    }
+
+    /**
+     * Returns the notify setting of the template.
+     *
+     * @return string the shared setting of the template
+     */
+    public function get_notify() {
+        return $this->persistent->get('notify');
+    }    
+
+    /**
      * Returns the formatted name of the template.
      *
      * @return string the name of the template
@@ -650,6 +675,8 @@ class template {
         $template = new \stdClass();
         $template->name = $formdata->name;
         $template->shared = $formdata->shared ?? 0;
+        $template->maxissuances = $formdata->maxissuances ?? 0;
+        $template->notify = $formdata->notify ?? 1;        
         if (!isset($formdata->contextid)) {
             debugging('Context is missing', DEBUG_DEVELOPER);
             $template->contextid = \context_system::instance()->id;
@@ -700,6 +727,15 @@ class template {
 
         component_class_callback(\tool_tenant\config::class, 'push_for_user', [$userid]);
 
+        $maxissuances = $DB->get_field('tool_certificate_templates', 'maxissuances', array('id' => $this->get_id()));
+        $notify = (bool) $DB->get_field('tool_certificate_templates', 'notify', array('id' => $this->get_id()));
+        $usercertificates = $DB->count_records('tool_certificate_issues', array('userid' => $userid, 'templateid' => $this->get_id()));
+
+        if ($maxissuances > 0 && $usercertificates >= $maxissuances) {
+            // Do not issue the certificate and possibly show an error message.
+            throw new moodle_exception('maxissuancesreached', 'tool_certificate');
+        }
+
         $issue = new \stdClass();
         $issue->userid = $userid;
         $issue->templateid = $this->get_id();
@@ -730,7 +766,9 @@ class template {
 
         // Create the issue file and send notification.
         $issuefile = $this->create_issue_file($issue);
-        self::send_issue_notification($issue, $issuefile);
+        if ($notify) {
+            self::send_issue_notification($issue, $issuefile);
+        }
 
         component_class_callback(\tool_tenant\config::class, 'pop', []);
 
