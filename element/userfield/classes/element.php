@@ -120,8 +120,6 @@ class element extends \tool_certificate\element {
     public function render($pdf, $preview, $user, $issue) {
         // The value to display on the PDF.
         $value = $this->get_user_field_value($user);
-
-        $value = format_string($value, true, ['context' => \context_system::instance()]);
         \tool_certificate\element_helper::render_content($pdf, $this, $value);
     }
 
@@ -137,8 +135,6 @@ class element extends \tool_certificate\element {
         // The value to display - we always want to show a value here so it can be repositioned.
         $value = $this->get_user_field_value($USER);
         $value = strlen($value) ? $value : $this->get_data();
-
-        $value = format_string($value, true, ['context' => \context_system::instance()]);
         return \tool_certificate\element_helper::render_html_content($this, $value);
     }
 
