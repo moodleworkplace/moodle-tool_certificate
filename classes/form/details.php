@@ -87,6 +87,8 @@ class details extends dynamic_form {
             $mform->setType('categoryid', PARAM_INT);
         } else {
             $mform->addElement('hidden', 'contextid');
+            $mform->setType('contextid', PARAM_INT);
+            $mform->setDefault('contextid', $this->get_context_for_dynamic_submission()->id);
         }
 
         $mform->addElement('advcheckbox', 'shared', get_string('availableincourses', 'tool_certificate'));
