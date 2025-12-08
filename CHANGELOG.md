@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.4 - 2025-12-09
 ### Added
 - Added bulk certificate regeneration
 ### Changed
