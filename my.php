@@ -36,7 +36,7 @@ require_login();
 
 // Check that we have a valid user.
 $user = \core_user::get_user($userid ?: $USER->id, '*', MUST_EXIST);
-if (!\tool_certificate\permission::can_view_list($user->id)) {
+if (!\tool_certificate\permission::can_view_list($user->id, \context_user::instance($user->id))) {
     throw new \required_capability_exception(context_system::instance(), 'tool/certificate:viewallcertificates',
         'nopermission', 'error');
 }

@@ -235,7 +235,7 @@ class permission {
             $context = \context_system::instance();
         }
         if ($context->contextlevel != CONTEXT_SYSTEM && $context->contextlevel != CONTEXT_COURSECAT
-                && $context->contextlevel != CONTEXT_COURSE) {
+                && $context->contextlevel != CONTEXT_COURSE && $context->contextlevel != CONTEXT_USER) {
             return false;
         }
         if (class_exists('\\tool_organisation\\organisation')) {
