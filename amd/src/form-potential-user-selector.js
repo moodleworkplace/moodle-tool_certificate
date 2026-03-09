@@ -51,6 +51,7 @@ define(['jquery', 'core/ajax', 'core/templates', 'core/str'], function($, Ajax, 
                 args: {
                     search: query,
                     itemid: $(selector).data('itemid'),
+                    limitnum: MAXUSERS + 1,
                 }
             }]);
             promise[0].then(function(results) {
