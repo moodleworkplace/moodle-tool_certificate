@@ -26,7 +26,6 @@ namespace tool_certificate\customfield;
 
 use core_customfield\field_controller;
 use core_customfield\handler;
-use tool_certification\certification;
 
 /**
  * Class issue_handler
@@ -294,7 +293,7 @@ class issue_handler extends handler {
     /**
      * For use in unittests
      */
-    public static function reset_caches() {
+    public static function reset_caches(): void {
         self::$singleton = null;
     }
 }
