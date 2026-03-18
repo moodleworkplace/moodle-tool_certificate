@@ -40,10 +40,10 @@ use tool_certificate\customfield\issue_handler;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider implements
+    \core_privacy\local\metadata\provider,
     \core_privacy\local\request\core_userlist_provider,
     \core_privacy\local\request\core_user_data_provider,
-    \core_privacy\local\request\subsystem\plugin_provider,
-    \core_privacy\local\metadata\provider {
+    \core_privacy\local\request\subsystem\plugin_provider {
     /**
      * Return the fields which contain personal data.
      *
