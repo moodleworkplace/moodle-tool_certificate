@@ -18,6 +18,7 @@ namespace tool_certificate;
 
 use advanced_testcase;
 use tool_certificate_generator;
+use core_external\external_api;
 
 /**
  * Unit tests for the webservices.
@@ -215,5 +216,70 @@ final class external_test extends advanced_testcase {
         $issue = $DB->get_record('tool_certificate_issues', ['id' => $issue->id]);
         $userfullname = @json_decode($issue->data, true)['userfullname'];
         $this->assertEquals('User 02', $userfullname);
+    }
+
+    /**
+     * Test for function potential_users_selector()
+     *
+     * @param string $search
+     * @param string[] $expectedfullnames
+     * @param int $limitfrom
+     * @param int $limitnum
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('potential_users_selector_provider')]
+    public function test_potential_users_selector(
+        string $search,
+        array $expectedfullnames,
+        int $limitfrom = 0,
+        int $limitnum = 0
+    ): void {
+        global $DB;
+
+        $this->setAdminUser();
+
+        $course = $this->getDataGenerator()->create_course();
+        $template = $this->certgenerator->create_template((object)['name' => 'Certificate 1']);
+
+        // Create two users and enrol them into the course.
+        $student1 = $this->getDataGenerator()->create_user([
+            'firstname' => 'Bob',
+            'lastname' => 'Smith',
+            'email' => 'test@example.invalid',
+        ]);
+        $student2 = $this->getDataGenerator()->create_user([
+            'firstname' => 'Lee',
+            'lastname' => 'Smith',
+        ]);
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id);
+
+        // Issue the certificate to the admin user, to skip it in the potential users selector results.
+        $template->issue_certificate(get_admin()->id);
+
+        $matchedusers = external_api::clean_returnvalue(
+            \tool_certificate\external\issues::potential_users_selector_returns(),
+            \tool_certificate\external\issues::potential_users_selector($search, $template->get_id(), $limitfrom, $limitnum),
+        );
+        $this->assertEqualsCanonicalizing($expectedfullnames, array_column($matchedusers, 'fullname'));
+    }
+
+    /**
+     * Data provider for potential user selection.
+     *
+     * @return array
+     */
+    public static function potential_users_selector_provider(): array {
+        return [
+            ['', ['Bob Smith', 'Lee Smith']],
+            ['bob', ['Bob Smith']],
+            ['smith', ['Bob Smith', 'Lee Smith']],
+            ['jim', []],
+            // Test for limits.
+            ['', ['Bob Smith'], 0, 1],
+            ['', ['Lee Smith'], 1, 1], // With limits starting from the second record.
+            ['smith', ['Bob Smith'], 0, 1],
+            ['smith', ['Lee Smith'], 1, 1],
+            ['jim', [], 2, 100], // With limits, but still no matches.
+        ];
     }
 }
