@@ -184,7 +184,6 @@ Feature: Being able to manage elements in a certificate template
     And the following fields match these values:
       | Field  | Course full name |
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
-    And I log out
 
   Scenario: Delete an element from a certificate template
     When I change window size to "large"
@@ -216,7 +215,6 @@ Feature: Being able to manage elements in a certificate template
     And I follow "Certificate 1"
     And I should not see "User field"
     And I should see "User full name"
-    And I log out
 
   Scenario: Rearrange elements on a certificate template
     When I change window size to "large"
@@ -236,4 +234,3 @@ Feature: Being able to manage elements in a certificate template
     And I follow "Certificate 1"
     And "User field" "list_item" should appear before "Date" "list_item"
     Then "Date" "list_item" should appear before "Code" "list_item"
-    And I log out

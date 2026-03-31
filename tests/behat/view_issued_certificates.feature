@@ -106,7 +106,6 @@ Feature: Being able to view the certificates that have been issued
     And I should not see "Verify certificates"
     And I should not see "Add certificate template"
     And I should not see "Certificate images"
-    And I log out
 
   @javascript
   Scenario: View certificate as user with certificateviewer role

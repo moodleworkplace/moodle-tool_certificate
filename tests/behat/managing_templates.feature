@@ -106,15 +106,12 @@ Feature: Being able to manage site templates
     And I click on "Save" "button" in the ".modal.show .modal-footer" "css_element"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     Then I should see "Certificate 1"
-    And I log out
     And I log in as "categorymanager1"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 1"
-    And I log out
     And I log in as "categorymanager2"
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should see "Certificate 1"
-    And I log out
 
   Scenario: Adding template with invalid width, heigth and margins
     When I log in as "admin"
@@ -145,7 +142,6 @@ Feature: Being able to manage site templates
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 1"
     And I should see "Certificate 2"
-    And I log out
 
   Scenario: Deleting a site template
     When I change window size to "large"
@@ -184,7 +180,6 @@ Feature: Being able to manage site templates
     And I click on "Duplicate" "button" in the "Confirm" "dialogue"
     Then I should see "Certificate 1"
     And I should see "Certificate 1 (copy)"
-    And I log out
 
   Scenario: Duplicating a site template to another category
     When the following "users" exist:
@@ -210,7 +205,6 @@ Feature: Being able to manage site templates
       | Name                 | Course category |
       | Certificate 1        | None            |
       | Certificate 1 (copy) | Category2       |
-    And I log out
 
   Scenario: Edit name of certificate template
     When the following certificate templates exist:
@@ -226,4 +220,3 @@ Feature: Being able to manage site templates
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I should not see "Certificate 1"
     And I should see "Certificate 2"
-    And I log out

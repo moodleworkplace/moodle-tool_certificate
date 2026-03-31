@@ -35,7 +35,6 @@ Feature: Being able to manage pages in a certificate template
     And I should not see "Page 2"
     And I should not see "User picture"
     And I should not see "User field"
-    And I log out
 
   Scenario: Rearrange pages in a certificate template
     When I change window size to "large"
@@ -49,4 +48,3 @@ Feature: Being able to manage pages in a certificate template
     Then "User field" "text" should appear before "User picture" "text"
     And I click on "Move up" "link" in the "//*[@data-region='page'][2]" "xpath_element"
     Then "User field" "text" should appear after "User picture" "text"
-    And I log out

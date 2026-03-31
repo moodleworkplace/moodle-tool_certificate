@@ -59,7 +59,6 @@ Feature: View links on admin tree
     And I wait until ".toast-message" "css_element" does not exist
     And I follow "Certificate 1"
     And I should see "User One"
-    And I log out
 
   Scenario: Manager without issue capability
     And the following "permission overrides" exist:
