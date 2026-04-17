@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added support for Moodle 5.2
+
 ## 5.0.6 - 2026-02-13
 ### Fixed
 - Fixed redundant string formatting of user profile fields in certificates
