@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added support for Moodle 5.2
+### Fixed
+- Fixed UI spacing glitches in template editor
+### Changed
+- Added pagination to user selector autocomplete element to improve performance
+
 ## 5.0.6 - 2026-02-13
 ### Fixed
 - Fixed redundant string formatting of user profile fields in certificates
