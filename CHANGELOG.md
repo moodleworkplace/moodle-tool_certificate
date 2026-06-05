@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+###
+- Fixed some more UI glitches in editor on narrow screens
+
 ## 5.0.7 - 2026-04-21
 ### Added
 - Added support for Moodle 5.2
