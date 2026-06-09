@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.8 - 2026-06-09
 ###
 - Fixed some more UI glitches in editor on narrow screens
 
