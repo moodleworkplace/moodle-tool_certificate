@@ -38,19 +38,31 @@
 }}
 <ul data-region="elementlist" data-id="{{id}}" class="unlist">
     {{#elements}}
-        <li data-region="pageelement" data-id="{{id}}" class="mb-2 mt-2 d-flex">
+        <li data-region="pageelement" data-id="{{id}}" class="d-flex align-items-center my-2 gap-1">
             {{> core/drag_handle}}
-            <span>{{{icon}}}</span>
-            {{#editablename}}{{> core/inplace_editable}}{{/editablename}}
+            <div class="d-flex align-items-center">{{{icon}}}</div>
+            <div>{{#editablename}}{{> core/inplace_editable}}{{/editablename}}</div>
 
-            <span class="ms-auto d-flex">
-                <a class="btn btn-link p-0" data-action="editelement" href="#" data-id="{{id}}" data-name="{{displayname}}" title="{{#str}}editelement, tool_certificate, {{displayname}}{{/str}}">
+            <div class="ms-auto d-flex gap-1">
+                <a class="btn btn-icon icon-no-margin text-primary"
+                   data-action="editelement"
+                   href="#"
+                   data-id="{{id}}"
+                   data-name="{{displayname}}"
+                   title="{{#str}}editelement, tool_certificate, {{displayname}}{{/str}}"
+                >
                     {{#pix}} i/settings, core {{/pix}}
                 </a>
-                <a class="btn btn-link p-0" data-action="deleteelement" href="#" data-id="{{id}}" data-name="{{displayname}}" title="{{#str}}deleteelement, tool_certificate{{/str}}">
+                <a class="btn btn-icon icon-no-margin text-primary"
+                   data-action="deleteelement"
+                   href="#"
+                   data-id="{{id}}"
+                   data-name="{{displayname}}"
+                   title="{{#str}}deleteelement, tool_certificate{{/str}}"
+                >
                     {{#pix}} i/trash, core {{/pix}}
                 </a>
-            </span>
+            </div>
         </li>
     {{/elements}}
 </ul>
