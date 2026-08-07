@@ -632,8 +632,10 @@ class certificate {
         );
         $group[] =& $mform->createElement('date_time_selector', 'expirydateabsolute', '');
         // TODO: Missing here "month" and "year" options. See MDL-61624.
-        $group[] =& $mform->createElement('duration', 'expirydaterelative', '', ['defaulunit' => DAYSECS,
-            'units' => [DAYSECS, WEEKSECS], ]);
+        $group[] =& $mform->createElement('duration', 'expirydaterelative', '', [
+            'units' => [DAYSECS, WEEKSECS],
+            'defaultunit' => DAYSECS,
+        ]);
         $mform->addGroup($group, 'expirydateformgroup', get_string('expirydate', 'tool_certificate'), ' ', false);
         $mform->setDefault('expirydatetype', self::DATE_EXPIRATION_NEVER);
         $mform->hideIf('expirydateabsolute', 'expirydatetype', 'noteq', self::DATE_EXPIRATION_ABSOLUTE);
