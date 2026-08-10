@@ -1,7 +1,12 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed the expiration duration form element name
+- Even more UI glitches squashed in page/template editor
+
 ## 5.0.8 - 2026-06-09
-###
+### Fixed
 - Fixed some more UI glitches in editor on narrow screens
 
 ## 5.0.7 - 2026-04-21
