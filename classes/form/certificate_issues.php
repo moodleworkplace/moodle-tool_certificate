@@ -59,8 +59,6 @@ class certificate_issues extends dynamic_form {
     public function definition() {
         $mform = $this->_form;
         $mform->setDisableShortforms();
-        // Add empty header for consistency.
-        $mform->addElement('header', 'hdr', '');
 
         $mform->addElement('hidden', 'tid');
         $mform->setType('tid', PARAM_INT);
