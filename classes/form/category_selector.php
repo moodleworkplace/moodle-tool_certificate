@@ -59,7 +59,6 @@ class category_selector extends dynamic_form {
     public function definition() {
         $mform = $this->_form;
         $mform->setDisableShortforms();
-        $mform->addElement('header', 'hdr', '');
 
         $mform->addElement('static', 'confirmmessage', '',
             get_string('duplicatetemplateconfirm', 'tool_certificate',
