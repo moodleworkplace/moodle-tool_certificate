@@ -17,6 +17,7 @@
 namespace tool_certificate;
 
 use advanced_testcase;
+use settings_navigation;
 use tool_certificate_generator;
 use tool_tenant_generator;
 use context_coursecat;
@@ -204,5 +205,46 @@ final class capabilities_test extends advanced_testcase {
         $this->assertEquals(true, $certificate1->can_issue($user2->id));
         $this->assertEquals(true, $certificate1->can_revoke($user1->id));
         $this->assertEquals(true, $certificate1->can_revoke($user2->id));
+    }
+
+    /**
+     * Test that the navigation menu item visibility matches the page access check.
+     *
+     * A teacher with course-level tool/certificate:view but no system/category manage
+     * should NOT see the "Certificates" menu item in the course navigation.
+     */
+    public function test_navigation_menu_visibility_matches_page_access(): void {
+        global $PAGE, $DB;
+
+        $course = $this->getDataGenerator()->create_course();
+        $teacherroleid = $DB->get_field('role', 'id', ['shortname' => 'editingteacher']);
+        $teacher = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->role_assign(
+            $teacherroleid,
+            $teacher->id,
+            \core\context\course::instance($course->id)
+        );
+
+        $this->setUser($teacher);
+
+        // The teacher has course-level view capability but no system/category manage.
+        // can_view_admin_tree should return false.
+        $this->assertFalse(\tool_certificate\permission::can_view_admin_tree());
+
+        $PAGE->set_url('/course/view.php', ['id' => $course->id]);
+        $PAGE->set_course($course);
+        $PAGE->set_context(\core\context\course::instance($course->id));
+
+        $settingsnav = new settings_navigation($PAGE);
+        $settingsnav->initialise();
+        $settingsnav->extend_for_user($teacher->id);
+
+        // Find the course administration node and check that the "Certificates" container is NOT present.
+        $coursenode = $settingsnav->find('courseadmin', null);
+        $this->assertNotFalse($coursenode, 'Course administration node should exist in settings navigation');
+
+        // The "Certificates" menu item should NOT be present because can_view_admin_tree() is false.
+        $certificatesnode = $coursenode->find('tool_certificate', null);
+        $this->assertFalse($certificatesnode, 'Certificates menu item should NOT be present for this user');
     }
 }

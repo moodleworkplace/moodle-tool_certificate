@@ -174,7 +174,7 @@ function tool_certificate_get_fontawesome_icon_map() {
  * @param context $context Course context
  */
 function tool_certificate_extend_navigation_course($navigation, $course, $context) {
-    if (permission::can_view_templates_in_context($context)) {
+    if (\tool_certificate\permission::can_view_admin_tree()) {
         $certificatenode = $navigation->add(
             get_string('certificates', 'tool_certificate'),
             null,
