@@ -103,15 +103,39 @@ class certificate_renew extends dynamic_form {
         global $DB;
 
         $templateid = $this->optional_param('templateid', 0, PARAM_INT);
-        // When selecting users from the list, the template ID is not provided but we can get it from one of the selected user.
+        $issues = [];
+        // When selecting users from the list, the template ID is not provided but we can get it from the selected issues.
         if ($templateid === 0) {
-            $issueids = explode(",", $this->optional_param('issueids', '', PARAM_RAW));
-            $issue = $DB->get_record('tool_certificate_issues', ['id' => $issueids[0]], '*', MUST_EXIST);
-            $templateid = (int)$issue->templateid;
+            $issueids = array_filter(explode(",", $this->optional_param('issueids', '', PARAM_RAW)));
+            if (!$issueids) {
+                throw new \moodle_exception('requiredparam', 'tool_certificate');
+            }
+            $issues = $DB->get_records_list('tool_certificate_issues', 'id', $issueids);
+            if (count($issues) !== count($issueids)) {
+                throw new \moodle_exception('invalidrecord', 'error', '', 'tool_certificate_issues');
+            }
+            $templateid = (int)reset($issues)->templateid;
         }
         $template = template::instance($templateid);
-        if (!$template->can_issue_to_anybody()) {
-            throw new \moodle_exception('issuenotallowed', 'tool_certificate');
+
+        if (!$issues) {
+            // No specific issues selected (e.g. regenerating all issues of the template): check the template's own context.
+            if (!$template->can_issue_to_anybody($template->get_context())) {
+                throw new \moodle_exception('issuenotallowed', 'tool_certificate');
+            }
+            return;
+        }
+
+        // Selected issues may belong to different courses: check each distinct context only once.
+        $contexts = [];
+        foreach ($issues as $issue) {
+            $context = \context_course::instance($issue->courseid, IGNORE_MISSING) ?: $template->get_context();
+            $contexts[$context->id] = $context;
+        }
+        foreach ($contexts as $context) {
+            if (!$template->can_issue_to_anybody($context)) {
+                throw new \moodle_exception('issuenotallowed', 'tool_certificate');
+            }
         }
     }
 
@@ -134,7 +158,7 @@ class certificate_renew extends dynamic_form {
         } else {
             regenerate_certificates::queue(
                 $data->actiontype,
-                $data->templateid,
+                (int)$data->templateid,
                 explode(",", $data->issueids),
                 (bool) $data->sendnotification,
             );
