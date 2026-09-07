@@ -39,8 +39,6 @@ class certificate_renew extends dynamic_form {
     public function definition(): void {
         $mform = $this->_form;
         $mform->setDisableShortforms();
-        // Add empty header for consistency.
-        $mform->addElement('header', 'hdr', '');
         $mform->addElement('hidden', 'actiontype', $this->optional_param('actiontype', '', PARAM_ALPHA));
         $mform->setType('actiontype', PARAM_ALPHA);
         $mform->addElement('hidden', 'templateid', $this->optional_param('templateid', '', PARAM_INT));
