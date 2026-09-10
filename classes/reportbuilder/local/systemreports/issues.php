@@ -109,9 +109,11 @@ class issues extends system_report {
         $this->add_filters();
         $this->add_actions();
 
-        $this->set_checkbox_toggleall(static function (stdClass $row): array {
-            return [$row->userid, get_string('select')];
-        });
+        if ($this->get_template()->can_issue_to_anybody($this->get_context())) {
+            $this->set_checkbox_toggleall(static function (stdClass $row): array {
+                return [$row->userid, get_string('select')];
+            });
+        }
         $this->set_downloadable(true);
         $this->set_initial_sort_column('user:fullnamewithpicturelink', SORT_ASC);
     }

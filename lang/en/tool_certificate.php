@@ -178,6 +178,7 @@ $string['regenerateissuefile'] = 'Regenerate issued certificate';
 $string['regeneratenotification'] = 'The issued certificates are being regenerated. It may take some time for the affected users to see the updated information. It\'s safe to continue navigating on the site.';
 $string['regenerateselected'] = 'Regenerate selected certificate';
 $string['regeneratesinglenotification'] = 'The certificate was successfully regenerated.';
+$string['requiredparam'] = 'Missing required parameter: provide either \'templateid\' or \'userids\'';
 $string['revoke'] = 'Revoke';
 $string['revokecertificateconfirm'] = 'Are you sure you want to revoke this certificate issue from this user?';
 $string['rightmargin'] = 'Right margin';
