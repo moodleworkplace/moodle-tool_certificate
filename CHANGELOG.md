@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Course navigation access for teachers
+- Certificate regeneration for course teachers
+- Accessibility improvements in forms
+
 ## 5.0.9 - 2026-08-11
 ### Fixed
 - Fixed the expiration duration form element name
