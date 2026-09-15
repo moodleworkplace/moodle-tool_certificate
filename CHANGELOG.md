@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.10 - 2026-09-15
 ### Fixed
 - Course navigation access for teachers
 - Certificate regeneration for course teachers
