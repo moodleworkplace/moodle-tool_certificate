@@ -40,21 +40,14 @@ use tool_certificate\permission;
 class issue extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
-     *
-     * @return array
-     */
-    protected function get_default_table_aliases(): array {
-        return ['tool_certificate_issues' => 'tci'];
-    }
-
-    /**
      * Database tables that this entity uses
      *
      * @return string[]
      */
     protected function get_default_tables(): array {
-        return array_keys($this->get_default_table_aliases());
+        return [
+            'tool_certificate_issues',
+        ];
     }
 
     /**
