@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Brand new icon
+
 ## 5.0.10 - 2026-09-15
 ### Fixed
 - Course navigation access for teachers
