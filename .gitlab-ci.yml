@@ -1,7 +1,7 @@
 image: moodlehq/moodle-workplace-plugin-ci:8.4
 
 services:
-- postgres:16
+- postgres:17
 - name: selenium/standalone-chrome:4
   alias: selenium-standalone-chrome
 
@@ -9,7 +9,7 @@ variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
   MOODLE_REPO_MOODLE: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_REPO: $MOODLE_REPO_WORKPLACE
-  MOODLE_BRANCH: WORKPLACE_ROLLING_502
+  MOODLE_BRANCH: WORKPLACE_ROLLING_503
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -92,7 +92,7 @@ shorttest:
       - MOODLE_REPO: $MOODLE_REPO_WORKPLACE
         MOODLE_BRANCH: [ WORKPLACE_500, WORKPLACE_501, WORKPLACE_502 ]
       - MOODLE_REPO: $MOODLE_REPO_MOODLE
-        MOODLE_BRANCH: [ MOODLE_500_STABLE, MOODLE_501_STABLE, MOODLE_502_STABLE ]
+        MOODLE_BRANCH: [ MOODLE_500_STABLE, MOODLE_501_STABLE, MOODLE_502_STABLE, MOODLE_503_STABLE ]
   script:
     - . prepare-workplace $cibot_sshkey
     - export PLUGINNAME=$(grep 'plugin->component' $CI_PROJECT_DIR/version.php | awk -F\' '{ print $2; }')
