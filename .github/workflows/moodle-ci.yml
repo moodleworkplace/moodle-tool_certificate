@@ -44,7 +44,7 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           extensions: ${{ matrix.extensions }}
-          ini-values: max_input_vars=5000, opcache.enable_cli=1
+          ini-values: max_input_vars=5000, opcache.enable_cli=1, opcache.jit=disable
           coverage: pcov
 
       - name: Initialise moodle-plugin-ci
