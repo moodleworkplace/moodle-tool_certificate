@@ -1,4 +1,7 @@
 {
+  "subplugintypes": {
+    "certificateelement": "element"
+  },
   "plugintypes": {
     "certificateelement": "admin\/tool\/certificate\/element"
   }
