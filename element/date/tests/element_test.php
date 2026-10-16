@@ -21,6 +21,8 @@ use tool_certificate_generator;
 use core_text;
 use core\clock;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\certificateelement_date\element::class)]
 /**
  * Unit tests for date element.
  *

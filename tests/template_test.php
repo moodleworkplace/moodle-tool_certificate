@@ -21,6 +21,7 @@ use tool_certificate_generator;
 use context_coursecat;
 use context_system;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\template::class)]
 /**
  * Unit tests for the certificate class.
  *
@@ -673,10 +674,10 @@ final class template_test extends advanced_testcase {
         file_put_contents($langfolder . '/langconfig.php', $langconfig);
     }
 
+    #[\PHPUnit\Framework\Attributes\DataProvider('get_shareonlinkedincerturl_provider')]
     /**
      * Test get_shareonlinkedincerturl method
      *
-     * @dataProvider get_shareonlinkedincerturl_provider
      * @param int $configvalue The value for show_shareonlinkedin config
      * @param string $url The expected url
      */

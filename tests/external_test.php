@@ -20,6 +20,9 @@ use advanced_testcase;
 use tool_certificate_generator;
 use core_external\external_api;
 
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\external\issues::class)]
 /**
  * Unit tests for the webservices.
  *
@@ -150,8 +153,7 @@ final class external_test extends advanced_testcase {
      * Test regenerate_issue_file
      */
     public function test_regenerate_issue_file(): void {
-        global $DB, $CFG;
-        require_once($CFG->libdir . '/externallib.php');
+        global $DB;
 
         $this->setAdminUser();
 

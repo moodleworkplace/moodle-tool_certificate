@@ -30,6 +30,8 @@ use tool_certificate_generator;
 use core_text;
 use stdClass;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\certificateelement_program\element::class)]
 /**
  * Unit tests for code element.
  *

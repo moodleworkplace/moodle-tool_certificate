@@ -8,7 +8,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env:
           POSTGRES_USER: 'postgres'
           POSTGRES_HOST_AUTH_METHOD: 'trust'
@@ -26,6 +26,8 @@ jobs:
             moodle-branch: 'MOODLE_501_STABLE'
           - php: '8.4'
             moodle-branch: 'MOODLE_502_STABLE'
+          - php: '8.4'
+            moodle-branch: 'MOODLE_503_STABLE'
 
     steps:
       - name: Check out repository code
@@ -50,7 +52,9 @@ jobs:
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
 
       - name: Install moodle-plugin-ci
-        run: moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+        run: |
+          moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
+          moodle-plugin-ci add-config '$CFG->behat_increasetimeout = 2;'
         env:
           DB: pgsql
           MOODLE_BRANCH: ${{ matrix.moodle-branch }}

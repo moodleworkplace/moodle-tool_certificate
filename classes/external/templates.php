@@ -23,12 +23,9 @@
  */
 namespace tool_certificate\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/externallib.php");
-
-use external_function_parameters;
-use external_value;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
 use tool_certificate\certificate;
 
 /**
@@ -37,17 +34,17 @@ use tool_certificate\certificate;
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class templates extends \external_api {
+class templates extends external_api {
     /**
      * Returns the duplicate_template() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function duplicate_template_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'id' => new \external_value(PARAM_INT, 'Template id'),
-                'categoryid' => new \external_value(PARAM_INT, 'Category id', VALUE_DEFAULT, 0),
+                'id' => new external_value(PARAM_INT, 'Template id'),
+                'categoryid' => new external_value(PARAM_INT, 'Category id', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -83,12 +80,12 @@ class templates extends \external_api {
     /**
      * Returns the delete_template() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function delete_template_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'id' => new \external_value(PARAM_INT, 'Template id'),
+                'id' => new external_value(PARAM_INT, 'Template id'),
             ]
         );
     }

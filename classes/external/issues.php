@@ -16,9 +16,11 @@
 
 namespace tool_certificate\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/externallib.php");
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Class issues
@@ -27,16 +29,16 @@ require_once("$CFG->libdir/externallib.php");
  * @copyright   2018 Daniel Neis
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class issues extends \external_api {
+class issues extends external_api {
     /**
      * Returns the delete_issue() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function revoke_issue_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'id' => new \external_value(PARAM_INT, 'The issue id'),
+                'id' => new external_value(PARAM_INT, 'The issue id'),
             ]
         );
     }
@@ -78,12 +80,12 @@ class issues extends \external_api {
     /**
      * Returns the regenerate_issue_file() parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function regenerate_issue_file_parameters() {
-        return new \external_function_parameters(
+        return new external_function_parameters(
             [
-                'id' => new \external_value(PARAM_INT, 'The issue id'),
+                'id' => new external_value(PARAM_INT, 'The issue id'),
             ]
         );
     }
@@ -125,14 +127,14 @@ class issues extends \external_api {
 
     /**
      * Parameters for the users selector WS.
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
-    public static function potential_users_selector_parameters(): \external_function_parameters {
-        return new \external_function_parameters([
-            'search' => new \external_value(PARAM_NOTAGS, 'Search string', VALUE_REQUIRED),
-            'itemid' => new \external_value(PARAM_INT, 'Item id', VALUE_REQUIRED),
-            'limitfrom' => new \external_value(PARAM_INT, 'The number to start getting the users from', VALUE_DEFAULT, 0),
-            'limitnum' => new \external_value(PARAM_INT, 'The number of users to get', VALUE_DEFAULT, 0),
+    public static function potential_users_selector_parameters(): external_function_parameters {
+        return new external_function_parameters([
+            'search' => new external_value(PARAM_NOTAGS, 'Search string', VALUE_REQUIRED),
+            'itemid' => new external_value(PARAM_INT, 'Item id', VALUE_REQUIRED),
+            'limitfrom' => new external_value(PARAM_INT, 'The number to start getting the users from', VALUE_DEFAULT, 0),
+            'limitnum' => new external_value(PARAM_INT, 'The number of users to get', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -166,7 +168,7 @@ class issues extends \external_api {
         self::validate_context($context);
 
         $template = \tool_certificate\template::instance($itemid);
-        \external_api::validate_context($template->get_context());
+        external_api::validate_context($template->get_context());
 
         if ($template->can_issue_to_anybody()) {
             $where = \tool_certificate\certificate::get_users_subquery();
@@ -213,21 +215,19 @@ class issues extends \external_api {
 
     /**
      * Return for User selector.
-     * @return \external_multiple_structure
+     * @return external_multiple_structure
      */
-    public static function potential_users_selector_returns(): \external_multiple_structure {
-        global $CFG;
-        require_once($CFG->dirroot . '/user/externallib.php');
-        return new \external_multiple_structure(new \external_single_structure([
-            'id' => new \external_value(
+    public static function potential_users_selector_returns(): external_multiple_structure {
+        return new external_multiple_structure(new external_single_structure([
+            'id' => new external_value(
                 \core_user::get_property_type('id'),
                 'ID of the user'
             ),
-            'fullname' => new \external_value(
+            'fullname' => new external_value(
                 \core_user::get_property_type('firstname'),
                 'The fullname of the user'
             ),
-            'email' => new \external_value(
+            'email' => new external_value(
                 \core_user::get_property_type('email'),
                 'An email address',
                 VALUE_OPTIONAL

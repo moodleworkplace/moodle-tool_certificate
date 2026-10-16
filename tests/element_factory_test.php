@@ -20,6 +20,8 @@ use advanced_testcase;
 use tool_certificate_generator;
 use moodle_exception;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\element::class)]
 /**
  * Unit tests for functions that deals with capabilities.
  *

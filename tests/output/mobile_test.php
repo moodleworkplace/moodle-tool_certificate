@@ -21,6 +21,7 @@ namespace tool_certificate\output;
 use core\clock;
 use tool_certificate\my_certificates_table;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\output\mobile::class)]
 /**
  * Tests for Certificate manager
  *

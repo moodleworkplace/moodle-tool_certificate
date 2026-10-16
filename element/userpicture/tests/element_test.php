@@ -20,6 +20,8 @@ use advanced_testcase;
 use tool_certificate_generator;
 use core_text;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\certificateelement_userpicture\element::class)]
 /**
  * Unit tests for userpicture element.
  *

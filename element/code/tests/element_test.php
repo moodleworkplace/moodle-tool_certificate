@@ -30,6 +30,8 @@ use tool_certificate_generator;
 use moodle_url;
 use core_text;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\certificateelement_code\element::class)]
 /**
  * Unit tests for code element.
  *

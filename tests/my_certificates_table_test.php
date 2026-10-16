@@ -18,6 +18,7 @@ namespace tool_certificate;
 
 use tool_certificate_generator;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\my_certificates_table::class)]
 /**
  * Tests for functions in /classes/my_certificates_table.php
  *
@@ -47,10 +48,9 @@ final class my_certificates_table_test extends \advanced_testcase {
         $this->assertEquals('Certificate 2 - Test course 1', $table->col_name($certificate2));
     }
 
+    #[\PHPUnit\Framework\Attributes\DataProvider('col_linkedin_provider')]
     /**
      * Test LinkedIn column
-     *
-     * @dataProvider col_linkedin_provider
      *
      * @param object $issue
      * @param array $params

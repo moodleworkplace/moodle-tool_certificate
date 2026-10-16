@@ -21,6 +21,8 @@ use tool_certificate\element;
 use tool_certificate_generator;
 use core_text;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\certificateelement_userfield\element::class)]
 /**
  * Unit tests for userfield element.
  *
@@ -78,13 +80,13 @@ final class element_test extends advanced_testcase {
         $this->assertGreaterThan(30000, core_text::strlen($filecontents, '8bit'));
     }
 
+    #[\PHPUnit\Framework\Attributes\DataProvider('data_provider_render_html')]
     /**
      * Test render_html
      *
      * @param string $elementname
      * @param string $expected
      * @return void
-     * @dataProvider data_provider_render_html
      */
     public function test_render_html(string $elementname, string $expected): void {
         $this->resetAfterTest();

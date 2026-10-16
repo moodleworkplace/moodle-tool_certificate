@@ -30,6 +30,8 @@ use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_userlist;
 use core_privacy\local\request\writer;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\privacy\provider::class)]
 /**
  * Privacy provider tests class.
  *

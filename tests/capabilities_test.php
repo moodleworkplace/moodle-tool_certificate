@@ -23,6 +23,8 @@ use tool_tenant_generator;
 use context_coursecat;
 use context_system;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\permission::class)]
 /**
  * Unit tests for functions that deals with capabilities.
  *

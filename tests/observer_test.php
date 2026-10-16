@@ -19,6 +19,7 @@ namespace tool_certificate;
 use advanced_testcase;
 use tool_certificate_generator;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate_observer::class)]
 /**
  * Tests for functions in observer.php
  *

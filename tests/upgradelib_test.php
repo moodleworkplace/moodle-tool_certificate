@@ -23,12 +23,24 @@ use context_coursecat;
 use context_system;
 use xmldb_table;
 
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_certificate_upgrade_remove_tenant_field')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_certificate_upgrade_move_data_to_customfields')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_certificate_upgrade_store_fullname_in_data')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_certificate_delete_certificates_with_missing_context')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_certificate_delete_orphaned_issue_files')]
+#[\PHPUnit\Framework\Attributes\CoversFunction('tool_certificate_fix_orphaned_template_element_files')]
 /**
  * Tests for functions in db/upgradelib.php
  *
  * @package    tool_certificate
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      ::tool_certificate_upgrade_remove_tenant_field
+ * @covers      ::tool_certificate_upgrade_move_data_to_customfields
+ * @covers      ::tool_certificate_upgrade_store_fullname_in_data
+ * @covers      ::tool_certificate_delete_certificates_with_missing_context
+ * @covers      ::tool_certificate_delete_orphaned_issue_files
+ * @covers      ::tool_certificate_fix_orphaned_template_element_files
  */
 final class upgradelib_test extends advanced_testcase {
     /** @var string */
@@ -71,8 +83,6 @@ final class upgradelib_test extends advanced_testcase {
 
     /**
      * Test for function tool_certificate_upgrade_remove_tenant_field()
-     *
-     * @covers ::tool_certificate_upgrade_remove_tenant_field
      */
     public function test_tool_certificate_upgrade_remove_tenant_field(): void {
         global $DB;
@@ -112,8 +122,6 @@ final class upgradelib_test extends advanced_testcase {
 
     /**
      * Tests for tool_certificate_upgrade_move_data_to_customfields()
-     *
-     * @covers ::tool_certificate_upgrade_move_data_to_customfields
      */
     public function test_tool_certificate_upgrade_move_data_to_customfields(): void {
         global $DB;
@@ -188,8 +196,6 @@ final class upgradelib_test extends advanced_testcase {
 
     /**
      * Tests for tool_certificate_upgrade_store_fullname_in_data()
-     *
-     * @covers ::tool_certificate_upgrade_store_fullname_in_data
      */
     public function test_tool_certificate_upgrade_store_fullname_in_data(): void {
         global $DB;
@@ -226,8 +232,6 @@ final class upgradelib_test extends advanced_testcase {
 
     /**
      * Test for tool_certificate_delete_certificates_with_missing_context()
-     *
-     * @covers ::tool_certificate_delete_certificates_with_missing_context
      */
     public function test_tool_certificate_delete_certificates_with_missing_context(): void {
         global $DB;
@@ -268,8 +272,6 @@ final class upgradelib_test extends advanced_testcase {
 
     /**
      * Test for test_tool_certificate_delete_orphaned_issue_files()
-     *
-     * @covers ::tool_certificate_delete_orphaned_issue_files
      */
     public function test_tool_certificate_delete_orphaned_issue_files(): void {
         global $DB;
@@ -306,8 +308,6 @@ final class upgradelib_test extends advanced_testcase {
 
     /**
      * Test for tool_certificate_fix_orphaned_template_element_files()
-     *
-     * @covers ::tool_certificate_fix_orphaned_template_element_files
      */
     public function test_tool_certificate_fix_orphaned_template_element_files(): void {
         $this->resetAfterTest();

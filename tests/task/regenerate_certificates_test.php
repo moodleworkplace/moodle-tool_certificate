@@ -20,6 +20,7 @@ namespace tool_certificate\task;
 
 use tool_certificate_generator;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\task\regenerate_certificates::class)]
 /**
  *  Test for regenerate certificates Ad-hoc task
  *
@@ -27,6 +28,7 @@ use tool_certificate_generator;
  * @copyright 2025 Moodle Pty Ltd <support@moodle.com>
  * @author    2025 Tasio Bertomeu Gomez <tasio.bertomeu@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      \tool_certificate\task\regenerate_certificates
  */
 final class regenerate_certificates_test extends \advanced_testcase {
     /** @var tool_certificate_generator */
@@ -42,7 +44,6 @@ final class regenerate_certificates_test extends \advanced_testcase {
 
     /**
      * Test execute() method for bulk certificate regeneration.
-     * @covers \tool_certificate\task\regenerate_certificates::execute
      */
     public function test_execute(): void {
         global $DB;

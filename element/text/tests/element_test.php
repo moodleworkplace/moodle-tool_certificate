@@ -29,6 +29,8 @@ use advanced_testcase;
 use tool_certificate_generator;
 use core_text;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\certificateelement_text\element::class)]
 /**
  * Unit tests for text element.
  *

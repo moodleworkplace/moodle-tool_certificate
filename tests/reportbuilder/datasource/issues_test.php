@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\reportbuilder\datasource\issues::class)]
 /**
  * Certificate template datasource tests.
  *

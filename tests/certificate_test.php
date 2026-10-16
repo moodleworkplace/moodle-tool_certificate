@@ -20,6 +20,8 @@ use advanced_testcase;
 use tool_certificate_generator;
 use tool_tenant_generator;
 
+#[\PHPUnit\Framework\Attributes\Group('tool_certificate')]
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\certificate::class)]
 /**
  * Unit tests for the certificate class.
  *
@@ -558,6 +560,7 @@ final class certificate_test extends advanced_testcase {
         ];
     }
 
+    #[\PHPUnit\Framework\Attributes\DataProvider('calculate_expirydate_provider')]
     /**
      * Test for test_calculate_expirydate
      *
@@ -565,7 +568,6 @@ final class certificate_test extends advanced_testcase {
      * @param string|null $absolutedatestr
      * @param int|null $duration
      * @param string|null $expirydatestr
-     * @dataProvider calculate_expirydate_provider
      */
     public function test_calculate_expirydate(
         int $datetype,

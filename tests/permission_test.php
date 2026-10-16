@@ -21,12 +21,14 @@ use tool_certificate_generator;
 use context_system;
 use context_course;
 
+#[\PHPUnit\Framework\Attributes\CoversClass(\tool_certificate\permission::class)]
 /**
  * Tests for functions in lib.php
  *
  * @package     tool_certificate
  * @copyright   2020 Mikel Martín <mikel@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      \tool_certificate\permission
  */
 final class permission_test extends advanced_testcase {
     /**
@@ -102,7 +104,6 @@ final class permission_test extends advanced_testcase {
 
     /**
      * Test for get_visible_templates as admin user.
-     * @covers \tool_certificate\permission::get_visible_categories_contexts
      */
     public function test_get_visible_templates_as_admin(): void {
         $this->setAdminUser();
@@ -114,7 +115,6 @@ final class permission_test extends advanced_testcase {
 
     /**
      * Test for get_visible_templates as teacher user.
-     * @covers \tool_certificate\permission::get_visible_categories_contexts
      */
     public function test_get_visible_templates_as_teacher(): void {
         // Creater user with role 'editingteacher'.
