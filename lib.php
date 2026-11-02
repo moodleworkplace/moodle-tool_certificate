@@ -283,7 +283,7 @@ function tool_certificate_pre_course_category_delete_move(
  *                 isglobal (optional) => bool to indicate if item is displayed in the global section.
  */
 function tool_certificate_theme_workplace_menu_items(): array {
-    global $OUTPUT;
+    global $OUTPUT, $CFG;
 
     $menuitems = [];
     if (permission::can_view_admin_tree()) {
@@ -295,7 +295,8 @@ function tool_certificate_theme_workplace_menu_items(): array {
         $menuitems[] = [
             'url' => new moodle_url("/admin/tool/certificate/manage_templates.php"),
             'name' => get_string('certificates', 'tool_certificate'),
-            'imageurl' => $OUTPUT->image_url('icon', 'tool_certificate')->out(false),
+            // TODO: remove in WP-6758. Serve the appropriate icon based on the Workplace branch.
+            'imageurl' => $OUTPUT->image_url($CFG->branch >= 503 ? 'icon' : 'icon-old', 'tool_certificate')->out(false),
             'isglobal' => $isglobal,
         ];
     }
