@@ -3,6 +3,7 @@
 #page-admin-tool-certificate-template [data-region="pdf"] {
     clear: both;
     position: relative;
+    background-color: white;
 }
 
 #page-admin-tool-certificate-template [data-region="pdf"] > * {
