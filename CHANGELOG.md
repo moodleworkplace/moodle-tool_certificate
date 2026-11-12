@@ -3,6 +3,8 @@
 ## Unreleased
 ### Added
 - Added support for Moodle 5.3
+### Fixed
+- Backwards compatibility fix for the launcher icon
 
 ## 5.0.11 - 2026-10-06
 ### Changed
