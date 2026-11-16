@@ -74,14 +74,14 @@ Feature: Being able to view the certificates that have been issued
     And I navigate to "Certificates > Manage certificate templates" in site administration
     And I follow "Certificate 1"
     And I navigate to "Issued certificates" in current page administration
-    And I press "Revoke" action in the "User 12" report row
+    And I press "Revoke" action in the "User 11" report row
     And I click on "Cancel" "button" in the "Confirm" "dialogue"
     And I should see "User 11"
     And I should see "User 12"
-    And I press "Revoke" action in the "User 12" report row
+    And I press "Revoke" action in the "User 11" report row
     And I click on "Revoke" "button" in the "Confirm" "dialogue"
-    And I should see "User 11"
-    And I should not see "User 12"
+    And I should not see "User 11"
+    And I should see "User 12"
 
   Scenario: Verify any certificate as a guest using the site-wide URL
     And the following "permission overrides" exist:
