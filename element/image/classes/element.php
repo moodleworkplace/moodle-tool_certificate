@@ -101,6 +101,19 @@ class element extends \tool_certificate\element {
             $mform->hideIf('posy', 'isbackground', 'checked');
         }
 
+        // Add a color picker for background color
+        $mform->addElement('certificate_colourpicker', 'backgroundcolor', get_string('backgroundcolor', 'tool_certificate'));
+        $mform->setType('backgroundcolor', PARAM_RAW);
+        $mform->addHelpButton('backgroundcolor', 'backgroundcolor', 'tool_certificate');
+
+        // Add input fields for entering dimensions for the background color
+        $mform->addElement('text', 'backgroundwidth', get_string('backgroundwidth', 'tool_certificate'), ['size' => 10]);
+        $mform->setType('backgroundwidth', PARAM_INT);
+        $mform->addHelpButton('backgroundwidth', 'backgroundwidth', 'tool_certificate');
+
+        $mform->addElement('text', 'backgroundheight', get_string('backgroundheight', 'tool_certificate'), ['size' => 10]);
+        $mform->setType('backgroundheight', PARAM_INT);
+        $mform->addHelpButton('backgroundheight', 'backgroundheight', 'tool_certificate');
     }
 
     /**
@@ -130,6 +143,9 @@ class element extends \tool_certificate\element {
         $arrtostore = [
             'width' => !empty($data->width) ? (int) $data->width : 0,
             'height' => !empty($data->height) ? (int) $data->height : 0,
+            'backgroundcolor' => !empty($data->backgroundcolor) ? $data->backgroundcolor : '',
+            'backgroundwidth' => !empty($data->backgroundwidth) ? (int) $data->backgroundwidth : 0,
+            'backgroundheight' => !empty($data->backgroundheight) ? (int) $data->backgroundheight : 0,
         ];
         if ($this->can_be_used_as_a_background()) {
             $arrtostore['isbackground'] = !empty($data->isbackground);
@@ -172,6 +188,12 @@ class element extends \tool_certificate\element {
         }
 
         element_helper::render_image($pdf, $this, $file, [], $imageinfo['width'], $imageinfo['height']);
+
+        // Render background color
+        if (!empty($imageinfo['backgroundcolor'])) {
+            $pdf->SetFillColorArray(\TCPDF_COLORS::convertHTMLColorToDec($imageinfo['backgroundcolor']));
+            $pdf->Rect(0, 0, $imageinfo['backgroundwidth'], $imageinfo['backgroundheight'], 'F');
+        }
     }
 
     /**
@@ -204,8 +226,17 @@ class element extends \tool_certificate\element {
             $fileimageinfo = $file->get_imageinfo();
         }
 
-        return element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height'],
+        $html = element_helper::render_image_html($url, $fileimageinfo, (float)$imageinfo['width'], (float)$imageinfo['height'],
             $this->get_display_name());
+
+        // Render background color
+        if (!empty($imageinfo['backgroundcolor'])) {
+            $html .= \html_writer::div('', '', [
+                'style' => 'background-color: ' . $imageinfo['backgroundcolor'] . '; width: ' . $imageinfo['backgroundwidth'] . 'mm; height: ' . $imageinfo['backgroundheight'] . 'mm;'
+            ]);
+        }
+
+        return $html;
     }
 
     /**
@@ -217,7 +248,7 @@ class element extends \tool_certificate\element {
         $record = parent::prepare_data_for_form();
         if (!empty($this->get_data())) {
             $dateinfo = json_decode($this->get_data());
-            $keys = ['width', 'height', 'isbackground'];
+            $keys = ['width', 'height', 'isbackground', 'backgroundcolor', 'backgroundwidth', 'backgroundheight'];
             foreach ($keys as $key) {
                 if (isset($dateinfo->$key)) {
                     $record->$key = $dateinfo->$key;
