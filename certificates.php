@@ -63,6 +63,14 @@ $PAGE->set_secondarynav($secondarynav);
 $outputpage = new \tool_certificate\output\issues_page($template->get_id());
 
 $data = $outputpage->export_for_template($PAGE->get_renderer('core'));
+
+$downloadform = new \tool_certificate\download_issues_form($template->get_id());
+if ($downloadissues = $downloadform->get_data()) {
+    $outputpage->output_issues_pdf($template, $downloadissues);
+    die();
+}
+$data['content'] .= $downloadform->render();
+
 $data += ['heading' => get_string('issuedcertificates', 'tool_certificate')];
 if ($template->can_issue_to_anybody()) {
     $data += ['addbutton' => true, 'addbuttontitle' => get_string('issuecertificates', 'tool_certificate'),
