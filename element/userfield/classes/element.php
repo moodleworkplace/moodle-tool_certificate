@@ -55,6 +55,7 @@ class element extends \tool_certificate\element {
             'fullname' => $displayname('fullname'),
             'firstname' => $displayname('firstname'),
             'lastname' => $displayname('lastname'),
+            'username' => $displayname('username'),
             'email' => $displayname('email'),
             'city' => $displayname('city'),
             'country' => $displayname('country'),
